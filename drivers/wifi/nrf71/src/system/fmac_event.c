@@ -25,7 +25,7 @@
 #include <system/fmac_rx.h>
 #include <system/fmac_tx.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 #if defined(CONFIG_NRF71_WIFI_TX_DONE_WQ_ENABLED)
 K_THREAD_STACK_DEFINE(nrf_wifi_tx_done_wq_stack, CONFIG_NRF71_WIFI_TX_DONE_WQ_STACK_SIZE);
@@ -338,7 +338,7 @@ out:
 }
 #endif /* CONFIG_NRF71_WIFI_DEBUG_SHELL */
 
-#if CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
+#if CONFIG_NRF71_WIFI_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
 struct error_stats_log_entry {
 	unsigned int status_code;
 	const char *msg;
@@ -380,7 +380,7 @@ static void log_error_stats(const char *func,
 	LOG_INF("%s: %s error stats: status_code=%u", func, type,
 			       status_code);
 }
-#endif /* CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF */
+#endif /* CONFIG_NRF71_WIFI_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF */
 
 
 static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
@@ -489,7 +489,7 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 			nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_FW_LMAC);
 		}
 
-#if CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
+#if CONFIG_NRF71_WIFI_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
 		switch (err_ev->stats_type) {
 		case RPU_STATS_TYPE_UMAC:
 			log_error_stats(__func__, "UMAC", err_ev->status_code,
@@ -511,7 +511,7 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 					       err_ev->status_code);
 			break;
 		}
-#endif /* CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF */
+#endif /* CONFIG_NRF71_WIFI_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF */
 		status = NRF_WIFI_STATUS_SUCCESS;
 		break;
 	}
@@ -804,7 +804,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 	 * default VIF is registered in vif_ctx[].
 	 */
 	if (event_num == NRF_WIFI_UMAC_EVENT_CMD_STATUS) {
-#if CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_DBG
+#if CONFIG_NRF71_WIFI_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_DBG
 		struct nrf_wifi_umac_event_cmd_status *cmd_status = event_data;
 
 		LOG_DBG("%s: Command %d -> status %d",

@@ -29,7 +29,7 @@
 #endif /* CONFIG_NRF71_WIFI_RANDOM_MAC_ADDRESS */
 
 #define DT_DRV_COMPAT nordic_wlan
-LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 /* Offloaded raw TX transmits from a single interface. */
 #define OFF_RAW_TX_VIF_IDX 0

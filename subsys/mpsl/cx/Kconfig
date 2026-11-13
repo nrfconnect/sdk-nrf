@@ -74,7 +74,7 @@ config MPSL_CX_NRF700X
 config MPSL_CX_NRF71_COEX
 	bool "nRF71 COEXC Coexistence"
 	depends on MPSL_CX_NRF71_COEX_SUPPORT
-	depends on WIFI_NRF71
+	depends on NRF71_WIFI
 	select NRF71_SR_COEX_DRIVER
 	help
 	  Radio Coexistence interface implementation for nRF71 Wi-Fi and

@@ -22,7 +22,7 @@ The snippet applies the following configuration:
 * Enables network statistics (:kconfig:option:`CONFIG_NET_STATISTICS`), Wi-Fi statistics (:kconfig:option:`CONFIG_NET_STATISTICS_WIFI`), and the statistics user API (:kconfig:option:`CONFIG_NET_STATISTICS_USER_API`).
 * Enables heap runtime statistics (:kconfig:option:`CONFIG_SYS_HEAP_RUNTIME_STATS`).
 * Enables logging (:kconfig:option:`CONFIG_LOG`) in immediate mode (:kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE`) and enables :kconfig:option:`CONFIG_PRINTK`.
-* Sets the nRF71 driver log level to debug (:kconfig:option:`CONFIG_WIFI_NRF71_LOG_LEVEL_DBG`).
+* Sets the nRF71 driver log level to debug (:kconfig:option:`CONFIG_NRF71_WIFI_LOG_LEVEL_DBG`).
 
 .. note::
    Enabling :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` can help prevent log buffer overflows, but it may impact system timing and performance.

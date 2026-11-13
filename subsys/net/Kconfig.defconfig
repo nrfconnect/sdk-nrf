@@ -19,7 +19,7 @@ config NET_MGMT_EVENT_QUEUE_TIMEOUT
 config NET_MGMT_EVENT_QUEUE_SIZE
 	# Increase the default queue size to fit net_mgmt event burst during
 	# Wi-Fi disconnect teardown.
-	default 32 if WIFI_NRF71 || WIFI_NRF70
+	default 32 if NRF71_WIFI || WIFI_NRF70
 
 endif # NET_MGMT_EVENT_QUEUE
 

@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-menuconfig WIFI_NRF71
-	bool "nRF71 driver"
+menuconfig NRF71_WIFI
+	bool "nRF71 Wi-Fi driver"
 	select NET_L2_WIFI_MGMT if NETWORKING
 	select NET_L2_ETHERNET_MGMT if NETWORKING && NET_L2_ETHERNET
 	select WIFI_USE_NATIVE_NETWORKING if NETWORKING
@@ -22,7 +22,13 @@ menuconfig WIFI_NRF71
 	help
 	  Nordic nRF71 Wi-Fi Driver
 
-if WIFI_NRF71
+if NRF71_WIFI
+
+config WIFI_NRF71
+	bool
+	default y
+	help
+	  Compatibility symbol for Kconfig that still references WIFI_NRF71.
 
 # IPC overrides
 config IPC_SERVICE_BACKEND_ICMSG
@@ -213,12 +219,12 @@ config NRF71_WIFI_LOG_VERBOSE
 	bool "Maintain the verbosity of information in logs"
 	default y
 
-module = WIFI_NRF71
+module = NRF71_WIFI
 module-str = Log level for Wi-Fi nRF71 driver
 module-help = Sets log level for Wi-Fi nRF71 driver
 source "subsys/logging/Kconfig.template.log_config"
 
-config WIFI_NRF71_LOG_LEVEL
+config NRF71_WIFI_LOG_LEVEL
 	# Enable error by default
 	default 1
 
@@ -850,4 +856,4 @@ config NRF71_WIFI_CMD_EVENT_LOG
 	help
 	  When enabled, log HAL command/events (debug only).
 
-endif # WIFI_NRF71
+endif # NRF71_WIFI

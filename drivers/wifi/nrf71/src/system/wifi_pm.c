@@ -19,7 +19,7 @@
 
 #include <system/wifi_pm.h>
 
-LOG_MODULE_REGISTER(wifi_pm, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_pm, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 /* MEMCONF_WIFI non-secure instance */
 #define MEMCONF_WIFI_NS_BASE            ((NRF_MEMCONF_Type *) 0x400F0000UL)

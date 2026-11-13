@@ -19,7 +19,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 #define RADIO_CMD_STATUS_TIMEOUT 5000
 #define RX_CAP_BYTES_PER_SAMPLE 3

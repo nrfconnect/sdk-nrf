@@ -18,7 +18,7 @@
 #endif
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 #include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/sys/byteorder.h>
@@ -493,7 +493,7 @@ int nrf_wifi_if_send(const struct device *dev,
 			/* TODO: Make this an error once we fix ping_work sending packets despite
 			 * the interface being dormant
 			 */
-#if CONFIG_WIFI_NRF71_LOG_LEVEL >= LOG_LEVEL_DBG
+#if CONFIG_NRF71_WIFI_LOG_LEVEL >= LOG_LEVEL_DBG
 			char ra_buf[18] = {0};
 
 			LOG_DBG("%s: Got packet for unknown PEER: %s", __func__,

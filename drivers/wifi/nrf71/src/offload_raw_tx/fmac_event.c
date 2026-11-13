@@ -15,7 +15,7 @@
 #include <common/util.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 static enum nrf_wifi_status umac_event_off_raw_tx_debug_stats_process(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	void *event)
