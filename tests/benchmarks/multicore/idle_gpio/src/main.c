@@ -29,7 +29,7 @@ LOG_MODULE_REGISTER(idle_gpio);
 #define SW_GPIO_INT_FLAGS                                                                          \
 	(DT_PROP(SW_GPIOTE_NODE, no_port_event) ? GPIO_INT_EDGE_FALLING : GPIO_INT_LEVEL_ACTIVE)
 
-#if IS_ENABLED(CONFIG_SOC_NRF54H20_CPUPPR)
+#if IS_ENABLED(CONFIG_SOC_NRF54H20_CPUPPR) || IS_ENABLED(CONFIG_SOC_NRF9251_CPUPPR)
 #include <ironside_zephyr/se/uicr_periphconf.h>
 
 /* The input pin must be configured as NS to be allowed to trigger PPR's GPIOTE IRQ. */
