@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* GPIO inputs monitoring SPIM lines driven by the application core:
+ *  - SPIM SCK P2.1 - P2.2,
+ *  - SPIM CS  P2.3 - P2.9.
+ *
+ * The test result is printed on UART133, which is the default console
+ * of the application core.
+ */
+
+/ {
+	chosen {
+		zephyr,console = &uart133;
+	};
+
+	zephyr,user {
+		spim-sck-gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
+		spim-cs-gpios = <&gpio2 9 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&uart133 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart133_default>;
+	pinctrl-1 = <&uart133_sleep>;
+	pinctrl-names = "default", "sleep";
+	hw-flow-control;
+};
+
+&uart120 {
+	status = "disabled";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <7>;
+};

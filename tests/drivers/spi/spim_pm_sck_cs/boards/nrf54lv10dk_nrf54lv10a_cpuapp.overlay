@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires wire connections between SPIM pins driven by the application
+ * core and GPIO inputs monitored by the FLPR core:
+ *  - SPIM SCK P1.11 - P1.10,
+ *  - SPIM CS  P1.9 - P1.8.
+ */
+
+/* Console of the FLPR core. */
+&uart30 {
+	status = "reserved";
+};
+
+&pinctrl {
+	spi21_default_test: spi21_default_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 11)>;
+		};
+	};
+
+	spi21_sleep_test: spi21_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 11)>;
+			low-power-enable;
+		};
+	};
+};
+
+&spi21 {
+	status = "okay";
+	pinctrl-0 = <&spi21_default_test>;
+	pinctrl-1 = <&spi21_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
+	zephyr,pm-device-runtime-auto;
+
+	dut_spi_dt: test-spi-dev@0 {
+		compatible = "vnd,spi-device";
+		reg = <0>;
+		spi-max-frequency = <250000>;
+		spi-cs-setup-delay-ns = <2000>;
+		spi-cs-hold-delay-ns = <2000>;
+	};
+};
