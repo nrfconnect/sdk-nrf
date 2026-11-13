@@ -1,0 +1,11 @@
+tests:
+  net.lib.tls_credentials_keygen_kmu:
+    sysbuild: true
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    tags:
+      - sysbuild
+      - ci_tests_subsys_net
