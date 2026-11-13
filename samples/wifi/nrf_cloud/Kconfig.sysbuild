@@ -6,9 +6,4 @@
 
 source "${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/Kconfig.sysbuild.nrf70"
 
-# MCUBoot is not fully supported on nRF7120/ns yet
-choice BOOTLOADER
-	default BOOTLOADER_MCUBOOT if !BOARD_NRF7120DK_NRF7120_CPUAPP_NS
-endchoice
-
 source "share/sysbuild/Kconfig"
