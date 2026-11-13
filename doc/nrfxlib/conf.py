@@ -102,6 +102,7 @@ doxyrunner_projects = {
 # -- Options for doxybridge plugin ---------------------------------------------
 
 doxybridge_projects = {"nrfxlib": _doxyrunner_outdir}
+doxyrunner_silent = False
 
 # -- Options for warnings_filter -----------------------------------------------
 

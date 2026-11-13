@@ -123,7 +123,7 @@ jobs:
       - name: Build documentation
         working-directory: ncs/nrf
         run: |
-          SPHINXOPTS_EXTRA="-q"
+          SPHINXOPTS_EXTRA=""
           BUILD_CONF="-DNRFUTIL_COMMAND_CHECK=ON"
           if [[ "${{ github.event_name }}" == "push" ]]; then
             BUILD_CONF="${BUILD_CONF} -DDTS_BINDINGS=ON -DHW_FEATURES=ON -DKCONFIGDIFF=ON"
