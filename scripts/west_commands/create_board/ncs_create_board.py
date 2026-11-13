@@ -16,6 +16,9 @@ try:
 except ImportError:
     from yaml import Loader
 
+from yaml import safe_load
+from yaml import dump
+
 sys.path.append(str(Path(__file__).parents[1]))
 import utils
 
@@ -174,7 +177,8 @@ class NcsCreateBoard(WestCommand):
 
         tmpl = env.get_template("board.yml.jinja2")
         with open(out_dir / "board.yml", "w") as f:
-            f.write(tmpl.render())
+            yaml_data = safe_load(tmpl.render())
+            dump(yaml_data, f)
 
         try:
             tmpl = env.get_template("Kconfig.defconfig.jinja2")
@@ -218,7 +222,8 @@ class NcsCreateBoard(WestCommand):
 
             tmpl = env.get_template("board_twister.yaml.jinja2")
             with open(out_dir / f"{name}.yaml", "w") as f:
-                f.write(tmpl.render(target=target))
+                yaml_data = safe_load(tmpl.render(target=target))
+                dump(yaml_data, f)
 
         # return post-commands
         commands = []

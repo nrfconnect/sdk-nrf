@@ -1,12 +1,12 @@
 board:
-  name: {{ board }}
-  full_name: {{ board }}
-  vendor: {{ vendor }}
+  name: "{{ board }}"
+  full_name: "{{ board }}"
+  vendor: "{{ vendor }}"
   socs:
-  - name: {{ soc }}
-    variants:
-    - name: xip
-      cpucluster: cpuflpr
+    - name: {{ soc }}
+      variants:
+        - name: xip
+          cpucluster: cpuflpr
 runners:
   run_once:
     '--recover':
