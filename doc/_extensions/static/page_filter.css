@@ -1,9 +1,40 @@
+.versiontag,
+.pf-toolbar button {
+    border: 1px solid #d0d0d0;
+    background: linear-gradient(to bottom, #fff, #f0f0f0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    color: #00263a;
+    cursor: pointer;
+}
+
+.versiontag:hover,
+.pf-toolbar button:hover {
+    background: linear-gradient(to bottom, #fafafa, #e4e4e4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+}
+
 .versiontag {
-    border: 1px solid #e97c25;
-    padding: 2px;
+    display: inline-block;
+    padding: 1px 8px;
     font-size: smaller;
-    color: #e97c25;
     margin: 0px 5px;
+    white-space: nowrap;
+}
+
+.versiontag.selected {
+    background: linear-gradient(135deg, #bed1ec, #f7fdff);
+    border-color: transparent;
+    font-weight: 700;
+}
+
+.versiontag-toggle {
+    background: none;
+    border: none;
+    padding: 0 5px;
+    font-size: smaller;
+    color: #0080c7;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .filtertag {
@@ -22,20 +53,37 @@
 .dropdown-select {
     display: inline-block;
     font-weight: 700;
-    color: var(--docset-color);
-    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
-    border: 2px solid #999;
+    color: #00263a;
+    border: 1px solid #d0d0d0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
-    background-color: #fff;
-    background-image: url('./images/dropdown.svg');
-    background-repeat: no-repeat, repeat;
-    background-position: right .7em top 50%;
-    background-size: .65em auto;
+    background-color: #f0f0f0;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0h10L5 6z' fill='%230080c7'/%3E%3C/svg%3E"),
+        linear-gradient(to bottom, #fff, #f0f0f0);
+    background-repeat: no-repeat, no-repeat;
+    background-position: right .7em top 50%, 0 0;
+    background-size: .65em auto, 100% 100%;
+    cursor: pointer;
     width: 160px;
     margin-bottom: 30px;
     margin-left: 10px;
+}
+
+.dropdown-select:hover {
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0h10L5 6z' fill='%230080c7'/%3E%3C/svg%3E"),
+        linear-gradient(to bottom, #fafafa, #e4e4e4);
+}
+
+.dropdown-select.pf-active {
+    border-color: transparent;
+    background-color: #bed1ec;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0h10L5 6z' fill='%2300263a'/%3E%3C/svg%3E"),
+        linear-gradient(135deg, #bed1ec, #f7fdff);
 }
 
 .dropdown-select::-ms-expand {
@@ -44,4 +92,44 @@
 
 .dropdown-select option {
     font-weight: normal;
+    background-color: #fff;
+    color: #00263a;
+}
+
+.pf-toolbar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 10px;
+    margin-bottom: 30px;
+}
+
+.pf-toolbar button {
+    padding: 4px 12px;
+    font-size: smaller;
+}
+
+.pf-counter {
+    font-size: smaller;
+    color: #666;
+}
+
+.pf-collapsible > dt {
+    cursor: pointer;
+}
+
+.pf-collapsible > dt::before {
+    content: "\25B8";
+    display: inline-block;
+    width: 1em;
+    transition: transform 0.15s;
+}
+
+.pf-collapsible.pf-open > dt::before {
+    transform: rotate(90deg);
+}
+
+.pf-collapsible > dt:focus-visible {
+    outline: 2px solid var(--docset-color);
+    outline-offset: 2px;
 }
