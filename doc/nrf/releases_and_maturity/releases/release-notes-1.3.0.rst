@@ -430,7 +430,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`app_build_system` - updated |NCS| additions
 * :ref:`ug_nrf9160` - added :ref:`Concurrent GPS and LTE <nrf9160_gps_lte>`
 * :ref:`ug_nrf5340` - updated
-* :ref:`ug_nrf52` - added
+* Developing with nRF52 Series - added
 * :ref:`ug_thingy91` - added :ref:`thingy91_serialports`
 * :ref:`ug_nfc` - added
 * :ref:`ug_bootloader` - added upgradeable bootloader

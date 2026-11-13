@@ -324,19 +324,24 @@ NRF = (
     ("app_dev/device_guides/nrf53/thingy53_application_guide", "app_dev/device_guides/thingy53/thingy53_application_guide"),
     ("device_guides/working_with_nrf/nrf53/qspi_xip_guide", "app_dev/device_guides/nrf53/qspi_xip_guide_nrf5340"), # External execute in place (XIP) configuration on the nRF5340 SoC
     ("device_guides/nrf53/qspi_xip_guide_nrf5340", "app_dev/device_guides/nrf53/qspi_xip_guide_nrf5340"),
-    ("ug_nrf52", "app_dev/device_guides/nrf52/index"), # Developing with nRF52 Series (landing)
-    ("nrf52", "app_dev/device_guides/nrf52/index"),
-    ("device_guides/nrf52", "app_dev/device_guides/nrf52/index"),
-    ("device_guides/nrf52/index", "app_dev/device_guides/nrf52/index"),
-    ("ug_nrf52_developing", "app_dev/device_guides/nrf52/index"),
-    ("working_with_nrf/nrf52/developing", "app_dev/device_guides/nrf52/index"),
-    ("device_guides/working_with_nrf/nrf52/developing", "app_dev/device_guides/nrf52/index"),
-    ("ug_nrf52_features", "app_dev/device_guides/nrf52/features"), # Features of nRF52 Series
-    ("working_with_nrf/nrf52/features", "app_dev/device_guides/nrf52/features"),
-    ("device_guides/working_with_nrf/nrf52/features", "app_dev/device_guides/nrf52/features"),
-    ("device_guides/nrf52/features", "app_dev/device_guides/nrf52/features"),
-    ("device_guides/nrf52/building", "app_dev/device_guides/nrf52/building"), # Building and programming on nRF52 Series devices
-    ("device_guides/nrf52/fota_update", "app_dev/device_guides/nrf52/fota_update"), # FOTA updates on nRF52 Series devices
+    ("ug_nrf52", "app_dev"), # Developing with nRF52 Series (landing; guide removed)
+    ("nrf52", "app_dev"),
+    ("device_guides/nrf52", "app_dev"),
+    ("device_guides/nrf52/index", "app_dev"),
+    ("ug_nrf52_developing", "app_dev"),
+    ("working_with_nrf/nrf52/developing", "app_dev"),
+    ("device_guides/working_with_nrf/nrf52/developing", "app_dev"),
+    ("app_dev/device_guides/working_with_nrf/nrf52/developing", "app_dev"),
+    ("ug_nrf52_features", "app_dev"), # Features of nRF52 Series (removed)
+    ("working_with_nrf/nrf52/features", "app_dev"),
+    ("device_guides/working_with_nrf/nrf52/features", "app_dev"),
+    ("device_guides/nrf52/features", "app_dev"),
+    ("device_guides/nrf52/building", "app_dev"), # Building on nRF52 Series (removed)
+    ("device_guides/nrf52/fota_update", "app_dev"), # FOTA on nRF52 Series (removed)
+    ("app_dev/device_guides/nrf52/index", "app_dev"), # Canonical paths after doc hierarchy change
+    ("app_dev/device_guides/nrf52/features", "app_dev"),
+    ("app_dev/device_guides/nrf52/building", "app_dev"),
+    ("app_dev/device_guides/nrf52/fota_update", "app_dev"),
     ("device_guides/pmic", "app_dev/device_guides/pmic/index"), # Developing with PMICs (landing)
     ("device_guides/pmic/index", "app_dev/device_guides/pmic/index"),
     ("device_guides/working_with_pmic/npm1300/developing", "app_dev/device_guides/pmic/npm1300"), # Developing with the nPM1300 PMIC

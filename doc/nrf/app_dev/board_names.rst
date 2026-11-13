@@ -48,9 +48,8 @@ While the board name is always present, other elements, such as the board revisi
 * :ref:`Variant <zephyr:glossary>` - You can use this board qualifier to build for a particular type or configuration of a build for a combination of SoC and CPU cluster.
   In the |NCS|, board variants are used for the following purposes:
 
-  * Changing the default memory map - This applies to the entry for the nRF52840 Dongle with the ``*/bare`` variant (``nrf52840dongle/nrf52840/bare``).
-    When you select this target, the firmware does not account for the onboard USB bootloader.
-    This corresponds to using :zephyr:board:`flashing option 3 with an external debug probe <nrf52840dongle>`.
+  * Changing the default memory map - Some board targets use a ``*/bare`` variant when the firmware does not account for an onboard USB bootloader.
+    See the board documentation in Zephyr for whether a ``bare`` variant exists and how to program it.
 
   * Indicating the use of Cortex-M Security Extensions (CMSE), also known as security by separation:
 
@@ -169,26 +168,6 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``thingy53/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)       |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF52840 DK       | PCA10056   | :zephyr:board:`nrf52840dk <nrf52840dk>`                | ``nrf52840dk/nrf52840``                                                  |
-|                   |            +--------------------------------------------------------+--------------------------------------------------------------------------+
-|                   |            | :ref:`nrf52840dk <zephyr:nrf52840dk_nrf52811>`         | ``nrf52840dk/nrf52811``                                                  |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF52840 Dongle   | PCA10059   | :zephyr:board:`nrf52840dongle <nrf52840dongle>`        | ``nrf52840dongle/nrf52840``                                              |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf52840dongle/nrf52840/bare``                                         |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF52833 DK       | PCA10100   | :zephyr:board:`nrf52833dk <nrf52833dk>`                | ``nrf52833dk/nrf52833``                                                  |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf52833dk/nrf52820``                                                  |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF52 DK          | PCA10040   | :zephyr:board:`nrf52dk <nrf52dk>`                      | ``nrf52dk/nrf52832``                                                     |
-| (nRF53832)        |            +--------------------------------------------------------+--------------------------------------------------------------------------+
-|                   |            | :ref:`nrf52dk <zephyr:nrf52dk_nrf52810>`               | ``nrf52dk/nrf52810``                                                     |
-|                   |            +--------------------------------------------------------+--------------------------------------------------------------------------+
-|                   |            | :ref:`nrf52dk <zephyr:nrf52dk_nrf52805>`               | ``nrf52dk/nrf52805``                                                     |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF21540 DK       | PCA10112   | :zephyr:board:`nrf21540dk <nrf21540dk>`                | ``nrf21540dk/nrf52840``                                                  |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF7002 DK        | PCA10143   | :zephyr:board:`nrf7002dk <nrf7002dk>`                  | ``nrf7002dk/nrf5340/cpunet``                                             |
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf7002dk/nrf5340/cpuapp``                                             |
@@ -240,21 +219,6 @@ The following boards are defined in the :file:`nrf/boards/nordic/` folder.
 |                   |            |                                                          | ``nrf54lc10dk/nrf54lc10a/cpuflpr``                                        |
 |                   |            |                                                          |                                                                           |
 |                   |            |                                                          | ``nrf54lc10dk/nrf54lc10a/cpuflpr/xip``                                    |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
-| nRF Desktop       | PCA20041   | :ref:`nrf52840gmouse <nrf_desktop>`                      | ``nrf52840gmouse/nrf52840``                                               |
-| Gaming Mouse      |            |                                                          |                                                                           |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
-| nRF Desktop       | PCA20044   | :ref:`nrf52dmouse <nrf_desktop>`                         | ``nrf52dmouse/nrf52832``                                                  |
-| Mouse             |            |                                                          |                                                                           |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
-| nRF Desktop       | PCA20037   | :ref:`nrf52kbd <nrf_desktop>`                            | ``nrf52kbd/nrf52832``                                                     |
-| Keyboard          |            |                                                          |                                                                           |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
-| nRF Desktop       | PCA10111   | :ref:`nrf52833dongle <nrf_desktop>`                      | ``nrf52833dongle/nrf52833``                                               |
-| Dongle            |            |                                                          |                                                                           |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
-| nRF Desktop       | PCA10114   | :ref:`nrf52820dongle <nrf_desktop>`                      | ``nrf52820dongle/nrf52820``                                               |
-| Dongle            |            |                                                          |                                                                           |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
 | Thingy:91         | PCA20035   | :ref:`thingy91 <ug_thingy91>`                            | ``thingy91/nrf9160``                                                      |
 |                   |            |                                                          |                                                                           |
