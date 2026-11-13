@@ -9,7 +9,6 @@
 #include <nrf_modem_gnss.h>
 #include <nrf_modem_at.h>
 #include <cJSON.h>
-#include <modem/modem_info.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud_agnss.h>
