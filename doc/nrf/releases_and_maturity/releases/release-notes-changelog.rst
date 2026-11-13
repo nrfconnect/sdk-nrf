@@ -389,6 +389,10 @@ Wi-Fi®
     This allows the stacks of the application, shell, and Connection Manager monitor threads to be reduced, as they no longer need to accommodate the Wi-Fi connect call chain.
   * The default value of the :kconfig:option:`CONFIG_NET_MGMT_EVENT_QUEUE_TIMEOUT` Kconfig option to ``50`` milliseconds when :kconfig:option:`CONFIG_NET_L2_WIFI_SHELL` is enabled to prevent Wi-Fi scan events from being dropped when using slow shell backends.
 
+* Fixed an issue where the Connection Manager Wi-Fi connectivity layer did not reconnect after the Wi-Fi interface went down and up again, for example, after an RPU recovery.
+  The connect request failed because ``wpa_supplicant`` had not yet re-added the interface.
+  The connect request is now deferred until ``wpa_supplicant`` manages the interface.
+
 Applications
 ============
 

@@ -8,6 +8,7 @@
 LOG_MODULE_REGISTER(l2_wifi_mgr_conn);
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/wifi_nm.h>
 #include <zephyr/net/net_event.h>
 #include <zephyr/sys/atomic.h>
 #include <net/l2_wifi_connect.h>
@@ -18,7 +19,7 @@ LOG_MODULE_REGISTER(l2_wifi_mgr_conn);
 #define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT | \
 				NET_EVENT_WIFI_DISCONNECT_RESULT)
 
-#define WPA_SUPP_EVENTS (NET_EVENT_SUPPLICANT_READY)
+#define WPA_SUPP_EVENTS (NET_EVENT_SUPPLICANT_READY | NET_EVENT_SUPPLICANT_IFACE_ADDED)
 
 static struct net_mgmt_event_callback net_l2_mgmt_cb;
 static struct net_mgmt_event_callback net_wpa_supp_cb;
@@ -38,9 +39,15 @@ static K_WORK_DELAYABLE_DEFINE(wifi_conn_work, wifi_conn_work_handler);
 /* Store a local reference to the connection binding */
 static struct net_if *wifi_iface;
 
+/* Set while a connect request has not yet been sent to the supplicant. */
+static atomic_t connect_pending;
+
 static void wifi_conn_work_handler(struct k_work *work)
 {
-	if (connection_status != WIFI_STATE_COMPLETED) {
+	/* connection_status may be stale if we have a pending connection request,
+	 * so we should not rely on it alone.
+	 */
+	if (atomic_get(&connect_pending) || connection_status != WIFI_STATE_COMPLETED) {
 		net_l2_wifi_disconnect(NULL);
 	}
 }
@@ -94,12 +101,21 @@ static void net_l2_wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
+static void wifi_conn_req_work_handler(struct k_work *work);
+static K_WORK_DEFINE(wifi_conn_req_work, wifi_conn_req_work_handler);
+
 static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
 				    uint64_t mgmt_event, struct net_if *iface)
 {
 	switch (mgmt_event) {
 	case NET_EVENT_SUPPLICANT_READY:
 		k_sem_give(&wpa_supp_ready_sem);
+		break;
+	case NET_EVENT_SUPPLICANT_IFACE_ADDED:
+		if (iface == wifi_iface && atomic_get(&connect_pending)) {
+			/* Supplicant interface added, queue connect request */
+			k_work_submit_to_queue(&wifi_conn_wq, &wifi_conn_req_work);
+		}
 		break;
 	default:
 		break;
@@ -121,23 +137,30 @@ static void wifi_conn_req_work_handler(struct k_work *work)
 
 	ARG_UNUSED(work);
 
+	/* On admin-up (e.g. after RPU recovery) the supplicant re-adds the iface
+	 * asynchronously; connecting before that fails with -ENOTSUP.
+	 */
+	if (wifi_nm_get_instance_iface(wifi_iface) == NULL) {
+		LOG_DBG("Supplicant not ready on iface, deferring connect");
+		return;
+	}
+	if (!atomic_cas(&connect_pending, 1, 0)) {
+		/* Dropped by a disconnect, or already sent */
+		return;
+	}
+
 	rc = net_mgmt(NET_REQUEST_WIFI_CONNECT_STORED, wifi_iface, NULL, 0);
 	if (rc) {
 		LOG_ERR("net management connect_stored request failed: %d", rc);
 		/* connect() has already returned success to conn_mgr, so surface
 		 * the asynchronous failure through the connectivity event.
 		 */
+		(void)k_work_cancel_delayable(&wifi_conn_work);
 		net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, wifi_iface);
-		goto out;
 	}
 
-	(void)wifi_conn_timeout_schedule();
-
-out:
 	atomic_clear(&connect_in_progress);
 }
-
-static K_WORK_DEFINE(wifi_conn_req_work, wifi_conn_req_work_handler);
 
 int net_l2_wifi_connect(struct conn_mgr_conn_binding *const binding)
 {
@@ -150,6 +173,9 @@ int net_l2_wifi_connect(struct conn_mgr_conn_binding *const binding)
 		return 0;
 	}
 
+	atomic_set(&connect_pending, 1);
+	/* Arm the timeout now so it also covers waiting for the supplicant */
+	(void)wifi_conn_timeout_schedule();
 	k_work_submit_to_queue(&wifi_conn_wq, &wifi_conn_req_work);
 
 	return 0;
@@ -158,6 +184,10 @@ int net_l2_wifi_connect(struct conn_mgr_conn_binding *const binding)
 int net_l2_wifi_disconnect(struct conn_mgr_conn_binding *const binding)
 {
 	ARG_UNUSED(binding);
+
+	/* Drop any connect request; a queued handler then does nothing */
+	atomic_clear(&connect_pending);
+	atomic_clear(&connect_in_progress);
 
 	return net_mgmt(NET_REQUEST_WIFI_DISCONNECT, wifi_iface, NULL, 0);
 }
