@@ -11,7 +11,9 @@
 #include <string.h>
 
 #include <zephyr/kernel.h>
+#include <zephyr/init.h>
 #include <zephyr/devicetree.h>
+#include <zephyr/linker/linker-defs.h>
 #include <zephyr/logging/log.h>
 
 #include <common/mem_mgmt.h>
@@ -286,6 +288,181 @@ static enum nrf_wifi_status rf_params_apply_board_values(void)
  * rf_params[].bytes only has to happen once: repeating it on every radio
  * test init would leak the previous allocation from the CTRL pool.
  */
+/* DEBUG: RF parameter table corruption diagnostics. Snapshots are taken at
+ * several boot stages and printed later from the system workqueue, because
+ * the deferred log buffer is too small to hold them during init.
+ */
+#define RF_DBG_WINDOW_ADDR  0x20018e40UL
+#define RF_DBG_WINDOW_WORDS 8
+#define RF_DBG_STR_BYTES    32
+
+enum rf_dbg_stage {
+	RF_DBG_PRE_KERNEL_1,
+	RF_DBG_POST_KERNEL_FIRST,
+	RF_DBG_POST_KERNEL_LAST,
+	RF_DBG_BYTES_INIT,
+	RF_DBG_APPLICATION,
+	RF_DBG_STAGE_COUNT,
+};
+
+static const char *const rf_dbg_stage_name[RF_DBG_STAGE_COUNT] = {
+	"PRE_KERNEL_1", "POST_KERNEL first", "POST_KERNEL last", "bytes_init entry",
+	"APPLICATION",
+};
+
+static struct {
+	bool taken;
+	int8_t bad_idx;
+	uint32_t uptime_us;
+	const char *bad_ptr;
+	uint32_t window[RF_DBG_WINDOW_WORDS];
+} rf_dbg_snap[RF_DBG_STAGE_COUNT];
+
+static struct {
+	bool valid;
+	int index;
+	int ret;
+	size_t str_len;
+	struct rf_hex_param table[NUM_WIFI_PARAMS];
+	bool str_valid;
+	uint8_t str[RF_DBG_STR_BYTES];
+} rf_dbg_fail;
+
+static bool rf_dbg_in_rodata(const char *ptr)
+{
+	return ptr >= (const char *)__rodata_region_start &&
+	       ptr < (const char *)__rodata_region_end;
+}
+
+static bool rf_dbg_in_ram(const char *ptr)
+{
+	uintptr_t addr = (uintptr_t)ptr;
+
+	return addr >= CONFIG_SRAM_BASE_ADDRESS &&
+	       addr + RF_DBG_STR_BYTES <= CONFIG_SRAM_BASE_ADDRESS + KB(CONFIG_SRAM_SIZE);
+}
+
+static void rf_dbg_snapshot(enum rf_dbg_stage stage)
+{
+	if (rf_dbg_snap[stage].taken) {
+		return;
+	}
+
+	rf_dbg_snap[stage].taken = true;
+	rf_dbg_snap[stage].bad_idx = -1;
+	/* The system timer is not running before POST_KERNEL. */
+	rf_dbg_snap[stage].uptime_us = (stage == RF_DBG_PRE_KERNEL_1)
+		? 0 : k_cyc_to_us_floor32(k_cycle_get_32());
+	memcpy(rf_dbg_snap[stage].window, (const void *)RF_DBG_WINDOW_ADDR,
+	       sizeof(rf_dbg_snap[stage].window));
+
+	for (int i = 0; i < NUM_WIFI_PARAMS; i++) {
+		if (!rf_dbg_in_rodata(rf_params[i].hex_str)) {
+			rf_dbg_snap[stage].bad_idx = i;
+			rf_dbg_snap[stage].bad_ptr = rf_params[i].hex_str;
+			break;
+		}
+	}
+}
+
+static void rf_dbg_fail_capture(int index, size_t str_len, int ret)
+{
+	const char *str = rf_params[index].hex_str;
+
+	rf_dbg_fail.valid = true;
+	rf_dbg_fail.index = index;
+	rf_dbg_fail.ret = ret;
+	rf_dbg_fail.str_len = str_len;
+	memcpy(rf_dbg_fail.table, rf_params, sizeof(rf_dbg_fail.table));
+	rf_dbg_fail.str_valid = rf_dbg_in_rodata(str) || rf_dbg_in_ram(str);
+	if (rf_dbg_fail.str_valid) {
+		memcpy(rf_dbg_fail.str, str, sizeof(rf_dbg_fail.str));
+	}
+
+	LOG_ERR("RFDBG fail idx %d entry %p hex_str %p len %zu bytes %p ret %d", index,
+		(void *)&rf_params[index], (void *)str, str_len,
+		(void *)rf_params[index].bytes, ret);
+}
+
+static void rf_dbg_report(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	LOG_INF("RFDBG table %p size %zu rodata %p-%p window 0x%08lx", (void *)rf_params,
+		sizeof(rf_params), (void *)__rodata_region_start, (void *)__rodata_region_end,
+		RF_DBG_WINDOW_ADDR);
+
+	for (int i = 0; i < RF_DBG_STAGE_COUNT; i++) {
+		const uint32_t *w = rf_dbg_snap[i].window;
+
+		if (!rf_dbg_snap[i].taken) {
+			LOG_INF("RFDBG %s: not reached", rf_dbg_stage_name[i]);
+			continue;
+		}
+
+		LOG_INF("RFDBG %s @%uus bad_idx %d ptr %p", rf_dbg_stage_name[i],
+			rf_dbg_snap[i].uptime_us, rf_dbg_snap[i].bad_idx,
+			(void *)rf_dbg_snap[i].bad_ptr);
+		LOG_INF("RFDBG   win %08x %08x %08x %08x %08x %08x %08x %08x", w[0], w[1], w[2],
+			w[3], w[4], w[5], w[6], w[7]);
+		k_msleep(50);
+	}
+
+	if (!rf_dbg_fail.valid) {
+		LOG_INF("RFDBG no RF parameter decode failure recorded");
+		return;
+	}
+
+	LOG_ERR("RFDBG failure at idx %d len %zu ret %d, table at failure:", rf_dbg_fail.index,
+		rf_dbg_fail.str_len, rf_dbg_fail.ret);
+	for (int i = 0; i < NUM_WIFI_PARAMS; i++) {
+		LOG_ERR("RFDBG   [%2d] hex_str %p bytes %p len %d", i,
+			(void *)rf_dbg_fail.table[i].hex_str, (void *)rf_dbg_fail.table[i].bytes,
+			rf_dbg_fail.table[i].bytes_len);
+		k_msleep(50);
+	}
+
+	if (rf_dbg_fail.str_valid) {
+		LOG_HEXDUMP_ERR(rf_dbg_fail.str, sizeof(rf_dbg_fail.str),
+				"RFDBG data at failing hex_str");
+	} else {
+		LOG_ERR("RFDBG failing hex_str is outside RAM and rodata, not dumped");
+	}
+}
+
+static struct k_work_delayable rf_dbg_report_work;
+
+static int rf_dbg_pre_kernel_1(void)
+{
+	rf_dbg_snapshot(RF_DBG_PRE_KERNEL_1);
+	return 0;
+}
+
+static int rf_dbg_post_kernel_first(void)
+{
+	rf_dbg_snapshot(RF_DBG_POST_KERNEL_FIRST);
+	return 0;
+}
+
+static int rf_dbg_post_kernel_last(void)
+{
+	rf_dbg_snapshot(RF_DBG_POST_KERNEL_LAST);
+	return 0;
+}
+
+static int rf_dbg_application(void)
+{
+	rf_dbg_snapshot(RF_DBG_APPLICATION);
+	k_work_init_delayable(&rf_dbg_report_work, rf_dbg_report);
+	k_work_schedule(&rf_dbg_report_work, K_SECONDS(2));
+	return 0;
+}
+
+SYS_INIT(rf_dbg_pre_kernel_1, PRE_KERNEL_1, 0);
+SYS_INIT(rf_dbg_post_kernel_first, POST_KERNEL, 0);
+SYS_INIT(rf_dbg_post_kernel_last, POST_KERNEL, 99);
+SYS_INIT(rf_dbg_application, APPLICATION, 99);
+
 static enum nrf_wifi_status rf_params_bytes_init(void)
 {
 	static bool initialized;
@@ -297,6 +474,8 @@ static enum nrf_wifi_status rf_params_bytes_init(void)
 	if (initialized) {
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
+
+	rf_dbg_snapshot(RF_DBG_BYTES_INIT);
 
 	for (index = 0; index < NUM_WIFI_PARAMS; index++) {
 		if (!rf_params[index].hex_str) {
@@ -312,6 +491,7 @@ static enum nrf_wifi_status rf_params_bytes_init(void)
 		ret = nrf_wifi_utils_hex_str_to_val(rf_params[index].bytes, (unsigned int)str_len,
 						    (unsigned char *)rf_params[index].hex_str);
 		if (ret < 0) {
+			rf_dbg_fail_capture(index, str_len, ret);
 			LOG_ERR("%s: hex_str_to_val failed", __func__);
 			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rf_params[index].bytes);
 			rf_params[index].bytes = NULL;
