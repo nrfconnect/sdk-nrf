@@ -90,7 +90,7 @@ struct nrf_wifi_drv_dbg_stats {
 	atomic_t tmo[NRF_WIFI_DRV_DBG_TMO_MAX];
 };
 
-#ifdef CONFIG_NRF71_UTIL_SHELL
+#ifdef CONFIG_NRF71_WIFI_UTIL_SHELL
 /**
  * @brief Count a control path error.
  *
@@ -159,6 +159,6 @@ static inline void nrf_wifi_drv_dbg_fmac_tmo(struct nrf_wifi_fmac_dev_ctx *fmac_
 					     enum nrf_wifi_drv_dbg_tmo tmo)
 {
 }
-#endif /* CONFIG_NRF71_UTIL_SHELL */
+#endif /* CONFIG_NRF71_WIFI_UTIL_SHELL */
 
 #endif /* __SYSTEM_DRV_DBG_STATS_H__ */

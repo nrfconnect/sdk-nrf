@@ -146,7 +146,7 @@ struct nrf_wifi_fmac_dev_ctx {
 	struct nrf_wifi_fmac_priv *fpriv;
 	/** Handle to the OS abstraction layer. */
 	void *os_dev_ctx;
-#if defined(CONFIG_NRF71_RPU_RECOVERY) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
 	/** Timestamp (ms) when the last wakeup-now signal was asserted. */
 	unsigned long wakeup_now_asserted_time_prev_ms;
 	/** Timestamp (ms) when the last wakeup-now signal was deasserted. */
@@ -157,7 +157,7 @@ struct nrf_wifi_fmac_dev_ctx {
 	int wdt_irq_recd;
 	/** Count of watchdog IRQ events ignored during RPU recovery. */
 	int wdt_irq_ignored;
-#endif /* CONFIG_NRF71_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 	/** Operation mode. @ref nrf_wifi_op_mode */
 	int op_mode;
 	/** Firmware statistics. */

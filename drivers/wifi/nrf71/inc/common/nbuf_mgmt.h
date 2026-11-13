@@ -37,12 +37,12 @@ struct nrf_wifi_nwb {
 	void (*cleanup_cb)();
 	unsigned char priority;
 	bool chksum_done;
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	void *raw_tx_hdr;
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
-#ifdef CONFIG_NRF71_ZERO_COPY_TX
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_ZERO_COPY_TX
 	struct net_pkt *pkt;
-#endif /* CONFIG_NRF71_ZERO_COPY_TX */
+#endif /* CONFIG_NRF71_WIFI_ZERO_COPY_TX */
 };
 
 /**
@@ -160,7 +160,7 @@ unsigned char nrf_wifi_nbuf_get_chksum_done(void *nbuf);
  */
 void nrf_wifi_nbuf_set_chksum_done(void *nbuf, unsigned char chksum_done);
 
-#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT) || defined(__DOXYGEN__)
 /**
  * @brief Reserve space for a raw TX header in a network buffer.
  *
@@ -188,7 +188,7 @@ void *nrf_wifi_nbuf_get_raw_tx_hdr(void *nbuf);
  * @return true if the buffer has a raw TX header, false otherwise.
  */
 bool nrf_wifi_nbuf_is_raw_tx(void *nbuf);
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || __DOXYGEN__ */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT || __DOXYGEN__ */
 
 /**
  * @brief Convert a Zephyr @c net_pkt into a driver network buffer.
@@ -211,7 +211,7 @@ void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt);
  */
 struct net_pkt *nrf_wifi_net_pkt_from_nbuf(void *iface, void *frm);
 
-#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 /**
  * @brief Build a raw RX @c net_pkt from a driver network buffer and header.
  *
@@ -228,6 +228,6 @@ struct net_pkt *nrf_wifi_net_raw_pkt_from_nbuf(void *iface,
 					       unsigned short raw_hdr_len,
 					       void *raw_rx_hdr,
 					       bool pkt_free);
-#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 
 #endif /* __NBUF_MGMT_H__ */

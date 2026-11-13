@@ -61,7 +61,7 @@ struct tx_pkt_info {
 	unsigned int peer_id;
 };
 
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 /**
  * @brief Structure containing information for preparing a raw TX command.
  */
@@ -73,7 +73,7 @@ struct tx_cmd_prep_raw_info {
 	/** Number of TX packets. */
 	unsigned char num_tx_pkts;
 };
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 
 /**
  * @brief Structure containing information for preparing a TX command.
@@ -85,10 +85,10 @@ struct tx_cmd_prep_info {
 	struct nrf_wifi_tx_buff *config;
 	/** Total packet data added to the command, in bytes. */
 	unsigned int total_data_len;
-#ifdef CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	/** Whether TCP/IP checksum offload is allowed for this TX command (e.g. not TKIP). */
 	bool chksum_offload_ok;
-#endif /* CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
 };
 
 /**
@@ -116,7 +116,7 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 enum nrf_wifi_status nrf_wifi_fmac_tx_done_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		struct nrf_wifi_tx_buff_done *buff);
 
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 /**
  * @brief Process the raw TX done event.
  *
@@ -127,7 +127,7 @@ enum nrf_wifi_status nrf_wifi_fmac_tx_done_event_process(struct nrf_wifi_fmac_de
 enum nrf_wifi_status
 nrf_wifi_fmac_rawtx_done_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		struct nrf_wifi_event_raw_tx_done *config);
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 
 /**
  * @brief Get a TX descriptor from the specified queue.

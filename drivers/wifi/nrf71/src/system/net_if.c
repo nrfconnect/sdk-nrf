@@ -13,7 +13,7 @@
 #include <common/nbuf_mgmt.h>
 #include <stdlib.h>
 
-#ifdef CONFIG_NRF71_RANDOM_MAC_ADDRESS
+#ifdef CONFIG_NRF71_WIFI_RANDOM_MAC_ADDRESS
 #include <zephyr/random/random.h>
 #endif
 
@@ -36,9 +36,9 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <system/net_if.h>
 #include <common/mac_addr.h>
 #include <system/wifi_pm.h>
-#ifdef CONFIG_NRF71_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 static struct net_if_mcast_monitor mcast_monitor;
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 void nrf_wifi_set_iface_event_handler(void *os_vif_ctx,
 						struct nrf_wifi_umac_event_set_interface *event,
@@ -69,7 +69,7 @@ out:
 	return;
 }
 
-#ifdef CONFIG_NRF71_RPU_RECOVERY
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY
 static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
@@ -107,7 +107,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	}
 
 	if (rpu_ctx_zep->rpu_recovery_in_progress) {
-#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY_DEBUG
 		LOG_ERR("%s: RPU recovery already in progress", __func__);
 #else
 		LOG_DBG("%s: RPU recovery already in progress", __func__);
@@ -116,7 +116,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	}
 
 	if (!sys_timepoint_expired(rpu_ctx_zep->rpu_recovery_quiet_end)) {
-#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY_DEBUG
 		LOG_ERR("%s: In quiet period, ignoring", __func__);
 #else
 		LOG_DBG("%s: In quiet period, ignoring", __func__);
@@ -124,17 +124,17 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 		return;
 	}
 
-#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY_DEBUG
 	LOG_ERR("%s: Starting RPU recovery", __func__);
 #else
 	LOG_DBG("%s: Starting RPU recovery", __func__);
 #endif
 	k_mutex_lock(&rpu_ctx_zep->rpu_lock, K_FOREVER);
-#if CONFIG_NRF71_RPU_RECOVERY_MAX_RETRIES > 0
+#if CONFIG_NRF71_WIFI_RPU_RECOVERY_MAX_RETRIES > 0
 	if (sys_timepoint_expired(rpu_ctx_zep->rpu_recovery_retry_window_end)) {
 		rpu_ctx_zep->rpu_recovery_retries = 0;
 	}
-	if (rpu_ctx_zep->rpu_recovery_retries >= CONFIG_NRF71_RPU_RECOVERY_MAX_RETRIES) {
+	if (rpu_ctx_zep->rpu_recovery_retries >= CONFIG_NRF71_WIFI_RPU_RECOVERY_MAX_RETRIES) {
 		LOG_ERR("%s: Maximum recovery retries reached, rebooting system", __func__);
 		sys_reboot(SYS_REBOOT_COLD);
 	}
@@ -143,7 +143,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	rpu_ctx_zep->rpu_recovery_in_progress = true;
 	rpu_ctx_zep->wdt_irq_received += fmac_dev_ctx->wdt_irq_recd;
 	rpu_ctx_zep->wdt_irq_ignored += fmac_dev_ctx->wdt_irq_ignored;
-#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY_DEBUG
 	LOG_ERR("%s: Bringing the interface down", __func__);
 #else
 	LOG_DBG("%s: Bringing the interface down", __func__);
@@ -161,7 +161,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	 * Mutex is released in the next phase.
 	 */
 	k_work_reschedule(&vif_ctx_zep->nrf_wifi_rpu_recovery_bringup_work,
-			  K_MSEC(CONFIG_NRF71_RPU_RECOVERY_PROPAGATION_DELAY_MS));
+			  K_MSEC(CONFIG_NRF71_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS));
 }
 
 static void nrf_wifi_rpu_recovery_bringup_work_handler(struct k_work *work)
@@ -173,7 +173,7 @@ static void nrf_wifi_rpu_recovery_bringup_work_handler(struct k_work *work)
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	int ret;
 
-#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY_DEBUG
 	LOG_ERR("%s: Bringing the interface up", __func__);
 #else
 	LOG_DBG("%s: Bringing the interface up", __func__);
@@ -184,11 +184,11 @@ static void nrf_wifi_rpu_recovery_bringup_work_handler(struct k_work *work)
 	}
 	rpu_ctx_zep->rpu_recovery_in_progress = false;
 	rpu_ctx_zep->rpu_recovery_quiet_end =
-		sys_timepoint_calc(K_MSEC(CONFIG_NRF71_RPU_RECOVERY_QUIET_PERIOD_MS));
+		sys_timepoint_calc(K_MSEC(CONFIG_NRF71_WIFI_RPU_RECOVERY_QUIET_PERIOD_MS));
 	rpu_ctx_zep->rpu_recovery_retry_window_end =
-		sys_timepoint_calc(K_SECONDS(CONFIG_NRF71_RPU_RECOVERY_RETRY_WINDOW_S));
+		sys_timepoint_calc(K_SECONDS(CONFIG_NRF71_WIFI_RPU_RECOVERY_RETRY_WINDOW_S));
 	k_mutex_unlock(&rpu_ctx_zep->rpu_lock);
-#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY_DEBUG
 	LOG_ERR("%s: RPU recovery done", __func__);
 #else
 	LOG_DBG("%s: RPU recovery done", __func__);
@@ -225,9 +225,9 @@ void nrf_wifi_rpu_recovery_cb(void *vif_ctx_handle,
 out:
 	return;
 }
-#endif /* CONFIG_NRF71_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 static void nrf_wifi_net_iface_work_handler(struct k_work *work)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
@@ -283,11 +283,11 @@ void nrf_wifi_if_rx_frm(void *os_vif_ctx, void *frm)
 		return;
 	}
 
-#ifdef CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep))) {
 		net_pkt_set_chksum_done(pkt, true);
 	}
-#endif /* CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
 
 	status = net_recv_data(iface, pkt);
 
@@ -334,9 +334,9 @@ static bool is_eapol(struct net_pkt *pkt)
 
 	return ethertype == NET_ETH_PTYPE_EAPOL;
 }
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 
-#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 				struct raw_rx_pkt_header *raw_rx_hdr,
 				bool pkt_free)
@@ -367,7 +367,7 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 		net_pkt_unref(pkt);
 	}
 }
-#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 
 enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev,
 					   struct net_if *iface __unused)
@@ -375,23 +375,23 @@ enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev,
 	enum ethernet_hw_caps caps = (ETHERNET_LINK_10BASE |
 			ETHERNET_LINK_100BASE | ETHERNET_LINK_1000BASE);
 
-#ifdef CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(nrf_wifi_get_fmac_vif_ctx(dev->data))) {
 		caps |= ETHERNET_HW_TX_CHKSUM_OFFLOAD |
 			ETHERNET_HW_RX_CHKSUM_OFFLOAD;
 	}
-#endif /* CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
 
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	caps |= ETHERNET_TXINJECTION_MODE;
 #endif
-#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT
 	caps |= ETHERNET_PROMISC_MODE;
 #endif
 	return caps;
 }
 
-#if defined(CONFIG_NRF71_DATA_TX) && defined(CONFIG_NRF71_STA_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_DATA_TX) && defined(CONFIG_NRF71_WIFI_STA_SUPPORT)
 static struct tx_token_stats *tx_token_stats_get(struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx)
 {
 	return sys_dev_ctx ? &sys_dev_ctx->tx_config.token_stats : NULL;
@@ -406,13 +406,13 @@ static struct tx_token_stats *tx_token_stats_get(struct nrf_wifi_sys_fmac_dev_ct
 	} while (false)
 #else
 #define TX_TOKEN_STAT_INC(_sys_dev_ctx, _field) ((void)0)
-#endif /* CONFIG_NRF71_DATA_TX && CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX && CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 int nrf_wifi_if_send(const struct device *dev,
 		     struct net_pkt *pkt)
 {
 	int ret = -EINVAL;
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
@@ -463,7 +463,7 @@ int nrf_wifi_if_send(const struct device *dev,
 		goto drop;
 	}
 
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	/*
 	 * Check for raw TX magic number in both byte orders:
 	 * - Little-endian: programmatic API stores native uint32_t
@@ -479,7 +479,7 @@ int nrf_wifi_if_send(const struct device *dev,
 						      vif_ctx_zep->vif_idx,
 						      nbuf);
 	} else {
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 
 		fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
 		if (!fmac_vif_ctx) {
@@ -525,9 +525,9 @@ int nrf_wifi_if_send(const struct device *dev,
 		ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
 					       vif_ctx_zep->vif_idx,
 					       nbuf);
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	}
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 	if (ret == NRF_WIFI_STATUS_FAIL) {
 		/* FMAC API takes care of freeing the nbuf */
 		host_stats->total_tx_drop_pkts++;
@@ -557,7 +557,7 @@ unlock:
 	ARG_UNUSED(dev);
 	ARG_UNUSED(pkt);
 	goto out;
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 
 out:
 	return ret;
@@ -567,7 +567,7 @@ int nrf_wifi_wpa_tx_control_port(void *if_priv, const unsigned char *dest, unsig
 				 const unsigned char *buf, size_t len, int no_encrypt)
 {
 	int ret = -EINVAL;
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = if_priv;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
@@ -680,12 +680,12 @@ out:
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
 	ARG_UNUSED(no_encrypt);
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 
 	return ret;
 }
 
-#ifdef CONFIG_NRF71_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 /* If the interface is not Wi-Fi then errors are expected, so, fail silently */
 static struct nrf_wifi_vif_ctx_zep *nrf_wifi_get_vif_ctx(struct net_if *iface)
 {
@@ -781,10 +781,10 @@ unlock:
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, mcast_info);
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 }
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
-#ifdef CONFIG_NRF71_FIXED_MAC_ADDRESS_ENABLED
-BUILD_ASSERT(sizeof(CONFIG_NRF71_FIXED_MAC_ADDRESS) - 1 == ((WIFI_MAC_ADDR_LEN * 2) + 5),
+#ifdef CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS_ENABLED
+BUILD_ASSERT(sizeof(CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS) - 1 == ((WIFI_MAC_ADDR_LEN * 2) + 5),
 					"Invalid fixed MAC address length");
 #endif
 
@@ -816,16 +816,16 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
-#ifdef CONFIG_NRF71_FIXED_MAC_ADDRESS_ENABLED
+#ifdef CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS_ENABLED
 	char fixed_mac_addr[WIFI_MAC_ADDR_LEN];
 
 	ret = net_bytes_from_str(fixed_mac_addr,
 			WIFI_MAC_ADDR_LEN,
-			CONFIG_NRF71_FIXED_MAC_ADDRESS);
+			CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to parse MAC address: %s",
 			__func__,
-			CONFIG_NRF71_FIXED_MAC_ADDRESS);
+			CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS);
 		goto unlock;
 	}
 
@@ -840,7 +840,7 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 		nrf_wifi_mac_addr_derive(vif_ctx_zep->mac_addr.addr,
 					 vif_ctx_zep->vif_idx);
 	}
-#elif CONFIG_NRF71_RANDOM_MAC_ADDRESS
+#elif CONFIG_NRF71_WIFI_RANDOM_MAC_ADDRESS
 	char random_mac_addr[WIFI_MAC_ADDR_LEN];
 
 	sys_rand_get(random_mac_addr, WIFI_MAC_ADDR_LEN);
@@ -849,7 +849,7 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 	memcpy(vif_ctx_zep->mac_addr.addr,
 		random_mac_addr,
 		WIFI_MAC_ADDR_LEN);
-#elif CONFIG_NRF71_XICR_MAC_ADDRESS
+#elif CONFIG_NRF71_WIFI_XICR_MAC_ADDRESS
 	ret = nrf_wifi_xicr_mac_addr_get(vif_ctx_zep->vif_idx,
 					 vif_ctx_zep->mac_addr.addr,
 					 NULL);
@@ -860,7 +860,7 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 		goto unlock;
 	}
 #else
-#error "No Wi-Fi MAC address type selected, see choice NRF71_MAC_ADDRESS"
+#error "No Wi-Fi MAC address type selected, see choice NRF71_WIFI_MAC_ADDRESS"
 #endif
 
 	if (!nrf_wifi_utils_is_mac_addr_valid(vif_ctx_zep->mac_addr.addr)) {
@@ -926,29 +926,29 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 	net_eth_carrier_on(iface);
 	net_if_dormant_on(iface);
 
-#ifdef CONFIG_NRF71_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 	net_if_mcast_mon_register(&mcast_monitor, iface, ip_maddr_event_handler);
-#endif /* CONFIG_NRF71_STA_SUPPORT */
-#ifdef CONFIG_NRF71_DATA_TX
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 	k_work_init(&vif_ctx_zep->nrf_wifi_net_iface_work,
 		    nrf_wifi_net_iface_work_handler);
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 
-#ifdef CONFIG_NRF71_SCAN_ONLY
+#ifdef CONFIG_NRF71_WIFI_SCAN_ONLY
 	/* In scan-only mode this interface should be ignored by the connectivity manager */
 	conn_mgr_ignore_iface(iface);
-#endif /* CONFIG_NRF71_SCAN_ONLY */
+#endif /* CONFIG_NRF71_WIFI_SCAN_ONLY */
 
-#ifdef CONFIG_NRF71_RPU_RECOVERY
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY
 	k_work_init(&vif_ctx_zep->nrf_wifi_rpu_recovery_work,
 		    nrf_wifi_rpu_recovery_work_handler);
 	k_work_init_delayable(&vif_ctx_zep->nrf_wifi_rpu_recovery_bringup_work,
 			      nrf_wifi_rpu_recovery_bringup_work_handler);
-#endif /* CONFIG_NRF71_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 
-#if !defined(CONFIG_NRF71_IF_AUTO_START_SUPPORT)
+#if !defined(CONFIG_NRF71_WIFI_IF_AUTO_START_SUPPORT)
 	net_if_flag_set(iface, NET_IF_NO_AUTO_START);
-#endif /* CONFIG_NRF71_IF_AUTO_START_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_IF_AUTO_START_SUPPORT */
 	net_if_flag_set(iface, NET_IF_NO_TX_LOCK);
 }
 
@@ -992,7 +992,7 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 
 	nrf_wifi_clear_session_state(vif_ctx_zep);
 
-#ifdef CONFIG_NRF71_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 	vif_ctx_zep->assoc_freq = 0;
 	vif_ctx_zep->twt_flows_map = 0;
 	vif_ctx_zep->twt_flow_in_progress_map = 0;
@@ -1004,7 +1004,7 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 		vif_ctx_zep->connect_scan_db_addr = 0;
 	}
 	vif_ctx_zep->connect_scan_res_cnt = 0;
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 }
 
 int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
@@ -1168,10 +1168,10 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 		goto del_vif;
 	}
 
-#ifdef CONFIG_NRF71_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 	nrf_wifi_wpa_supp_event_mac_chgd(vif_ctx_zep);
 
-#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 	status = nrf_wifi_sys_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
 					      NRF_WIFI_PS_ENABLED);
@@ -1182,8 +1182,8 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 		ret = -EIO;
 		goto dev_rem;
 	}
-#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_UP;
 
@@ -1267,8 +1267,8 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 		goto unlock;
 	}
 
-#ifdef CONFIG_NRF71_STA_SUPPORT
-#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 	status = nrf_wifi_sys_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
 					      NRF_WIFI_PS_DISABLED);
@@ -1277,8 +1277,8 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 		LOG_ERR("%s: nrf_wifi_sys_fmac_set_power_save failed",
 			__func__);
 	}
-#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 	memset(&vif_info,
 	       0,
@@ -1373,7 +1373,7 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 	}
 
 	memset(config, 0, sizeof(struct ethernet_config));
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
 		struct nrf_wifi_fmac_vif_ctx *vif = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
 
@@ -1385,7 +1385,7 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 		config->txinjection_mode = vif->txinjection_mode;
 	}
 #endif
-#ifdef CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	if (type  == ETHERNET_CONFIG_TYPE_TX_CHECKSUM_SUPPORT ||
 	    type == ETHERNET_CONFIG_TYPE_RX_CHECKSUM_SUPPORT) {
 		if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(
@@ -1399,7 +1399,7 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 		}
 	}
 #endif
-#ifdef CONFIG_NRF71_ZERO_COPY_TX
+#ifdef CONFIG_NRF71_WIFI_ZERO_COPY_TX
 	if (type == ETHERNET_CONFIG_TYPE_EXTRA_TX_PKT_HEADROOM) {
 		config->extra_tx_pkt_headroom = NRF_WIFI_EXTRA_TX_HEADROOM;
 	}
@@ -1475,7 +1475,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		goto unlock;
 	}
 
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
 		unsigned char mode;
 		struct nrf_wifi_fmac_vif_ctx *vif = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
@@ -1530,7 +1530,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		goto unlock;
 	}
 #endif
-#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT
 	else if (type == ETHERNET_CONFIG_TYPE_PROMISC_MODE) {
 		unsigned char mode;
 		struct nrf_wifi_fmac_vif_ctx *vif = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
@@ -1716,9 +1716,9 @@ int nrf_wifi_stats_get(const struct device *dev,
 	zstats->errors.rx = stats.host.total_rx_drop_pkts +
 			stats.fw.umac.interface_data_stats.rx_checksum_error_count;
 	zstats->overrun_count = stats.host.total_tx_drop_pkts + stats.host.total_rx_drop_pkts;
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	zstats->errors.tx += sys_dev_ctx->raw_pkt_stats.raw_pkt_send_failure;
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 
 	/* FMAC statistics */
 	status = nrf_wifi_sys_fmac_stats_get(rpu_ctx_zep->rpu_ctx,

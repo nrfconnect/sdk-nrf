@@ -266,7 +266,7 @@ int main(void)
 	buttons_init();
 #endif /* CONFIG_OPERATION_MODE_BUTTONS */
 
-#if defined(CONFIG_NRF_WIFI_IF_AUTO_START) || defined(CONFIG_NRF71_IF_AUTO_START_SUPPORT)
+#if defined(CONFIG_NRF_WIFI_IF_AUTO_START) || defined(CONFIG_NRF71_WIFI_IF_AUTO_START_SUPPORT)
 	exit_shutdown_mode();
 	enter_shutdown_mode();
 #endif

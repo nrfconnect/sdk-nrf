@@ -29,9 +29,9 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 	unsigned int *rf_params_addr,
 	unsigned int vtf_buffer_start_address,
 	bool rf_params_valid,
-#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 	int sleep_type,
-#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 	unsigned int phy_calib,
 	unsigned char op_band,
 	bool beamforming,
@@ -51,9 +51,9 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 				  rf_params_addr,
 				  vtf_buffer_start_address,
 				  rf_params_valid,
-#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 				  sleep_type,
-#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 				  phy_calib,
 				  op_band,
 				  beamforming,
@@ -142,9 +142,9 @@ out:
 
 enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 	int sleep_type,
-#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 	unsigned int phy_calib,
 	unsigned char op_band,
 	bool beamforming,
@@ -185,9 +185,9 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 
 	status = nrf_wifi_rt_fmac_fw_init(
 		fmac_dev_ctx, rf_params_addr, vtf_buffer_start_address, true,
-#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 		sleep_type,
-#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 		phy_calib, op_band, beamforming, tx_pwr_ctrl_params, country_code);
 
 	if (status == NRF_WIFI_STATUS_FAIL) {

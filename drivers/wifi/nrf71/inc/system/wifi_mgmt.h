@@ -20,7 +20,7 @@
 #define WIFI_MGMT_DATA_CTRL_FILTER_SETTING 0xE
 #define WIFI_ALL_FILTER_SETTING 0xF
 
-#ifdef CONFIG_NRF71_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 struct twt_interval_float {
 	unsigned short mantissa;
 	unsigned char exponent;
@@ -56,25 +56,25 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 void nrf_wifi_event_proc_get_power_save_info(void *vif_ctx,
 		struct nrf_wifi_umac_event_power_save_info *ps_info,
 		unsigned int event_len);
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
-#ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT
 int nrf_wifi_mode(const struct device *dev,
 		  struct net_if *iface,
 		  struct wifi_mode_info *mode);
 #endif
 
-#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT)
 int nrf_wifi_channel(const struct device *dev,
 		     struct net_if *iface,
 		     struct wifi_channel_info *channel);
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT || CONFIG_NRF71_WIFI_MONITOR_SUPPORT */
 
-#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 int nrf_wifi_filter(const struct device *dev,
 		    struct net_if *iface,
 		    struct wifi_filter_info *filter);
-#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 
 int nrf_wifi_set_rts_threshold(const struct device *dev,
 			       struct net_if *iface,
