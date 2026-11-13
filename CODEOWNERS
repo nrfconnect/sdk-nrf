@@ -160,7 +160,6 @@
 /doc/nrf/libraries/debug/memfault_ncs.rst @nrfconnect/ncs-nrf-cloud-doc
 /doc/nrf/libraries/debug/ppi_trace.rst    @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/dfu/                   @nrfconnect/ncs-eris-doc
-/doc/nrf/libraries/gazell/                @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/modem/nrf_modem_lib/   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_cmd_custom.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_host.rst      @nrfconnect/ncs-modem-doc
@@ -262,7 +261,6 @@
 /doc/nrf/protocols/coexistence/           @nrfconnect/ncs-doc-leads
 /doc/nrf/protocols/dect/                  @nrfconnect/ncs-modem-doc
 /doc/nrf/protocols/esb/                   @nrfconnect/ncs-si-xcake-doc
-/doc/nrf/protocols/gazell/                @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/protocols/knx-iot/               @nrfconnect/ncs-terahertz-doc
 /doc/nrf/protocols/lte/                   @nrfconnect/ncs-carrier-doc
 /doc/nrf/protocols/lte/power_nrf91.rst    @nrfconnect/ncs-modem-doc
@@ -284,7 +282,6 @@
 /doc/nrf/samples/edge_impulse.rst         @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/samples/esb.rst                  @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/samples/fast_pair.rst            @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
-/doc/nrf/samples/gazell.rst               @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/samples/ironside_se.rst          @nrfconnect/ncs-aurora-doc
 /doc/nrf/samples/keys.rst                 @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/mesh.rst                 @nrfconnect/ncs-paladin-doc
@@ -431,9 +428,6 @@
 /include/emds/                            @nrfconnect/ncs-paladin
 /include/event_manager_proxy.h            @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /include/fem_al/                          @nrfconnect/ncs-dragoon
-/include/gzll_glue.h                      @leewkb4567
-/include/gzp.h                            @leewkb4567
-/include/gzp_config.h                     @leewkb4567
 /include/hpf/                             @nrfconnect/ncs-ll-ursus
 /include/hw_id.h                          @nrfconnect/ncs-nrf-cloud
 /include/hw_unique_key.h                  @nrfconnect/ncs-cc3xx
@@ -639,7 +633,6 @@
 /samples/dfu/                             @nrfconnect/ncs-eris
 /samples/esb/                             @nrfconnect/ncs-si-xcake
 /samples/event_manager_proxy/             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
-/samples/gazell/                          @leewkb4567
 /samples/hw_id/                           @nrfconnect/ncs-nrf-cloud
 /samples/ipc/ipc_service/                 @anangl
 /samples/keys/                            @nrfconnect/ncs-aegir
@@ -775,7 +768,6 @@
 /samples/dfu/smp_svr_mini_boot/*.rst      @nrfconnect/ncs-eris-doc
 /samples/esb/**/*.rst                     @nrfconnect/ncs-si-xcake-doc
 /samples/event_manager_proxy/*.rst        @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
-/samples/gazell/**/*.rst                  @nrfconnect/ncs-si-xcake-doc
 /samples/hw_id/*.rst                      @nrfconnect/ncs-nrf-cloud-doc
 /samples/ironside_se/**/*.rst             @nrfconnect/ncs-aurora-doc
 /samples/ipc/ipc_service/*.rst            @nrfconnect/ncs-vestavind-doc
@@ -1006,7 +998,6 @@
 /subsys/esb/                              @nrfconnect/ncs-si-xcake
 /subsys/event_manager_proxy/              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /subsys/fw_info/                          @nrfconnect/ncs-eris
-/subsys/gazell/                           @leewkb4567
 /subsys/nrf_lcs/                          @nrfconnect/ncs-eris
 /subsys/logging/                          @nrfconnect/ncs-protocols-serialization
 /subsys/mcuboot/                          @nrfconnect/ncs-eris

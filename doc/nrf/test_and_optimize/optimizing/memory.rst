@@ -148,24 +148,6 @@ Model configuration options that affect stack size at runtime:
 * :kconfig:option:`CONFIG_BT_MESH_PROP_MAXSIZE`
 * :kconfig:option:`CONFIG_BT_MESH_PROP_MAXCOUNT`
 
-.. _app_memory_gazell:
-
-Gazell
-******
-
-To optimize the Gazell memory footprint, follow the `General recommendations`_.
-Specifically, study the ISR stack size.
-If your application is in a pairing device, pay attention to the system workqueue stack size.
-
-Do not enable features that your application does not use.
-The configuration options default to disabling optional features, such as:
-
-* Pairing
-* Pairing encryption
-* Pairing settings persistent storage
-
-To reduce the logging level, set the :kconfig:option:`CONFIG_GAZELL_LOG_LEVEL_CHOICE` Kconfig option.
-
 .. _app_memory_nfc:
 
 NFC
