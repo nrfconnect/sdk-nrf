@@ -466,10 +466,6 @@
   - "samples/wifi/**/boards/nrf7120*"
   - "samples/wifi/**/*nrf71*"
 
-"CI-wifi-7120-vu19p":
-  - "drivers/wifi/nrf71/**/*"
-  - "modules/trusted-firmware-m/tfm_boards/*7120*"
-
 "CI-cloud-test":
   - "include/caf/**/*"
   - "include/date_time.h"
