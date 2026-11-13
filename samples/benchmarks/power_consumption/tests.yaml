@@ -14,9 +14,13 @@ common:
   platform_allow:
     - nrf7120dk/nrf7120/cpuapp
     - nrf7120dk/nrf7120/cpuapp/ns
+    - nrf7120dk/nrf7120e/cpuapp
+    - nrf7120dk/nrf7120e/cpuapp/ns
   integration_platforms:
     - nrf7120dk/nrf7120/cpuapp
     - nrf7120dk/nrf7120/cpuapp/ns
+    - nrf7120dk/nrf7120e/cpuapp
+    - nrf7120dk/nrf7120e/cpuapp/ns
 tests:
   sample.benchmarks.power_consumption.ram_retain_full:
     extra_configs:
