@@ -10,14 +10,13 @@ Developing with nRF7002 EB
    :depth: 2
 
 The nRF7002 :term:`Expansion Board (EB)` (PCA63561), part of the `nRF70 Series Family <nRF70 Series product page_>`_, can be used to provide Wi-Fi® connectivity to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
-For example, you can use it with the :ref:`Nordic Thingy:53 <ug_thingy53>`, an IoT prototyping platform from Nordic Semiconductor.
 
 .. note::
    .. deprecated:: v3.0.0
-      Support for the nRF7002 EB is deprecated for all boards except the Thingy:53.
+      Support for the nRF7002 EB is deprecated.
       This support will be removed in the next major release of the |NCS|.
 
-You can also use the nRF7002 EB to provide Wi-Fi connectivity to the :zephyr:board:`nrf54h20dk` and :zephyr:board:`nrf54l15dk`.
+You can use the nRF7002 EB to provide Wi-Fi connectivity to the :zephyr:board:`nrf54h20dk` and :zephyr:board:`nrf54l15dk`.
 
 .. figure:: images/nRF7002eb.png
    :alt: nRF7002 EB
@@ -26,9 +25,7 @@ You can also use the nRF7002 EB to provide Wi-Fi connectivity to the :zephyr:boa
 
 The nRF7002 EB features a :term:`Printed Circuit Board (PCB)` edge connector and castellated holes to provide Wi-Fi connectivity through the nRF7002 companion IC.
 
-In case of the Nordic Thingy:53, the PCB edge connector connects nRF7002 to nRF5340, which acts as a host.
 For the pinout of the PCB edge connector, see `nRF7002 EB PCB edge connector`_ in the board's `Hardware User Guide <nRF7002 EB User Guide_>`_.
-For information about how to connect to the Nordic Thingy:53, see `Using nRF7002 EB with the Nordic Thingy:53`_, also in the hardware guide.
 
 The castellated holes on the side of the board allow the EB to be used as a breakout board that can be soldered to other PCB assemblies.
 This way, you can provide Wi-Fi capabilities to develop Wi-Fi applications with another System on Chip (SoC), MPU, or MCU host.
@@ -107,11 +104,11 @@ Building and programming with nRF7002 EB
 To build for the nRF7002 EB, build for the compatible :ref:`board target <app_boards_names>` with the CMake ``SHIELD`` option set to the corresponding shield name.
 See :ref:`cmake_options` for instructions on how to provide CMake options.
 
-For example, if you build for Thingy:53 on the command line, you can use the following command:
+For example, if you build on the command line, you can use the following command:
 
 .. code-block:: console
 
-   west build -b thingy53/nrf5340/cpuapp -- -DSHIELD=nrf7002eb
+   west build -b <board_target> -- -DSHIELD=nrf7002eb
 
 If you use |nRFVSC|, specify ``-DSHIELD=nrf7002eb`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
 
