@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+target_sources(app PRIVATE pake_test_logic.c)
+target_sources(app PRIVATE pake_test_data.c)
+target_sources(app PRIVATE pake_ecjpake.c)
+target_sources(app PRIVATE pake_spake2p.c)
+target_sources(app PRIVATE pake_srp6.c)
