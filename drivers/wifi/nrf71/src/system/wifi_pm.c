@@ -10,9 +10,12 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/devicetree/mbox.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/sys_io.h>
 
+#include <hal/nrf_bellboard.h>
 #include <hal/nrf_lrcconf.h>
 #include <hal/nrf_vpr.h>
 #include <nrfx.h>
@@ -46,6 +49,12 @@ LOG_MODULE_REGISTER(wifi_pm, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 /* RPU reset poll timeout */
 #define RPU_RESET_TIMEOUT_US            3000
+
+/* Bellboard and channel used by the host to ring the UMAC over ipc0 */
+#define WIFI_IPC_NODE                   DT_NODELABEL(ipc0)
+#define WIFI_IPC_TX_BELLBOARD \
+	((NRF_BELLBOARD_Type *)DT_REG_ADDR(DT_MBOX_CTLR_BY_NAME(WIFI_IPC_NODE, tx)))
+#define WIFI_IPC_TX_CHANNEL             DT_MBOX_CHANNEL_BY_NAME(WIFI_IPC_NODE, tx)
 
 int nrf_wifi_power_on(void)
 {
@@ -96,6 +105,14 @@ int nrf_wifi_power_off(void)
 	nrf_vpr_cpurun_set(NRF_WIFICORE_UMAC_VPR, false);
 	vpr_reset(NRF_WIFICORE_LMAC_VPR);
 	vpr_reset(NRF_WIFICORE_UMAC_VPR);
+
+	/* A host doorbell that the UMAC did not service before being halted stays
+	 * latched, and the interrupt it raises towards the halted Wi-Fi core keeps
+	 * the WIFICORE domain from collapsing. The firmware set the interrupt enable
+	 * at boot and the RPU reset below does not clear it, so drop the event here.
+	 */
+	nrf_bellboard_event_clear(WIFI_IPC_TX_BELLBOARD,
+				  nrf_bellboard_triggered_event_get(WIFI_IPC_TX_CHANNEL));
 
 	/* Force the next LMAC start to be classified as a cold boot. The RPU ROM
 	 * checks these values before entering its startup sequence.
