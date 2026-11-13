@@ -83,6 +83,9 @@ BUILD_ASSERT(RX_REQUEST_IPCT_CH != RX_RELEASE_IPCT_CH && TX_REQUEST_IPCT_CH != T
 #define SR_TX_CLIENT   DT_PROP(CX_NODE, tx_client)
 #define CCCONF_SR_MODE 0U
 
+#define SHARED_LNA_REG  (*(volatile uint32_t *)(DT_REG_ADDR(DT_NODELABEL(radio)) + 0x740UL))
+#define SHARED_LNA_MASK BIT(15)
+
 BUILD_ASSERT(SR_RX_CLIENT != SR_TX_CLIENT, "COEXC RX and TX clients must be distinct");
 BUILD_ASSERT(SR_RX_CLIENT < COEXC_CCCONF_MaxCount && SR_TX_CLIENT < COEXC_CCCONF_MaxCount,
 	     "COEXC client index out of range");
@@ -159,7 +162,7 @@ static bool prio_resolve(const struct nrf71_sr_coex_pti_range *range, uint8_t le
 		return true;
 	}
 
-	if (level > (range->start - range->end) / range->step) {
+	if ((range->step == 0) || (level > (range->start - range->end) / range->step)) {
 		return false;
 	}
 
@@ -197,6 +200,13 @@ static void sr_priority_apply(mpsl_cx_op_map_t ops, bool critical)
 
 static int sr_coex_enable(bool enable)
 {
+	/* Use shared LNA when coex is enabled */
+	if (enable) {
+		SHARED_LNA_REG |= SHARED_LNA_MASK;
+	} else {
+		SHARED_LNA_REG &= ~SHARED_LNA_MASK;
+	}
+
 	atomic_set(&coex_enabled, enable);
 
 	return 0;
