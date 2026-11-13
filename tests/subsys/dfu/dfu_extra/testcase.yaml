@@ -1,11 +1,19 @@
 tests:
   dfu.dfu_extra:
     sysbuild: true
-    build_only: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "DFU Extra Images Test"
+        - "=== Extra Image 1 ==="
+        - "=== Extra Image 2 ==="
+        - "Done"
     tags:
       - dfu
       - sysbuild
