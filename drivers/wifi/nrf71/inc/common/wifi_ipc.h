@@ -32,6 +32,18 @@ struct nrf_wifi_fmac_dev_ctx;
 enum nrf_wifi_status nrf_wifi_ipc_open(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 /**
+ * @brief Shut down the host–RPU IPC link for a FMAC device context.
+ *
+ * Stops the host RX path and closes the IPC instance, which notifies the RPU.
+ * Command buffers in flight are kept, since the RPU may still access them;
+ * @ref nrf_wifi_ipc_close releases them once the RPU is halted. No operation
+ * if IPC is not open for @p fmac_dev_ctx.
+ *
+ * @param fmac_dev_ctx FMAC device context.
+ */
+void nrf_wifi_ipc_shutdown(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
+
+/**
  * @brief Close host–RPU IPC for a FMAC device context.
  *
  * Disarms the host RX path, tears down IPC, and frees transport locks associated

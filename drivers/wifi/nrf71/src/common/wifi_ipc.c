@@ -512,11 +512,9 @@ int ipc_init(void)
 	return 0;
 }
 
-int ipc_deinit(void)
+static void ipc_close_instance(void)
 {
 	int ret;
-
-	host_tx_reclaim_completed();
 
 	if (nrf_wifi_ipc_host_tx.busy_q.ipc_bound) {
 		ret = ipc_service_deregister_endpoint(&nrf_wifi_ipc_host_tx.busy_q.ipc_ep);
@@ -530,15 +528,23 @@ int ipc_deinit(void)
 		}
 	}
 
+	nrf_wifi_ipc_host_tx.busy_q.ipc_bound = false;
+	nrf_wifi_ipc_host_tx.busy_q.ipc_ready = false;
+	nrf_wifi_ipc_host_rx.busy_q.ipc_bound = false;
+	nrf_wifi_ipc_host_rx.busy_q.ipc_ready = false;
+}
+
+int ipc_deinit(void)
+{
+	host_tx_reclaim_completed();
+
+	ipc_close_instance();
+
 	/* The peer has been halted and power-isolated, so no further
 	 * acknowledgments can arrive. Release all command buffers in flight.
 	 */
 	host_tx_abort_pending();
 
-	nrf_wifi_ipc_host_tx.busy_q.ipc_bound = false;
-	nrf_wifi_ipc_host_tx.busy_q.ipc_ready = false;
-	nrf_wifi_ipc_host_rx.busy_q.ipc_bound = false;
-	nrf_wifi_ipc_host_rx.busy_q.ipc_ready = false;
 	nrf_wifi_ipc_rx_ctx_shared = NULL;
 
 	return 0;
@@ -697,6 +703,23 @@ bool nrf_wifi_ipc_is_open(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	struct nrf_wifi_ipc_inst *inst = ipc_inst_bound(fmac_dev_ctx);
 
 	return inst != NULL && inst->locks_inited;
+}
+
+void nrf_wifi_ipc_shutdown(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
+{
+	struct nrf_wifi_ipc_inst *inst = ipc_inst_bound(fmac_dev_ctx);
+
+	if (!inst) {
+		return;
+	}
+
+	if (inst->locks_inited) {
+		k_mutex_lock(&inst->rx_lock, K_FOREVER);
+		inst->rx_active = false;
+		k_mutex_unlock(&inst->rx_lock);
+	}
+
+	ipc_close_instance();
 }
 
 void nrf_wifi_ipc_close(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)

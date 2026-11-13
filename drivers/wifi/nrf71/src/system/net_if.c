@@ -1202,6 +1202,9 @@ del_vif:
 	}
 	vif_ctx_zep->vif_idx = MAX_NUM_VIFS;
 dev_rem:
+	if (fmac_dev_added) {
+		nrf_wifi_ipc_shutdown(rpu_ctx_zep->rpu_ctx);
+	}
 	if (wifi_powered_on) {
 		if (nrf_wifi_power_off()) {
 			LOG_ERR("%s: nrf_wifi_power_off failed", __func__);
@@ -1309,6 +1312,11 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 	vif_ctx_zep->vif_idx = MAX_NUM_VIFS;
 
 	if (nrf_wifi_fmac_get_num_vifs(rpu_ctx_zep->rpu_ctx) == 0) {
+		/* Closing the IPC instance rings the UMAC doorbell, so it must
+		 * happen while the UMAC can still service it. Buffers shared with
+		 * the UMAC are only freed once the cores are halted.
+		 */
+		nrf_wifi_ipc_shutdown(rpu_ctx_zep->rpu_ctx);
 		if (nrf_wifi_power_off()) {
 			LOG_ERR("%s: nrf_wifi_power_off failed", __func__);
 		}
