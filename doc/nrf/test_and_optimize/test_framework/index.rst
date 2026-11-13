@@ -18,3 +18,4 @@ You can run these tests using either west or Twister, as described in :ref:`runn
 
    testing_unity_cmock
    running_unit_tests
+   ../ci_doxygen_reviewer_test
