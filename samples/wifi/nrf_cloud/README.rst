@@ -227,10 +227,8 @@ This sample intentionally uses only Memfault's FOTA mechanism, and not nRF Cloud
 
    * ``nrf7002dk/nrf5340/cpuapp/ns`` (``slot1_partition`` is placed in the board's external QSPI flash, since the 1 MB internal flash is too small to fit two full images).
    * ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` (both slots fit in internal flash).
-   * ``nrf7120dk/nrf7120/cpuapp`` (secure-only build).
-
-   The ``nrf7120dk/nrf7120/cpuapp/ns`` board target does not support FOTA.
-   It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` for that target.
+   * ``nrf7120dk/nrf7120/cpuapp/ns`` (both slots fit in internal MRAM).
+     The secure image area is reduced to 160 KB, so that the non-secure image fits below the Wi-Fi ROM patches at address ``0x100000`` (see :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.overlay`).
 
    To build with FOTA enabled, see :ref:`wifi_nrf_cloud_building_coap`.
 
@@ -327,7 +325,7 @@ The sample provides predefined configuration files for the following use cases:
   Must be used together with :ncs-file:`/samples/wifi/nrf_cloud/coap.conf`.
 * :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
 * :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf54lm20dk_nrf54lm20a_cpuapp_ns.conf` and :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf54lm20dk_nrf54lm20b_cpuapp_ns.conf` - Configuration files for the nRF54LM20 DK with the nRF7002-EB II shield.
-* :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp.conf` and :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration files for the nRF7120 DK.
+* :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
 * :file:`sysbuild/mcuboot/` - Configuration of the MCUboot bootloader image used for FOTA.
 
 Board and SoC files under the :file:`boards/` and :file:`socs/` folders are merged automatically for the selected target.
