@@ -79,6 +79,8 @@ BUILD_ASSERT(
 #define AGNSS_ALM_MIN_COUNT 3
 /* PRN of the first QZSS satellite. The range for QZSS PRNs is 193...202. */
 #define FIRST_QZSS_PRN 193
+/* Mask for all Galileo satellites. The range for Galileo PRNs is 1...36. */
+#define GAL_SV_MASK 0xfffffffffULL
 #endif
 
 #define VISIBILITY_DETECTION_EXEC_TIME CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME
@@ -423,11 +425,27 @@ static const char *get_system_string(uint8_t system_id)
 	case NRF_MODEM_GNSS_SYSTEM_QZSS:
 		return "QZSS";
 
+	case NRF_MODEM_GNSS_SYSTEM_GAL:
+		return "Galileo";
+
 	default:
 		return "unknown";
 	}
 }
 #endif /* CONFIG_LOG */
+
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+static struct nrf_modem_gnss_agnss_system_data_need *agnss_system_data_need_get(uint8_t system_id)
+{
+	for (int i = 0; i < agnss_request.system_count; i++) {
+		if (agnss_request.system[i].system_id == system_id) {
+			return &agnss_request.system[i];
+		}
+	}
+
+	return NULL;
+}
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 /* Triggers A-GNSS data request and/or injection of a P-GPS prediction.
  *
@@ -438,16 +456,17 @@ static const char *get_system_string(uint8_t system_id)
  *
  * A-GNSS only:
  * Ephemerides, almanacs and additional assistance data is handled by A-GNSS.
- * If any additional assistance data (UTC, Klobuchar, GPS time, integrity or position) is needed,
- * all additional assistance is requested at the same time.
+ * If any additional assistance data (UTC, Klobuchar, GPS time, integrity, position or GGTO) is
+ * needed, all additional assistance is requested at the same time.
  *
  * A-GNSS and P-GPS:
  * GPS ephemerides are handled by P-GPS.
- * GPS almanacs are handled by A-GNSS, but only if the downloaded P-GPS prediction set is longer
- * than one week.
+ * Almanacs are not used.
+ * Galileo ephemerides are not requested, because P-GPS doesn't provide them and requesting them
+ * using A-GNSS would cause frequent A-GNSS requests.
  * Additional assistance data is handled by A-GNSS.
- * If any additional assistance data (UTC, Klobuchar, GPS time, integrity or position) is needed,
- * all additional assistance is requested at the same time.
+ * If any additional assistance data (UTC, Klobuchar, GPS time, integrity, position or GGTO) is
+ * needed, all additional assistance is requested at the same time.
  *
  * P-GPS only:
  * Ephemerides are handled by P-GPS.
@@ -457,10 +476,8 @@ static const char *get_system_string(uint8_t system_id)
  * The frequency of A-GNSS data requests is limited to avoid requesting data repeatedly, for
  * example in case the server is down.
  *
- * Almanacs are not used with P-GPS prediction sets up to one week in length, because GNSS always
- * has valid (and more accurate) ephemerides available. With longer prediction sets, the number of
- * satellite ephemerides in the later prediction periods decreases due to accumulated errors,
- * so having almanacs may be beneficial.
+ * Almanacs are not used with P-GPS, because GNSS always has valid (and more accurate) GPS
+ * ephemerides available.
  */
 static void method_gnss_assistance_request(void)
 {
@@ -469,10 +486,6 @@ static void method_gnss_assistance_request(void)
 	pgps_agnss_request.system[0].sv_mask_ephe = agnss_request.system[0].sv_mask_ephe;
 	pgps_agnss_request.data_flags = agnss_request.data_flags;
 	agnss_request.system[0].sv_mask_ephe = 0;
-	if (CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS <= 42) {
-		/* GPS almanacs not needed in this configuration. */
-		agnss_request.system[0].sv_mask_alm = 0;
-	}
 
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_AGNSS)) {
 		/* Time and position come from A-GNSS. */
@@ -484,6 +497,13 @@ static void method_gnss_assistance_request(void)
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
+	/* GPS is always the first system. */
+	struct nrf_modem_gnss_agnss_system_data_need *gps = &agnss_request.system[0];
+	struct nrf_modem_gnss_agnss_system_data_need *qzss =
+		agnss_system_data_need_get(NRF_MODEM_GNSS_SYSTEM_QZSS);
+	struct nrf_modem_gnss_agnss_system_data_need *gal =
+		agnss_system_data_need_get(NRF_MODEM_GNSS_SYSTEM_GAL);
+
 	if (agnss_request.data_flags != 0) {
 		/* With A-GNSS, if any of the flags in the data_flags field is set, it is
 		 * feasible to request everything at the same time, because of the small amount
@@ -496,31 +516,54 @@ static void method_gnss_assistance_request(void)
 			NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST |
 			NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST |
 			NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST;
+
+		if (gal != NULL) {
+			agnss_request.data_flags |= NRF_MODEM_GNSS_AGNSS_GGTO_REQUEST;
+		}
+	}
+
+	/* Galileo ephemerides and almanacs are requested whenever GPS ephemerides and almanacs
+	 * are requested, so that they don't need to be requested separately shortly after.
+	 */
+	if (gal != NULL) {
+		if (gps->sv_mask_ephe != 0) {
+			gal->sv_mask_ephe = GAL_SV_MASK;
+		}
+		if (gps->sv_mask_alm != 0) {
+			gal->sv_mask_alm = GAL_SV_MASK;
+		}
 	}
 
 	/* QZSS needs special handling because QZSS ephemerides are valid for a shorter time
 	 * than GPS ephemerides, there are only a few QZSS satellites and GNSS reports unused
 	 * QZSS satellites always as expired.
 	 */
-	if (agnss_request.system_count > 1) {
-		if (agnss_request.system[0].sv_mask_ephe != 0) {
-			/* QZSS ephemerides are requested whenever GPS ephemerides are requested. */
-			agnss_request.system[1].sv_mask_ephe = 0x3ff;
+	if (qzss != NULL) {
+		bool ephe_requested = gps->sv_mask_ephe != 0 ||
+				      (gal != NULL && gal->sv_mask_ephe != 0);
+		bool alm_requested = gps->sv_mask_alm != 0 ||
+				     (gal != NULL && gal->sv_mask_alm != 0);
+
+		if (ephe_requested) {
+			/* QZSS ephemerides are requested whenever GPS or Galileo ephemerides are
+			 * requested.
+			 */
+			qzss->sv_mask_ephe = 0x3ff;
 		} else {
 			/* No other assistance is needed. Request QZSS ephemerides anyway if
 			 * all QZSS ephemerides are expired and QZSS assistance is prioritized.
 			 */
-			if (!(agnss_request.system[1].sv_mask_ephe == 0x3ff &&
+			if (!(qzss->sv_mask_ephe == 0x3ff &&
 			     IS_ENABLED(CONFIG_LOCATION_METHOD_GNSS_PRIORITIZE_QZSS_ASSISTANCE))) {
-				agnss_request.system[1].sv_mask_ephe = 0x0;
+				qzss->sv_mask_ephe = 0x0;
 			}
 		}
 
-		/* QZSS almanacs are requested whenever GPS almanacs are requested. */
-		if (agnss_request.system[0].sv_mask_alm != 0) {
-			agnss_request.system[1].sv_mask_alm = 0x3ff;
+		/* QZSS almanacs are requested whenever GPS or Galileo almanacs are requested. */
+		if (alm_requested) {
+			qzss->sv_mask_alm = 0x3ff;
 		} else {
-			agnss_request.system[1].sv_mask_alm = 0x0;
+			qzss->sv_mask_alm = 0x0;
 		}
 	}
 
@@ -796,7 +839,8 @@ static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pv
 
 		const struct nrf_modem_gnss_sv *sv_data = &pvt_data->sv[i];
 
-		LOG_DBG("PRN: %3d, C/N0: %4.1f, in fix: %d, unhealthy: %d",
+		LOG_DBG("Signal: %d, PRN: %3d, C/N0: %4.1f, in fix: %d, unhealthy: %d",
+			sv_data->signal,
 			sv_data->sv,
 			sv_data->cn0 / 10.0,
 			sv_data->flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX ? 1 : 0,
@@ -1068,6 +1112,11 @@ static void method_gnss_agnss_expiry_process(const struct nrf_modem_gnss_agnss_e
 	bool qzss_supported = false;
 	uint32_t expired_qzss_ephe_mask = 0;
 	uint32_t expired_qzss_alm_mask = 0;
+	bool gal_supported = false;
+	uint8_t expired_gal_ephes = 0;
+	uint8_t expired_gal_alms = 0;
+	uint64_t gal_ephe_mask = 0;
+	uint64_t gal_alm_mask = 0;
 
 	memset(&agnss_request, 0, sizeof(agnss_request));
 
@@ -1109,6 +1158,18 @@ static void method_gnss_agnss_expiry_process(const struct nrf_modem_gnss_agnss_e
 					1 << (agnss_expiry->sv[i].sv_id - FIRST_QZSS_PRN);
 			}
 		}
+
+		if (agnss_expiry->sv[i].system_id == NRF_MODEM_GNSS_SYSTEM_GAL) {
+			gal_supported = true;
+
+			if (agnss_expiry->sv[i].ephe_expiry <= AGNSS_EXPIRY_THRESHOLD) {
+				expired_gal_ephes++;
+			}
+
+			if (agnss_expiry->sv[i].alm_expiry <= AGNSS_EXPIRY_THRESHOLD) {
+				expired_gal_alms++;
+			}
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)) {
@@ -1122,8 +1183,27 @@ static void method_gnss_agnss_expiry_process(const struct nrf_modem_gnss_agnss_e
 	if (expired_gps_ephes >= expired_ephes_min_count) {
 		agnss_request.system[0].sv_mask_ephe = 0xffffffff;
 	}
-	if (expired_gps_alms >= AGNSS_ALM_MIN_COUNT) {
+	/* Almanacs are not used with P-GPS. */
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) && expired_gps_alms >= AGNSS_ALM_MIN_COUNT) {
 		agnss_request.system[0].sv_mask_alm = 0xffffffff;
+	}
+
+	if (gal_supported) {
+		/* With P-GPS, the device is expected to operate mostly on P-GPS data. P-GPS doesn't
+		 * provide Galileo ephemerides, but they must not trigger A-GNSS requests either.
+		 * Almanacs are not used with P-GPS.
+		 */
+		if (!IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)) {
+			if (expired_gal_ephes >= AGNSS_EPHE_MIN_COUNT) {
+				gal_ephe_mask = GAL_SV_MASK;
+			}
+			if (expired_gal_alms >= AGNSS_ALM_MIN_COUNT) {
+				gal_alm_mask = GAL_SV_MASK;
+			}
+		}
+		if (agnss_expiry->ggto_expiry <= AGNSS_EXPIRY_THRESHOLD) {
+			agnss_request.data_flags |= NRF_MODEM_GNSS_AGNSS_GGTO_REQUEST;
+		}
 	}
 
 	if (agnss_expiry->utc_expiry <= AGNSS_EXPIRY_THRESHOLD) {
@@ -1155,19 +1235,36 @@ static void method_gnss_agnss_expiry_process(const struct nrf_modem_gnss_agnss_e
 	if (agnss_expiry->position_expiry == 0 &&
 	    (agnss_request.system[0].sv_mask_ephe != 0 ||
 	     agnss_request.system[0].sv_mask_alm != 0 ||
+	     gal_ephe_mask != 0 ||
+	     gal_alm_mask != 0 ||
 	     agnss_request.data_flags != 0)) {
 		agnss_request.data_flags |= NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST;
 	}
 
 	if (qzss_supported) {
-		agnss_request.system_count = 2;
-		agnss_request.system[1].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
-		agnss_request.system[1].sv_mask_ephe = expired_qzss_ephe_mask;
-		agnss_request.system[1].sv_mask_alm = expired_qzss_alm_mask;
+		agnss_request.system[agnss_request.system_count].system_id =
+			NRF_MODEM_GNSS_SYSTEM_QZSS;
+		agnss_request.system[agnss_request.system_count].sv_mask_ephe =
+			expired_qzss_ephe_mask;
+		agnss_request.system[agnss_request.system_count].sv_mask_alm =
+			expired_qzss_alm_mask;
+		agnss_request.system_count++;
+	}
+
+	if (gal_supported) {
+		agnss_request.system[agnss_request.system_count].system_id =
+			NRF_MODEM_GNSS_SYSTEM_GAL;
+		agnss_request.system[agnss_request.system_count].sv_mask_ephe = gal_ephe_mask;
+		agnss_request.system[agnss_request.system_count].sv_mask_alm = gal_alm_mask;
+		agnss_request.system_count++;
 	}
 
 #if defined(CONFIG_LOG) /* Flagged to get get_system_string() out of coverage metrics */
 	LOG_DBG("GPS: Expired ephemerides: %d, almanacs: %d", expired_gps_ephes, expired_gps_alms);
+	if (gal_supported) {
+		LOG_DBG("Galileo: Expired ephemerides: %d, almanacs: %d",
+			expired_gal_ephes, expired_gal_alms);
+	}
 
 	LOG_DBG("A-GNSS data need: data_flags: 0x%02x", agnss_request.data_flags);
 	for (int i = 0; i < agnss_request.system_count; i++) {

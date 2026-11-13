@@ -236,6 +236,24 @@ void tearDown(void)
 	mock_nrf_modem_at_Verify();
 }
 
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+static void agnss_request_verify(
+	const struct nrf_modem_gnss_agnss_data_frame *expected,
+	const struct nrf_modem_gnss_agnss_data_frame *request)
+{
+	TEST_ASSERT_EQUAL_HEX32(expected->data_flags, request->data_flags);
+	TEST_ASSERT_EQUAL(expected->system_count, request->system_count);
+
+	for (int i = 0; i < expected->system_count; i++) {
+		TEST_ASSERT_EQUAL(expected->system[i].system_id, request->system[i].system_id);
+		TEST_ASSERT_EQUAL_HEX64(
+			expected->system[i].sv_mask_ephe, request->system[i].sv_mask_ephe);
+		TEST_ASSERT_EQUAL_HEX64(
+			expected->system[i].sv_mask_alm, request->system[i].sv_mask_alm);
+	}
+}
+#endif
+
 static void location_event_data_verify(
 	const struct location_event_data *expected,
 	const struct location_event_data *event_data)
@@ -350,7 +368,14 @@ static void location_event_data_verify(
 		/* TODO: Verify data: event_data->error.details*/
 		break;
 	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST:
-		/* TODO: Verify data: event_data->agnss_request */
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+		/* A request always contains at least GPS, so zero system count in the expected
+		 * data means that the test doesn't verify the request.
+		 */
+		if (expected->agnss_request.system_count > 0) {
+			agnss_request_verify(&expected->agnss_request, &event_data->agnss_request);
+		}
+#endif
 		break;
 	case LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST:
 		/* TODO: Verify data: event_data->cloud_location_request*/
@@ -702,6 +727,341 @@ void test_location_gnss_agnss_no_request(void)
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 	k_sleep(K_MSEC(1));
+}
+
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+#define TEST_GAL_SV_MASK 0xfffffffffULL
+
+/* Performs a GNSS location request where GNSS reports the given A-GNSS expiry times and
+ * verifies that the expected A-GNSS data request is made.
+ *
+ * LTE is reported as not registered, so that the A-GNSS request timestamp is not stored and
+ * the A-GNSS request rate limiting doesn't affect the following tests.
+ */
+static void helper_location_gnss_agnss_request(
+	struct nrf_modem_gnss_agnss_expiry *agnss_expiry,
+	const struct nrf_modem_gnss_agnss_data_frame *expected_request)
+{
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_GNSS};
+
+	location_config_defaults_set(&config, 1, methods);
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_STARTED;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_GNSS;
+	location_cb_expected++;
+#endif
+
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_GNSS_ASSISTANCE_REQUEST;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_GNSS;
+	test_location_event_data[location_cb_expected].agnss_request = *expected_request;
+	location_cb_expected++;
+
+	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
+	test_pvt_data.latitude = 61.005;
+	test_pvt_data.longitude = -45.997;
+	test_pvt_data.accuracy = 15.83;
+	test_pvt_data.datetime.year = 2026;
+	test_pvt_data.datetime.month = 11;
+	test_pvt_data.datetime.day = 13;
+	test_pvt_data.datetime.hour = 12;
+	test_pvt_data.datetime.minute = 34;
+	test_pvt_data.datetime.seconds = 56;
+	test_pvt_data.datetime.ms = 789;
+	test_pvt_data.sv[0].sv = 2;
+	test_pvt_data.sv[0].flags = NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX;
+
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_LOCATION;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_GNSS;
+	test_location_event_data[location_cb_expected].location.latitude = 61.005;
+	test_location_event_data[location_cb_expected].location.longitude = -45.997;
+	test_location_event_data[location_cb_expected].location.accuracy = 15.83;
+	test_location_event_data[location_cb_expected].location.datetime.valid = true;
+	test_location_event_data[location_cb_expected].location.datetime.year = 2026;
+	test_location_event_data[location_cb_expected].location.datetime.month = 11;
+	test_location_event_data[location_cb_expected].location.datetime.day = 13;
+	test_location_event_data[location_cb_expected].location.datetime.hour = 12;
+	test_location_event_data[location_cb_expected].location.datetime.minute = 34;
+	test_location_event_data[location_cb_expected].location.datetime.second = 56;
+	test_location_event_data[location_cb_expected].location.datetime.ms = 789;
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	test_location_event_data[location_cb_expected].location.details.gnss.satellites_tracked = 1;
+	test_location_event_data[location_cb_expected].location.details.gnss.satellites_used = 1;
+	test_location_event_data[location_cb_expected].location.details.gnss.pvt_data =
+		test_pvt_data;
+#endif
+	location_cb_expected++;
+
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ExpectAndReturn(NULL, 0);
+	__cmock_nrf_modem_gnss_agnss_expiry_get_IgnoreArg_agnss_expiry();
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ReturnMemThruPtr_agnss_expiry(
+		agnss_expiry, sizeof(*agnss_expiry));
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CEREG?", "+CEREG: %*u,%hu,%*[^,],\"%x\",", 2);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(LTE_LC_NW_REG_NOT_REGISTERED); /* Status */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0x10012002); /* Cell ID */
+
+	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
+	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
+	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* NB-IoT support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
+#endif
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
+	/* Let GNSS start before sending the PVT event. */
+	k_sleep(K_MSEC(1));
+
+	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
+		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
+	__cmock_nrf_modem_gnss_read_IgnoreArg_buf();
+	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
+	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
+	k_sleep(K_MSEC(1));
+}
+#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL */
+
+/* Test that when GNSS uses Galileo, Galileo ephemerides and almanacs are requested together with
+ * GPS ephemerides and almanacs, and that expired GGTO triggers the request of all additional
+ * assistance data.
+ */
+void test_location_gnss_agnss_galileo(void)
+{
+#if !defined(CONFIG_LOCATION_TEST_AGNSS) || !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	TEST_IGNORE();
+#else
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
+		.utc_expiry = 120, /* valid */
+		.klob_expiry = 120, /* valid */
+		.neq_expiry = 120, /* valid */
+		.integrity_expiry = 120, /* valid */
+		.position_expiry = 120, /* valid */
+		.ggto_expiry = 50, /* expired */
+		.sv_count = 5,
+		.sv = {
+			/* Three expired GPS ephes and almanacs are needed to trigger a request. */
+			{
+				.sv_id = 1,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 50 /* expired */
+			},
+			{
+				.sv_id = 2,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 50 /* expired */
+			},
+			{
+				.sv_id = 3,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 50 /* expired */
+			},
+			{
+				.sv_id = 193,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_QZSS,
+				.ephe_expiry = 120, /* valid */
+				.alm_expiry = 120 /* valid */
+			},
+			/* Galileo ephes and almanacs are requested at the same time with GPS, when
+			 * Galileo is used. It's enough to have one Galileo SV and data doesn't even
+			 * have to be expired.
+			 */
+			{
+				.sv_id = 1,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GAL,
+				.ephe_expiry = 120, /* valid */
+				.alm_expiry = 120 /* valid */
+			},
+		}
+	};
+	struct nrf_modem_gnss_agnss_data_frame expected_request = {
+		.data_flags =
+			NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_GGTO_REQUEST,
+		.system_count = 3,
+		.system = {
+			{
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.sv_mask_ephe = 0xffffffff,
+				.sv_mask_alm = 0xffffffff
+			},
+			{
+				.system_id = NRF_MODEM_GNSS_SYSTEM_QZSS,
+				.sv_mask_ephe = 0x3ff,
+				.sv_mask_alm = 0x3ff
+			},
+			{
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GAL,
+				.sv_mask_ephe = TEST_GAL_SV_MASK,
+				.sv_mask_alm = TEST_GAL_SV_MASK
+			},
+		}
+	};
+
+	helper_location_gnss_agnss_request(&agnss_expiry, &expected_request);
+#endif
+}
+
+/* Test that expired Galileo ephemerides trigger an A-GNSS request even when no GPS assistance
+ * data is needed, and that QZSS ephemerides are requested together with Galileo ephemerides.
+ */
+void test_location_gnss_agnss_galileo_ephe_only(void)
+{
+#if !defined(CONFIG_LOCATION_TEST_AGNSS) || !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	TEST_IGNORE();
+#else
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
+		.utc_expiry = 120, /* valid */
+		.klob_expiry = 120, /* valid */
+		.neq_expiry = 120, /* valid */
+		.integrity_expiry = 120, /* valid */
+		.position_expiry = 120, /* valid */
+		.ggto_expiry = 120, /* valid */
+		.sv_count = 5,
+		.sv = {
+			{
+				.sv_id = 1,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 120, /* valid */
+				.alm_expiry = 120 /* valid */
+			},
+			{
+				.sv_id = 193,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_QZSS,
+				.ephe_expiry = 120, /* valid */
+				.alm_expiry = 120 /* valid */
+			},
+			/* Three expired Galileo ephes are needed to trigger a request. */
+			{
+				.sv_id = 1,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GAL,
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 120 /* valid */
+			},
+			{
+				.sv_id = 2,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GAL,
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 120 /* valid */
+			},
+			{
+				.sv_id = 36,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GAL,
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 120 /* valid */
+			},
+		}
+	};
+	struct nrf_modem_gnss_agnss_data_frame expected_request = {
+		.data_flags = 0,
+		.system_count = 3,
+		.system = {
+			{
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.sv_mask_ephe = 0x0,
+				.sv_mask_alm = 0x0
+			},
+			{
+				.system_id = NRF_MODEM_GNSS_SYSTEM_QZSS,
+				.sv_mask_ephe = 0x3ff,
+				.sv_mask_alm = 0x0
+			},
+			{
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GAL,
+				.sv_mask_ephe = TEST_GAL_SV_MASK,
+				.sv_mask_alm = 0x0
+			},
+		}
+	};
+
+	helper_location_gnss_agnss_request(&agnss_expiry, &expected_request);
+#endif
+}
+
+/* Test that no Galileo assistance data or GGTO is requested when GNSS doesn't support Galileo,
+ * that is, GNSS doesn't report expiry times for Galileo satellites.
+ */
+void test_location_gnss_agnss_galileo_not_supported(void)
+{
+#if !defined(CONFIG_LOCATION_TEST_AGNSS) || !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	TEST_IGNORE();
+#else
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
+		.utc_expiry = 120, /* valid */
+		.klob_expiry = 120, /* valid */
+		.neq_expiry = 120, /* valid */
+		.integrity_expiry = 120, /* valid */
+		.position_expiry = 0, /* expired */
+		.ggto_expiry = 0, /* expired, but ignored because Galileo is not supported */
+		.sv_count = 3,
+		.sv = {
+			{
+				.sv_id = 1,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 50 /* expired */
+			},
+			{
+				.sv_id = 2,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 50 /* expired */
+			},
+			{
+				.sv_id = 3,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 50 /* expired */
+			},
+		}
+	};
+	struct nrf_modem_gnss_agnss_data_frame expected_request = {
+		.data_flags =
+			NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST,
+		.system_count = 1,
+		.system = {
+			{
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.sv_mask_ephe = 0xffffffff,
+				.sv_mask_alm = 0xffffffff
+			},
+		}
+	};
+
+	helper_location_gnss_agnss_request(&agnss_expiry, &expected_request);
+#endif
 }
 
 /* Test successful GNSS location request. */
