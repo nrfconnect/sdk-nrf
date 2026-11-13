@@ -415,7 +415,9 @@ Debug libraries
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* :ref:`lib_dfu_target` library:
+
+  * Updated the library to clear the last page of the flash area when scheduling an update, in case the page contains leftover data from a previous operation.
 
 Gazell libraries
 ----------------
