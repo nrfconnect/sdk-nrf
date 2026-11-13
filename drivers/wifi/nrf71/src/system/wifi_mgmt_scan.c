@@ -22,7 +22,7 @@
 #include <system/core.h>
 #include <system/wifi_mgmt_scan.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 
@@ -121,15 +121,16 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	if (!scan_info) {
 		LOG_ERR("%s: Unable to allocate memory for scan_info (size: %d bytes)",
 			__func__,
-		       sizeof(*scan_info) + (num_scan_channels *
-					     sizeof(scan_info->scan_params.center_frequency[0])));
+			sizeof(*scan_info) + (num_scan_channels *
+			sizeof(scan_info->scan_params.center_frequency[0])));
 		goto out;
 	}
 
 	memset(scan_info, 0, sizeof(*scan_info) + (num_scan_channels *
 		sizeof(scan_info->scan_params.center_frequency[0])));
 
-	static uint8_t skip_local_admin_mac = IS_ENABLED(CONFIG_WIFI_NRF71_SKIP_LOCAL_ADMIN_MAC);
+	static uint8_t skip_local_admin_mac =
+		IS_ENABLED(CONFIG_NRF71_WIFI_SCAN_SKIP_LOCAL_ADMIN_MAC);
 
 	scan_info->scan_params.skip_local_admin_macs = skip_local_admin_mac;
 
@@ -200,7 +201,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 
 			if (scan_info->scan_params.center_frequency[k - 1] == -1) {
 				LOG_ERR("%s: Invalid channel %d", __func__,
-					 params->band_chan[i].channel);
+					params->band_chan[i].channel);
 				goto out;
 			}
 		}
@@ -210,13 +211,13 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 
 	vif_ctx_zep->scan_res_cnt = 0;
 	max_bss_cnt = vif_ctx_zep->max_bss_cnt ? vif_ctx_zep->max_bss_cnt :
-		      CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT;
+		      CONFIG_NRF71_WIFI_SCAN_MAX_BSS_CNT;
 	LOG_DBG("%s: max_bss_cnt = %d", __func__, max_bss_cnt);
 	scan_info->scan_db_len = max_bss_cnt * sizeof(struct umac_display_results);
 
-#ifdef CONFIG_NRF71_PASSIVE_SCAN
+#ifdef CONFIG_NRF71_WIFI_FORCE_PASSIVE_SCAN
 	scan_info->scan_params.passive_scan = 1;
-#endif /* CONFIG_NRF71_PASSIVE_SCAN */
+#endif /* CONFIG_NRF71_WIFI_FORCE_PASSIVE_SCAN */
 
 	status = nrf_wifi_sys_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, scan_info);
 
@@ -229,7 +230,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	vif_ctx_zep->scan_in_progress = true;
 
 	k_work_schedule(&vif_ctx_zep->scan_timeout_work,
-		K_SECONDS(CONFIG_WIFI_NRF71_SCAN_TIMEOUT_S));
+			K_SECONDS(CONFIG_NRF71_WIFI_SCAN_TIMEOUT));
 
 	ret = 0;
 out:
@@ -327,8 +328,8 @@ static int nrf_wifi_scan_res_rssi_cmp(const void *a, const void *b)
 }
 
 void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
-				struct nrf_wifi_umac_event_scan_done *scan_done_event,
-				unsigned int event_len)
+					   struct nrf_wifi_umac_event_scan_done *scan_done_event,
+					   unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct umac_display_results *display_results = NULL;
@@ -357,7 +358,7 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	}
 
 	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
-		vif_ctx_zep->max_bss_cnt : CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT;
+		vif_ctx_zep->max_bss_cnt : CONFIG_NRF71_WIFI_SCAN_MAX_BSS_CNT;
 
 	display_results = (struct umac_display_results *)(uintptr_t)scan_db_addr;
 
@@ -469,13 +470,13 @@ void nrf_wifi_rx_bcn_prb_resp_frm(void *vif_ctx,
 
 	if (frame_length > CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH) {
 		nrf_wifi_mem_cpy(&bcn_prb_resp_info.data,
-				      nrf_wifi_nbuf_data_get(nwb),
-				      CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH);
+				 nrf_wifi_nbuf_data_get(nwb),
+				 CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH);
 
 	} else {
 		nrf_wifi_mem_cpy(&bcn_prb_resp_info.data,
-				      nrf_wifi_nbuf_data_get(nwb),
-				      frame_length);
+				 nrf_wifi_nbuf_data_get(nwb),
+				 frame_length);
 	}
 
 	bcn_prb_resp_info.rssi = MBM_TO_DBM(val);

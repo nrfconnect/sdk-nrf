@@ -26,7 +26,7 @@
 #include <vtf_monitoring/vtf_monitoring.h>
 
 #define DT_DRV_COMPAT nordic_wlan
-LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 struct nrf_wifi_rt_drv_priv rt_drv_priv;
 
@@ -85,15 +85,15 @@ static enum nrf_wifi_status nrf_wifi_rt_drv_dev_add(struct nrf_wifi_rt_drv_priv 
 	configure_tx_pwr_settings(&tx_pwr_ctrl_params, &tx_pwr_ceil_params);
 
 	status = nrf_wifi_rt_fmac_dev_init(rpu_ctx,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 					   SLEEP_DISABLE,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 					   NRF_WIFI_DEF_PHY_CALIB,
 					   op_band,
-					   IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
+					   IS_ENABLED(CONFIG_NRF71_WIFI_BEAMFORMING),
 					   &tx_pwr_ctrl_params,
 					   &tx_pwr_ceil_params,
-					   STRINGIFY(CONFIG_NRF71_REG_DOMAIN),
+					   STRINGIFY(CONFIG_NRF71_WIFI_REG_DOMAIN),
 					   drv_ctx->phy_rf_params_addr,
 					   drv_ctx->vtf_buffer_start_address);
 

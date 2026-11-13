@@ -18,7 +18,7 @@
 #include <zephyr/net/net_pkt.h>
 #include <zephyr/net/ethernet.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 /*
  * Tailroom reserved after the payload in every copied TX data buffer.
@@ -67,12 +67,12 @@ void nrf_wifi_nbuf_free(void *nbuf)
 		return;
 	}
 
-#ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
+#ifdef CONFIG_NRF71_WIFI_ZERO_COPY_TX
 	if (nwb->pkt) {
 		net_pkt_unref(nwb->pkt);
 		nwb->pkt = NULL;
 	}
-#endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */
+#endif /* CONFIG_NRF71_WIFI_ZERO_COPY_TX */
 
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_DATA, nwb->priv);
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_DATA, nwb);
@@ -163,7 +163,7 @@ void nrf_wifi_nbuf_set_chksum_done(void *nbuf, unsigned char chksum_done)
 	((struct nrf_wifi_nwb *)nbuf)->chksum_done = (bool)chksum_done;
 }
 
-#if defined(CONFIG_NRF71_RAW_DATA_TX)
+#if defined(CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT)
 void *nrf_wifi_nbuf_set_raw_tx_hdr(void *nbuf, unsigned short raw_hdr_len)
 {
 	struct nrf_wifi_nwb *nwb = nbuf;
@@ -207,9 +207,9 @@ bool nrf_wifi_nbuf_is_raw_tx(void *nbuf)
 
 	return (nwb->raw_tx_hdr != NULL);
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 
-#ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
+#ifdef CONFIG_NRF71_WIFI_ZERO_COPY_TX
 static void *nrf_wifi_net_pkt_to_nbuf_zc(struct net_pkt *pkt)
 {
 	struct nrf_wifi_nwb *nbuff;
@@ -240,7 +240,7 @@ static void *nrf_wifi_net_pkt_to_nbuf_zc(struct net_pkt *pkt)
 
 	return nbuff;
 }
-#endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */
+#endif /* CONFIG_NRF71_WIFI_ZERO_COPY_TX */
 
 void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt)
 {
@@ -252,11 +252,11 @@ void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt)
 		return NULL;
 	}
 
-#ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
+#ifdef CONFIG_NRF71_WIFI_ZERO_COPY_TX
 	if (pkt->buffer && !pkt->buffer->frags) {
 		return nrf_wifi_net_pkt_to_nbuf_zc(pkt);
 	}
-#endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */
+#endif /* CONFIG_NRF71_WIFI_ZERO_COPY_TX */
 
 	len = net_pkt_get_len(pkt);
 
@@ -307,7 +307,7 @@ out:
 	return pkt;
 }
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 struct net_pkt *nrf_wifi_net_raw_pkt_from_nbuf(void *iface, void *frm,
 					       unsigned short raw_hdr_len,
 					       void *raw_rx_hdr,
@@ -360,4 +360,4 @@ out:
 
 	return pkt;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */

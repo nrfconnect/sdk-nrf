@@ -17,7 +17,7 @@
 #include <system/fmac_peer.h>
 #include <system/fmac_tx.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					      struct nrf_wifi_sap_ps_get_frames *config)

@@ -18,6 +18,9 @@
 #define WORD_SIZE 4
 #define WORD_ALIGNED(size) ROUND_UP(size, WORD_SIZE)
 
+/** @brief Firmware GDRAM buffer size for connect-scan results (bytes). */
+#define NRF71_CONNECT_SCAN_DB_SIZE 8192U
+
 /**
  * @brief The type of memory pool to allocate from.
  */

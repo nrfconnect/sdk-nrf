@@ -25,9 +25,9 @@
 #include <system/net_if.h>
 #endif /* CONFIG_NETWORKING */
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 #include <drivers/driver_zephyr.h>
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 #include <system/fmac_api.h>
 #include <system/drv_dbg_stats.h>
@@ -74,19 +74,19 @@ struct nrf_wifi_vif_ctx_zep {
 #endif /* CONFIG_NET_STATISTICS_ETHERNET_VENDOR */
 	struct net_stats_eth eth_stats;
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 	bool authorized;
 	enum nrf_wifi_fmac_if_carr_state if_carr_state;
 	struct k_work nrf_wifi_net_iface_work;
-#endif /* CONFIG_NRF71_DATA_TX */
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	/** Last base mode from WiFi mgmt set_mode (e.g. MONITOR/STA). Used when
 	 *  building combined mode for TX injection so we send the intended base
 	 *  even before the async mode event has been applied.
 	 */
 	unsigned char requested_wifi_mode;
 #endif
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 	unsigned int assoc_freq;
 	struct wpa_signal_info *signal_info;
 	struct wpa_conn_info *conn_info;
@@ -99,21 +99,19 @@ struct nrf_wifi_vif_ctx_zep {
 	uint64_t rssi_record_timestamp_us;
 	signed short rssi;
 	unsigned int tx_rate_kbps;
-#ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
 	/* Connect scan results database cached from the scan done event, read
 	 * on the supplicant's get scan results call and freed right after.
 	 */
 	unsigned int connect_scan_db_addr;
 	unsigned int connect_scan_res_cnt;
-#endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
-#endif /* CONFIG_NRF71_STA_MODE */
-#ifdef CONFIG_NRF71_AP_MODE
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_AP_SUPPORT
 	int inactive_time_sec;
-#endif /* CONFIG_NRF71_AP_MODE */
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#endif /* CONFIG_NRF71_WIFI_AP_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY
 	struct k_work nrf_wifi_rpu_recovery_work;
 	struct k_work_delayable nrf_wifi_rpu_recovery_bringup_work;
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 	int rts_threshold_value;
 	unsigned short bss_max_idle_period;
 };
@@ -127,15 +125,15 @@ struct nrf_wifi_ctx_zep {
 	void *drv_priv_zep;
 	void *rpu_ctx;
 	struct nrf_wifi_vif_ctx_zep vif_ctx_zep[MAX_NUM_VIFS];
-#ifdef CONFIG_NRF71_UTIL
+#ifdef CONFIG_NRF71_WIFI_UTIL_SHELL
 	struct rpu_conf_params conf_params;
 	unsigned int extended_sleep_sec;
 	struct nrf_wifi_drv_dbg_stats drv_dbg_stats;
-#endif /* CONFIG_NRF71_UTIL */
+#endif /* CONFIG_NRF71_WIFI_UTIL_SHELL */
 	unsigned char *extended_capa, *extended_capa_mask;
 	unsigned int extended_capa_len;
 	struct k_mutex rpu_lock;
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY
 	bool rpu_recovery_in_progress;
 	k_timepoint_t rpu_recovery_quiet_end;
 	k_timepoint_t rpu_recovery_retry_window_end;
@@ -144,10 +142,10 @@ struct nrf_wifi_ctx_zep {
 	int rpu_recovery_failure;
 	int wdt_irq_received;
 	int wdt_irq_ignored;
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS];
 	unsigned int vtf_buffer_start_address;
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT)
 	struct k_sem channel_set_done_sem;
 	volatile int channel_set_status;
 #endif
@@ -174,7 +172,7 @@ static inline struct nrf_wifi_fmac_vif_ctx *nrf_wifi_get_fmac_vif_ctx(
 	return sys_dev_ctx ? sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx] : NULL;
 }
 
-#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#ifdef CONFIG_NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 /**
  * @brief Whether TCP/IP checksum offload to the RPU is allowed on this VIF.
  *
@@ -190,7 +188,7 @@ static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_v
 		return false;
 	}
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_WIFI_STA_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT)
 	{
 		struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
 		unsigned int i;
@@ -208,15 +206,15 @@ static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_v
 			}
 		}
 	}
-#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT || CONFIG_NRF71_WIFI_MONITOR_SUPPORT */
 
 	return true;
 }
-#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+#endif /* CONFIG_NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
 
 static inline bool nrf_wifi_txinjection_active(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
 
 	return fmac_vif_ctx && fmac_vif_ctx->txinjection_mode;
@@ -224,12 +222,12 @@ static inline bool nrf_wifi_txinjection_active(struct nrf_wifi_vif_ctx_zep *vif_
 	ARG_UNUSED(vif_ctx_zep);
 
 	return false;
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 }
 
 static inline void nrf_wifi_clear_txinjection(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
 
 	if (fmac_vif_ctx) {
@@ -237,28 +235,28 @@ static inline void nrf_wifi_clear_txinjection(struct nrf_wifi_vif_ctx_zep *vif_c
 	}
 #else
 	ARG_UNUSED(vif_ctx_zep);
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 }
 
 static inline void nrf_wifi_clear_session_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
 	nrf_wifi_clear_txinjection(vif_ctx_zep);
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 	vif_ctx_zep->authorized = false;
 	vif_ctx_zep->if_carr_state = NRF_WIFI_FMAC_IF_CARR_STATE_OFF;
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 }
 
 static inline void nrf_wifi_refresh_oper_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 	k_work_submit(&vif_ctx_zep->nrf_wifi_net_iface_work);
 #else
 	ARG_UNUSED(vif_ctx_zep);
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 }
 
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 /* Single decision point for the dormant gate. Callers must hold vif_lock: this
  * reaches the FMAC device context through rpu_ctx, which is freed under that
  * lock.
@@ -275,7 +273,7 @@ static inline bool nrf_wifi_iface_operational(struct nrf_wifi_vif_ctx_zep *vif_c
 
 	return vif_ctx_zep->authorized || nrf_wifi_txinjection_active(vif_ctx_zep);
 }
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 
 struct nrf_wifi_drv_priv_zep {
 	struct nrf_wifi_fmac_priv *fmac_priv;
@@ -284,11 +282,11 @@ struct nrf_wifi_drv_priv_zep {
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY
 void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
-		void *event_data,
-		unsigned int event_len);
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+			      void *event_data,
+			      unsigned int event_len);
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);

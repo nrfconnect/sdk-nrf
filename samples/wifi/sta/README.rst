@@ -215,7 +215,7 @@ To test RPU recovery, you must build the sample with the :kconfig:option:`CONFIG
 nRF71 Series
 ------------
 
-To test RPU recovery, you must build the sample with the :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF71_UTIL` Kconfig options.
+To test RPU recovery, you must build the sample with the :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF71_WIFI_UTIL_SHELL` Kconfig options.
 
 #. Trigger RPU recovery using the following command:
 

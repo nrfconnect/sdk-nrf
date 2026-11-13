@@ -4,5 +4,5 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-add_subdirectory_ifdef(CONFIG_WIFI_NRF71 nrf71)
+add_subdirectory_ifdef(CONFIG_NRF71_WIFI nrf71)
 add_subdirectory_ifdef(CONFIG_WIFI_NRF92 nrf92)

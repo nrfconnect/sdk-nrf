@@ -5,23 +5,30 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-menuconfig WIFI_NRF71
-	bool "nRF71 driver"
+menuconfig NRF71_WIFI
+	bool "nRF71 Wi-Fi driver"
 	select NET_L2_WIFI_MGMT if NETWORKING
 	select NET_L2_ETHERNET_MGMT if NETWORKING && NET_L2_ETHERNET
 	select WIFI_USE_NATIVE_NETWORKING if NETWORKING
-	select EXPERIMENTAL if !SOC_SERIES_NRF53 && !SOC_SERIES_NRF91
+	select EXPERIMENTAL
 	select IPC_SERVICE
 	select MBOX
 	select SPSC_PBUF
 	select SOC_NRF71_WIFI_BOOT
 	select VTF_MONITORING
+	select NRF_WIFI_KMU
 	default y
 	depends on DT_HAS_NORDIC_NRF7120_WIFI_ENABLED
 	help
 	  Nordic nRF71 Wi-Fi Driver
 
-if WIFI_NRF71
+if NRF71_WIFI
+
+config WIFI_NRF71
+	bool
+	default y
+	help
+	  Compatibility symbol for Kconfig that still references WIFI_NRF71.
 
 # IPC overrides
 config IPC_SERVICE_BACKEND_ICMSG
@@ -30,7 +37,7 @@ config IPC_SERVICE_BACKEND_ICMSG
 config IPC_SERVICE_BACKEND_ICMSG_WQ_STACK_SIZE
 	default 5600
 
-config NRF71_IPC_BIND_TIMEOUT_MS
+config NRF71_WIFI_IPC_BIND_TIMEOUT_MS
 	int "IPC endpoint bind timeout (ms)"
 	default 5000
 	help
@@ -38,7 +45,7 @@ config NRF71_IPC_BIND_TIMEOUT_MS
 	  registration. The Wi-Fi UMAC peer must register its endpoint before
 	  bind completes. On timeout host-RPU transport open fails.
 
-config NRF71_IPC_SEND_TIMEOUT_MS
+config NRF71_WIFI_IPC_SEND_TIMEOUT_MS
 	int "IPC host TX send timeout (ms)"
 	default 5000
 	help
@@ -46,19 +53,19 @@ config NRF71_IPC_SEND_TIMEOUT_MS
 	  a command or TX buffer after the endpoint is bound. On timeout
 	  ipc_send() returns -ETIMEDOUT.
 
-config NRF71_IPC_SEND_RETRY_INTERVAL_US
+config NRF71_WIFI_IPC_SEND_RETRY_INTERVAL_US
 	int "IPC host TX retry interval (us)"
 	default 100
 	help
 	  Delay between retries when the IPC busy queue is not ready.
 
-choice NRF71_OPER_MODES
+choice NRF71_WIFI_OPER_MODES
 	bool "nRF71 operating modes"
-	default NRF71_SYSTEM_MODE
+	default NRF71_WIFI_SYSTEM_MODE
 	help
 	  Select the operating mode of the nRF71 driver
 
-config NRF71_SYSTEM_MODE
+config NRF71_WIFI_SYSTEM_MODE
 	bool "System mode of the nRF71 driver"
 	help
 	  Select this option to enable system mode of the nRF71 driver.
@@ -66,7 +73,7 @@ config NRF71_SYSTEM_MODE
 	  functionality including sub-modes like STA, AP, and P2P.
 	  Scan functionality is available as a sub-option of system mode.
 
-config NRF71_RADIO_TEST
+config NRF71_WIFI_RADIO_TEST_MODE
 	bool "Radio test mode of the nRF71 driver"
 	help
 	  Select this option to enable radio test mode of the nRF71 driver.
@@ -74,7 +81,7 @@ config NRF71_RADIO_TEST
 	  compliance. It provides direct control of the radio hardware
 	  for transmitting test patterns and measuring RF parameters.
 
-config NRF71_OFFLOADED_RAW_TX
+config NRF71_WIFI_OFFLOADED_RAW_TX_MODE
 	bool "Offloaded raw TX mode of the nRF71 driver"
 	help
 	  Select this option to enable offloaded raw TX mode.
@@ -86,11 +93,11 @@ config NRF71_OFFLOADED_RAW_TX
 endchoice
 
 config NET_L2_ETHERNET
-	default y if (!NRF71_RADIO_TEST && !NRF71_OFFLOADED_RAW_TX)
+	default y if (!NRF71_WIFI_RADIO_TEST_MODE && !NRF71_WIFI_OFFLOADED_RAW_TX_MODE)
 
-if NRF71_SYSTEM_MODE
+if NRF71_WIFI_SYSTEM_MODE
 
-config NRF71_SCAN
+config NRF71_WIFI_SCAN_SUPPORT
 	bool "Wi-Fi scan support"
 	default y if WIFI_USAGE_MODE_SCAN_ONLY
 	help
@@ -100,86 +107,87 @@ config NRF71_SCAN
 	  When enabled without any connection sub-mode, the driver
 	  operates in scan-only mode for discovering nearby networks.
 
-config NRF71_STA_MODE
+config NRF71_WIFI_STA_SUPPORT
 	bool "nRF71 STA mode"
 	default y if WIFI_USAGE_MODE_STA || WIFI_USAGE_MODE_STA_AP
 	select WIFI_NM_WPA_SUPPLICANT
-	select NRF71_DATA_TX
-	select NRF71_SCAN
+	select NRF71_WIFI_DATA_TX
+	select NRF71_WIFI_SCAN_SUPPORT
 	help
 	  Select this option to enable STA mode of the nRF71 driver.
 
-config NRF71_AP_MODE
+config NRF71_WIFI_AP_SUPPORT
 	bool "Access point mode"
 	depends on WIFI_NM_WPA_SUPPLICANT_AP
-	select NRF71_DATA_TX
-	select NRF71_SCAN
+	select NRF71_WIFI_DATA_TX
+	select NRF71_WIFI_SCAN_SUPPORT
 	default y if WIFI_USAGE_MODE_AP || WIFI_USAGE_MODE_STA_AP
 
-config NRF71_P2P_MODE
+config NRF71_WIFI_P2P_SUPPORT
 	bool "P2P support in driver"
 	default y if WIFI_NM_WPA_SUPPLICANT_P2P
-	select NRF71_SCAN
+	select NRF71_WIFI_SCAN_SUPPORT
 
-config NRF71_SYSTEM_WITH_RAW_MODES
-	bool "nRF71 system mode with raw modes"
-	default y if (NRF71_RAW_DATA_TX || NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX)
-	help
-	  Select this option to enable system mode of the nRF71 driver with raw modes.
+config NRF71_WIFI_RAW_DATA_SUPPORT
+	bool
 
-config NRF71_RAW_DATA_TX
+config NRF71_WIFI_TX_INJECTION_SUPPORT
 	bool "RAW TX data path in the driver [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	select NRF71_WIFI_RAW_DATA_SUPPORT
 
-config NRF71_RAW_DATA_RX
+config NRF71_WIFI_MONITOR_SUPPORT
 	bool "RAW RX sniffer operation in the driver [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	select NRF71_WIFI_RAW_DATA_SUPPORT
 
-config NRF71_PROMISC_DATA_RX
+config NRF71_WIFI_PROMISCUOUS_SUPPORT
 	bool "Promiscuous RX sniffer operation in the driver [EXPERIMENTAL]"
 	select WIFI_NM_WPA_SUPPLICANT
 	select EXPERIMENTAL
 	select NET_PROMISCUOUS_MODE
+	select NRF71_WIFI_RAW_DATA_SUPPORT
 
-config NRF71_DATA_TX
+config NRF71_WIFI_DATA_TX
 	bool
 
-config NRF71_SCAN_ONLY
+config NRF71_WIFI_SCAN_ONLY
 	bool
-	default y if NRF71_SCAN && !NRF71_STA_MODE && !NRF71_AP_MODE && \
-		!NRF71_P2P_MODE && !NRF71_RAW_DATA_TX && !NRF71_RAW_DATA_RX && \
-		!NRF71_PROMISC_DATA_RX
+	default y if NRF71_WIFI_SCAN_SUPPORT && !NRF71_WIFI_STA_SUPPORT && \
+		!NRF71_WIFI_AP_SUPPORT && !NRF71_WIFI_P2P_SUPPORT && \
+		!NRF71_WIFI_TX_INJECTION_SUPPORT && !NRF71_WIFI_MONITOR_SUPPORT && \
+		!NRF71_WIFI_PROMISCUOUS_SUPPORT
 
-config NRF71_ENABLE_DUAL_VIF
+config NRF71_WIFI_DUAL_VIF_SUPPORT
 	bool "Dual virtual Wi-Fi interfaces"
-	depends on !NRF71_SCAN_ONLY
+	depends on !NRF71_WIFI_SCAN_ONLY
 	default y if WIFI_NM_MAX_MANAGED_INTERFACES = 2
 	help
 	  Enable support for two virtual Wi-Fi interfaces (VIFs).
 	  When enabled, the driver can operate two VIFs simultaneously,
 	  allowing use cases such as one interface in AP mode and another in STA mode.
 
-endif # NRF71_SYSTEM_MODE
+endif # NRF71_WIFI_SYSTEM_MODE
 
-config NRF_WIFI_IF_AUTO_START
+config NRF71_WIFI_IF_AUTO_START_SUPPORT
 	bool "Wi-Fi interface auto start on boot"
 	default y
 
-config NRF_WIFI_LOW_POWER
+config NRF71_WIFI_LOW_POWER_SUPPORT
 	bool "Low power mode in nRF Wi-Fi chipsets"
-	depends on !NRF71_RADIO_TEST && !NRF71_AP_MODE
+	depends on !NRF71_WIFI_RADIO_TEST_MODE && !NRF71_WIFI_AP_SUPPORT
 	default y
 
-config NRF_WIFI_LP_RX
+config NRF71_WIFI_LP_RX_SUPPORT
 	bool "Low power RF mode in nRF Wi-Fi chipsets"
-	depends on NRF_WIFI_LOW_POWER
+	depends on NRF71_WIFI_LOW_POWER_SUPPORT
 	default y
 	help
 	  Enable low power RX in the LMAC tuning parameters sent to the RPU.
 
-config NRF_WIFI_BET
+config NRF71_WIFI_BET_SUPPORT
 	bool "Beacon early termination (BET) in nRF Wi-Fi chipsets"
-	depends on NRF_WIFI_LOW_POWER
+	depends on NRF71_WIFI_LOW_POWER_SUPPORT
 	default y
 	help
 	  Enable beacon early termination in the LMAC tuning parameters sent
@@ -187,14 +195,14 @@ config NRF_WIFI_BET
 	  determines that none of the fields the host cares about have
 	  changed, cutting short the RX window and saving power.
 
-config NRF71_TCP_IP_CHECKSUM_OFFLOAD
+config NRF71_WIFI_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	bool "TCP/IP checksum offload"
-	depends on NRF71_DATA_TX
-	default y if !NRF71_RADIO_TEST
+	depends on NRF71_WIFI_DATA_TX
+	default y if NRF71_WIFI_SYSTEM_MODE
 	help
 	  Enable TCP/IP checksum offload for Wi-Fi driver.
 
-config NRF71_REG_DOMAIN
+config NRF71_WIFI_REG_DOMAIN
 	string "The ISO/IEC alpha2"
 	# 00 is used for World regulatory
 	default "00"
@@ -207,40 +215,40 @@ config NET_MGMT_EVENT_STACK_SIZE
 	default 2048 if !WIFI_NM_WPA_SUPPLICANT
 	default 4600
 
-config NRF71_LOG_VERBOSE
+config NRF71_WIFI_LOG_VERBOSE
 	bool "Maintain the verbosity of information in logs"
 	default y
 
-module = WIFI_NRF71
+module = NRF71_WIFI
 module-str = Log level for Wi-Fi nRF71 driver
 module-help = Sets log level for Wi-Fi nRF71 driver
 source "subsys/logging/Kconfig.template.log_config"
 
-config WIFI_NRF71_LOG_LEVEL
+config NRF71_WIFI_LOG_LEVEL
 	# Enable error by default
 	default 1
 
-config NRF71_MAX_TX_PENDING_QLEN
+config NRF71_WIFI_MAX_TX_PENDING_QLEN
 	int "Maximum number of pending TX packets"
 	default 18
 
-config NRF71_UTIL
+config NRF71_WIFI_UTIL_SHELL
 	bool "Utility shell in nRF71 driver"
-	depends on SHELL && NRF71_SYSTEM_MODE
+	depends on SHELL && NRF71_WIFI_SYSTEM_MODE
 
-config NRF71_DEBUG_SHELL
+config NRF71_WIFI_DEBUG_SHELL
 	bool "Debug shell in nRF71 driver"
-	depends on SHELL && NRF71_SYSTEM_MODE
+	depends on SHELL && NRF71_WIFI_SYSTEM_MODE
 	select SYS_HEAP_RUNTIME_STATS
 	help
 	  Register the "nrf71 dbg" shell commands to read and clear
 	  UMAC/LMAC/PHY statistics and debug statistics from the RPU,
 	  and to show host TX queue and driver heap usage statistics.
 
-config NRF71_RADIO_TEST_SHELL
+config NRF71_WIFI_RADIO_TEST_SHELL
 	bool "Radio test shell commands"
 	default y
-	depends on NRF71_RADIO_TEST && SHELL
+	depends on NRF71_WIFI_RADIO_TEST_MODE && SHELL
 	help
 	  Register the wifi_radio_test shell command set for nRF71 radio test
 	  mode. Disable to provide a custom shell integration in the application.
@@ -253,67 +261,68 @@ config NRF71_RADIO_TEST_SHELL
 
 # Performance fine tuning options
 
-config NRF71_RX_NUM_BUFS
+config NRF71_WIFI_RX_NUM_BUFS
 	int "Number of RX buffers"
 	range 3 256
-	default 6 if !NRF71_DATA_TX
+	default 6 if !NRF71_WIFI_DATA_TX
 	default 16
 
-config NRF71_MAX_TX_AGGREGATION
+config NRF71_WIFI_MAX_TX_AGGREGATION
 	int "Maximum number of TX packets to aggregate"
 	default 4
 
-config NRF71_MAX_TX_TOKENS
+config NRF71_WIFI_MAX_TX_TOKENS
 	int "Maximum number of TX tokens"
-	range 5 12 if !NRF71_RADIO_TEST
+	range 5 12 if !NRF71_WIFI_RADIO_TEST_MODE
 	default 10
 
-config NRF71_TX_MAX_DATA_SIZE
+config NRF71_WIFI_TX_MAX_DATA_SIZE
 	int "Maximum size of TX data"
 	default 1600
 
-config NRF71_RX_MAX_DATA_SIZE
+config NRF71_WIFI_RX_MAX_DATA_SIZE
 	int "Maximum size of RX data"
 	range 400 65536
-	default 1000 if !NRF71_DATA_TX
+	default 1000 if !NRF71_WIFI_DATA_TX
 	default 1600
 
-config NRF71_TX_DONE_WQ_ENABLED
+config NRF71_WIFI_TX_DONE_WQ_ENABLED
 	bool "TX done workqueue (impacts performance negatively)"
 
-config NRF71_RX_WQ_ENABLED
+config NRF71_WIFI_RX_WQ_ENABLED
 	bool "RX workqueue"
 
-if NRF71_TX_DONE_WQ_ENABLED
+if NRF71_WIFI_TX_DONE_WQ_ENABLED
 
-config NRF71_TX_DONE_WQ_PRIORITY
+config NRF71_WIFI_TX_DONE_WQ_PRIORITY
 	int "Priority of the workqueue for handling TX done"
 	default 0
 
-config NRF71_TX_DONE_WQ_STACK_SIZE
+config NRF71_WIFI_TX_DONE_WQ_STACK_SIZE
 	int "Stack size of the workqueue for handling TX done"
 	default 2048
 
-endif # NRF71_TX_DONE_WQ_ENABLED
-if NRF71_RX_WQ_ENABLED
+endif # NRF71_WIFI_TX_DONE_WQ_ENABLED
 
-config NRF71_RX_WQ_PRIORITY
+if NRF71_WIFI_RX_WQ_ENABLED
+
+config NRF71_WIFI_RX_WQ_PRIORITY
 	int "Priority of the workqueue for handling RX"
 	default 0
 
-config NRF71_RX_WQ_STACK_SIZE
+config NRF71_WIFI_RX_WQ_STACK_SIZE
 	int "Stack size of the workqueue for handling RX"
 	default 2048
 
-endif # NRF71_RX_WQ_ENABLED
+endif # NRF71_WIFI_RX_WQ_ENABLED
 
-if NRF_WIFI_LOW_POWER
+if NRF71_WIFI_LOW_POWER_SUPPORT
 
-config NRF71_RPU_PS_IDLE_TIMEOUT_MS
+config NRF71_WIFI_RPU_PS_IDLE_TIMEOUT_MS
 	int "RPU power save idle timeout in milliseconds"
 	default 10
 
-config NRF71_RPU_EXTEND_TWT_SP
+config NRF71_WIFI_RPU_EXTEND_TWT_SP
 	bool "Extending TWT service period"
 	help
 	  In case frames accepted before the beginning of SP are not
@@ -328,24 +337,24 @@ config NRF71_RPU_EXTEND_TWT_SP
 	  Note that if a frame is sent after the SP starts, it will be queued, and this
 	  mechanism is not used.
 
-endif # NRF_WIFI_LOW_POWER
+endif # NRF71_WIFI_LOW_POWER_SUPPORT
 
-config WIFI_FIXED_MAC_ADDRESS
+config NRF71_WIFI_FIXED_MAC_ADDRESS
 	string "Wi-Fi Fixed MAC address in format XX:XX:XX:XX:XX:XX"
 	help
 	  This option overrides the MAC address read from the xICR registers and
 	  is used for the first interface. It is strictly for testing purposes only.
 
-choice WIFI_MAC_ADDRESS
+choice NRF71_WIFI_MAC_ADDRESS
 	prompt "Wi-Fi MAC address type"
-	default WIFI_FIXED_MAC_ADDRESS_ENABLED if WIFI_FIXED_MAC_ADDRESS != ""
-	default WIFI_NRF71_XICR_MAC_ADDRESS
+	default NRF71_WIFI_FIXED_MAC_ADDRESS_ENABLED if NRF71_WIFI_FIXED_MAC_ADDRESS != ""
+	default NRF71_WIFI_XICR_MAC_ADDRESS
 	help
 	  Select the type of MAC address to be used by the Wi-Fi driver.
 	  A MAC address configured at runtime through the net_mgmt API always
 	  takes precedence over the selected type.
 
-config WIFI_NRF71_XICR_MAC_ADDRESS
+config NRF71_WIFI_XICR_MAC_ADDRESS
 	bool "Use MAC address from the xICR registers"
 	help
 	  This option uses the MAC address programmed in the MACADDR registers of
@@ -358,16 +367,16 @@ config WIFI_NRF71_XICR_MAC_ADDRESS
 	  it by incrementing the device-unique part and setting the locally
 	  administered bit.
 
-config WIFI_FIXED_MAC_ADDRESS_ENABLED
+config NRF71_WIFI_FIXED_MAC_ADDRESS_ENABLED
 	bool "Fixed MAC address"
 	help
 	  Enable fixed MAC address.
-	  The address configured in WIFI_FIXED_MAC_ADDRESS is used for the first
+	  The address configured in NRF71_WIFI_FIXED_MAC_ADDRESS is used for the first
 	  interface. The remaining interfaces derive their address from it by
 	  incrementing the device-unique part and setting the locally administered
 	  bit, so that they do not share an address with the first interface.
 
-config WIFI_RANDOM_MAC_ADDRESS
+config NRF71_WIFI_RANDOM_MAC_ADDRESS
 	bool "Random MAC address generation at runtime"
 	depends on ENTROPY_GENERATOR
 	help
@@ -378,9 +387,9 @@ config WIFI_RANDOM_MAC_ADDRESS
 
 endchoice
 
-config WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM
+config NRF71_WIFI_XICR_MAC_ADDRESS_FALLBACK_RANDOM
 	bool "Fall back to a locally administered MAC address"
-	depends on WIFI_NRF71_XICR_MAC_ADDRESS
+	depends on NRF71_WIFI_XICR_MAC_ADDRESS
 	default y
 	help
 	  Generate a locally administered MAC address if neither UICR nor FICR
@@ -392,7 +401,7 @@ config WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM
 	  Disable this option to bring up the interface only with a MAC address
 	  that has been programmed.
 
-config NRF71_GET_STA_STALE_TIMEOUT_MS
+config NRF71_WIFI_GET_STA_STALE_TIMEOUT_MS
 	int "Station info stale timeout in milliseconds"
 	default 1000
 	help
@@ -405,16 +414,16 @@ config NRF71_GET_STA_STALE_TIMEOUT_MS
 	  If no frame has been received within this period, the driver
 	  queries the RPU instead.
 
-config NRF_WIFI_CTRL_HEAP_SIZE
+config NRF71_WIFI_CTRL_HEAP_SIZE
 	int "Dedicated memory pool for control plane"
 	# New IPC design uses RAM for commands and events and hold till
 	# Wi-Fi core processes them, so, need more RAM.
 	default 40000
 
-config NRF_WIFI_DATA_HEAP_SIZE
+config NRF71_WIFI_DATA_HEAP_SIZE
 	int "Dedicated memory pool for data plane"
-	default 0 if NRF71_RADIO_TEST || NRF71_OFFLOADED_RAW_TX
-	default 8000 if NRF71_SCAN_ONLY
+	default 0 if NRF71_WIFI_RADIO_TEST_MODE || NRF71_WIFI_OFFLOADED_RAW_TX_MODE
+	default 8000 if NRF71_WIFI_SCAN_ONLY
 	default 110000 if !SOC_FAMILY_NORDIC_NRF
 	default 65536
 
@@ -434,7 +443,7 @@ config NET_TC_TX_COUNT
 
 endif # NETWORKING
 
-config NRF_WIFI_USE_VARIABLE_NET_BUFS
+config NRF71_WIFI_USE_VARIABLE_NET_BUFS
 	bool "Use variable network buffers"
 	default y
 	help
@@ -443,7 +452,7 @@ config NRF_WIFI_USE_VARIABLE_NET_BUFS
 	  based on the data size. This option is enabled by default to optimize RAM usage.
 	  Samples and applications can override this option for higher performance.
 
-if NRF_WIFI_USE_VARIABLE_NET_BUFS
+if NRF71_WIFI_USE_VARIABLE_NET_BUFS
 
 # nRF71 now uses variable buffers as default to optimize RAM usage. Default pool
 # sizes are used; samples/apps can override for higher performance.
@@ -451,7 +460,7 @@ choice NET_PKT_DATA_ALLOC_TYPE
 	default NET_BUF_VARIABLE_DATA_SIZE
 endchoice
 
-endif # NRF_WIFI_USE_VARIABLE_NET_BUFS
+endif # NRF71_WIFI_USE_VARIABLE_NET_BUFS
 
 config MAIN_STACK_SIZE
 	default 4096
@@ -464,69 +473,71 @@ config SHELL_STACK_SIZE
 config WIFI_MGMT_SCAN_SSID_FILT_MAX
 	default 2
 
-config NRF_WIFI_SCAN_MAX_BSS_CNT
+config NRF71_WIFI_SCAN_MAX_BSS_CNT
 	int "Maximum number of scan results to return."
 	default 200
 	range 0 65535
 	help
 	  Maximum number of scan results to return. 0 represents unlimited number of BSSes.
 
-config NRF_WIFI_BEAMFORMING
+config NRF71_WIFI_BEAMFORMING
 	bool "Wi-Fi beamforming"
 	default y
 	help
 	  Enable this option to enable Wi-Fi beamforming.
-	  Beamforming can provide a slight improvement in performance, whereas disabling it can provide better power savings in low network activity applications.
+	  Beamforming can provide a slight improvement in performance, whereas
+	  disabling it can provide better power savings in low network activity
+	  applications.
 
-config WIFI_NRF71_SCAN_TIMEOUT_S
+config NRF71_WIFI_SCAN_TIMEOUT
 	int "Scan timeout in seconds"
 	default 30
 
-config NRF_WIFI_6G_SUPPORT
+config NRF71_WIFI_6G_SUPPORT
 	bool
 	default y if SOC_NRF7120E
 	help
 	  The SoC supports operation in the 6GHz band.
 
-choice NRF_WIFI_OP_BAND
+choice NRF71_WIFI_OP_BAND
 	prompt "nRF Wi-Fi operation bands"
-	default NRF_WIFI_ALL_BAND if NRF_WIFI_6G_SUPPORT
-	default NRF_WIFI_DUAL_BAND
+	default NRF71_WIFI_OP_BAND_ALL if NRF71_WIFI_6G_SUPPORT
+	default NRF71_WIFI_OP_BAND_DUAL
 
-config NRF_WIFI_ALL_BAND
-	bool "Set operation band to all supported bands"
-
-config NRF_WIFI_2G_BAND
+config NRF71_WIFI_OP_BAND_2G
 	bool "Set operation band to 2.4GHz"
 
-config NRF_WIFI_5G_BAND
+config NRF71_WIFI_OP_BAND_5G
 	bool "Set operation band to 5GHz"
 
-config NRF_WIFI_6G_BAND
+config NRF71_WIFI_OP_BAND_6G
 	bool "Set operation band to 6GHz"
-	depends on NRF_WIFI_6G_SUPPORT
+	depends on NRF71_WIFI_6G_SUPPORT
 
-config NRF_WIFI_DUAL_BAND
+config NRF71_WIFI_OP_BAND_DUAL
 	bool "Set operation band to 2.4GHz and 5GHz"
+
+config NRF71_WIFI_OP_BAND_ALL
+	bool "Set operation band to all supported bands"
 
 endchoice
 
-config NRF_WIFI_IFACE_MTU
+config NRF71_WIFI_IF_MTU
 	int "MTU for Wi-Fi interface"
 	range 576 2304 if NET_IPV4
 	range 1280 2304 if NET_IPV6
 	default 1500
 
-config WIFI_NRF71_SKIP_LOCAL_ADMIN_MAC
+config NRF71_WIFI_SCAN_SKIP_LOCAL_ADMIN_MAC
 	bool "Suppress networks with non-individual MAC addresses as BSSID in the scan results"
 	help
 	  Wi-Fi access points use locally administered MAC addresses to manage
 	  multiple virtual interfaces. For geo-location use cases, these networks
-	  from the virtual interfaces do not help in any way as they are co-located with the primary interface
-	  that has a globally unique MAC address.
+	  from the virtual interfaces do not help in any way as they are co-located
+	  with the primary interface that has a globally unique MAC address.
 	  So, to save resources, this option drops such networks from the scan results.
 
-config WIFI_NRF71_SCAN_DISABLE_DFS_CHANNELS
+config NRF71_WIFI_SCAN_DISABLE_DFS_CHANNELS
 	bool "Disables DFS channels in scan operation"
 	help
 	  This option disables inclusion of the DFS channels in the scan operation.
@@ -536,15 +547,16 @@ config NET_INTERFACE_NAME_LEN
 	# nordic_wlanN
 	default 15
 
-config NRF_WIFI_AP_DEAD_DETECT_TIMEOUT
+config NRF71_WIFI_AP_DEAD_DETECT_TIMEOUT
 	int "Access point dead detection timeout in seconds"
 	range 1 30
 	default 20
 	help
 	  The number of seconds after which the AP is declared dead if no beacons
-	  are received from the AP. This is used to detect AP silently going down, for example, due to power off.
+	  are received from the AP. This is used to detect AP silently going down,
+	  for example, due to power off.
 
-config WIFI_NRF71_VHT_HT_FALLBACK
+config NRF71_WIFI_VHT_HT_FALLBACK
 	bool "Allow fallback from VHT to HT on 802.11ac access points"
 	default y
 	help
@@ -552,10 +564,10 @@ config WIFI_NRF71_VHT_HT_FALLBACK
 	  VHT to HT when needed. Clear this option to keep VHT mode. Applies
 	  only to 802.11ac 80 MHz links; other modes are unaffected.
 
-config NRF_WIFI_RPU_RECOVERY
+config NRF71_WIFI_RPU_RECOVERY
 	bool "RPU recovery mechanism [EXPERIMENTAL]"
 	# Relies on power-save mode, so, LPM is needed
-	depends on NRF_WIFI_LOW_POWER
+	depends on NRF71_WIFI_LOW_POWER_SUPPORT
 	select EXPERIMENTAL
 	help
 	  Enable the RPU recovery mechanism to recover from an RPU (nRF71) hang.
@@ -564,9 +576,9 @@ config NRF_WIFI_RPU_RECOVERY
 	  the recovery process, and it is the application's responsibility to
 	  re-establish the network connection.
 
-if NRF_WIFI_RPU_RECOVERY
+if NRF71_WIFI_RPU_RECOVERY
 
-config NRF_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS
+config NRF71_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS
 	int "RPU recovery propagation delay in milliseconds"
 	default 2000
 	help
@@ -579,7 +591,7 @@ config NET_MGMT_EVENT_QUEUE_SIZE
 	# Doing interface down and up even with delay puts a lot of events in the queue
 	default 16
 
-config NRF_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS
+config NRF71_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS
 	int "RPU recovery power save active timeout in milliseconds"
 	default 50000
 	help
@@ -587,7 +599,7 @@ config NRF_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS
 	  mechanism will be triggered. This timeout is used to ensure that the
 	  RPU attempts to enter power save mode in case of inactivity.
 
-config NRF_WIFI_RPU_MIN_TIME_TO_ENTER_SLEEP_MS
+config NRF71_WIFI_RPU_MIN_TIME_TO_ENTER_SLEEP_MS
 	int "Minimum idle time to enter sleep in milliseconds"
 	range 100 40000
 	default 5000
@@ -596,48 +608,48 @@ config NRF_WIFI_RPU_MIN_TIME_TO_ENTER_SLEEP_MS
 	  sleep mode, assuming there is no activity. Please note that higher values
 	  of this value may increase the power consumption.
 
-config NRF_WIFI_RPU_RECOVERY_DEBUG
+config NRF71_WIFI_RPU_RECOVERY_DEBUG
 	bool "RPU recovery debug logs"
 	help
 	  Enable RPU recovery debug logs to help debug the RPU recovery mechanism.
 
-config NRF_WIFI_RPU_RECOVERY_QUIET_PERIOD_MS
+config NRF71_WIFI_RPU_RECOVERY_QUIET_PERIOD_MS
 	int "RPU recovery quiet period in milliseconds"
 	default 5000
 	help
 	  Quiet period in milliseconds after RPU recovery is triggered. During
 	  this period, no new RPU recovery will be triggered.
 
-config NRF_WIFI_RPU_RECOVERY_MAX_RETRIES
+config NRF71_WIFI_RPU_RECOVERY_MAX_RETRIES
 	int "Maximum number of consecutive RPU recovery retries, 0 to disable"
 	default 0
 	help
 	  Maximum number of consecutive RPU recovery retries before giving up
 	  and resetting the system. Set it to 0 to keep retrying indefinitely.
 
-config NRF_WIFI_RPU_RECOVERY_RETRY_WINDOW_S
+config NRF71_WIFI_RPU_RECOVERY_RETRY_WINDOW_S
 	int "RPU recovery retry window in seconds"
 	default 900
 	help
 	  Window in seconds during which the number of consecutive RPU recovery
 	  retries are counted. If the number of consecutive RPU recovery retries
-	  exceeds NRF_WIFI_RPU_RECOVERY_MAX_RETRIES within this window, the system
+	  exceeds NRF71_WIFI_RPU_RECOVERY_MAX_RETRIES within this window, the system
 	  will be reset.
 
-config NRF_WIFI_RPU_RECOVERY_PS_STATE_DEBUG
+config NRF71_WIFI_RPU_RECOVERY_PS_STATE_DEBUG
 	bool "RPU recovery power save state debug logs"
 	help
 	  Enable RPU recovery power save state debug logs to help debug the RPU recovery mechanism.
 
-endif # NRF_WIFI_RPU_RECOVERY
+endif # NRF71_WIFI_RPU_RECOVERY
 
-config NRF_WIFI_FEAT_WMM
+config NRF71_WIFI_WMM_SUPPORT
 	bool "WMM/QoS support"
 	default y
 	help
 	  This option controls disable/enable of the WMM (Wireless Multi-Media) feature.
 
-config NRF_WIFI_QOS_NOACK_POLICY
+config NRF71_WIFI_QOS_NOACK_POLICY
 	bool "QoS No-ACK policy for Tx packets"
 	help
 	  Enable this option to set No-ACK policy for Tx packets with a specific TID.
@@ -652,9 +664,9 @@ config NRF_WIFI_QOS_NOACK_POLICY
 	  Ideally for VI (Video) or VO (Voice) access category.
 	  The application must correctly encode TID via TOS to activate this feature.
 
-if NRF_WIFI_QOS_NOACK_POLICY
+if NRF71_WIFI_QOS_NOACK_POLICY
 
-config NRF_WIFI_QOS_NOACK_POLICY_TID
+config NRF71_WIFI_QOS_NOACK_POLICY_TID
 	int "TID (Traffic Identifier) for No-ACK policy"
 	range 0 7
 	default 0
@@ -663,22 +675,22 @@ config NRF_WIFI_QOS_NOACK_POLICY_TID
 	  TID values range from 0 to 7, corresponding to different QoS priority levels.
 	  All Tx frames with this TID will be marked with the No-ACK policy flag.
 
-endif # NRF_WIFI_QOS_NOACK_POLICY
+endif # NRF71_WIFI_QOS_NOACK_POLICY
 
-choice NRF_WIFI_PS_DATA_RETRIEVAL_MECHANISM
+choice NRF71_WIFI_PS_DATA_RETRIEVAL_MECHANISM
 	prompt "Power save data retrieval mechanism"
-	default NRF_WIFI_PS_POLL_BASED_RETRIEVAL
+	default NRF71_WIFI_PS_POLL_BASED_DATA_RETRIEVAL
 	help
 	  Select the mechanism to retrieve buffered data from AP.
 
-config NRF_WIFI_PS_POLL_BASED_RETRIEVAL
+config NRF71_WIFI_PS_POLL_BASED_DATA_RETRIEVAL
 	bool "PS-Poll frame-based mechanism to retrieve buffered data from AP"
 	help
 	  When the AP notifies about the availability of buffered data, the STA stays in power save
 	  and retrieves the frames one-by-one. This conserves more power but adds latency
 	  to the traffic. It is ideal for minimum number of frames.
 
-config NRF_WIFI_QOS_NULL_BASED_RETRIEVAL
+config NRF71_WIFI_PS_QOS_NULL_BASED_DATA_RETRIEVAL
 	bool "QoS null frame-based mechanism to retrieve buffered data from AP"
 	help
 	  When the AP notifies about the availability of buffered data, the STA comes out of
@@ -687,7 +699,7 @@ config NRF_WIFI_QOS_NULL_BASED_RETRIEVAL
 	  depending on the delay. It is ideal for heavy buffered traffic.
 endchoice
 
-config NRF_WIFI_MGMT_BUFF_OFFLOAD
+config NRF71_WIFI_MGMT_BUFF_OFFLOAD
 	bool "Management buffer offload"
 	# Raw scan results need host based refilling
 	depends on !WIFI_MGMT_RAW_SCAN_RESULTS
@@ -697,9 +709,9 @@ config NRF_WIFI_MGMT_BUFF_OFFLOAD
 	  from having to exchange commands and events for every management packet even if it is
 	  consumed by UMAC.
 
-config NRF_WIFI_FEAT_KEEPALIVE
+config NRF71_WIFI_KEEPALIVE_SUPPORT
 	bool "Wi-Fi keepalive feature for connection maintenance"
-	depends on NRF71_STA_MODE
+	depends on NRF71_WIFI_STA_SUPPORT
 	default y
 	help
 	  Enable the Wi-Fi keepalive feature to keep the connection alive by sending
@@ -707,9 +719,9 @@ config NRF_WIFI_FEAT_KEEPALIVE
 	  that disconnect idle clients without any explicit checks. It slightly increases
 	  power consumption.
 
-if NRF_WIFI_FEAT_KEEPALIVE
+if NRF71_WIFI_KEEPALIVE_SUPPORT
 
-config NRF_WIFI_KEEPALIVE_PERIOD_S
+config NRF71_WIFI_KEEPALIVE_PERIOD_S
 	int "Keepalive period in seconds"
 	range 30 3600
 	default 30
@@ -718,19 +730,19 @@ config NRF_WIFI_KEEPALIVE_PERIOD_S
 
 endif
 
-choice NRF_WIFI_PS_EXIT_STRATEGY
+choice NRF71_WIFI_PS_EXIT_STRATEGY
 	prompt "Power save exit strategy"
-	default NRF_WIFI_PS_INT_PS
+	default NRF71_WIFI_PS_INTELLIGENT_EXIT
 	help
 	  Select the power save exit strategy to retrieve buffered data from AP.
 
-config NRF_WIFI_PS_EXIT_EVERY_TIM
+config NRF71_WIFI_PS_EXIT_EVERY_TIM
 	bool "Exit power save every time to retrieve buffered data from AP"
 	help
 	  Exit power save every time to retrieve buffered data from AP. Entering back to
 	  power save mode might take some time and power.
 
-config NRF_WIFI_PS_INT_PS
+config NRF71_WIFI_PS_INTELLIGENT_EXIT
 	bool "Exit power save based on an intelligent algorithm"
 	help
 	  Exit power save based on an intelligent algorithm to retrieve buffered data from the AP.
@@ -740,50 +752,31 @@ config NRF_WIFI_PS_INT_PS
 
 endchoice
 
-config NRF71_PASSIVE_SCAN
+config NRF71_WIFI_FORCE_PASSIVE_SCAN
 	bool "Forced Passive scan"
-	depends on NRF71_SCAN
+	depends on NRF71_WIFI_SCAN_SUPPORT
 	help
 	  Enable this configuration to force passive scan on all channels.
 	  This will override application-specified scan type.
 
-config NRF_WIFI_DISPLAY_SCAN_BSS_LIMIT
+config NRF71_WIFI_DISPLAY_SCAN_BSS_LIMIT
 	# Display scan BSS entries limit
 	# By default, the limit is 250 in scan-only mode and 150 in regular mode.
 	int "Display scan bss limit"
-	range 1 450 if NRF71_SCAN_ONLY
-	def_int 250 if NRF71_SCAN_ONLY
+	range 1 450 if NRF71_WIFI_SCAN_ONLY
+	def_int 250 if NRF71_WIFI_SCAN_ONLY
 	range 1 160
 	def_int 150
 	help
 	  Number of BSS entries in scan result.
 
-config NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
-	bool "Read connect scan results from the scan results database"
-	depends on NRF71_STA_MODE
-	default y
-	help
-	  Read connect scan results from the database the firmware builds in
-	  GDRAM instead of the NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS command. This
-	  lifts the per-SSID result limit and is mainly useful for roaming.
-
-config NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM_SIZE
-	int "Connect scan results database buffer size"
-	depends on NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
-	range 1024 65535
-	default 8192
-	help
-	  Size in bytes of the connect scan results database buffer. The default
-	  holds around ten results, enough for roaming. The control plane heap it
-	  is allocated from grows with this, so it is safe to increase.
-
-config NRF_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN
+config NRF71_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN
 	bool "Force disable priority window for scan in the case of coexistence with Short Range radio"
 	help
 	  Enable this configuration to disable priority window for scan
 	  in the case of coexistence with Short Range radio.
 
-config NRF_WIFI_SCAN_BT_GRANT_TIME_MS
+config NRF71_WIFI_SCAN_BT_GRANT_TIME_MS
 	int "BT grant time during Wi-Fi scan (milliseconds)"
 	default 0
 	range 0 10000
@@ -792,7 +785,7 @@ config NRF_WIFI_SCAN_BT_GRANT_TIME_MS
 	  allocate between Wi-Fi scan channel operations. Applies only to 2.4 GHz
 	  band scan. Use 0 for the firmware default (no explicit grant time).
 
-config NRF_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS
+config NRF71_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS
 	int "BT grant tolerance time during Wi-Fi scan (milliseconds)"
 	default 0
 	range 0 10000
@@ -804,7 +797,7 @@ config NRF_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS
 
 if NETWORKING
 
-config NRF_WIFI_ZERO_COPY_TX
+config NRF71_WIFI_ZERO_COPY_TX
 	bool "Zero copy Transmit path [EXPERIMENTAL]"
 	select NET_L2_ETHERNET_RESERVE_HEADER
 	select EXPERIMENTAL
@@ -823,32 +816,32 @@ config NRF_WIFI_ZERO_COPY_TX
 
 endif # NETWORKING
 
-config NRF_WIFI_MAX_PS_POLL_FAIL_CNT
+config NRF71_WIFI_MAX_PS_POLL_FAIL_CNT
 	int "Maximum number of PS-Poll failures"
 	default 10
 	range 10 4294967295
 	help
 	  Maximum number of PS-Poll failures before entering qos null-based power save.
 
-config NRF_WIFI_RX_STBC_HT
+config NRF71_WIFI_RX_STBC_HT_SUPPORT
 	bool "Receive packets encoded with STBC in HT (Wi-Fi4) mode"
 	default y
 	help
 	  Receive packets encoded with STBC (Space-Time Block Coding)
 	  in HT (Wi-Fi4) mode.
 
-config NRF_WIFI_DYNAMIC_BANDWIDTH_SIGNALLING
+config NRF71_WIFI_DYN_BW_SIGNALLING_SUPPORT
 	bool "Dynamic bandwidth signalling for Wi-Fi"
 	help
 	  This option enables support for dynamic bandwidth signalling.
 
-config NRF_WIFI_DYNAMIC_ED
+config NRF71_WIFI_DYNAMIC_ED_SUPPORT
 	bool "Dynamic ED"
 	help
 	  This option enables support for proprietary algorithm to
 	  enhance performance in high-traffic channels.
 
-config NRF_WIFI_TWT_SETUP_TIMEOUT_MS
+config NRF71_WIFI_TWT_SETUP_TIMEOUT_MS
 	int "TWT setup timeout (ms)"
 	range 100 10000
 	default 250
@@ -858,17 +851,9 @@ config NRF_WIFI_TWT_SETUP_TIMEOUT_MS
 	  continuing until this timeout value is reached. If no response is
 	  received before the timeout expires, the TWT setup is considered failed.
 
-config NRF_WIFI_USE_KMU
-	bool "Use KMU for key installation"
-	depends on NRF_WIFI_KMU
-	default y
-	help
-	  Use KMU for key installation. This is the default KMU for the
-	  nRF71 Wi-Fi chip.
-
-config NRF_WIFI_CMD_EVENT_LOG
+config NRF71_WIFI_CMD_EVENT_LOG
 	bool "Log HAL command/events (debug)"
 	help
 	  When enabled, log HAL command/events (debug only).
 
-endif # WIFI_NRF71
+endif # NRF71_WIFI

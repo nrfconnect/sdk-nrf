@@ -21,11 +21,11 @@
 #include <system/core.h>
 #include <system/wifi_mgmt.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 int nrf_wifi_set_power_save(const struct device *dev,
 			    struct net_if *iface __unused,
 			    struct wifi_ps_params *params)
@@ -78,12 +78,12 @@ int nrf_wifi_set_power_save(const struct device *dev,
 	break;
 	case  WIFI_PS_PARAM_TIMEOUT:
 		if ((vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION)
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 		    && (vif_ctx_zep->if_type != NRF_WIFI_STA_TX_INJECTOR)
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
-#ifdef CONFIG_NRF71_PROMISC_DATA_RX
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT
 		    && (vif_ctx_zep->if_type != NRF_WIFI_STA_PROMISC_TX_INJECTOR)
-#endif /* CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 		   ) {
 			LOG_ERR("%s: Operation supported only in STA enabled mode",
 				__func__);
@@ -179,12 +179,12 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 	}
 
 	if ((vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION)
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	    && (vif_ctx_zep->if_type != NRF_WIFI_STA_TX_INJECTOR)
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
-#ifdef CONFIG_NRF71_PROMISC_DATA_RX
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT
 	    && (vif_ctx_zep->if_type != NRF_WIFI_STA_PROMISC_TX_INJECTOR)
-#endif /* CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 	    ) {
 		LOG_ERR("%s: Operation supported only in STA enabled mode",
 			__func__);
@@ -683,7 +683,7 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 	int desc = 0;
 	int ac = 0;
 #endif
@@ -730,7 +730,7 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 		sys_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_AWAKE;
 		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
 						WIFI_TWT_STATE_AWAKE);
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 		for (ac = NRF_WIFI_FMAC_AC_BE;
 		     ac <= NRF_WIFI_FMAC_AC_MAX; ++ac) {
 			desc = tx_desc_get(fmac_dev_ctx, ac);
@@ -747,9 +747,9 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT
 int nrf_wifi_mode(const struct device *dev,
 		  struct net_if *iface __unused,
 		  struct wifi_mode_info *mode)
@@ -829,7 +829,7 @@ int nrf_wifi_mode(const struct device *dev,
 			LOG_ERR("%s: mode set operation failed", __func__);
 			goto out;
 		}
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 		vif_ctx_zep->requested_wifi_mode = mode->mode;
 		nrf_wifi_clear_txinjection(vif_ctx_zep);
 		refresh_oper_state = true;
@@ -847,16 +847,16 @@ int nrf_wifi_mode(const struct device *dev,
 		 * This is a work-around to handle current UMAC mode handling.
 		 * This might be removed in future versions when UMAC has more space.
 		 */
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 		if (fmac_vif_ctx->txinjection_mode == true) {
 			mode->mode ^= NRF_WIFI_TX_INJECTION_MODE;
 		}
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
-#ifdef CONFIG_NRF71_PROMISC_DATA_RX
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT
 		if (fmac_vif_ctx->promisc_mode == true) {
 			mode->mode ^= NRF_WIFI_PROMISCUOUS_MODE;
 		}
-#endif /* CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 	}
 	ret = 0;
 out:
@@ -866,9 +866,9 @@ out:
 	}
 	return ret;
 }
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
+#endif /* CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT */
 
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT)
 int nrf_wifi_channel(const struct device *dev,
 		     struct net_if *iface __unused,
 		     struct wifi_channel_info *channel)
@@ -992,9 +992,9 @@ out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT || CONFIG_NRF71_WIFI_MONITOR_SUPPORT */
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 int nrf_wifi_filter(const struct device *dev,
 		    struct net_if *iface __unused,
 		    struct wifi_filter_info *filter)
@@ -1074,7 +1074,7 @@ int nrf_wifi_filter(const struct device *dev,
 out:
 	return ret;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 
 int nrf_wifi_set_rts_threshold(const struct device *dev,
 			       struct net_if *iface __unused,
