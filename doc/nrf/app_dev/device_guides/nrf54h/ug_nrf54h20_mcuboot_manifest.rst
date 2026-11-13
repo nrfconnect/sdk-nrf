@@ -23,13 +23,18 @@ As described in the :ref:`ug_nrf54h20_partitioning_merged`, this design introduc
 #. Each image must define its own dependencies, creating complex interdependencies that make compatibility and version management difficult.
 
 To address these challenges, the MCUboot fork included in the |NCS| introduces the *manifest-based update strategy*.
-In this strategy, a single manifest TLV describes multiple firmware images through their cryptographic digests.
+In this strategy, a single manifest type-length-value (TLV) structure describes multiple firmware images through their cryptographic digests.
 The manifest defines a set of images that were tested together and are known to be compatible.
 The manifest image is the only image that contains a manifest TLV.
 It is also the only image that requires confirmation or can be reverted.
 The system contains two manifests, one for each manifest image slot.
 Before switching to a new slot, the bootloader verifies that all images described by the manifest are present and valid.
 This ensures that all images are compatible and reduces the complexity of managing interdependencies between images.
+
+.. figure:: images/mcuboot_manifest_partitions.svg
+   :alt: MCUboot partitions and their relationship with manifests
+
+   MCUboot partitions and their relationship with manifests
 
 This update strategy also supports partial system updates, with the limitation that you must always update the manifest image.
 For example, you can update only the application core firmware while keeping the radio core firmware unchanged.
@@ -110,6 +115,13 @@ This can be useful when the image is not built as part of the same build process
 The ``imgtool sign`` command handles the generation of the manifest structure.
 You can specify the path to the manifest configuration file using the ``--manifest`` option.
 The manifest TLV is appended to the image's protected TLV area, being included in the image's signature.
+The following diagram shows where the manifest TLV is stored in an image and how the bootloader uses it.
+The bootloader copies the manifest into its internal state and then checks the digest of the radio image against the digest that the manifest holds.
+
+.. figure:: images/mcuboot_manifest_tlvs.svg
+   :alt: Manifest TLV in the protected TLVs of the manifest image, copied into the MCUboot state and checked against the digest of the radio image
+
+   Manifest TLV in the protected TLVs of the manifest image, copied into the MCUboot state and checked against the digest of the radio image
 
 Manifest-based update and boot strategy
 ***************************************
