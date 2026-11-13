@@ -43,8 +43,7 @@ LOG_MODULE_REGISTER(ancs_c, CONFIG_BT_ANCS_CLIENT_LOG_LEVEL);
  */
 static int bt_ancs_verify_notification_format(const struct bt_ancs_evt_notif *notif)
 {
-	if ((notif->evt_id >= BT_ANCS_EVT_ID_COUNT) ||
-	    (notif->category_id >= BT_ANCS_CATEGORY_ID_COUNT)) {
+	if (notif->evt_id >= BT_ANCS_EVT_ID_COUNT) {
 		return -EINVAL;
 	}
 	return 0;
@@ -417,6 +416,7 @@ static int bt_ancs_get_notif_attrs(struct bt_ancs_client *ancs_c,
 	uint8_t *data = ancs_c->cp_data;
 
 	ancs_c->number_of_requested_attr = 0;
+	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
 
 	/* Encode Command ID. */
 	*(data + index++) = BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES;
@@ -463,8 +463,6 @@ int bt_ancs_request_attrs(struct bt_ancs_client *ancs_c,
 		return err;
 	}
 
-	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
-
 	return bt_ancs_get_notif_attrs(ancs_c, notif->notif_uid, func);
 }
 
@@ -476,7 +474,7 @@ int bt_ancs_register_attr(struct bt_ancs_client *ancs_c,
 		return -EINVAL;
 	}
 
-	if (!len || len > BT_ANCS_ATTR_DATA_MAX) {
+	if (!len) {
 		return -EINVAL;
 	}
 
@@ -499,7 +497,7 @@ int bt_ancs_register_app_attr(struct bt_ancs_client *ancs_c,
 		return -EINVAL;
 	}
 
-	if (!len || len > BT_ANCS_ATTR_DATA_MAX) {
+	if (!len) {
 		return -EINVAL;
 	}
 
