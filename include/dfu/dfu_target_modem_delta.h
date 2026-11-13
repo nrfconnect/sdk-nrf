@@ -14,11 +14,15 @@
 #ifndef DFU_TARGET_MODEM_H__
 #define DFU_TARGET_MODEM_H__
 
+#include <stddef.h>
 #include <zephyr/types.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/** @brief Modem delta UUID length (ASCII). */
+#define DFU_TARGET_MODEM_DELTA_UUID_LEN 36
 
 /**
  * @brief See if data in buf indicates modem delta upgrade.
@@ -45,7 +49,9 @@ int dfu_target_modem_delta_init(size_t file_size, int img_num,
  *
  * @param[out] offset Returns the offset of the firmware upgrade.
  *
- * @return 0 if success, otherwise negative value if unable to get the offset
+ * @retval 0 On success.
+ * @retval -EAGAIN Scratch erase is still in progress.
+ * @retval -EFAULT Other modem or internal failure.
  */
 int dfu_target_modem_delta_offset_get(size_t *offset);
 
@@ -89,6 +95,17 @@ int dfu_target_modem_delta_schedule_update(int img_num);
  * @return 0 on success, negative errno otherwise.
  */
 int dfu_target_modem_delta_reset(void);
+
+/**
+ * @brief Read the modem firmware UUID string.
+ *
+ * @param[out] uuid     Buffer for the UUID.
+ * @param[in]  uuid_len Size of @p uuid (use @ref DFU_TARGET_MODEM_DELTA_UUID_LEN).
+ *
+ * @retval 0 On success.
+ * @retval Negative errno on failure.
+ */
+int dfu_target_modem_delta_firmware_uuid(char *uuid, size_t uuid_len);
 
 #ifdef __cplusplus
 }
