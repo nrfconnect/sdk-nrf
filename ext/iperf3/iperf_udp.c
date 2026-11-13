@@ -92,7 +92,7 @@ iperf_udp_recv(struct iperf_stream *sp)
      * we need to read more from rcv buffer to avoid deadlocks.
      */
     do {
-	    q = Nread(sp->socket, sp->buffer, size, Pudp);
+	    q = Nread_no_select(sp->socket, sp->buffer, size, Pudp);
 	    if (q <= 0) {
 		    break;
 	    }
@@ -237,7 +237,7 @@ iperf_udp_recv(struct iperf_stream *sp)
         r = total_received;
     }
 #else
-    r = Nread(sp->socket, sp->buffer, size, Pudp);
+    r = Nread_no_select(sp->socket, sp->buffer, size, Pudp);
     /*
      * If we got an error in the read, or if we didn't read anything
      * because the underlying read(2) got a EAGAIN, then skip packet

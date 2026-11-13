@@ -3149,8 +3149,13 @@ static cJSON *JSON_read(int fd)
      * Then read the JSON into a buffer and parse it.  Return a parsed JSON
      * structure, NULL if there was an error.
      */
-	if (Nread(fd, (char *)&nsize, sizeof(nsize), Ptcp) >= 0) {
+	/* Short read (e.g. Nread() timeout) would leave nsize uninitialized */
+	if (Nread(fd, (char *)&nsize, sizeof(nsize), Ptcp) == sizeof(nsize)) {
 		hsize = ntohl(nsize);
+		/* hsize + 1 wraps to 0 for UINT32_MAX (CVE-2023-38403) */
+		if (hsize == UINT32_MAX) {
+			return NULL;
+		}
 		/* Allocate a buffer to hold the JSON */
 		str = (char *)calloc(sizeof(char),
 				     hsize + 1); /* +1 for trailing null */
@@ -3244,6 +3249,12 @@ static cJSON
 #endif
                     {
                         hsize = ntohl(nsize);
+			/* hsize + 1 wraps to 0 for UINT32_MAX (CVE-2023-38403) */
+			if (hsize == UINT32_MAX) {
+				iperf_printf(test, "ERROR: invalid json length %u\n", hsize);
+				test->i_errno = IERECVRESULTS;
+				break;
+			}
                         str = (char *) calloc(sizeof(char), hsize + 1);   /* +1 for trailing null */
 			if (str == NULL) {
                         	iperf_printf(

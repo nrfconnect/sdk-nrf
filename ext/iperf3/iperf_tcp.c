@@ -69,7 +69,7 @@ iperf_tcp_recv(struct iperf_stream *sp)
        an another option would be to separate send and receive 
        buffer in order to read more more that blksize */
     do {
-        r = Nread(sp->socket, sp->buffer, sp->settings->blksize, Ptcp);
+        r = Nread_no_select(sp->socket, sp->buffer, sp->settings->blksize, Ptcp);
         if (r < 0)
             return r;
 
@@ -94,7 +94,7 @@ iperf_tcp_recv(struct iperf_stream *sp)
     return total_received;
 
 #else
-    r = Nread(sp->socket, sp->buffer, sp->settings->blksize, Ptcp);
+    r = Nread_no_select(sp->socket, sp->buffer, sp->settings->blksize, Ptcp);
 
     if (r < 0)
         return r;
@@ -172,8 +172,9 @@ iperf_tcp_accept(struct iperf_test * test)
         return -1;
     }
 
-    if (Nread(s, cookie, COOKIE_SIZE, Ptcp) < 0) {
+    if (Nread(s, cookie, COOKIE_SIZE, Ptcp) != COOKIE_SIZE) {
         test->i_errno = IERECVCOOKIE;
+        close(s);
         return -1;
     }
 
