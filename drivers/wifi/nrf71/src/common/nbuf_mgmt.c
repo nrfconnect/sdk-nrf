@@ -210,19 +210,24 @@ bool nrf_wifi_nbuf_is_raw_tx(void *nbuf)
 #endif /* CONFIG_NRF71_RAW_DATA_TX */
 
 #ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
+/*
+ * The RPU uses the NRF_WIFI_EXTRA_TX_HEADROOM bytes in front of the payload
+ * and, with TKIP, the MIC tailroom after it, in the host buffer. A net_buf can
+ * only be handed over as is when it has that room, else it would overwrite
+ * whatever sits next to it.
+ */
+static bool nrf_wifi_net_pkt_zc_ok(struct net_pkt *pkt, bool tkip)
+{
+	struct net_buf *buf = pkt->buffer;
+
+	return buf && !buf->frags &&
+	       net_buf_headroom(buf) >= NRF_WIFI_EXTRA_TX_HEADROOM &&
+	       (!tkip || net_buf_tailroom(buf) >= NRF71_TX_MIC_TAILROOM);
+}
+
 static void *nrf_wifi_net_pkt_to_nbuf_zc(struct net_pkt *pkt)
 {
 	struct nrf_wifi_nwb *nbuff;
-
-	if (!pkt || !pkt->buffer) {
-		LOG_DBG("Invalid packet, dropping");
-		return NULL;
-	}
-
-	if (pkt->buffer->frags) {
-		LOG_ERR("Zero-copy only supports single buffer packets");
-		return NULL;
-	}
 
 	nbuff = nrf_wifi_nbuf_alloc(NRF_WIFI_EXTRA_TX_HEADROOM);
 	if (!nbuff) {
@@ -242,7 +247,7 @@ static void *nrf_wifi_net_pkt_to_nbuf_zc(struct net_pkt *pkt)
 }
 #endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */
 
-void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt)
+void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt, bool tkip)
 {
 	struct nrf_wifi_nwb *nbuff;
 	unsigned char *data;
@@ -253,9 +258,11 @@ void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt)
 	}
 
 #ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
-	if (pkt->buffer && !pkt->buffer->frags) {
+	if (nrf_wifi_net_pkt_zc_ok(pkt, tkip)) {
 		return nrf_wifi_net_pkt_to_nbuf_zc(pkt);
 	}
+#else
+	ARG_UNUSED(tkip);
 #endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */
 
 	len = net_pkt_get_len(pkt);

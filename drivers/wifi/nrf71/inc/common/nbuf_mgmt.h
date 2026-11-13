@@ -193,11 +193,16 @@ bool nrf_wifi_nbuf_is_raw_tx(void *nbuf);
 /**
  * @brief Convert a Zephyr @c net_pkt into a driver network buffer.
  *
+ * With CONFIG_NRF_WIFI_ZERO_COPY_TX the packet data is used in place when it
+ * sits in a single net_buf with enough headroom, and enough tailroom for the
+ * Michael MIC when @p tkip is set; otherwise it is copied.
+ *
  * @param pkt Pointer to the network packet to convert.
+ * @param tkip TKIP is in use on the interface, so the payload needs MIC tailroom.
  *
  * @return Pointer to a driver network buffer on success, NULL on failure.
  */
-void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt);
+void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt, bool tkip);
 
 /**
  * @brief Convert a driver network buffer into a Zephyr @c net_pkt.

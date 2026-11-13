@@ -174,20 +174,20 @@ static inline struct nrf_wifi_fmac_vif_ctx *nrf_wifi_get_fmac_vif_ctx(
 	return sys_dev_ctx ? sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx] : NULL;
 }
 
-#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
 /**
- * @brief Whether TCP/IP checksum offload to the RPU is allowed on this VIF.
+ * @brief Whether TKIP is in use for the group key or any peer on this VIF.
  *
- * TKIP data uses software Michael MIC; do not offload checksums for TKIP PTK/GTK.
+ * With TKIP the UMAC computes the Michael MIC in software and writes it right
+ * after the payload in the host TX buffer.
  */
-static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_vif_ctx *fmac_vif)
+static inline bool nrf_wifi_fmac_tkip_in_use(struct nrf_wifi_fmac_vif_ctx *fmac_vif)
 {
 	if (!fmac_vif || !fmac_vif->fmac_dev_ctx) {
-		return true;
+		return false;
 	}
 
 	if (fmac_vif->groupwise_cipher == NRF_WIFI_FMAC_CIPHER_SUITE_TKIP) {
-		return false;
+		return true;
 	}
 
 #if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX)
@@ -198,19 +198,30 @@ static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_v
 		sys_dev_ctx = wifi_dev_priv(fmac_vif->fmac_dev_ctx);
 
 		if (!sys_dev_ctx) {
-			return true;
+			return false;
 		}
 
 		for (i = 0; i < MAX_PEERS; i++) {
 			if (sys_dev_ctx->tx_config.peers[i].pairwise_cipher ==
 			    NRF_WIFI_FMAC_CIPHER_SUITE_TKIP) {
-				return false;
+				return true;
 			}
 		}
 	}
 #endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_RAW_DATA_RX */
 
-	return true;
+	return false;
+}
+
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+/**
+ * @brief Whether TCP/IP checksum offload to the RPU is allowed on this VIF.
+ *
+ * TKIP data uses software Michael MIC; do not offload checksums for TKIP PTK/GTK.
+ */
+static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_vif_ctx *fmac_vif)
+{
+	return !nrf_wifi_fmac_tkip_in_use(fmac_vif);
 }
 #endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
