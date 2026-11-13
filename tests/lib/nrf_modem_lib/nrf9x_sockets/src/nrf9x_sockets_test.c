@@ -1557,6 +1557,18 @@ void test_nrf9x_socket_offload_sendmsg_fits_buf(void)
 
 	TEST_ASSERT_EQUAL(ret, 2 * sizeof(int));
 
+	/* A completed send must report the total, not just the last short write. */
+	__cmock_nrf_sendto_ExpectAndReturn(nrf_fd, NULL, 2 * sizeof(int),
+					 NRF_MSG_DONTWAIT, NULL, 0, sizeof(int));
+	__cmock_nrf_sendto_IgnoreArg_message();
+	__cmock_nrf_sendto_ExpectAndReturn(nrf_fd, NULL, sizeof(int),
+					 NRF_MSG_DONTWAIT, NULL, 0, sizeof(int));
+	__cmock_nrf_sendto_IgnoreArg_message();
+
+	ret = zsock_sendmsg(fd, &msg, flags);
+
+	TEST_ASSERT_EQUAL(2 * sizeof(int), ret);
+
 	__cmock_nrf_close_ExpectAndReturn(nrf_fd, 0);
 
 	ret = zsock_close(fd);
@@ -1627,6 +1639,64 @@ void test_nrf9x_socket_offload_sendmsg_not_fits_buf(void)
 	ret = zsock_close(fd);
 
 	TEST_ASSERT_EQUAL(ret, 0);
+}
+
+/* Exercise errors after progress in both the coalesced and per-iovec paths. */
+static void check_sendmsg_failure(size_t length, int result)
+{
+	uint8_t data[12] = { 0 };
+	struct net_iovec chunks[] = {
+		{ .iov_base = data, .iov_len = 4 },
+		{ .iov_base = data + 4, .iov_len = length - 4 },
+	};
+	struct net_msghdr msg = {
+		.msg_iov = chunks,
+		.msg_iovlen = ARRAY_SIZE(chunks),
+	};
+	int fd;
+	int ret;
+
+	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_STREAM, NRF_IPPROTO_TCP,
+					 NRF_FD);
+	fd = zsock_socket(NET_AF_INET, NET_SOCK_STREAM, NET_IPPROTO_TCP);
+	TEST_ASSERT_EQUAL(0, fd);
+
+	/* The intermediate buffer is 8 bytes; larger messages use each iovec. */
+	__cmock_nrf_sendto_ExpectAndReturn(NRF_FD, NULL, length <= 8 ? length : 4,
+					 NRF_MSG_DONTWAIT, NULL, 0, 4);
+	__cmock_nrf_sendto_IgnoreArg_message();
+	__cmock_nrf_sendto_ExpectAndReturn(NRF_FD, NULL, length - 4,
+					 NRF_MSG_DONTWAIT, NULL, 0, result);
+	__cmock_nrf_sendto_IgnoreArg_message();
+
+	errno = EPIPE;
+	ret = zsock_sendmsg(fd, &msg, ZSOCK_MSG_DONTWAIT);
+
+	TEST_ASSERT_EQUAL(-1, ret);
+	TEST_ASSERT_EQUAL(result == 0 ? EIO : EPIPE, errno);
+
+	__cmock_nrf_close_ExpectAndReturn(NRF_FD, 0);
+	TEST_ASSERT_EQUAL(0, zsock_close(fd));
+}
+
+void test_nrf9x_socket_offload_sendmsg_fits_buf_zero_progress(void)
+{
+	check_sendmsg_failure(8, 0);
+}
+
+void test_nrf9x_socket_offload_sendmsg_not_fits_buf_zero_progress(void)
+{
+	check_sendmsg_failure(12, 0);
+}
+
+void test_nrf9x_socket_offload_sendmsg_fits_buf_send_error(void)
+{
+	check_sendmsg_failure(8, -1);
+}
+
+void test_nrf9x_socket_offload_sendmsg_not_fits_buf_send_error(void)
+{
+	check_sendmsg_failure(12, -1);
 }
 
 void test_nrf9x_socket_offload_fcntl_einval(void)

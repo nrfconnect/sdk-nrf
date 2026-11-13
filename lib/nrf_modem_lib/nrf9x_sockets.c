@@ -812,13 +812,18 @@ static ssize_t nrf9x_socket_offload_sendmsg(void *obj, const struct net_msghdr *
 			ret = nrf9x_socket_offload_sendto(obj,
 				(buf + offset), (len - offset), flags,
 				msg->msg_name, msg->msg_namelen);
+			if (ret == 0) {
+				errno = EIO;
+				ret = -1;
+				break;
+			}
 			if (ret > 0) {
 				offset += ret;
 			}
 		}
 
 		k_mutex_unlock(&sendmsg_lock);
-		return ret;
+		return ret < 0 ? ret : offset;
 	}
 
 	/* If the data won't fit into intermediate buffer, send the buffers
@@ -838,8 +843,11 @@ static ssize_t nrf9x_socket_offload_sendmsg(void *obj, const struct net_msghdr *
 				(((uint8_t *) msg->msg_iov[i].iov_base) + offset),
 				(msg->msg_iov[i].iov_len - offset), flags,
 				msg->msg_name, msg->msg_namelen);
-			if (ret < 0) {
-				return ret;
+			if (ret <= 0) {
+				if (ret == 0) {
+					errno = EIO;
+				}
+				return -1;
 			}
 			offset += ret;
 			len += ret;
