@@ -641,7 +641,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	vif_ctx_zep->scan_in_progress = true;
 
 	k_work_schedule(&vif_ctx_zep->scan_timeout_work,
-			K_SECONDS(CONFIG_NRF71_SCAN_TIMEOUT));
+			K_SECONDS(CONFIG_NRF71_WIFI_SCAN_TIMEOUT));
 
 	ret = 0;
 out:
@@ -910,12 +910,12 @@ int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 		goto out;
 	}
 
-#ifdef CONFIG_NRF71_MONITOR_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_MONITOR_SUPPORT
 	if (vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_MONITOR) {
 		LOG_ERR("%s: Interface is in Monitor mode -  cannot connect to a BSS", __func__);
 		goto out;
 	}
-#endif /* CONFIG_NRF71_MONITOR_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT */
 
 	memset(&auth_info, 0, sizeof(auth_info));
 
@@ -1458,7 +1458,7 @@ int nrf_wifi_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 		(k_ticks_to_us_floor64(k_uptime_ticks()) -
 		 vif_ctx_zep->rssi_record_timestamp_us) / 1000;
 
-	if (rssi_record_elapsed_time_ms > CONFIG_NRF71_GET_STA_STALE_TIMEOUT_MS) {
+	if (rssi_record_elapsed_time_ms > CONFIG_NRF71_WIFI_GET_STA_STALE_TIMEOUT_MS) {
 		ret = nrf_wifi_sys_fmac_get_station(rpu_ctx_zep->rpu_ctx,
 						    vif_ctx_zep->vif_idx,
 						    bssid);
@@ -1517,9 +1517,9 @@ void nrf_wifi_wpa_supp_event_proc_get_sta(void *if_priv,
 		goto out;
 	}
 
-#ifdef CONFIG_NRF71_AP_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_AP_SUPPORT
 	vif_ctx_zep->inactive_time_sec = info->sta_info.inactive_time;
-#endif /* CONFIG_NRF71_AP_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_AP_SUPPORT */
 
 	signal_info = vif_ctx_zep->signal_info;
 	/* Semaphore timedout */
@@ -2094,10 +2094,10 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 	capa->flags |= WPA_DRIVER_FLAGS_CONTROL_PORT;
 	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_RRM;
 	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_BEACON_REPORT;
-	if (IS_ENABLED(CONFIG_NRF71_AP_SUPPORT)) {
+	if (IS_ENABLED(CONFIG_NRF71_WIFI_AP_SUPPORT)) {
 		capa->flags |= WPA_DRIVER_FLAGS_AP;
 	}
-	if (IS_ENABLED(CONFIG_NRF71_P2P_SUPPORT)) {
+	if (IS_ENABLED(CONFIG_NRF71_WIFI_P2P_SUPPORT)) {
 		capa->flags |= WPA_DRIVER_FLAGS_P2P_CAPABLE;
 	}
 
@@ -2349,7 +2349,7 @@ int nrf_wifi_supp_remain_on_channel(void *if_priv, unsigned int freq,
 				    unsigned int duration, u64 host_cookie)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-#ifdef CONFIG_NRF71_P2P_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_P2P_SUPPORT
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct remain_on_channel_info roc_info;
@@ -2389,14 +2389,14 @@ int nrf_wifi_supp_remain_on_channel(void *if_priv, unsigned int freq,
 	}
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
-#endif /* CONFIG_NRF71_P2P_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_P2P_SUPPORT */
 	return status;
 }
 
 int nrf_wifi_supp_cancel_remain_on_channel(void *if_priv, u64 cookie)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-#ifdef CONFIG_NRF71_P2P_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_P2P_SUPPORT
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
@@ -2425,14 +2425,14 @@ int nrf_wifi_supp_cancel_remain_on_channel(void *if_priv, u64 cookie)
 	}
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
-#endif /* CONFIG_NRF71_P2P_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_P2P_SUPPORT */
 	return status;
 }
 
 int nrf_wifi_supp_set_p2p_powersave(void *if_priv, int legacy_ps, int opp_ps, int ctwindow)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-#ifdef CONFIG_NRF71_P2P_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_P2P_SUPPORT
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
@@ -2470,11 +2470,11 @@ int nrf_wifi_supp_set_p2p_powersave(void *if_priv, int legacy_ps, int opp_ps, in
 	}
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
-#endif /* CONFIG_NRF71_P2P_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_P2P_SUPPORT */
 	return status;
 }
 
-#ifdef CONFIG_NRF71_AP_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_AP_SUPPORT
 static int nrf_wifi_vif_state_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 				     enum nrf_wifi_fmac_if_op_state state)
 {
@@ -3403,4 +3403,4 @@ out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return inactive_time_sec;
 }
-#endif /* CONFIG_NRF71_AP_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_AP_SUPPORT */

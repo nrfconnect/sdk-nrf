@@ -20,8 +20,8 @@
 #define CONFIG_WIFI_NRF71_LOG_LEVEL NRF_WIFI_LOG_LEVEL_ERR
 #endif
 
-#ifndef CONFIG_NRF71_LOG_VERBOSE
+#ifndef CONFIG_NRF71_WIFI_LOG_VERBOSE
 #define __func__ "<snipped>"
-#endif /* CONFIG_NRF71_LOG_VERBOSE */
+#endif /* CONFIG_NRF71_WIFI_LOG_VERBOSE */
 
 #endif /* __LOG_CFG_H__ */

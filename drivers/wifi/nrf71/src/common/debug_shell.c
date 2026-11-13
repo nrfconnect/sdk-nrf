@@ -1470,7 +1470,7 @@ unlock_umac:
 	return ret;
 }
 
-#ifdef CONFIG_NRF71_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 static int nrf_wifi_dbg_tx_stats(const struct shell *sh,
 				  size_t argc,
 				  const char *argv[])
@@ -1530,7 +1530,7 @@ unlock:
 	k_mutex_unlock(&dbg_ctx->rpu_lock);
 	return ret;
 }
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 static int nrf_wifi_dbg_heap(const struct shell *sh, size_t argc, char **argv)
 {
@@ -1600,7 +1600,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_dbg_umac_int_stats,
 		      1,
 		      0),
-#ifdef CONFIG_NRF71_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 	SHELL_CMD_ARG(tx_stats,
 		      NULL,
 		      "Displays transmit statistics\n"
@@ -1608,7 +1608,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_dbg_tx_stats,
 		      2,
 		      0),
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 	SHELL_CMD_ARG(heap,
 		      NULL,
 		      "Control and data pool heap usage statistics",

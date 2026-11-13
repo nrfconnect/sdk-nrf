@@ -204,9 +204,9 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_rt_fmac_dev_add(
  */
 enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-#if defined(CONFIG_NRF71_LOW_POWER_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT) || defined(__DOXYGEN__)
 	int sleep_type,
-#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 	unsigned int phy_calib,
 	unsigned char op_band,
 	bool beamforming,

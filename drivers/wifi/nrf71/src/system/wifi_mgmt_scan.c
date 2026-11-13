@@ -129,7 +129,8 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	memset(scan_info, 0, sizeof(*scan_info) + (num_scan_channels *
 		sizeof(scan_info->scan_params.center_frequency[0])));
 
-	static uint8_t skip_local_admin_mac = IS_ENABLED(CONFIG_NRF71_SCAN_SKIP_LOCAL_ADMIN_MAC);
+	static uint8_t skip_local_admin_mac =
+		IS_ENABLED(CONFIG_NRF71_WIFI_SCAN_SKIP_LOCAL_ADMIN_MAC);
 
 	scan_info->scan_params.skip_local_admin_macs = skip_local_admin_mac;
 
@@ -210,13 +211,13 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 
 	vif_ctx_zep->scan_res_cnt = 0;
 	max_bss_cnt = vif_ctx_zep->max_bss_cnt ? vif_ctx_zep->max_bss_cnt :
-		      CONFIG_NRF71_SCAN_MAX_BSS_CNT;
+		      CONFIG_NRF71_WIFI_SCAN_MAX_BSS_CNT;
 	LOG_DBG("%s: max_bss_cnt = %d", __func__, max_bss_cnt);
 	scan_info->scan_db_len = max_bss_cnt * sizeof(struct umac_display_results);
 
-#ifdef CONFIG_NRF71_FORCE_PASSIVE_SCAN
+#ifdef CONFIG_NRF71_WIFI_FORCE_PASSIVE_SCAN
 	scan_info->scan_params.passive_scan = 1;
-#endif /* CONFIG_NRF71_FORCE_PASSIVE_SCAN */
+#endif /* CONFIG_NRF71_WIFI_FORCE_PASSIVE_SCAN */
 
 	status = nrf_wifi_sys_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, scan_info);
 
@@ -229,7 +230,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	vif_ctx_zep->scan_in_progress = true;
 
 	k_work_schedule(&vif_ctx_zep->scan_timeout_work,
-			K_SECONDS(CONFIG_NRF71_SCAN_TIMEOUT));
+			K_SECONDS(CONFIG_NRF71_WIFI_SCAN_TIMEOUT));
 
 	ret = 0;
 out:
@@ -357,7 +358,7 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	}
 
 	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
-		vif_ctx_zep->max_bss_cnt : CONFIG_NRF71_SCAN_MAX_BSS_CNT;
+		vif_ctx_zep->max_bss_cnt : CONFIG_NRF71_WIFI_SCAN_MAX_BSS_CNT;
 
 	display_results = (struct umac_display_results *)(uintptr_t)scan_db_addr;
 

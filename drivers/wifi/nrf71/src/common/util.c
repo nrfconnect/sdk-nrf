@@ -15,10 +15,10 @@
 #include <common/util.h>
 #include <common/fmac_structs_common.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
-#ifdef CONFIG_NRF71_SYSTEM_MODE
+#ifdef CONFIG_NRF71_WIFI_SYSTEM_MODE
 #include <common/nbuf_mgmt.h>
 #include <system/fmac_api.h>
-#endif /* CONFIG_NRF71_SYSTEM_MODE */
+#endif /* CONFIG_NRF71_WIFI_SYSTEM_MODE */
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -166,19 +166,19 @@ out:
  */
 unsigned char nrf_wifi_utils_get_op_band(void)
 {
-	if (IS_ENABLED(CONFIG_NRF71_OP_BAND_2G)) {
+	if (IS_ENABLED(CONFIG_NRF71_WIFI_OP_BAND_2G)) {
 		return NRF_WIFI_OP_BAND_2GHZ;
 	}
-	if (IS_ENABLED(CONFIG_NRF71_OP_BAND_5G)) {
+	if (IS_ENABLED(CONFIG_NRF71_WIFI_OP_BAND_5G)) {
 		return NRF_WIFI_OP_BAND_5GHZ;
 	}
-	if (IS_ENABLED(CONFIG_NRF71_OP_BAND_6G)) {
+	if (IS_ENABLED(CONFIG_NRF71_WIFI_OP_BAND_6G)) {
 		return NRF_WIFI_OP_BAND_6GHZ;
 	}
-	if (IS_ENABLED(CONFIG_NRF71_OP_BAND_DUAL)) {
+	if (IS_ENABLED(CONFIG_NRF71_WIFI_OP_BAND_DUAL)) {
 		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
 	}
-	if (IS_ENABLED(CONFIG_NRF71_6G_SUPPORT)) {
+	if (IS_ENABLED(CONFIG_NRF71_WIFI_6G_SUPPORT)) {
 		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
 	}
 	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
@@ -222,11 +222,11 @@ enum nrf_wifi_status nrf_wifi_check_mode_validity(unsigned char mode)
 	if ((mode ^ NRF_WIFI_STA_MODE) == 0) {
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
-#ifdef CONFIG_NRF71_MONITOR_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_MONITOR_SUPPORT
 	else if ((mode ^ NRF_WIFI_MONITOR_MODE) == 0) {
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
-#endif /* CONFIG_NRF71_MONITOR_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT */
 	return NRF_WIFI_STATUS_FAIL;
 }
 
@@ -242,15 +242,15 @@ bool nrf_wifi_util_is_arr_zero(unsigned char *arr,
 	return true;
 }
 
-#ifdef CONFIG_NRF71_SYSTEM_MODE
+#ifdef CONFIG_NRF71_WIFI_SYSTEM_MODE
 unsigned char *nrf_wifi_util_get_ra(struct nrf_wifi_fmac_vif_ctx *vif,
 				    void *nwb)
 {
 	if ((vif->if_type == NRF_WIFI_IFTYPE_STATION)
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	    || (vif->if_type == NRF_WIFI_STA_TX_INJECTOR)
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
-#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT
 	    || (vif->if_type == NRF_WIFI_STA_PROMISC)
 	    || (vif->if_type == NRF_WIFI_STA_PROMISC_TX_INJECTOR)
 #endif
@@ -260,7 +260,7 @@ unsigned char *nrf_wifi_util_get_ra(struct nrf_wifi_fmac_vif_ctx *vif,
 
 	return nrf_wifi_nbuf_data_get(nwb);
 }
-#endif /* CONFIG_NRF71_SYSTEM_MODE */
+#endif /* CONFIG_NRF71_WIFI_SYSTEM_MODE */
 
 void *wifi_fmac_priv(struct nrf_wifi_fmac_priv *def)
 {

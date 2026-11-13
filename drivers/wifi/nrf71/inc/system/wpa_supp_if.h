@@ -14,7 +14,7 @@
 
 
 #define RPU_RESP_EVENT_TIMEOUT  5000
-#ifdef CONFIG_NRF71_STA_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 #include <drivers/driver_zephyr.h>
 
 void *nrf_wifi_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
@@ -139,8 +139,8 @@ int nrf_wifi_supp_remain_on_channel(void *if_priv, unsigned int freq,
 int nrf_wifi_supp_cancel_remain_on_channel(void *if_priv, u64 rpu_cookie);
 int nrf_wifi_supp_set_p2p_powersave(void *if_priv, int legacy_ps, int opp_ps, int ctwindow);
 
-#endif /* CONFIG_NRF71_STA_SUPPORT */
-#ifdef CONFIG_NRF71_AP_SUPPORT
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_AP_SUPPORT
 int nrf_wifi_wpa_supp_init_ap(void *if_priv, struct wpa_driver_associate_params *params);
 int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *params);
 int nrf_wifi_wpa_supp_change_beacon(void *if_priv, struct wpa_driver_ap_params *params);
@@ -154,5 +154,5 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 			unsigned int total_flags, unsigned int flags_or,
 			unsigned int flags_and);
 int nrf_wifi_wpa_supp_sta_get_inact_sec(void *if_priv, const u8 *addr);
-#endif /* CONFIG_NRF71_AP_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_AP_SUPPORT */
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */

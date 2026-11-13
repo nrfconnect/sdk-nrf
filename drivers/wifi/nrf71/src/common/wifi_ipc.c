@@ -113,11 +113,11 @@ static int nrf_wifi_ipc_wait_bound(nrf_wifi_ipc_t *context)
 	}
 
 	if (k_sem_take(&nrf_wifi_ipc_bind_sem,
-		       K_MSEC(CONFIG_NRF71_IPC_BIND_TIMEOUT_MS)) != 0 &&
+		       K_MSEC(CONFIG_NRF71_WIFI_IPC_BIND_TIMEOUT_MS)) != 0 &&
 	    !context->busy_q.ipc_ready) {
 		LOG_ERR("IPC endpoint not bound after %d ms (Wi-Fi core up? "
 			"CONFIG_SOC_NRF71_WIFI_BOOT=y for TF-M builds)",
-			CONFIG_NRF71_IPC_BIND_TIMEOUT_MS);
+			CONFIG_NRF71_WIFI_IPC_BIND_TIMEOUT_MS);
 		return -ETIMEDOUT;
 	}
 
@@ -569,7 +569,7 @@ int ipc_send(ipc_ctx_t ctx, const void *data, int len)
 
 		/* TX path: send (addr, size, ack_addr) on IPC0 */
 		{
-			int64_t deadline = k_uptime_get() + CONFIG_NRF71_IPC_SEND_TIMEOUT_MS;
+			int64_t deadline = k_uptime_get() + CONFIG_NRF71_WIFI_IPC_SEND_TIMEOUT_MS;
 
 			do {
 				status = nrf_wifi_ipc_host_tx_send(&nrf_wifi_ipc_host_tx,
@@ -582,12 +582,12 @@ int ipc_send(ipc_ctx_t ctx, const void *data, int len)
 
 				if (k_uptime_get() >= deadline) {
 					LOG_ERR("IPC host TX timed out after %d ms",
-						CONFIG_NRF71_IPC_SEND_TIMEOUT_MS);
+						CONFIG_NRF71_WIFI_IPC_SEND_TIMEOUT_MS);
 					host_tx_ack_slot_free(ack_addr);
 					return -ETIMEDOUT;
 				}
 
-				k_usleep(CONFIG_NRF71_IPC_SEND_RETRY_INTERVAL_US);
+				k_usleep(CONFIG_NRF71_WIFI_IPC_SEND_RETRY_INTERVAL_US);
 			} while (true);
 		}
 
@@ -738,7 +738,7 @@ enum nrf_wifi_status nrf_wifi_ipc_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		return NRF_WIFI_STATUS_FAIL;
 	}
 
-#ifdef CONFIG_NRF71_CMD_EVENT_LOG
+#ifdef CONFIG_NRF71_WIFI_CMD_EVENT_LOG
 	LOG_INF("%s: caller %p", __func__, __builtin_return_address(0));
 #else
 	LOG_DBG("%s: caller %p", __func__, __builtin_return_address(0));

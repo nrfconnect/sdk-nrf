@@ -20,9 +20,9 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 				      unsigned int *rf_params_addr,
 				      unsigned int vtf_buffer_start_address,
 				      bool rf_params_valid,
-#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 				      int sleep_type,
-#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 				      unsigned int phy_calib,
 				      unsigned char op_band,
 				      bool beamforming,
@@ -61,32 +61,32 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 	umac_cmd_data->sys_params.sw_bringup_time = SW_DELAY;
 	umac_cmd_data->sys_params.bcn_time_out = BCN_TIMEOUT;
 	umac_cmd_data->sys_params.calib_sleep_clk = CALIB_SLEEP_CLOCK_ENABLE;
-#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 	umac_cmd_data->sys_params.sleep_enable = sleep_type;
-#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
-	umac_cmd_data->discon_timeout = CONFIG_NRF71_AP_DEAD_DETECT_TIMEOUT;
-#ifdef CONFIG_NRF71_RPU_RECOVERY
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
+	umac_cmd_data->discon_timeout = CONFIG_NRF71_WIFI_AP_DEAD_DETECT_TIMEOUT;
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY
 	umac_cmd_data->watchdog_timer_val =
-		(CONFIG_NRF71_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS) / 1000;
+		(CONFIG_NRF71_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS) / 1000;
 #else
 	/* Disable watchdog */
 	umac_cmd_data->watchdog_timer_val = 0xFFFFFF;
-#endif /* CONFIG_NRF71_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 
 	LOG_DBG("RPU LPM type: %s",
 		umac_cmd_data->sys_params.sleep_enable == 2 ? "HW" :
 		umac_cmd_data->sys_params.sleep_enable == 1 ? "SW" : "DISABLED");
 
-#ifdef CONFIG_NRF71_MGMT_BUFF_OFFLOAD
+#ifdef CONFIG_NRF71_WIFI_MGMT_BUFF_OFFLOAD
 	umac_cmd_data->mgmt_buff_offload =  1;
 	LOG_DBG("Management buffer offload enabled");
-#endif /* CONFIG_NRF71_MGMT_BUFF_OFFLOAD */
-#ifdef CONFIG_NRF71_KEEPALIVE_SUPPORT
+#endif /* CONFIG_NRF71_WIFI_MGMT_BUFF_OFFLOAD */
+#ifdef CONFIG_NRF71_WIFI_KEEPALIVE_SUPPORT
 	umac_cmd_data->keep_alive_enable = KEEP_ALIVE_ENABLED;
-	umac_cmd_data->keep_alive_period = CONFIG_NRF71_KEEPALIVE_PERIOD_S;
+	umac_cmd_data->keep_alive_period = CONFIG_NRF71_WIFI_KEEPALIVE_PERIOD_S;
 	LOG_DBG("Keepalive enabled with period %d",
 				   umac_cmd_data->keep_alive_enable);
-#endif /* CONFIG_NRF71_KEEPALIVE_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_KEEPALIVE_SUPPORT */
 
 	umac_cmd_data->op_band = op_band;
 
@@ -98,30 +98,30 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 			      country_code,
 			      NRF_WIFI_COUNTRY_CODE_LEN);
 
-#ifdef CONFIG_NRF71_RPU_EXTEND_TWT_SP
+#ifdef CONFIG_NRF71_WIFI_RPU_EXTEND_TWT_SP
 	 umac_cmd_data->feature_flags |= TWT_EXTEND_SP_EDCA;
 #endif
-#ifdef CONFIG_NRF71_SCAN_DISABLE_DFS_CHANNELS
+#ifdef CONFIG_NRF71_WIFI_SCAN_DISABLE_DFS_CHANNELS
 	umac_cmd_data->feature_flags |= DISABLE_DFS_CHANNELS;
-#endif /* CONFIG_NRF71_SCAN_DISABLE_DFS_CHANNELS */
+#endif /* CONFIG_NRF71_WIFI_SCAN_DISABLE_DFS_CHANNELS */
 
 	if (!beamforming) {
 		umac_cmd_data->disable_beamforming = 1;
 	}
 
-#if defined(CONFIG_NRF71_PS_INTELLIGENT_EXIT)
+#if defined(CONFIG_NRF71_WIFI_PS_INTELLIGENT_EXIT)
 	umac_cmd_data->ps_exit_strategy = INT_PS;
 #else
 	umac_cmd_data->ps_exit_strategy = EVERY_TIM;
-#endif  /* CONFIG_NRF71_PS_INTELLIGENT_EXIT */
+#endif  /* CONFIG_NRF71_WIFI_PS_INTELLIGENT_EXIT */
 
-	umac_cmd_data->display_scan_bss_limit = CONFIG_NRF71_DISPLAY_SCAN_BSS_LIMIT;
+	umac_cmd_data->display_scan_bss_limit = CONFIG_NRF71_WIFI_DISPLAY_SCAN_BSS_LIMIT;
 
-#ifdef CONFIG_NRF71_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN
+#ifdef CONFIG_NRF71_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN
 	umac_cmd_data->coex_disable_ptiwin_for_wifi_scan = 1;
 #else
 	umac_cmd_data->coex_disable_ptiwin_for_wifi_scan = 0;
-#endif /* CONFIG_NRF71_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN */
+#endif /* CONFIG_NRF71_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN */
 
 	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
 				       umac_cmd,

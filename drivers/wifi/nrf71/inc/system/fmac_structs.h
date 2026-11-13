@@ -73,7 +73,7 @@ enum nrf_wifi_fmac_if_carr_state {
 	NRF_WIFI_FMAC_IF_CARR_STATE_INVALID
 };
 
-#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 /**
  * @brief Structure to hold raw rx packet information.
  *
@@ -90,7 +90,7 @@ struct raw_rx_pkt_header {
 	/** Data rate of the packet (MCS or Legacy). */
 	unsigned char rate;
 };
-#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 
 /**
  * @brief Callback functions to be invoked by UMAC IF layer when a particular event occurs.
@@ -144,7 +144,7 @@ struct nrf_wifi_fmac_callbk_fns {
 	      struct nrf_wifi_reg *get_reg,
 	      unsigned int event_len);
 
-#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || \
+#if defined(CONFIG_NRF71_WIFI_STA_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || \
 	defined(__DOXYGEN__)
 	/** Callback function to be called when a set interface response is received. */
 	void (*set_if_callbk_fn)(void *os_vif_ctx,
@@ -152,7 +152,7 @@ struct nrf_wifi_fmac_callbk_fns {
 	      unsigned int event_len);
 #endif
 
-#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_WIFI_STA_SUPPORT) || defined(__DOXYGEN__)
 	/** Callback function to be called when an interface association state changes. */
 	enum nrf_wifi_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
 			      enum nrf_wifi_fmac_if_carr_state cs);
@@ -275,22 +275,22 @@ struct nrf_wifi_fmac_callbk_fns {
 	/** Callback function to be called when TX PHY rate is to be processed from TX done. */
 	void (*process_tx_rate_from_tx_done)(void *os_vif_ctx,
 	      unsigned int tx_rate_kbps);
-#endif /* CONFIG_NRF71_STA_SUPPORT */
-#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 	void (*sniffer_callbk_fn)(void *os_vif_ctx,
 	      void *frm,
 	      struct raw_rx_pkt_header *,
 	      bool pkt_free);
-#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 	void (*reg_change_callbk_fn)(void *os_vif_ctx,
 	      struct nrf_wifi_event_regulatory_change *reg_change,
 	      unsigned int event_len);
-#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT)
 	/** Callback when NRF_WIFI_EVENT_CHANNEL_SET_DONE is received. */
 	void (*channel_set_done_callbk_fn)(void *os_vif_ctx,
 	      struct nrf_wifi_event_set_channel *channel_event,
 	      unsigned int event_len);
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT || CONFIG_NRF71_WIFI_MONITOR_SUPPORT */
 	/** Callback when a coexistence (CM2CD) event NRF_WIFI_EVENT_COEX_CONFIG
 	 *  is received. Delivers the coexistence event payload to the host
 	 *  coexistence driver.
@@ -298,7 +298,7 @@ struct nrf_wifi_fmac_callbk_fns {
 	void (*coex_event_callbk_fn)(void *os_dev_ctx, void *coex_event, unsigned int event_len);
 };
 
-#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_WIFI_STA_SUPPORT) || defined(__DOXYGEN__)
 /**
  * @brief The TWT sleep state of device.
  *
@@ -309,9 +309,9 @@ enum nrf_wifi_fmac_twt_state {
 	/** RPU in TWT awake state. */
 	NRF_WIFI_FMAC_TWT_STATE_AWAKE
 };
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
-#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || \
+#if defined(CONFIG_NRF71_WIFI_STA_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || \
 	defined(__DOXYGEN__)
 /**
  * @brief Structure to hold peer context information.
@@ -344,9 +344,9 @@ struct peers_info {
 	bool authorized;
 };
 
-#if defined(__DOXYGEN__) && !defined(CONFIG_NRF71_MAX_TX_TOKENS)
-/** Maximum number of TX tokens (comes from CONFIG_NRF71_MAX_TX_TOKENS). */
-#define CONFIG_NRF71_MAX_TX_TOKENS 12
+#if defined(__DOXYGEN__) && !defined(CONFIG_NRF71_WIFI_MAX_TX_TOKENS)
+/** Maximum number of TX tokens (comes from CONFIG_NRF71_WIFI_MAX_TX_TOKENS). */
+#define CONFIG_NRF71_WIFI_MAX_TX_TOKENS 12
 #endif
 
 /**
@@ -362,23 +362,23 @@ struct peers_info {
 
 struct tx_token_stats {
 	/** Number of times each TX token (descriptor) was acquired from the free pool. */
-	unsigned int token_acq[CONFIG_NRF71_MAX_TX_TOKENS];
+	unsigned int token_acq[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
 	/** Number of TX commands issued on each TX token. */
-	unsigned int token_cmds[CONFIG_NRF71_MAX_TX_TOKENS];
+	unsigned int token_cmds[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
 	/** Number of packets carried by each TX token. */
-	unsigned int token_pkts[CONFIG_NRF71_MAX_TX_TOKENS];
+	unsigned int token_pkts[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
 	/** Occupancy (packet data + per-packet headroom) carried by each token, in bytes. */
-	unsigned long long token_bytes[CONFIG_NRF71_MAX_TX_TOKENS];
+	unsigned long long token_bytes[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
 	/** Highest number of packets carried by a single command, per token. */
-	unsigned int token_max_pkts[CONFIG_NRF71_MAX_TX_TOKENS];
+	unsigned int token_max_pkts[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
 	/** Highest occupancy carried by a single command, per token, in bytes. */
-	unsigned int token_max_bytes[CONFIG_NRF71_MAX_TX_TOKENS];
+	unsigned int token_max_bytes[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
 	/** Cycle stamp of the command in flight on each token, 0 if idle. */
-	unsigned int token_issue_cyc[CONFIG_NRF71_MAX_TX_TOKENS];
+	unsigned int token_issue_cyc[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
 	/** Accumulated in-flight time (command issued to TX done), per token, in us. */
-	unsigned long long token_inflight_us[CONFIG_NRF71_MAX_TX_TOKENS];
+	unsigned long long token_inflight_us[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
 	/** Longest in-flight time of a single command, per token, in us. */
-	unsigned int token_max_inflight_us[CONFIG_NRF71_MAX_TX_TOKENS];
+	unsigned int token_max_inflight_us[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
 	/** Number of commands currently in flight. */
 	unsigned int cmds_in_flight;
 	/** Highest number of commands in flight at once. */
@@ -497,30 +497,30 @@ struct tx_config {
 	 *  - Second four bits: Spare desc2 queue number.
 	 */
 	unsigned int spare_desc_queue_map;
-#if defined(CONFIG_NRF71_TX_DONE_WQ_ENABLED) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_WIFI_TX_DONE_WQ_ENABLED) || defined(__DOXYGEN__)
 	/** Deferred TX-done events for the TX-done work queue. */
 	sys_dlist_t tx_done_event_q;
-#endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
+#endif /* CONFIG_NRF71_WIFI_TX_DONE_WQ_ENABLED */
 	/** TX token debug statistics. */
 	struct tx_token_stats token_stats;
 };
-#endif /* CONFIG_NRF71_STA_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT || CONFIG_NRF71_WIFI_MONITOR_SUPPORT */
 
-#if defined(CONFIG_NRF71_RX_WQ_ENABLED) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_WIFI_RX_WQ_ENABLED) || defined(__DOXYGEN__)
 /** RX work-queue list element (CTRL-pool copy of UMAC @c nrf_wifi_rx_buff). */
 struct nrf_wifi_fmac_rx_node {
 	sys_dnode_t node;
 	struct nrf_wifi_rx_buff buff;
 };
-#endif /* CONFIG_NRF71_RX_WQ_ENABLED */
+#endif /* CONFIG_NRF71_WIFI_RX_WQ_ENABLED */
 
-#if defined(CONFIG_NRF71_TX_DONE_WQ_ENABLED) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_WIFI_TX_DONE_WQ_ENABLED) || defined(__DOXYGEN__)
 /** TX-done work-queue list element (CTRL-pool copy of UMAC @c nrf_wifi_tx_buff_done). */
 struct nrf_wifi_fmac_tx_done_node {
 	sys_dnode_t node;
 	struct nrf_wifi_tx_buff_done buff;
 };
-#endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
+#endif /* CONFIG_NRF71_WIFI_TX_DONE_WQ_ENABLED */
 
 /**
  * @brief Structure to hold context information for the UMAC IF layer.
@@ -539,7 +539,7 @@ struct nrf_wifi_sys_fmac_priv {
 	unsigned int rx_desc[MAX_NUM_OF_RX_QUEUES];
 	/** Maximum number of host buffers needed for RX frames. */
 	unsigned int num_rx_bufs;
-#if defined(CONFIG_NRF71_STA_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_STA_SUPPORT)
 	/** Maximum number of tokens available for TX. */
 	unsigned char num_tx_tokens;
 	/** Maximum number of TX tokens available reserved per AC. */
@@ -550,10 +550,10 @@ struct nrf_wifi_sys_fmac_priv {
 	unsigned int max_ampdu_len_per_token;
 	/** Available (remaining) AMPDU length per token. */
 	unsigned int avail_ampdu_len_per_token;
-#endif /* CONFIG_NRF71_STA_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 };
 
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 
 /**
  * @brief Transmit modes for raw packets.
@@ -615,7 +615,7 @@ struct raw_tx_stats {
 	/** Total number of raw packets sent. */
 	unsigned int raw_pkt_send_success;
 };
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 
 /**
  * @brief Structure to hold per device context information for the UMAC IF layer.
@@ -626,12 +626,12 @@ struct raw_tx_stats {
 struct nrf_wifi_sys_fmac_dev_ctx {
 	/** Array of pointers to virtual interfaces created on this device. */
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx[MAX_NUM_VIFS];
-#if defined(CONFIG_NRF71_RX_WQ_ENABLED)
+#if defined(CONFIG_NRF71_WIFI_RX_WQ_ENABLED)
 	/** Deferred RX processing work item. */
 	struct k_work rx_work;
 	/** Deferred RX events for @ref rx_work. */
 	sys_dlist_t rx_event_q;
-#endif /* CONFIG_NRF71_RX_WQ_ENABLED */
+#endif /* CONFIG_NRF71_WIFI_RX_WQ_ENABLED */
 	/** Host statistics. */
 	struct rpu_host_stats host_stats;
 	/** Number of interfaces in STA mode. */
@@ -640,22 +640,22 @@ struct nrf_wifi_sys_fmac_dev_ctx {
 	unsigned char num_ap;
 	/** Queue for storing mapping info of RX buffers. */
 	struct nrf_wifi_fmac_buf_map_info *rx_buf_info;
-#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_STA_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT)
 	/** Context information related to TX path. */
 	struct tx_config tx_config;
 #endif
-#if defined(CONFIG_NRF71_STA_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_STA_SUPPORT)
 	/** TWT state of the RPU. */
 	enum nrf_wifi_fmac_twt_state twt_sleep_status;
-#if defined(CONFIG_NRF71_TX_DONE_WQ_ENABLED)
+#if defined(CONFIG_NRF71_WIFI_TX_DONE_WQ_ENABLED)
 	/** Deferred TX-done processing work item. */
 	struct k_work tx_done_work;
-#endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
-#endif /* CONFIG_NRF71_STA_SUPPORT */
-#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+#endif /* CONFIG_NRF71_WIFI_TX_DONE_WQ_ENABLED */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
 	struct raw_tx_pkt_header raw_tx_config;
 	struct raw_tx_stats raw_pkt_stats;
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT */
 };
 
 /**
@@ -683,20 +683,20 @@ struct nrf_wifi_fmac_vif_ctx {
 	unsigned char bssid[NRF_WIFI_ETH_ADDR_LEN];
 	/** Mode setting for the current VIF */
 	unsigned char mode;
-#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
+#if defined(CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT)
 	/** Channel setting for the current VIF */
 	unsigned char channel;
 	/** TX injection mode setting */
 	bool txinjection_mode;
-#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
-#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT || CONFIG_NRF71_WIFI_MONITOR_SUPPORT */
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 	/** Filter setting for Monitor and Promiscuous modes */
 	unsigned char packet_filter;
-#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
-#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT
 	/** Promiscuous mode setting */
 	bool promisc_mode;
-#endif /* CONFIG_NRF71_PROMISCUOUS_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 };
 
 /**
