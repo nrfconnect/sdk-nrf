@@ -43,28 +43,19 @@
 
 LOG_MODULE_REGISTER(coap_client_sample, CONFIG_COAP_CLIENT_SAMPLE_LOG_LEVEL);
 
-/* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+/* Macro used to subscribe to specific Zephyr NET management events. */
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
 #define MAX_CONSECUTIVE_BUSY_RETRIES 5
+
+/* Any IP family, and DNS to resolve the server host name */
+#define READY_MASK (CONN_MGR_READY_IP_ANY | CONN_MGR_READY_DNS)
 
 /* Macro called upon a fatal error, reboots the device. */
 #define FATAL_ERROR()					\
 	LOG_ERR("Fatal error! Rebooting the device.");	\
 	LOG_PANIC();					\
 	IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)))
-
-/* Zephyr NET management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
-static struct net_mgmt_event_callback conn_cb;
-
-/* Variable used to indicate if network is connected. */
-static bool is_connected;
-
-/* Mutex and conditional variable used to signal network connectivity. */
-K_MUTEX_DEFINE(network_connected_lock);
-K_CONDVAR_DEFINE(network_connected);
 
 static void server_addr_set_ipv4(struct sockaddr_storage *server, struct addrinfo *result)
 {
@@ -94,59 +85,41 @@ static void server_addr_set_ipv6(struct sockaddr_storage *server, struct addrinf
 	LOG_INF("IPv6 Address found %s", addr_str);
 }
 
-static int server_resolve(struct sockaddr_storage *server)
+/* Resolves the server for the address families that are ready */
+static int server_resolve(struct addrinfo **result)
 {
 	int err;
-	struct addrinfo *result;
 	struct addrinfo hints = {
-		.ai_family = AF_UNSPEC,
+		.ai_family = conn_mgr_get_ready_addr_family(),
 		.ai_socktype = SOCK_DGRAM
 	};
 
-	err = getaddrinfo(CONFIG_COAP_SAMPLE_SERVER_HOSTNAME, NULL, &hints, &result);
+	err = getaddrinfo(CONFIG_COAP_SAMPLE_SERVER_HOSTNAME, NULL, &hints, result);
 	if (err) {
 		LOG_ERR("getaddrinfo, error: %d", err);
 		return err;
 	}
 
-	if (result == NULL) {
-		LOG_ERR("Address not found");
-		return -ENOENT;
-	}
+	return 0;
+}
 
+static int server_addr_set(struct sockaddr_storage *server, struct addrinfo *result)
+{
 	/* Resolve either IPv4 or IPv6 */
 	switch (result->ai_family) {
 	case AF_INET:
 		server_addr_set_ipv4(server, result);
-		break;
+		return 0;
 	case AF_INET6:
 		if (IS_ENABLED(CONFIG_NET_IPV6)) {
 			server_addr_set_ipv6(server, result);
-			break;
+			return 0;
 		}
 		__fallthrough;
 	default:
 		LOG_ERR("Unexpected address family: %d", result->ai_family);
-		freeaddrinfo(result);
 		return -EAFNOSUPPORT;
 	}
-
-	/* Free the address. */
-	freeaddrinfo(result);
-
-	return 0;
-}
-
-static void wait_for_network(void)
-{
-	k_mutex_lock(&network_connected_lock, K_FOREVER);
-
-	if (!is_connected) {
-		LOG_INF("Waiting for network connectivity");
-		k_condvar_wait(&network_connected, &network_connected_lock, K_FOREVER);
-	}
-
-	k_mutex_unlock(&network_connected_lock);
 }
 
 static void response_cb(const struct coap_client_response_data *data, void *user_data)
@@ -214,18 +187,12 @@ static int credentials_add(void)
 	return 0;
 }
 
-/* Resolves the server and opens a socket to it, performing the DTLS handshake if enabled.
+/* Opens a socket to the server, performing the DTLS handshake if enabled.
  * Returns the socket on success, or a negative error code on a recoverable failure.
  */
 static int server_connect(struct sockaddr_storage *server)
 {
 	int err, sock;
-
-	err = server_resolve(server);
-	if (err) {
-		LOG_ERR("Failed to resolve server name");
-		return err;
-	}
 
 	sock = socket(server->ss_family, SOCK_DGRAM,
 		      IS_ENABLED(CONFIG_COAP_SAMPLE_DTLS) ? IPPROTO_DTLS_1_2 : IPPROTO_UDP);
@@ -305,6 +272,31 @@ static int server_connect(struct sockaddr_storage *server)
 	return sock;
 }
 
+/* Resolves the server and connects to the first address that accepts a connection */
+static int server_resolve_and_connect(struct sockaddr_storage *server)
+{
+	struct addrinfo *result;
+	struct addrinfo *ai;
+	int sock = -ENOENT;
+	int err;
+
+	err = server_resolve(&result);
+	if (err) {
+		LOG_ERR("Failed to resolve server name");
+		return err;
+	}
+
+	for (ai = result; ai != NULL && sock < 0; ai = ai->ai_next) {
+		if (server_addr_set(server, ai) == 0) {
+			sock = server_connect(server);
+		}
+	}
+
+	freeaddrinfo(result);
+
+	return sock;
+}
+
 static void server_disconnect(struct coap_client *coap_client, int *sock)
 {
 	coap_client_cancel_requests(coap_client);
@@ -318,6 +310,7 @@ static int periodic_coap_request_loop(void)
 	int err;
 	int sock = -1;
 	int consecutive_busy_retries = 0;
+	uint32_t last_seen = 0;
 	struct sockaddr_storage server = { 0 };
 	struct coap_client coap_client = { 0 };
 	struct coap_client_request req = {
@@ -342,15 +335,26 @@ static int periodic_coap_request_loop(void)
 		return err;
 	}
 
-	while (true) {
-		wait_for_network();
+	LOG_INF("Waiting for network...");
+	(void)conn_mgr_wait_ready(READY_MASK, NULL, K_FOREVER);
+	LOG_INF("Network ready");
 
+	while (true) {
 		if (sock < 0) {
-			sock = server_connect(&server);
+			/* At once the first time, then after the delay or a network change */
+			err = conn_mgr_wait_ready(READY_MASK, &last_seen,
+						  K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
+			if (err == -EAGAIN) {
+				/* The network is not ready. Keep waiting. */
+				continue;
+			} else if (err != 0) {
+				return err;
+			}
+
+			sock = server_resolve_and_connect(&server);
 			if (sock < 0) {
 				LOG_WRN("Failed to connect to server: %d, retrying in %d seconds",
 					sock, CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS);
-				k_sleep(K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
 				continue;
 			}
 		}
@@ -369,7 +373,6 @@ static int periodic_coap_request_loop(void)
 		if (err) {
 			LOG_ERR("Failed to send request: %d, reconnecting", err);
 			server_disconnect(&coap_client, &sock);
-			k_sleep(K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
 			continue;
 		}
 
@@ -382,32 +385,8 @@ static int periodic_coap_request_loop(void)
 	}
 }
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
-{
-	switch (event) {
-	case NET_EVENT_L4_CONNECTED:
-		LOG_INF("Network connectivity established");
-		k_mutex_lock(&network_connected_lock, K_FOREVER);
-		is_connected = true;
-		k_condvar_signal(&network_connected);
-		k_mutex_unlock(&network_connected_lock);
-		break;
-	case NET_EVENT_L4_DISCONNECTED:
-		LOG_INF("Network connectivity lost");
-		k_mutex_lock(&network_connected_lock, K_FOREVER);
-		is_connected = false;
-		k_mutex_unlock(&network_connected_lock);
-		break;
-	default:
-		/* Don't care */
-		return;
-	}
-}
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-						uint64_t event,
-						struct net_if *iface)
+static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
+				       size_t info_length, void *user_data)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
 		LOG_ERR("NET_EVENT_CONN_IF_FATAL_ERROR");
@@ -416,18 +395,15 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
+/* Registered statically to not miss events raised before main() */
+NET_MGMT_REGISTER_EVENT_HANDLER(conn_events, CONN_LAYER_EVENT_MASK, connectivity_event_handler,
+				NULL);
+
 int main(void)
 {
 	int err;
 
 	LOG_INF("The CoAP client sample started");
-
-	/* Setup handler for Zephyr NET Connection Manager events and Connectivity layer. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
-
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
 
 	/* Bring all network interfaces up.
 	 * Wi-Fi or LTE depending on the board that the sample was built for.
@@ -447,18 +423,6 @@ int main(void)
 		FATAL_ERROR();
 		return err;
 	}
-
-	/* Resend connection status if the sample is built for NATIVE_SIM.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that NET_EVENT_L4_CONNECTED fires before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
-	}
-
-	wait_for_network();
 
 	err = periodic_coap_request_loop();
 	if (err) {

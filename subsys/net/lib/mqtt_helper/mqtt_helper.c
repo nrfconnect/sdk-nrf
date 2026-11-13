@@ -8,6 +8,7 @@
 #include <zephyr/net/socket.h>
 
 #include <net/mqtt_helper.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/net/mqtt.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/logging/log.h>
@@ -375,39 +376,6 @@ MQTT_HELPER_STATIC void mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 }
 
-static bool ipv6_ready(struct net_if *iface)
-{
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB) && !IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF)) {
-		/* If the modem library is used without the net_if support, net_if won't be able to
-		 * determine the IPv6 connectivity state. In this case, we assume that the IPv6
-		 * connectivity is ready when the modem is connected to the network.
-		 */
-		return true;
-	}
-
-	struct net_if *query_iface = iface;
-
-	return net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &query_iface) != NULL;
-}
-
-static bool ipv4_ready(struct net_if *iface)
-{
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB) && !IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF)) {
-		/* If the modem library is used without the net_if support, net_if won't be able to
-		 * determine the IPv4 connectivity state. In this case, we assume that the IPv4
-		 * connectivity is ready when the modem is connected to the network.
-		 */
-		return true;
-	}
-
-	if (iface == NULL) {
-		iface = net_if_get_default();
-	}
-
-	return (iface != NULL) &&
-	       (net_if_ipv4_get_global_addr(iface, NET_ADDR_PREFERRED) != NULL);
-}
-
 static bool family_supported(int family)
 {
 	switch (family) {
@@ -415,18 +383,6 @@ static bool family_supported(int family)
 		return IS_ENABLED(CONFIG_NET_IPV4);
 	case NET_AF_INET6:
 		return IS_ENABLED(CONFIG_NET_IPV6);
-	default:
-		return false;
-	}
-}
-
-static bool family_ready(int family, struct net_if *iface)
-{
-	switch (family) {
-	case NET_AF_INET:
-		return ipv4_ready(iface);
-	case NET_AF_INET6:
-		return ipv6_ready(iface);
 	default:
 		return false;
 	}
@@ -473,13 +429,14 @@ static int broker_connect(struct net_sockaddr_storage *broker,
 	int ifindex;
 	int last_err = -ENOENT;
 	bool attempted = false;
-	struct net_if *iface = NULL;
 	struct zsock_addrinfo *result;
 	struct zsock_addrinfo *addr;
 	struct zsock_addrinfo hints = {
 		.ai_socktype = NET_SOCK_STREAM,
 #if defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4)
-		.ai_family = NET_AF_UNSPEC,
+		/* Only query the ready family, if only one is. Readiness is not per iface. */
+		.ai_family = conn_params->if_name ? NET_AF_UNSPEC :
+						    conn_mgr_get_ready_addr_family(),
 #elif defined(CONFIG_NET_IPV6)
 		.ai_family = NET_AF_INET6,
 #else
@@ -503,8 +460,7 @@ static int broker_connect(struct net_sockaddr_storage *broker,
 			return -ENODEV;
 		}
 
-		iface = net_if_get_by_index(ifindex);
-		if (iface == NULL) {
+		if (net_if_get_by_index(ifindex) == NULL) {
 			LOG_ERR("Could not get interface by index %d", ifindex);
 			return -ENODEV;
 		}
@@ -520,12 +476,6 @@ static int broker_connect(struct net_sockaddr_storage *broker,
 		if (!family_supported(addr->ai_family)) {
 			LOG_DBG("Skipping unsupported address family %d",
 				(unsigned int)addr->ai_family);
-			continue;
-		}
-
-		if (!family_ready(addr->ai_family, iface)) {
-			LOG_DBG("Skipping %s address: no local %s address",
-				net_family2str(addr->ai_family), net_family2str(addr->ai_family));
 			continue;
 		}
 

@@ -151,10 +151,9 @@ The following output is logged on the terminal when the sample downloads the def
 
    Download client sample started
    Connecting to network
-   IPv4 connectivity established
-   Network connected
-   Starting download over IPv4
-   Downloading https://nrfconnectsdk.s3.eu-central-1.amazonaws.com/sample-img-100kb.png
+   Waiting for network...
+   Network ready
+   Downloading https://nrfconnectsdk.s3.dualstack.eu-central-1.amazonaws.com/sample-img-100kb.png
    Setting up TLS credentials, sec tag count 1
 
    [ 100% ] (102923/102923 bytes)
@@ -163,7 +162,6 @@ The following output is logged on the terminal when the sample downloads the def
    SHA256: 344577d739dc0e9f9498c13be2fbc7fb947abd291e9e57db9e9ca4a89ccd5f63
    Done
    Download finished, bringing network interfaces down
-   IPv4 connectivity lost
 
 Troubleshooting
 ===============

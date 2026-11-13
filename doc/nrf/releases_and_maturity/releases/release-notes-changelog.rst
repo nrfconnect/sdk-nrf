@@ -891,6 +891,9 @@ Networking samples
     * Support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
     * Steps for testing a FOTA update in the :ref:`aws_iot_sample_testing_fota` section of the sample documentation.
 
+  * Fixed an issue where the sample could try to connect to AWS IoT before DNS was available and stop with a fatal error.
+    The sample now connects once the Connection Manager reports both IP connectivity and DNS as ready.
+
 * :ref:`download_sample` sample:
 
   * Added:
@@ -904,13 +907,14 @@ Networking samples
     * By enabling CoAP by default so that the sample always builds with support for both HTTP and CoAP.
       The transport is selected automatically at runtime.
     * By enabling the :option:`CONFIG_SAMPLE_COMPUTE_HASH` and :option:`CONFIG_SAMPLE_COMPARE_HASH` options by default.
+    * The default test file URLs to use the dual-stack Amazon S3 endpoint, so that the sample can also download over IPv6.
 
   * Fixed:
 
     * The HTTP file link, which was previously broken.
     * An issue where network interface teardown was attempted with uninitialized ``net_if``.
     * An issue where the sample could try to download over an IP family for which the device had no address.
-      The sample now catches IPv4 and IPv6 connectivity events separately and restricts the download to the available family or families.
+      The sample now waits for the Connection Manager to report the network as ready and relies on the :ref:`lib_downloader` library to select the address family.
 
 * :ref:`udp_sample` sample:
 
@@ -923,7 +927,12 @@ Networking samples
 
     * Support for mutual DTLS (client X.509 certificate authentication), using the new :option:`CONFIG_COAP_SAMPLE_DTLS` Kconfig option.
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
-  * Updated the sample to only reboot on fatal errors and reconnect to the server on recoverable errors.
+
+  * Updated:
+
+    * The sample to reboot only on fatal errors and reconnect to the server on recoverable errors.
+    * The sample to wait for the network to be ready, resolve the server for the address families that the Connection Manager reports as ready, and try all resolved addresses, moving to the next one when a request times out.
+
   * Fixed:
 
     * An issue with the sample's IPv6 support, where the device crashes when trying to communicate over IPv6.
@@ -940,6 +949,7 @@ Networking samples
     * The sample documentation with the security tag requirements for the FOTA download over HTTPS.
     * The FOTA testing steps in the sample documentation with the version option to change and the steps to build the update image.
     * The FOTA download security tag (:kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`) in Wi-Fi builds from ``11`` to ``10``, the same value as :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`.
+    * The sample to wait for the Connection Manager to report the network as ready, and to retry the connection to Azure IoT Hub, including DPS, when it fails.
 
   * Fixed:
 
@@ -950,7 +960,7 @@ Networking samples
 * :ref:`https_client` sample:
 
   * Fixed an issue where the sample could try to connect over IPv4 or IPv6 even when the device had no local address for that family.
-    The sample now uses only resolved addresses that match a ready local IPv4/IPv6 address.
+    The sample now resolves the server only for the address families that the Connection Manager reports as ready.
 
 * :ref:`http_server` sample:
 
@@ -972,6 +982,11 @@ Networking samples
       Both Kconfig option values were increased.
     * The HTTP response to GET requests.
       An extra blank line after the ``Content-Type`` header terminated the header section early, putting the ``Content-Length`` header in the response body.
+
+* :ref:`mqtt_sample` sample:
+
+  * Fixed an issue where the sample could try to connect to the MQTT broker before DNS was available.
+    The sample now connects once the Connection Manager reports both IP connectivity and DNS as ready.
 
 * :ref:`nrf_coap_server_sample` sample:
 
@@ -1126,6 +1141,8 @@ Wi-Fi samples
     * Temperature reporting to use the on-die temperature sensor instead of simulated values.
       The ``nrf7002dk/nrf5340/cpuapp/ns`` board target still reports simulated values, as no temperature sensor is available to the nRF5340 application core.
     * The sample documentation with restructured provisioning and onboarding instructions, and a description of the device monitoring data reported to `Memfault`_.
+    * The sample to retry the connection to nRF Cloud early when the Connection Manager reports a network readiness change.
+    * The sample to connect to nRF Cloud only when the Connection Manager reports both IP connectivity and DNS as ready.
 
   * Fixed:
 
@@ -1289,6 +1306,7 @@ Modem libraries
 * :ref:`nrf_modem_lib_readme`:
 
   * Updated the diagnostic counters of memory allocation failures to depend on the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` Kconfig option.
+  * Updated the :c:func:`getaddrinfo` function to query both IPv6 and IPv4 addresses when the address family is ``AF_UNSPEC``, returning IPv6 addresses first.
 
 * :ref:`lib_location` library:
 
@@ -1407,7 +1425,7 @@ Libraries for networking
 
     * An issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
       This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
-      The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
+      The library now resolves the host only for the address families that the Connection Manager reports as ready.
 
     * An issue where the :c:func:`nrf_cloud_pending_fota_job_process` function always requested a reboot after a modem delta FOTA update.
       A reboot is no longer requested if the reported DFU result shows that the modem is running, with either the updated or the previous firmware.
@@ -1415,10 +1433,20 @@ Libraries for networking
 * :ref:`lib_mqtt_helper` library:
 
   * Fixed an issue where the library could stop after one resolved broker address.
-    The library now iterates all resolved IPv4/IPv6 addresses and only tries families for which the device has a local address.
+    The library now iterates all resolved IPv4/IPv6 addresses.
+    In dual-stack builds, the library resolves the broker only for the address families that the Connection Manager reports as ready.
+
+* :ref:`lib_downloader` library:
+
+  * Updated the library to try all resolved addresses for the address families that the Connection Manager reports as ready, instead of trying IPv6 and then falling back to IPv4, when the address family is ``AF_UNSPEC``.
+
+* :ref:`lib_rest_client` library:
+
+  * Updated the library to resolve the host only for the address families that the Connection Manager reports as ready.
 
 * :ref:`lib_nrf_provisioning` library:
 
+  * Updated the CoAP client to resolve the host only for the address families that the Connection Manager reports as ready, in dual-stack builds.
   * Added a configurable heap allocator for the library's dynamic allocations, selected with the :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_KERNEL` (default) and :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_SYSTEM` Kconfig options.
   * Updated the library to send the :c:enumerator:`NRF_PROVISIONING_EVENT_FATAL_ERROR` event when the modem fails to generate the attestation token for an unclaimed device.
     Previously, the :c:enumerator:`NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED` event was sent without a token.
@@ -1496,6 +1524,7 @@ Other libraries
 * :ref:`lib_date_time` library:
 
   * Fixed an issue where periodic time updates stopped permanently if the time was obtained, for example, from an ``%XTIME`` notification shortly before a scheduled update.
+  * Updated the library to resolve the NTP servers only for the address families that the Connection Manager reports as ready.
 
 * :ref:`dult_readme` library:
 

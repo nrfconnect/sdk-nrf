@@ -34,20 +34,16 @@
 
 #define RECV_BUF_SIZE		2048
 #define TLS_SEC_TAG		42
-#define IP_FAMILY_EVENT_IPV4	BIT(0)
-#define IP_FAMILY_EVENT_IPV6	BIT(1)
+#define RETRY_SECONDS		10
 
-/* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK		(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED |	\
-				 NET_EVENT_L4_IPV4_CONNECTED | NET_EVENT_L4_IPV4_DISCONNECTED |	\
-				 NET_EVENT_L4_IPV6_CONNECTED | NET_EVENT_L4_IPV6_DISCONNECTED)
+/* Macro used to subscribe to specific Zephyr NET management events. */
 #define CONN_LAYER_EVENT_MASK	(NET_EVENT_CONN_IF_FATAL_ERROR)
+
+/* Any IP family, and DNS to resolve the server host name */
+#define READY_MASK		(CONN_MGR_READY_IP_ANY | CONN_MGR_READY_DNS)
 
 static const char send_buf[] = HTTP_HEAD;
 static char recv_buf[RECV_BUF_SIZE];
-static K_SEM_DEFINE(network_connected_sem, 0, 1);
-static K_EVENT_DEFINE(ip_family_event);
-static ATOMIC_DEFINE(network_state, 2);
 /* Certificate for `example.com` */
 static const char cert[] = {
 	#include "example_com_ca.pem.inc"
@@ -56,15 +52,6 @@ static const char cert[] = {
 	 * Required by TLS credentials API.
 	 */
 	IF_ENABLED(CONFIG_TLS_CREDENTIALS, (0x00))
-};
-
-/* Zephyr NET management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
-static struct net_mgmt_event_callback conn_cb;
-
-enum network_state_flag {
-	NETWORK_STATE_IPV4_READY,
-	NETWORK_STATE_IPV6_READY,
 };
 
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
@@ -177,57 +164,8 @@ int tls_setup(int fd)
 	return 0;
 }
 
-static void on_net_event_l4_disconnected(void)
-{
-	printk("Disconnected from the network\n");
-}
-
-static void on_net_event_l4_connected(void)
-{
-	k_sem_give(&network_connected_sem);
-}
-
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
-{
-	switch (event) {
-	case NET_EVENT_L4_CONNECTED:
-		printk("Network connectivity established and IP address assigned\n");
-		on_net_event_l4_connected();
-		break;
-	case NET_EVENT_L4_DISCONNECTED:
-		printk("Network connectivity lost\n");
-		on_net_event_l4_disconnected();
-		break;
-	case NET_EVENT_L4_IPV4_CONNECTED:
-		atomic_set_bit(network_state, NETWORK_STATE_IPV4_READY);
-		k_event_post(&ip_family_event, IP_FAMILY_EVENT_IPV4);
-		printk("IPv4 connectivity established\n");
-		break;
-	case NET_EVENT_L4_IPV4_DISCONNECTED:
-		printk("IPv4 connectivity lost\n");
-		atomic_clear_bit(network_state, NETWORK_STATE_IPV4_READY);
-		k_event_clear(&ip_family_event, IP_FAMILY_EVENT_IPV4);
-		break;
-	case NET_EVENT_L4_IPV6_CONNECTED:
-		atomic_set_bit(network_state, NETWORK_STATE_IPV6_READY);
-		k_event_post(&ip_family_event, IP_FAMILY_EVENT_IPV6);
-		printk("IPv6 connectivity established\n");
-		break;
-	case NET_EVENT_L4_IPV6_DISCONNECTED:
-		printk("IPv6 connectivity lost\n");
-		atomic_clear_bit(network_state, NETWORK_STATE_IPV6_READY);
-		k_event_clear(&ip_family_event, IP_FAMILY_EVENT_IPV6);
-		break;
-	default:
-		break;
-	}
-}
-
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint64_t event,
-				       struct net_if *iface)
+static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
+				       size_t info_length, void *user_data)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
 		printk("Fatal error received from the connectivity layer\n");
@@ -235,54 +173,11 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-static bool ipv4_ready(void)
-{
-	return atomic_test_bit(network_state, NETWORK_STATE_IPV4_READY);
-}
+/* Registered statically to not miss events raised before main() */
+NET_MGMT_REGISTER_EVENT_HANDLER(conn_events, CONN_LAYER_EVENT_MASK, connectivity_event_handler,
+				NULL);
 
-static bool ipv6_ready(void)
-{
-	return atomic_test_bit(network_state, NETWORK_STATE_IPV6_READY);
-}
-
-static bool family_ready(int family)
-{
-	if (family == AF_INET) {
-		return ipv4_ready();
-	}
-
-	if (family == AF_INET6) {
-		return ipv6_ready();
-	}
-
-	return false;
-}
-
-static int wait_for_family_ready_event(int family)
-{
-	const uint32_t family_event = (family == AF_INET) ? IP_FAMILY_EVENT_IPV4 :
-					IP_FAMILY_EVENT_IPV6;
-	int events;
-
-	printk("Waiting for local %s address event\n", family == AF_INET ? "IPv4" : "IPv6");
-	events = k_event_wait(&ip_family_event, family_event, false, K_FOREVER);
-	if (events == 0) {
-		printk("Failed to wait for local %s address event\n",
-		       family == AF_INET ? "IPv4" : "IPv6");
-		return -EIO;
-	}
-
-	if (!family_ready(family)) {
-		printk("Local %s address is not ready\n", family == AF_INET ? "IPv4" : "IPv6");
-		return -EIO;
-	}
-
-	printk("Local %s address is now ready\n", family == AF_INET ? "IPv4" : "IPv6");
-
-	return 0;
-}
-
-static int connect_to_family(struct addrinfo *res, int family, int *last_err)
+static int connect_to_server(struct addrinfo *res, int *last_err)
 {
 	int fd;
 	int err;
@@ -291,10 +186,6 @@ static int connect_to_family(struct addrinfo *res, int family, int *last_err)
 
 	for (struct addrinfo *entry = res; entry != NULL; entry = entry->ai_next) {
 		const void *addr_ptr;
-
-		if (entry->ai_family != family) {
-			continue;
-		}
 
 		if (entry->ai_family == AF_INET6) {
 			addr_ptr = &((const struct sockaddr_in6 *)entry->ai_addr)->sin6_addr;
@@ -345,85 +236,9 @@ static int connect_to_family(struct addrinfo *res, int family, int *last_err)
 	return -1;
 }
 
-static int connect_to_server(struct addrinfo *res, int *last_err)
+static int send_http_request(void)
 {
-	int first_family = AF_UNSPEC;
-	int second_family = AF_UNSPEC;
-	int fd = -1;
-
-	for (struct addrinfo *entry = res; entry != NULL; entry = entry->ai_next) {
-		if (IS_ENABLED(CONFIG_NET_IPV4) && entry->ai_family == AF_INET) {
-			first_family = AF_INET;
-		} else if (IS_ENABLED(CONFIG_NET_IPV6) && entry->ai_family == AF_INET6) {
-			second_family = AF_INET6;
-		}
-	}
-
-	if (first_family == AF_INET) {
-		/* If IPv4 is resolved and compiled in but not ready, then swap first and second
-		 * families to start with IPv6 if it is resolved and compiled in, otherwise, keep
-		 * IPv4 and wait for IP address.
-		 */
-		if (!ipv4_ready() && second_family == AF_INET6) {
-			first_family = AF_INET6;
-			second_family = AF_INET;
-		}
-	} else {
-		/* If IPv4 is not resolved or compiled in, select second family. Don't set AF_UNSPEC
-		 * directly, because second_family can be resolved to AF_UNSPEC if IPv6 is not
-		 * compiled in.
-		 */
-		first_family = second_family;
-	}
-
-	/* This happens if resolved families and compiled families don't match. For example, if IPv6
-	 * is resolved but not compiled in.
-	 */
-	if (first_family == AF_UNSPEC) {
-		printk("No supported address families found\n");
-		return -1;
-	}
-
-	/* It is possible that the first family is not ready yet if resolved families don't match
-	 * to device family, which device got first. Therefore we need to wait for the other family
-	 * to be ready.
-	 */
-	if (!family_ready(first_family)) {
-		int err;
-
-		err = wait_for_family_ready_event(first_family);
-		if (err != 0) {
-			printk("Failed to wait for the first family ready event, err %d\n", err);
-			return -1;
-		}
-	}
-
-	fd = connect_to_family(res, first_family, last_err);
-	if (fd >= 0) {
-		return fd;
-	}
-
-	/* Try the second family. */
-	if (second_family == AF_UNSPEC) {
-		return fd;
-	}
-
-	if (!family_ready(second_family)) {
-		int err;
-
-		err = wait_for_family_ready_event(second_family);
-		if (err != 0) {
-			printk("Failed to wait for the second family ready event, err %d\n", err);
-			return -1;
-		}
-	}
-
-	fd = connect_to_family(res, second_family, last_err);
-	return fd;
-}
-
-static void send_http_request(void)
-{
+	int ret = -1;
 	int err;
 	int fd = -1;
 	char *p;
@@ -432,6 +247,8 @@ static void send_http_request(void)
 	struct addrinfo *res = NULL;
 	struct addrinfo hints = {
 		.ai_flags = AI_NUMERICSERV, /* Let getaddrinfo() set port */
+		/* Only query the ready families */
+		.ai_family = conn_mgr_get_ready_addr_family(),
 		.ai_socktype = SOCK_STREAM,
 	};
 	int connect_errno = 0;
@@ -492,6 +309,7 @@ static void send_http_request(void)
 	}
 
 	printk("Finished, closing socket.\n");
+	ret = 0;
 
 clean_up:
 	if (res != NULL) {
@@ -500,21 +318,16 @@ clean_up:
 	if (fd >= 0) {
 		(void)close(fd);
 	}
+
+	return ret;
 }
 
 int main(void)
 {
+	uint32_t last_seen = 0;
 	int err;
 
 	printk("HTTPS client sample started\n\r");
-
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
-
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
 
 	printk("Bringing network interface up\n");
 
@@ -541,19 +354,26 @@ int main(void)
 		return 0;
 	}
 
-	/* Resend connection status if the sample is built for NATIVE_SIM.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that NET_EVENT_L4_CONNECTED fires before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
+	printk("Waiting for network...\n");
+	(void)conn_mgr_wait_ready(READY_MASK, NULL, K_FOREVER);
+	printk("Network ready\n");
+
+	while (true) {
+		/* At once the first time, then after the delay or a network change */
+		err = conn_mgr_wait_ready(READY_MASK, &last_seen, K_SECONDS(RETRY_SECONDS));
+		if (err == -EAGAIN) {
+			/* The network is not ready. Keep waiting. */
+			continue;
+		} else if (err != 0) {
+			return err;
+		}
+
+		if (send_http_request() == 0) {
+			break;
+		}
+
+		printk("Retrying in %d seconds\n", RETRY_SECONDS);
 	}
-
-	k_sem_take(&network_connected_sem, K_FOREVER);
-
-	send_http_request();
 
 	/* A small delay for the TCP connection teardown */
 	k_sleep(K_SECONDS(1));

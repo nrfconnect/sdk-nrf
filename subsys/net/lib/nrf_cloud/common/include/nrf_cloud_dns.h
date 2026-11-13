@@ -36,8 +36,8 @@ typedef int (*nrf_cloud_connect_host_cb)(struct sockaddr *const addr);
  * This function performs DNS lookup of the provided hostname, then tries to connect to each
  * address found, until successful.
  *
- * If a static IPv4 address is configured, this will be attempted first. Then, IPv6 addresses will
- * be searched for and tried. Finally, IPv4 addresses will be searched for and tried.
+ * If a static IPv4 address is configured, this will be attempted first. Then, addresses are
+ * searched for and tried for the address families that the Connection Manager reports as ready.
  *
  * The provided connect callback is called for each IP address tried. This callback should attempt
  * to connect to the provided IP address, and either return a negative error code on failure, or a
