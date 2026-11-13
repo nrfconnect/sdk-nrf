@@ -87,6 +87,93 @@ int bt_conn_set_power_control_request_params(struct bt_conn_set_pcr_params *para
 
 	return bt_hci_cmd_send_sync(BT_HCI_OP_SET_POWER_CONTROL_REQUEST_PARAMS, buf, NULL);
 }
+
+#if defined(CONFIG_BT_NRF_LE_POWER_CONTROL_EXT)
+/* Set LE Power Control Feature Parameters for a connection */
+int bt_conn_set_conn_power_control_request_params(struct bt_conn *conn,
+						  struct bt_conn_set_pcr_params *params)
+{
+	struct bt_hci_cp_set_conn_power_control_request_param *cp;
+	struct net_buf *buf;
+	uint16_t conn_handle;
+	int err;
+
+	if (!params->wait_period_ms) {
+		return -EINVAL;
+	}
+
+	err = bt_hci_get_conn_handle(conn, &conn_handle);
+	if (err) {
+		return err;
+	}
+
+	buf = bt_hci_cmd_alloc(K_FOREVER);
+	if (!buf) {
+		return -ENOBUFS;
+	}
+
+	cp = net_buf_add(buf, sizeof(*cp));
+	cp->handle = sys_cpu_to_le16(conn_handle);
+	cp->auto_enable = params->auto_enable;
+	cp->apr_enable = params->apr_enable;
+	cp->beta = sys_cpu_to_le16(params->beta);
+	cp->lower_limit = params->lower_limit;
+	cp->upper_limit = params->upper_limit;
+	cp->lower_target_rssi = params->lower_target_rssi;
+	cp->upper_target_rssi = params->upper_target_rssi;
+	cp->wait_period_ms = sys_cpu_to_le16(params->wait_period_ms);
+	cp->apr_margin = params->apr_margin;
+
+	return bt_hci_cmd_send_sync(BT_HCI_OP_SET_CONN_POWER_CONTROL_REQUEST_PARAMS, buf, NULL);
+}
+
+/* Set TX power bounds for a connection */
+int bt_conn_set_tx_power_bounds(struct bt_conn *conn, int8_t min_tx_power, int8_t max_tx_power)
+{
+	struct bt_hci_cp_set_conn_tx_power_bounds *cp;
+	struct net_buf *buf;
+	uint16_t conn_handle;
+	int err;
+
+	if (min_tx_power > max_tx_power) {
+		return -EINVAL;
+	}
+
+	err = bt_hci_get_conn_handle(conn, &conn_handle);
+	if (err) {
+		return err;
+	}
+
+	buf = bt_hci_cmd_alloc(K_FOREVER);
+	if (!buf) {
+		return -ENOBUFS;
+	}
+
+	cp = net_buf_add(buf, sizeof(*cp));
+	cp->handle = sys_cpu_to_le16(conn_handle);
+	cp->min_tx_power = min_tx_power;
+	cp->max_tx_power = max_tx_power;
+
+	return bt_hci_cmd_send_sync(BT_HCI_OP_SET_CONN_TX_POWER_BOUNDS, buf, NULL);
+}
+
+/* Enable or disable the power control response report events */
+int bt_nrf_power_control_rsp_report_enable(bool enable)
+{
+	struct bt_hci_cp_power_control_rsp_report_enable *cp;
+	struct net_buf *buf;
+
+	buf = bt_hci_cmd_alloc(K_FOREVER);
+	if (!buf) {
+		return -ENOBUFS;
+	}
+
+	cp = net_buf_add(buf, sizeof(*cp));
+	cp->enable = enable ? 1 : 0;
+
+	return bt_hci_cmd_send_sync(BT_HCI_OP_POWER_CONTROL_RSP_REPORT_ENABLE, buf, NULL);
+}
+#endif /* CONFIG_BT_NRF_LE_POWER_CONTROL_EXT */
 #endif /* CONFIG_BT_TRANSMIT_POWER_CONTROL */
 
 #if defined(CONFIG_BT_LL_SOFTDEVICE)

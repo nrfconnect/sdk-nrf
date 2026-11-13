@@ -22,3 +22,28 @@ config BT_NRF_CONN_SET_LTK
 	depends on BT_SMP
 	help
 	  Enables the bt_nrf_conn_set_ltk() API.
+
+config BT_NRF_LE_POWER_CONTROL_EXT
+	bool "LE Power Control extensions"
+	depends on BT_TRANSMIT_POWER_CONTROL || BT_CTLR_LE_POWER_CONTROL
+	help
+	  Enables the vendor-specific extensions to LE Power Control:
+
+	  * bt_conn_set_conn_power_control_request_params() sets the LE Power Control Request
+	    parameters for a single connection, instead of for all connections as
+	    bt_conn_set_power_control_request_params() does.
+	    This allows, for example, the lower limit of the RSSI golden range, which determines the
+	    Acceptable Power Reduction (APR) sent in LL_POWER_CONTROL_RSP, to differ between
+	    connections.
+	  * bt_conn_set_tx_power_bounds() sets the lowest and highest local TX power of a connection.
+	    The bounds are honored when the peer requests a change of the local TX power.
+	  * bt_nrf_power_control_rsp_report_enable() enables reports to the host with the full content of
+	    LL_POWER_CONTROL_RSP, including the Acceptable Power Reduction (APR) and the minimum and
+	    maximum power flags of the peer, for the procedures that the host initiated.
+
+	  In the SoftDevice Controller, this enables the vendor-specific HCI commands that the
+	  APIs use, see sdc_hci_cmd_vs_set_conn_power_control_request_params(),
+	  sdc_hci_cmd_vs_set_conn_tx_power_bounds() and sdc_hci_cmd_vs_power_control_rsp_report_enable().
+	  When the host and the controller are built as separate images, enable this option in
+	  both images.
+	  The APIs and the commands are not included in the build when this option is disabled.

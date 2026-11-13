@@ -289,6 +289,15 @@ Bluetooth® LE
   * The :kconfig:option:`CONFIG_BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE_DEFAULT` Kconfig option to set the minimum connection event length mode on boot.
   * Support for the channel index in advertising reports for legacy advertising PDUs in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_SDC_CHAN_IDX_IN_ADV_REPORT` Kconfig option.
     The host exposes the channel index in the :c:member:`bt_le_scan_recv_info.chan_idx` field when the :kconfig:option:`CONFIG_BT_HCI_ADV_REPORT_CHAN_IDX` Kconfig option is enabled.
+  * The :kconfig:option:`CONFIG_BT_NRF_LE_POWER_CONTROL_EXT` Kconfig option, which enables extensions to LE Power Control:
+
+    * The :c:func:`bt_conn_set_conn_power_control_request_params` function to set the LE Power Control Request parameters for a single connection.
+    * The :c:func:`bt_conn_set_tx_power_bounds` function to set the lowest and highest local transmit power of a connection.
+      The bounds are honored when the peer requests a change of the local transmit power.
+    * The :c:func:`bt_nrf_power_control_rsp_report_enable` function to enable vendor-specific HCI events that report the full content of ``LL_POWER_CONTROL_RSP``, including the Acceptable Power Reduction (APR), for the procedures initiated by the host.
+
+    The option also enables the corresponding vendor-specific HCI commands in the SoftDevice Controller.
+    The option is disabled by default.
 
 Bluetooth Mesh
 --------------
