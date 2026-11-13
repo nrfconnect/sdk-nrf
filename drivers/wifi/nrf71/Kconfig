@@ -191,6 +191,7 @@ config NRF71_TCP_IP_CHECKSUM_OFFLOAD
 	bool "TCP/IP checksum offload"
 	depends on NRF71_DATA_TX
 	default y if !NRF71_RADIO_TEST
+	select NET_CHECKSUM_OFFLOAD_SUPPORTED if NET_L2_ETHERNET
 	help
 	  Enable TCP/IP checksum offload for Wi-Fi driver.
 
