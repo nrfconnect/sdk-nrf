@@ -1,4 +1,4 @@
-/* mmdl.c - Bluetooth Mesh Models Tester */
+﻿/* mmdl.c - Bluetooth Mesh Models Tester */
 
 /*
  * Copyright (c) 2021 Nordic Semiconductor ASA
@@ -7,7 +7,9 @@
  */
 
 #include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/mesh/access.h>
 #include <bluetooth/mesh/models.h>
+#include "access.h"
 
 /* Private Mesh Model headers */
 #include <model_utils.h>
@@ -44,6 +46,42 @@ struct bt_mesh_scene_cli scene_cli;
 struct bt_mesh_light_xyl_cli xyl_cli;
 struct bt_mesh_light_hsl_cli light_hsl_cli;
 struct bt_mesh_scheduler_cli scheduler_cli;
+
+static bool tester_mmdl_get_lowest_appkey_idx(const struct bt_mesh_model *model,
+					      uint16_t *appkey_idx)
+{
+	uint16_t key_idx;
+
+	*appkey_idx = BT_MESH_KEY_UNUSED;
+
+	/* Check the full list of keys the Model keeps. */
+	for (size_t i = 0; i < model->keys_cnt; i++) {
+		key_idx = model->keys[i];
+
+		/* Do not proceed in a case of unused slot, or a Device Key. */
+		if (key_idx == BT_MESH_KEY_UNUSED ||
+		    (key_idx == BT_MESH_KEY_DEV_ANY || BT_MESH_IS_DEV_KEY(key_idx))) {
+			continue;
+		}
+		/* Update AppKey index value if it is lower than the current value. */
+		if (key_idx < *appkey_idx) {
+			*appkey_idx = key_idx;
+		}
+	}
+
+	return (*appkey_idx != BT_MESH_KEY_UNUSED);
+}
+
+static void tester_mmdl_set_msg_ctx(struct bt_mesh_msg_ctx *ctx,
+				    const struct model_data *model_bound)
+{
+	/* Fill the message context of a Client model message from the result of
+	 * lookup_model_bound(): destination, AppKey and the subnet of that AppKey.
+	 */
+	ctx->addr = model_bound->addr;
+	ctx->app_idx = model_bound->appkey_idx;
+	ctx->net_idx = model_bound->net_idx;
+}
 
 static void supported_commands(uint8_t *data, uint16_t len)
 {
@@ -151,18 +189,55 @@ static void supported_commands(uint8_t *data, uint16_t len)
 
 struct model_data *lookup_model_bound(uint16_t id)
 {
-	int i;
+	static struct model_data data;
+	const struct bt_mesh_comp *comp;
+	const struct bt_mesh_model *model;
 
-	for (i = 0; i < ARRAY_SIZE(model_bound); i++) {
-		if (model_bound[i].model->id ==
-		    BT_MESH_MODEL_ID_GEN_ONOFF_CLI) {
-			if (model_bound[i].model) {
-				return &model_bound[i];
-			}
-			break;
-		}
+	comp = bt_mesh_comp_get();
+	if (!comp) {
+		return NULL;
 	}
 
+	for (size_t i = 0; i < comp->elem_count; i++) {
+		model = bt_mesh_model_find(&comp->elem[i], id);
+		if (!model) {
+			continue;
+		}
+
+		data.model = model;
+
+		/* Select the destination address and the AppKey index:
+		 * - Model publication if the current Test Case has configured one;
+		 * - otherwise PTS with the lowest AppKey index bound to this Model;
+		 * - otherwise no message can be sent.
+		 */
+		if (model->pub && model->pub->addr != BT_MESH_ADDR_UNASSIGNED &&
+		    model->pub->key != BT_MESH_KEY_UNUSED) {
+			data.addr = model->pub->addr;
+			data.appkey_idx = model->pub->key;
+		} else if (tester_pts_addr != BT_MESH_ADDR_UNASSIGNED &&
+			   tester_mmdl_get_lowest_appkey_idx(model, &data.appkey_idx)) {
+			data.addr = tester_pts_addr;
+		} else {
+			LOG_ERR("Model 0x%04x has no publication, and no AppKey bound to PTS.",
+				id);
+			return NULL;
+		}
+
+		/* Message is encrypted with this AppKey, get the NetKey index from
+		 * it.
+		 */
+		if (!tester_mesh_get_net_idx_from_appkey_idx(data.appkey_idx,
+							     &data.net_idx)) {
+			LOG_ERR("AppKey 0x%03x of Model 0x%04x is not bound to a network.",
+				data.appkey_idx, id);
+			return NULL;
+		}
+
+		return &data;
+	}
+
+	LOG_ERR("Model 0x%04x not found in composition", id);
 	return NULL;
 }
 
@@ -188,8 +263,7 @@ static void gen_onoff_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_onoff_cli_get(&onoff_cli, &ctx, &status);
 	if (err) {
@@ -236,8 +310,7 @@ static void gen_onoff_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.on_off = !!cmd->onoff;
 
@@ -298,8 +371,7 @@ static void gen_lvl_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_lvl_cli_get(&lvl_cli, &ctx, &status);
 	if (err) {
@@ -348,8 +420,7 @@ static void gen_lvl_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.lvl = cmd->lvl;
 
@@ -416,8 +487,7 @@ static void gen_lvl_delta_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.delta = cmd->delta;
 
@@ -485,8 +555,7 @@ static void gen_lvl_move_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.delta = cmd->delta;
 
@@ -546,8 +615,7 @@ static void gen_dtt_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_dtt_get(&dtt_cli, &ctx, &status);
 	if (err) {
@@ -591,8 +659,7 @@ static void gen_dtt_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	if (cmd->ack) {
 		err = bt_mesh_dtt_set(
@@ -640,8 +707,7 @@ static void gen_ponoff_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_ponoff_cli_on_power_up_get(&ponoff_cli, &ctx, &status);
 	if (err) {
@@ -681,8 +747,7 @@ static void gen_ponoff_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set = cmd->on_power_up;
 
@@ -732,8 +797,7 @@ static void gen_plvl_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_plvl_cli_power_get(&plvl_cli, &ctx, &status);
 	if (err) {
@@ -780,8 +844,7 @@ static void gen_plvl_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.power_lvl = cmd->power_lvl;
 
@@ -840,8 +903,7 @@ static void gen_plvl_last_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_plvl_cli_last_get(&plvl_cli, &ctx, &status);
 	if (err) {
@@ -877,8 +939,7 @@ static void gen_plvl_dflt_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_plvl_cli_default_get(&plvl_cli, &ctx, &status);
 	if (err) {
@@ -918,8 +979,7 @@ static void gen_plvl_dflt_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set = cmd->power_dflt;
 
@@ -969,8 +1029,7 @@ static void gen_plvl_range_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_plvl_cli_range_get(&plvl_cli, &ctx, &status);
 	if (err) {
@@ -1016,8 +1075,7 @@ static void gen_plvl_range_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.min = cmd->range_min;
 	set.max = cmd->range_max;
@@ -1071,8 +1129,7 @@ static void battery_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_battery_cli_get(&battery_cli, &ctx, &status);
 	if (err) {
@@ -1112,8 +1169,7 @@ static void location_global_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_loc_cli_global_get(&loc_cli, &ctx, &status);
 	if (err) {
@@ -1153,8 +1209,7 @@ static void location_local_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_loc_cli_local_get(&loc_cli, &ctx, &status);
 	if (err) {
@@ -1199,8 +1254,7 @@ static void location_global_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	net_buf_simple_init_with_data(buf, (void *)&data[1], len - 1);
 	bt_mesh_loc_global_decode(buf, &set);
@@ -1254,8 +1308,7 @@ void location_local_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	net_buf_simple_init_with_data(buf, (void *)&data[1], len - 1);
 	bt_mesh_loc_local_decode(buf, &set);
@@ -1310,8 +1363,7 @@ static void gen_props_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	if (cmd->kind == BT_MESH_PROP_SRV_KIND_CLIENT) {
 		err = bt_mesh_prop_cli_client_props_get(&prop_cli, &ctx,
@@ -1365,8 +1417,7 @@ static void gen_prop_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_prop_cli_prop_get(&prop_cli, &ctx,
 					(enum bt_mesh_prop_srv_kind)cmd->kind,
@@ -1424,8 +1475,7 @@ static void gen_prop_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	if (cmd->len > status.size) {
 		err = -EINVAL;
@@ -1516,8 +1566,7 @@ static void sensor_desc_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	if (len == 2) {
 		sensor.type = bt_mesh_sensor_type_get(cmd->id);
@@ -1589,8 +1638,7 @@ static void sensor_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	if (len == 2) {
 		sensor = bt_mesh_sensor_type_get(cmd->id);
@@ -1669,8 +1717,7 @@ static void sensor_cadence_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	sensor = bt_mesh_sensor_type_get(cmd->id);
 	if (!sensor) {
@@ -1727,8 +1774,7 @@ static void sensor_cadence_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	net_buf_simple_init_with_data(buf, (void *)&cmd->data, cmd->len);
 	sensor = bt_mesh_sensor_type_get(cmd->id);
@@ -1805,8 +1851,7 @@ static void sensor_settings_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	sensor = bt_mesh_sensor_type_get(cmd->id);
 	if (!sensor) {
@@ -1860,8 +1905,7 @@ static void sensor_setting_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	sensor = bt_mesh_sensor_type_get(cmd->id);
 	if (!sensor) {
@@ -1915,8 +1959,7 @@ static void sensor_setting_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	sensor = bt_mesh_sensor_type_get(cmd->id);
 	if (!sensor) {
@@ -1998,8 +2041,7 @@ static void sensor_column_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	sensor = bt_mesh_sensor_type_get(cmd->id);
 	if (!sensor) {
@@ -2092,8 +2134,7 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	sensor = bt_mesh_sensor_type_get(cmd->id);
 	if (!sensor) {
@@ -2191,8 +2232,7 @@ static void time_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_time_cli_time_get(&time_cli, &ctx, &status);
 	if (err) {
@@ -2235,8 +2275,7 @@ static void time_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	net_buf_simple_init_with_data(buf, data, len);
 	bt_mesh_time_decode_time_params(buf, &set);
@@ -2278,8 +2317,7 @@ static void time_role_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_time_cli_role_get(&time_cli, &ctx, &status);
 	if (err) {
@@ -2317,8 +2355,7 @@ static void time_role_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_time_cli_role_set(&time_cli, &ctx, &set, &status);
 	if (err) {
@@ -2355,8 +2392,7 @@ static void time_zone_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_time_cli_zone_get(&time_cli, &ctx, &status);
 	if (err) {
@@ -2400,8 +2436,7 @@ static void time_zone_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.new_offset = cmd->new_offset;
 	set.timestamp = cmd->timestamp;
@@ -2445,8 +2480,7 @@ static void time_tai_utc_delta_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_time_cli_tai_utc_delta_get(&time_cli, &ctx, &status);
 	if (err) {
@@ -2490,8 +2524,7 @@ static void time_tai_utc_delta_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.delta_new = cmd->delta_new;
 	set.timestamp = cmd->timestamp;
@@ -2536,8 +2569,7 @@ static void light_lightness_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_lightness_cli_light_get(&lightness_cli, &ctx, &status);
 	if (err) {
@@ -2584,8 +2616,7 @@ static void light_lightness_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.lvl = cmd->lightness;
 
@@ -2647,8 +2678,7 @@ static void light_lightness_linear_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = lightness_cli_light_get(&lightness_cli, &ctx, LINEAR, &status);
 	if (err) {
@@ -2698,8 +2728,7 @@ static void light_lightness_linear_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.lvl = cmd->lightness;
 
@@ -2765,8 +2794,7 @@ static void light_lightness_last_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_lightness_cli_last_get(&lightness_cli, &ctx, &status);
 	if (err) {
@@ -2802,8 +2830,7 @@ static void light_lightness_default_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_lightness_cli_default_get(&lightness_cli, &ctx, &status);
 	if (err) {
@@ -2842,8 +2869,7 @@ static void light_lightness_default_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	if (cmd->ack) {
 		err = bt_mesh_lightness_cli_default_set(&lightness_cli, &ctx,
@@ -2890,8 +2916,7 @@ static void light_lightness_range_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_lightness_cli_range_get(&lightness_cli, &ctx, &status);
 	if (err) {
@@ -2936,8 +2961,7 @@ static void light_lightness_range_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.min = cmd->min;
 	set.max = cmd->max;
@@ -2991,8 +3015,7 @@ static void light_lc_mode_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_ctrl_cli_mode_get(&light_ctrl_cli, &ctx, &status);
 	if (err) {
@@ -3030,8 +3053,7 @@ static void light_lc_mode_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	if (cmd->ack) {
 		err = bt_mesh_light_ctrl_cli_mode_set(&light_ctrl_cli, &ctx,
@@ -3076,8 +3098,7 @@ static void light_lc_occupancy_mode_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_ctrl_cli_occupancy_enabled_get(&light_ctrl_cli,
 							   &ctx, &status);
@@ -3117,8 +3138,7 @@ static void light_lc_occupancy_mode_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	if (cmd->ack) {
 		err = bt_mesh_light_ctrl_cli_occupancy_enabled_set(
@@ -3165,8 +3185,7 @@ static void light_lc_light_onoff_mode_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_ctrl_cli_light_onoff_get(&light_ctrl_cli, &ctx,
 						     &status);
@@ -3214,8 +3233,7 @@ static void light_lc_light_onoff_mode_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 	set.on_off = !!cmd->onoff;
 
 	if (len > sizeof(*cmd)) {
@@ -3280,8 +3298,7 @@ static void light_lc_property_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 	id = (enum bt_mesh_light_ctrl_prop)cmd->id;
 
 	err = bt_mesh_light_ctrl_cli_prop_get(&light_ctrl_cli, &ctx, id,
@@ -3341,8 +3358,7 @@ static void light_lc_property_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 	id = (enum bt_mesh_light_ctrl_prop)cmd->id;
 
 	net_buf_simple_init_with_data(buf, &cmd->val, sizeof(cmd->val));
@@ -3411,8 +3427,7 @@ static void light_ctl_states_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_ctl_get(&light_ctl_cli, &ctx, &status);
 
@@ -3463,8 +3478,7 @@ static void light_ctl_states_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.params.light = cmd->light;
 	set.params.temp = cmd->temp;
@@ -3531,8 +3545,7 @@ static void light_ctl_temperature_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_temp_get(&light_ctl_cli, &ctx, &status);
 
@@ -3583,8 +3596,7 @@ static void light_ctl_temperature_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.params.temp = cmd->temp;
 	set.params.delta_uv = cmd->delta_uv;
@@ -3650,8 +3662,7 @@ static void light_ctl_default_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_ctl_default_get(&light_ctl_cli, &ctx, &status);
 
@@ -3697,8 +3708,7 @@ static void light_ctl_default_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.light = cmd->light;
 	set.temp = cmd->temp;
@@ -3752,8 +3762,7 @@ static void light_ctl_temp_range_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_temp_range_get(&light_ctl_cli, &ctx, &status);
 
@@ -3800,8 +3809,7 @@ static void light_ctl_temp_range_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.min = cmd->min;
 	set.max = cmd->max;
@@ -3855,8 +3863,7 @@ static void scene_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_scene_cli_get(&scene_cli, &ctx, &status);
 
@@ -3900,8 +3907,7 @@ static void scene_register_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_scene_cli_register_get(&scene_cli, &ctx, &status);
 
@@ -3950,8 +3956,7 @@ static void scene_store_procedure(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 	scene = cmd->scene;
 
 	if (cmd->ack) {
@@ -4006,8 +4011,7 @@ static void scene_recall(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 	scene = cmd->scene;
 
 	if (len > sizeof(*cmd)) {
@@ -4068,8 +4072,7 @@ static void light_xyl_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_xyl_get(&xyl_cli, &ctx, &status);
 
@@ -4118,8 +4121,7 @@ static void light_xyl_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.params.lightness = cmd->lightness;
 	set.params.xy.x = cmd->x;
@@ -4182,8 +4184,7 @@ static void light_xyl_target_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_xyl_target_get(&xyl_cli, &ctx, &status);
 
@@ -4227,8 +4228,7 @@ static void light_xyl_default_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_xyl_default_get(&xyl_cli, &ctx, &status);
 
@@ -4275,8 +4275,7 @@ static void light_xyl_default_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.lightness = cmd->lightness;
 	set.xy.x = cmd->x;
@@ -4331,8 +4330,7 @@ static void light_xyl_range_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_xyl_range_get(&xyl_cli, &ctx, &status);
 
@@ -4381,8 +4379,7 @@ static void light_xyl_range_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.min.x = cmd->min_x;
 	set.min.y = cmd->min_y;
@@ -4440,8 +4437,7 @@ static void light_hsl_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_hsl_get(&light_hsl_cli, &ctx, &status);
 
@@ -4490,8 +4486,7 @@ static void light_hsl_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.params.lightness = cmd->lightness;
 	set.params.hue = cmd->hue;
@@ -4555,8 +4550,7 @@ static void light_hsl_target_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_hsl_target_get(&light_hsl_cli, &ctx, &status);
 
@@ -4600,8 +4594,7 @@ static void light_hsl_default_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_hsl_default_get(&light_hsl_cli, &ctx, &status);
 
@@ -4648,8 +4641,7 @@ static void light_hsl_default_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.lightness = cmd->lightness;
 	set.hue = cmd->hue;
@@ -4705,8 +4697,7 @@ static void light_hsl_range_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_hsl_range_get(&light_hsl_cli, &ctx, &status);
 
@@ -4755,8 +4746,7 @@ static void light_hsl_range_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.min.hue = cmd->hue_min;
 	set.min.saturation = cmd->saturation_min;
@@ -4815,8 +4805,7 @@ static void light_hsl_hue_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_hue_get(&light_hsl_cli, &ctx, &status);
 
@@ -4864,8 +4853,7 @@ static void light_hsl_hue_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.lvl = cmd->hue;
 
@@ -4927,8 +4915,7 @@ static void light_hsl_saturation_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_light_saturation_get(&light_hsl_cli, &ctx, &status);
 
@@ -4976,8 +4963,7 @@ static void light_hsl_saturation_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	set.lvl = cmd->saturation;
 
@@ -5039,8 +5025,7 @@ static void scheduler_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_scheduler_cli_get(&scheduler_cli, &ctx, &status);
 
@@ -5078,8 +5063,7 @@ static void scheduler_action_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	err = bt_mesh_scheduler_cli_action_get(&scheduler_cli, &ctx, cmd->index,
 					       &status);
@@ -5133,8 +5117,7 @@ static void scheduler_action_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	ctx.addr = model_bound->addr;
-	ctx.app_idx = model_bound->appkey_idx;
+	tester_mmdl_set_msg_ctx(&ctx, model_bound);
 
 	entry.year = cmd->year;
 	entry.month = cmd->month;
@@ -5477,6 +5460,8 @@ void tester_handle_mmdl(uint8_t opcode, uint8_t index, uint8_t *data,
 
 uint8_t tester_init_mmdl(void)
 {
+	tester_mesh_set_state_reset_request();
+
 	return BTP_STATUS_SUCCESS;
 }
 
