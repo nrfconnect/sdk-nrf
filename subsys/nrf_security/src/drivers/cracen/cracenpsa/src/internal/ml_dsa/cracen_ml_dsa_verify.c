@@ -25,7 +25,8 @@
 
 _Static_assert(ML_DSA_MATRIX_ROWS_MAX != 1 && ML_DSA_MATRIX_COLS_MAX != 1,
 	       "To compile this file you need at least one ML-DSA key size (ML-DSA-44/65/87) "
-	       "enabled in the driver using the PSA_WANT_* configs.");
+	       "enabled in the driver using the PSA_WANT_* and/or "
+	       "CRACEN_HYBRID_VERIFY_ML_DSA_* configs.");
 
 /** FIPS 204, Algorithm 23 (pkDecode): split public key pk into seed (rho)
  *  and the pk_polynomial (t1) coefficients vector.

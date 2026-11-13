@@ -1,0 +1,67 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CRACEN_HYBRID_VERIFY
+	bool "CRACEN hybrid ML-DSA and ECDSA verification"
+	depends on !BUILD_WITH_TFM
+	depends on PSA_NEED_CRACEN_ECDSA || PSA_NEED_CRACEN_DETERMINISTIC_ECDSA
+	help
+	  Enable cracen_hybrid_verify(), which starts an ECDSA verification
+	  before an ML-DSA verification over the same message and collects
+	  its result. This way, the PKE and the CryptoMaster run in
+	  parallel instead of idling one while the other runs.
+
+	  ML-DSA support in the PSA configuration is not required. The
+	  ML-DSA public key is passed to cracen_hybrid_verify() as a buffer
+	  and not through a PSA key slot, so the ML-DSA verification code and
+	  the SHAKE128 and SHAKE256 functions it uses are built internally
+	  for the parameter sets selected below.
+
+if CRACEN_HYBRID_VERIFY
+
+config CRACEN_HYBRID_VERIFY_ML_DSA_44
+	bool "ML-DSA-44 support in hybrid verification"
+	help
+	  Support the ML-DSA-44 parameter set in cracen_hybrid_verify().
+	  Both ML-DSA (PSA_ALG_ML_DSA) and deterministic ML-DSA
+	  (PSA_ALG_DETERMINISTIC_ML_DSA) verification are enabled for this
+	  parameter set.
+
+config CRACEN_HYBRID_VERIFY_ML_DSA_65
+	bool "ML-DSA-65 support in hybrid verification"
+	help
+	  Support the ML-DSA-65 parameter set in cracen_hybrid_verify().
+	  Both ML-DSA (PSA_ALG_ML_DSA) and deterministic ML-DSA
+	  (PSA_ALG_DETERMINISTIC_ML_DSA) verification are enabled for this
+	  parameter set.
+
+config CRACEN_HYBRID_VERIFY_ML_DSA_87
+	bool "ML-DSA-87 support in hybrid verification"
+	help
+	  Support the ML-DSA-87 parameter set in cracen_hybrid_verify().
+	  Both ML-DSA (PSA_ALG_ML_DSA) and deterministic ML-DSA
+	  (PSA_ALG_DETERMINISTIC_ML_DSA) verification are enabled for this
+	  parameter set.
+
+config NEED_CRACEN_HYBRID_VERIFY_ML_DSA
+	def_bool y
+	depends on CRACEN_HYBRID_VERIFY_ML_DSA_44 || \
+		   CRACEN_HYBRID_VERIFY_ML_DSA_65 || \
+		   CRACEN_HYBRID_VERIFY_ML_DSA_87
+
+config NEED_CRACEN_HYBRID_VERIFY_SHAKE128
+	def_bool y
+	depends on NEED_CRACEN_HYBRID_VERIFY_ML_DSA
+
+config NEED_CRACEN_HYBRID_VERIFY_SHAKE256
+	def_bool y
+	depends on NEED_CRACEN_HYBRID_VERIFY_ML_DSA
+
+config NEED_CRACEN_HYBRID_VERIFY_XOF
+	def_bool y
+	depends on NEED_CRACEN_HYBRID_VERIFY_ML_DSA
+
+endif # CRACEN_HYBRID_VERIFY
