@@ -26,7 +26,7 @@
 #include <vtf_monitoring/vtf_monitoring.h>
 
 #define DT_DRV_COMPAT nordic_wlan
-LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 struct nrf_wifi_rt_drv_priv rt_drv_priv;
 
