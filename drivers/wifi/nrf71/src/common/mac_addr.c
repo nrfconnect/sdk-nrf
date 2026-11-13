@@ -22,7 +22,7 @@
 #endif
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 #include <common/util.h>
 #include <common/mac_addr.h>

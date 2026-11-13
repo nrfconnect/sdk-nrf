@@ -30,7 +30,7 @@
 #include <common/wifi_ipc.h>
 #include <system/drv_dbg_stats.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 #define GET_IPC_INSTANCE(dev) (dev)
 typedef struct device ipc_device_wrapper_t;

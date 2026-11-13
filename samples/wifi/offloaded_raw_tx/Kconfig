@@ -40,7 +40,7 @@ config SAMPLE_OFFLOADED_RAW_TX_BAND_5GHZ
 
 config SAMPLE_OFFLOADED_RAW_TX_BAND_6GHZ
 	bool "6 GHz"
-	depends on WIFI_NRF71
+	depends on NRF71_WIFI
 
 endchoice
 
