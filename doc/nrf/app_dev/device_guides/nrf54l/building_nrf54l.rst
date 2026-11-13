@@ -84,7 +84,7 @@ Separate images
 ---------------
 
 You can build and program application sample and the FLPR sample as separate images using |nRFVSC| or command line.
-To use nRF Util, see `Programming application firmware on the nRF54L SoCs`_.
+To use nRF Util, see the `device command page <nrfutil-device-program_programming_application_nrf54l_>`_.
 Depending on the selected method, complete the following steps:
 
 .. tabs::

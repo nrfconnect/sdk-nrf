@@ -379,7 +379,7 @@ Program the OTP fields
 
 Program the OTP fields while the device is in lifecycle state ``EMPTY``.
 Use the ``nrfutil device otp-write`` command, which is available in the nRF Util ``device`` command version 2.21.0 and later.
-For the command options, see `Device command overview`_.
+For the command options, see `nrfutil device`_.
 
 To program the snapshot configuration, complete the following steps:
 

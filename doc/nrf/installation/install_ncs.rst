@@ -172,7 +172,7 @@ Complete the following steps:
          This is because the ``sdk-manager`` command only supports installing specific release versions.
 
       The ``sdk-manager`` command installs the SDK by default at :file:`C:/ncs/` on Windows and at :file:`~/ncs/` on Linux, and the toolchain in the :file:`toolchains` subdirectory.
-      You can modify the SDK installation location, as explained in the `command documentation <sdk-manager Configuration settings_>`_.
+      You can modify the SDK installation location, as explained in the `command documentation <nrfutil sdk-manager install_>`_.
       On macOS, the command defaults to :file:`/opt/nordic/ncs/` and :file:`/opt/nordic/ncs/toolchains` and no other locations are allowed.
       The :file:`ncs` directory holds all |NCS| repositories.
 
@@ -194,8 +194,6 @@ Complete the following steps:
 
             nrfutil sdk-manager toolchain install --toolchain-bundle-id <custom_bundle_ID>
 
-         To learn more about ``sdk-manager`` commands, use the ``nrfutil sdk-manager --help`` command, or see the `command documentation <sdk-manager command_>`_.
-
    #. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the |NCS| version you have installed:
 
       .. nrfutil-command::
@@ -210,7 +208,6 @@ Complete the following steps:
       .. note::
 
          You can also use other options instead of ``--ncs-version``.
-         See the `sdk-manager command documentation <sdk-manager Starting and inspecting the toolchain environment_>`_ for more information.
 
    #. Determine the identifier of the revision of the |NCS| you want to work with.
       See :ref:`dm_code_base` for information about the available revision identifiers.

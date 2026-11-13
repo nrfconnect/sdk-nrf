@@ -74,16 +74,12 @@ To install the required versions of the nRF Util commands, complete the followin
 
          nrfutil self-upgrade
 
-      For more information, consult the `Upgrading nRF Util core module`_ documentation.
-
 #. Install the required versions of the nRF Util commands:
 
    .. nrfutil-command::
 
       nrfutil install device=|54H_nrfutil_device_ver| --force
       nrfutil install trace=|54H_nrfutil_trace_ver| --force
-
-   For more information, see the `Installing specific versions of nRF Util commands`_ documentation.
 
 #. Verify the installation of the nRF Util commands:
 

@@ -102,7 +102,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`WEST_VERSION_WIN10`
          * - nRF Util
            - :ncs-tool-version:`NRFUTIL_VERSION_WIN10`
-         * - nRF Util's `device command <Device command overview_>`_
+         * - nRF Util's `device command <nrfutil device_>`_
            - :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_WIN10`
 
    .. group-tab:: Linux
@@ -130,7 +130,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`WEST_VERSION_LINUX`
          * - nRF Util
            - :ncs-tool-version:`NRFUTIL_VERSION_LINUX`
-         * - nRF Util's `device command <Device command overview_>`_
+         * - nRF Util's `device command <nrfutil device_>`_
            - :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_LINUX`
 
       Additionally, you need to install `nrf-udev`_ rules for accessing USB ports on Nordic Semiconductor devices and programming the firmware.
@@ -160,7 +160,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`WEST_VERSION_DARWIN`
          * - nRF Util
            - :ncs-tool-version:`NRFUTIL_VERSION_DARWIN`
-         * - nRF Util's `device command <Device command overview_>`_
+         * - nRF Util's `device command <nrfutil device_>`_
            - :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_DARWIN`
 
 Checking tool versions
@@ -442,7 +442,7 @@ When :ref:`install_ncs`, you get both these versions `locked <Locking nRF Util h
 
    * If you plan to work with command line, you also need to download nRF Util and install the following command in order to get the toolchain bundle:
 
-     * `sdk-manager command`_ - The latest version is required for working with |NCS| toolchain packages.
+     * `sdk-manager command <nrfutil sdk-manager_>`_ - The latest version is required for working with |NCS| toolchain packages.
        See `Installing and upgrading nRF Util commands`_ for information about how to install this command.
 
    * If you plan to work with the :ref:`nRF Connect for VS Code extension <requirements_nrfvsc>`, you do not need a separate nRF Util installation to get the toolchain bundle.
