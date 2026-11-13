@@ -886,13 +886,13 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
               * - RSA Key Pair Derive
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                - Supported
-                - Supported
-                - Supported
-                - Experimental
-                - Supported
-                - Supported
-                - Supported
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - RSA Public Key
@@ -4304,6 +4304,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
 
             .. note::
+
+               The CRACEN driver does not support unwrapping RSA keys with ``psa_unwrap_key()``.
 
                The following limitations apply for nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
 
@@ -8168,6 +8170,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
 
+            .. note::
+               A single ``psa_generate_random()`` call with the CRACEN driver returns at most 65536 bytes on the nRF54L05, nRF54L10, and nRF54L15 SoCs.
+               On the nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A SoCs, a single call returns at most 8192 bytes.
+               Larger requests return ``PSA_ERROR_INVALID_ARGUMENT``.
+
          .. tab:: nrf_oberon
 
             .. list-table:: RNG algorithm support (nrf_oberon driver) - nRF54L Series
@@ -10048,6 +10055,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
 
+            .. note::
+
+               With the CRACEN driver:
+
+               * SRP password hashing supports only SHA-512 (``PSA_ALG_SRP_PASSWORD_HASH(PSA_ALG_SHA_512)``).
+               * WPA3-SAE (fixed and GDH) supports only SHA-256 with secp256r1 curve.
+
          .. tab:: nrf_oberon
 
             .. list-table:: PAKE algorithm support (nrf_oberon driver) - nRF54L Series
@@ -10504,13 +10518,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
 
@@ -11063,13 +11077,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
                * - Derive

@@ -212,8 +212,8 @@ psa_status_t cracen_sp800_108_ctr_mac_input_key(cracen_key_derivation_operation_
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC) &&
-	    PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg) &&
-	    key_type != PSA_KEY_TYPE_HMAC) {
+	    PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg) && key_type != PSA_KEY_TYPE_HMAC &&
+	    key_type != PSA_KEY_TYPE_DERIVE) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 

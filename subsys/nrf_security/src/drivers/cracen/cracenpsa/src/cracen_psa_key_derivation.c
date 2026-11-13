@@ -52,11 +52,11 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 	}
 #endif /* PSA_NEED_CRACEN_HKDF */
 
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
+#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC) || defined(PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128)
 	if (PSA_ALG_IS_PBKDF2(operation->alg)) {
 		return cracen_pbkdf2_hmac_setup(operation);
 	}
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
+#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC || PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128 */
 
 #if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
 	if (operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
@@ -118,6 +118,26 @@ psa_status_t cracen_key_derivation_set_capacity(cracen_key_derivation_operation_
 	return PSA_SUCCESS;
 }
 
+#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
+/* The secret of SP 800-108 counter HMAC can also be given as bytes. It is then passed on as a
+ * volatile PSA_KEY_TYPE_DERIVE key with no key ID, so that it is handled as a key input.
+ */
+static psa_status_t sp800_108_ctr_hmac_input_bytes(cracen_key_derivation_operation_t *operation,
+						   psa_key_derivation_step_t step,
+						   const uint8_t *data, size_t data_length)
+{
+	if (step == PSA_KEY_DERIVATION_INPUT_SECRET) {
+		psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+
+		psa_set_key_type(&attributes, PSA_KEY_TYPE_DERIVE);
+		return cracen_sp800_108_ctr_mac_input_key(operation, step, &attributes, data,
+							  data_length);
+	}
+
+	return cracen_sp800_108_ctr_mac_input_bytes(operation, step, data, data_length);
+}
+#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
+
 psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t *operation,
 					       psa_key_derivation_step_t step, const uint8_t *data,
 					       size_t data_length)
@@ -130,11 +150,11 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 	}
 #endif /* PSA_NEED_CRACEN_HKDF */
 
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
+#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC) || defined(PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128)
 	if (PSA_ALG_IS_PBKDF2(operation->alg)) {
 		return cracen_pbkdf2_hmac_input_bytes(operation, step, data, data_length);
 	}
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
+#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC || PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128 */
 
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
 	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
@@ -144,7 +164,7 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
 	if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg)) {
-		return cracen_sp800_108_ctr_mac_input_bytes(operation, step, data, data_length);
+		return sp800_108_ctr_hmac_input_bytes(operation, step, data, data_length);
 	}
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
 
@@ -212,11 +232,11 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
 psa_status_t cracen_key_derivation_input_integer(cracen_key_derivation_operation_t *operation,
 						 psa_key_derivation_step_t step, uint64_t value)
 {
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
+#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC) || defined(PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128)
 	if (PSA_ALG_IS_PBKDF2(operation->alg)) {
 		return cracen_pbkdf2_hmac_input_integer(operation, step, value);
 	}
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
+#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC || PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128 */
 
 	return PSA_ERROR_NOT_SUPPORTED;
 }
@@ -281,11 +301,11 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 	}
 #endif /* PSA_NEED_CRACEN_HKDF */
 
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
+#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC) || defined(PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128)
 	if (PSA_ALG_IS_PBKDF2(operation->alg)) {
 		return cracen_pbkdf2_hmac_output_bytes(operation, output, output_length);
 	}
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
+#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC || PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128 */
 
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
 	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
