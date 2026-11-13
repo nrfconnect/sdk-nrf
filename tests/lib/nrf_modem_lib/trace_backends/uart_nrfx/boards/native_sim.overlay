@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		nordic,modem-trace-uart = &trace_uarte;
+	};
+
+	test_intc: interrupt-controller {
+		compatible = "test,uarte-intc";
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+	trace_uarte_default: trace-uarte-default {};
+
+	trace_uarte_sleep: trace-uarte-sleep {};
+
+	trace_uarte: uart@40000000 {
+		compatible = "nordic,nrf-uarte";
+		reg = <0x40000000 0x1000>;
+		interrupt-parent = <&test_intc>;
+		interrupts = <5 1>;
+		current-speed = <1000000>;
+		pinctrl-0 = <&trace_uarte_default>;
+		pinctrl-1 = <&trace_uarte_sleep>;
+		pinctrl-names = "default", "sleep";
+		status = "reserved";
+	};
+};

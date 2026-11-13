@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice NRF_MODEM_LIB_TRACE_BACKEND
+
+config NRF_MODEM_LIB_TRACE_BACKEND_UART_NRFX
+	bool "UART (nrfx UARTE, DMA and IRQ driven)"
+	depends on $(dt_chosen_has_compat,$(DT_CHOSEN_NORDIC_MODEM_TRACE_UART),$(DT_COMPAT_NORDIC_NRF_UARTE))
+	select NRFX_UARTE
+	select NRFX_UARTE_CONFIG_TX_LINK
+	select PINCTRL
+	help
+	  Send modem traces over a UARTE instance that is driven directly through the nrfx UARTE
+	  driver, bypassing the Zephyr UART driver.
+	  Transfers are DMA and interrupt driven, and consecutive transfers are linked so that
+	  the transmitter is kept busy without gaps. This allows using the high-speed UARTE
+	  instances (for example UARTE120 on nRF9251) at baud rates of several Mbaud.
+
+	  The UARTE instance is selected with the nordic,modem-trace-uart chosen node.
+	  The node must have status "reserved" so that it is not claimed by the Zephyr UART
+	  driver, and its baud rate is taken from the current-speed property.
+
+endchoice # NRF_MODEM_LIB_TRACE_BACKEND
+
+if NRF_MODEM_LIB_TRACE_BACKEND_UART_NRFX
+
+config NRF_MODEM_LIB_TRACE_BACKEND_UART_NRFX_CHUNK_SZ
+	int "Trace chunk size"
+	default 4096
+	range 1024 32767
+	help
+	  Trace data is sent in DMA transfers of at most this many bytes. Two transfers are kept
+	  in flight, and the trace data is freed from the shared memory as each transfer completes.
+	  The value must not exceed the EasyDMA MAXCNT of the selected UARTE instance.
+	  The transmission time of one chunk must exceed the worst case thread latency,
+	  since the next transfer is linked while the current one is in progress.
+
+config NRF_MODEM_LIB_TRACE_BACKEND_UART_NRFX_BOUNCE_BUF_SZ
+	int "Bounce buffer size"
+	default 0
+	range 0 32767
+	help
+	  Size of each of the two bounce buffers that are used when the trace data is located
+	  in memory that is not accessible by the UARTE EasyDMA. Data is then copied to the
+	  bounce buffers before it is sent. Set to 0 to disable bounce buffers, in which case
+	  trace data that is not DMA accessible cannot be sent.
+	  The bounce buffers are placed in the memory region given by the memory-regions
+	  property of the UARTE node, if present.
+
+config NRF_MODEM_LIB_TRACE_BACKEND_UART_NRFX_TX_TIMEOUT_MS
+	int "TX timeout (ms)"
+	default 1000
+	help
+	  Maximum time to wait for a DMA transfer to complete before aborting it.
+	  Must exceed the transmission time of one trace chunk at the configured baud rate.
+
+endif # NRF_MODEM_LIB_TRACE_BACKEND_UART_NRFX
