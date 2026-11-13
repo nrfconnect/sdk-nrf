@@ -25,7 +25,6 @@ rsource "bt_stream/bt_le_audio_tx/Kconfig"
 
 config BT_AUDIO_PACKING_INTERLEAVED
 	bool "Interleaved packing"
-	default n
 	help
 	  ISO channels can either be interleaved or sequentially packed; sequential is the default one.
 
@@ -169,7 +168,6 @@ menu "Testing"
 
 config TESTING_BLE_ADDRESS_RANDOM
 	bool "Random address and bonding clear on every restart [EXPERIMENTAL]"
-	default n
 	select EXPERIMENTAL
 	help
 	  If enabled the system will generate a new address on every

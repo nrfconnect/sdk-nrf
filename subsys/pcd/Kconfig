@@ -52,7 +52,6 @@ config PCD_BUF_SIZE
 
 config PCD_LOCK_NETCORE_DEBUG
 	bool "Include PCD command to lock network core debug"
-	default n
 
 endif # PCD_NET
 

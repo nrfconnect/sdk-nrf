@@ -112,6 +112,5 @@ config COEX_SEP_ANTENNAS
 
 config SR_PROTOCOL_BLE
 	bool "Indicates if the SR protocol is Bluetooth LE or not"
-	default n
 
 endmenu

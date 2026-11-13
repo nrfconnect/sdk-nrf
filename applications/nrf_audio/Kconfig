@@ -10,7 +10,6 @@ menuconfig APP_NRF_AUDIO
 
 config CUSTOM_BROADCASTER
 	bool "Allow custom broadcasters"
-	default n
 	help
 	  Incomplete feature for now, but will introduce support for multiple BIGs and subgroups.
 
