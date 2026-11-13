@@ -1202,14 +1202,14 @@ del_vif:
 	}
 	vif_ctx_zep->vif_idx = MAX_NUM_VIFS;
 dev_rem:
+	/* Free only if we added above i.e., for 1st VIF */
+	if (fmac_dev_added) {
+		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
+	}
 	if (wifi_powered_on) {
 		if (nrf_wifi_power_off()) {
 			LOG_ERR("%s: nrf_wifi_power_off failed", __func__);
 		}
-	}
-	/* Free only if we added above i.e., for 1st VIF */
-	if (fmac_dev_added) {
-		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
 	}
 out:
 	if (locked) {
@@ -1309,10 +1309,13 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 	vif_ctx_zep->vif_idx = MAX_NUM_VIFS;
 
 	if (nrf_wifi_fmac_get_num_vifs(rpu_ctx_zep->rpu_ctx) == 0) {
+		/* Closing the IPC instance rings the UMAC doorbell, so it must
+		 * happen while the UMAC can still service it.
+		 */
+		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
 		if (nrf_wifi_power_off()) {
 			LOG_ERR("%s: nrf_wifi_power_off failed", __func__);
 		}
-		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
 	}
 
 	ret = 0;
