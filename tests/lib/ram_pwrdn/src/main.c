@@ -49,7 +49,7 @@ static volatile uint32_t *unused_ram_word(void)
 			    DT_REG_SIZE(DT_CHOSEN(zephyr_sram));
 	uintptr_t probe = ram_end - sizeof(uint32_t);
 
-#if defined(CONFIG_SOC_NRF7120)
+#if defined(CONFIG_SOC_NRF7120) || defined(CONFIG_SOC_NRF7120E)
 	/* RAM03 cannot be fully powered down, so probe the top of RAM02. */
 	probe = DT_REG_ADDR(DT_NODELABEL(ram02_sram)) +
 		DT_REG_SIZE(DT_NODELABEL(ram02_sram)) - sizeof(uint32_t);
