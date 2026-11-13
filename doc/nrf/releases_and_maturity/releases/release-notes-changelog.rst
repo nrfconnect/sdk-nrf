@@ -719,6 +719,8 @@ Cryptography samples
   * The :ref:`crypto_ml_dsa` sample.
   * The :ref:`crypto_ml_kem` sample.
 
+* Removed support for the nRF9160 DK and the nRF9161 DK (with and without TF-M) in the crypto samples.
+
 Debug samples
 -------------
 

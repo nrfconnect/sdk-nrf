@@ -53,8 +53,7 @@ The table mirrors the test setup used for TLS verification.
        | TLS v1.3: No
      -
      -
-   * - | ``nrf9160dk/nrf9160``
-       | ``nrf9151dk/nrf9151``
+   * - | ``nrf9151dk/nrf9151``
        | ``nrf5340dk/nrf5340/cpuapp``
      - | TLS v1.2: :ref:`nrf_cc3xx <nrf_security_drivers_cc3xx>` and :ref:`nrf_oberon <nrf_security_drivers_oberon>`
        | TLS v1.3: :ref:`nrf_oberon <nrf_security_drivers_oberon>`
