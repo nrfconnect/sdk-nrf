@@ -20,9 +20,14 @@
 #include <zephyr/ipc/pbuf.h>
 #include <ironside/se/api.h>
 
-#define DCACHE_LINE_SIZE (CONFIG_DCACHE_LINE_SIZE)
-BUILD_ASSERT(DCACHE_LINE_SIZE == 32,
-	     "Unexpected data cache line size " STRINGIFY(DCACHE_LINE_SIZE) ", expected 32");
+/* Cache line size the modem shared memory layout is built for. */
+#define SHMEM_CACHE_LINE_SIZE 32
+
+#if CONFIG_DCACHE
+BUILD_ASSERT(CONFIG_DCACHE_LINE_SIZE == SHMEM_CACHE_LINE_SIZE,
+	     "Unexpected data cache line size " STRINGIFY(CONFIG_DCACHE_LINE_SIZE) ", expected "
+	     STRINGIFY(SHMEM_CACHE_LINE_SIZE));
+#endif
 
 /** IronSide SE boot report local domain context for cellcore. */
 struct boot_report_cellcore_ldc {
@@ -90,8 +95,8 @@ struct nrf_modem_os_rpc_signal {
  * Define and initialize the RPC instances used by nrf_modem.
  * These are declared extern in nrf_modem_os_rpc.h.
  */
-struct nrf_modem_os_rpc inst_ctrl = NRF_MODEM_OS_RPC_INIT(inst_ctrl, DCACHE_LINE_SIZE);
-struct nrf_modem_os_rpc inst_data = NRF_MODEM_OS_RPC_INIT(inst_data, DCACHE_LINE_SIZE);
+struct nrf_modem_os_rpc inst_ctrl = NRF_MODEM_OS_RPC_INIT(inst_ctrl, SHMEM_CACHE_LINE_SIZE);
+struct nrf_modem_os_rpc inst_data = NRF_MODEM_OS_RPC_INIT(inst_data, SHMEM_CACHE_LINE_SIZE);
 
 /**
  * Define and initialize the signaling instances used by nrf_modem.
