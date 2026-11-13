@@ -380,9 +380,10 @@ static uint16_t on_test_rx_cmd(uint8_t channel, struct net_buf *hci_cmd)
 #endif
 #if CONFIG_DTM_TWOWIRE_TO_HCI_RECEIVER_TEST_VERSION >= 3
 	/* TODO: DRGN-27910 add CTE and antenna switching support */
-	cp->expected_cte_len = 0;
-	cp->expected_cte_type = 0;
-	cp->switch_pattern_len = 0;
+	cp->expected_cte_len = BT_HCI_LE_TEST_CTE_DISABLED;
+	cp->expected_cte_type = BT_HCI_LE_TEST_CTE_TYPE_ANY;
+	cp->slot_durations = BT_HCI_LE_TEST_SLOT_DURATION_ANY;
+	cp->switch_pattern_len = BT_HCI_LE_TEST_SWITCH_PATTERN_LEN_ANY;
 #endif
 
 	return HCI_GENERATED;

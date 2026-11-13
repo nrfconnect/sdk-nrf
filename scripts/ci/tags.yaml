@@ -1192,6 +1192,12 @@ ci_tests_lib_modem_key_mgmt:
     - nrf/lib/modem_key_mgmt/
     - nrf/tests/lib/modem_key_mgmt/
 
+ci_tests_lib_dtm_twowire:
+  files:
+    - nrf/include/bluetooth/dtm_twowire/
+    - nrf/lib/dtm_twowire/
+    - nrf/tests/lib/dtm_twowire/
+
 ci_tests_drivers_lpuart:
   files:
     - modules/hal/nordic/nrfx/

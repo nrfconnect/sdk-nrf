@@ -1101,6 +1101,7 @@
 /tests/lib/contin_array/                  @nrfconnect/ncs-audio
 /tests/lib/data_fifo/                     @nrfconnect/ncs-audio
 /tests/lib/date_time/                     @nrfconnect/ncs-modem-tre
+/tests/lib/dtm_twowire/                   @nrfconnect/ncs-dragoon
 /tests/lib/gcf_sms/                       @nrfconnect/ncs-modem
 /tests/lib/hw_unique_key*/                @nrfconnect/ncs-aegir
 /tests/lib/hw_id/                         @nrfconnect/ncs-nrf-cloud
