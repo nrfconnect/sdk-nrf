@@ -62,8 +62,6 @@ disabled:
   - nrf9161dk/nrf9161/ns
   - nrf9131ek/nrf9131
   - nrf9131ek/nrf9131/ns
-  - nrf9280pdk/nrf9280/cpuapp
-  - nrf9280pdk/nrf9280/cpurad
   - nrf21540dk/nrf21540
   - thingy52/nrf52832
   - native_sim/native/64
