@@ -17,6 +17,7 @@ from threading import Lock
 from args import args
 from common import SbomException, command_execute, concurrent_pool_iter, get_executor_workers
 from data_structure import DataBaseClass
+from dependency_graph import BuildGraph, BuildNode, build_path
 from west import log
 
 COMMAND_LINE_MAX_SIZE = 7000  # Size of command line parameters in Windows is limited.
@@ -90,6 +91,7 @@ class NinjaBuildExtractor:
         self.process_target_queue = list()
         self.cache = dict()
         self.query_cache = dict()
+        self.query_rules = {}
         self.file_type_cache = dict()
         self.build_dir = Path(build_dir)
         self.include_order_only = include_order_only
@@ -160,13 +162,10 @@ class NinjaBuildExtractor:
                         rest = line[colon_index + 1 :]
                         rest_stripped = rest.lstrip()
                         target = target_part.rstrip()
-                        if (
-                            target
-                            and not any(ch.isspace() for ch in target)
-                            and (not rest_stripped or rest_stripped.startswith('#'))
-                        ):
+                        if target and (not rest_stripped or rest_stripped.startswith('#')):
                             dep = set()
-                            self.deps[target] = dep
+                            if '(STALE)' not in rest_stripped:
+                                self.deps[target] = dep
                             continue
                     if line.lstrip().startswith('#'):
                         continue
@@ -258,6 +257,7 @@ class NinjaBuildExtractor:
                 phony = phony or ('phony' in tail.split())
                 if dir == 'input':
                     inputs = True
+                    self.query_rules[target] = tail.strip()
                 else:
                     if dir != 'outputs':
                         raise SbomException(
@@ -498,5 +498,45 @@ class NinjaBuildExtractor:
             self.remove_dummy_objects(self.archives)
             self.remove_dummy_objects({'': self.root})
             self.root.archives.update(self.archives)
+            self.root.dependency_graph = self._dependency_graph(targets)
 
         return self.root
+
+    def _dependency_graph(self, targets: list[str]) -> BuildGraph:
+        '''Keep build inputs for package dependency collection after file detection.'''
+        graph = BuildGraph(build_path(self.build_dir, Path.cwd()))
+        # Reuse paths already checked by file collection, including resolved symlinks.
+        # Reading dependency metadata must not trigger additional filesystem lookups.
+        resolved_paths = {
+            target: build_path(details[0], self.build_dir)
+            for target, details in self.target_details.items()
+        }
+        graph.aliases = {
+            build_path(target, self.build_dir): path
+            for target, path in resolved_paths.items()
+            if build_path(target, self.build_dir) != path
+        }
+
+        def path(target):
+            if target not in resolved_paths:
+                normalized = build_path(target, self.build_dir)
+                resolved_paths[target] = graph.aliases.get(normalized, normalized)
+            return resolved_paths[target]
+
+        def paths(inputs):
+            return {path(target) for target in inputs if not self.should_ignore_target(target)}
+
+        graph.targets = {path(target) for target in targets}
+        compiler_inputs = {path(target): inputs for target, inputs in self.deps.items()}
+        for target, (explicit, implicit, order_only, _) in self.query_cache.items():
+            if self.should_ignore_target(target):
+                continue
+            target_path = path(target)
+            graph.nodes[target_path] = BuildNode(
+                paths(explicit),
+                paths(implicit),
+                paths(compiler_inputs.get(target_path, set())),
+                paths(order_only),
+                self.query_rules.get(target, ''),
+            )
+        return graph
