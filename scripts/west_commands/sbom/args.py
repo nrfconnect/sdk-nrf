@@ -41,6 +41,10 @@ scancode-toolkit
   License and copyright detection by scancode-toolkit.
   For more details see: https://scancode-toolkit.readthedocs.io/en/stable/
 
+reuse
+  Copyright detection by the REUSE tool. Reads the file, its ".license" file and REUSE.toml.
+  For more details see: https://reuse.software/
+
 cache-databese
   License and copyright information is obtained from a predefined database.
   The license type is obtained from the database.
@@ -118,12 +122,13 @@ def add_arguments(parser: argparse.ArgumentParser):
                              'with arguments from each line of the file.'
                              'You can provide this option more than once.')
     parser.add_argument('--license-detectors',
-                        default='spdx-tag,full-text,external-file,scancode-toolkit,git-info',
+                        default='spdx-tag,full-text,external-file,scancode-toolkit,reuse,git-info',
                         help='Comma separated list of enabled license detectors.')
-    parser.add_argument('--optional-license-detectors', default='scancode-toolkit',
+    parser.add_argument('--optional-license-detectors', default='scancode-toolkit,reuse',
                         help='Comma separated list of optional license detectors. Optional license '
                              'detector is skipped if any of the previous detectors has already '
-                             'detected any license.')
+                             'detected any license. The "reuse" detector is skipped if any of them '
+                             'has already detected a copyright notice.')
     parser.add_argument('--output-html', default=None,
                         help='Generate output HTML report.')
     parser.add_argument('--output-spdx', default=None,

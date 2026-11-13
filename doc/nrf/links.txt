@@ -1798,6 +1798,8 @@
 
 .. _`Requests`: https://requests.readthedocs.io/en/latest/
 
+.. _`REUSE tool`: https://reuse.software/
+
 .. _`Scancode-Toolkit`: https://scancode-toolkit.readthedocs.io/
 .. _`Scancode-Toolkit Installation`: https://scancode-toolkit.readthedocs.io/en/stable/getting-started/installation/index.html
 

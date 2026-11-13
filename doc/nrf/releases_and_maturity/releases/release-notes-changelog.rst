@@ -1552,6 +1552,8 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
     It recursively adds all files in the given directory to the report, equivalent to ``--input-files DIR/**/*``.
   * ``--spdx-version`` option to generate SPDX 3.0 (JSON-LD) reports.
     The default remains SPDX 2.3.
+  * The ``reuse`` detector for extracting copyright notices using the `REUSE tool`_, enabled by default.
+    The reports now include copyright text for files that also have an SPDX license tag.
 
 * Updated:
 
