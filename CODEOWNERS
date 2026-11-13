@@ -767,6 +767,7 @@
 /samples/dfu/dfu_target/*.rst             @nrfconnect/ncs-eris-doc
 /samples/dfu/dfu_multi_image/*.rst        @nrfconnect/ncs-eris-doc
 /samples/dfu/fw_loader/**/*.rst           @nrfconnect/ncs-eris-doc
+/samples/dfu/mcuboot_serial_recovery/*.rst @nrfconnect/ncs-eris @nrfconnect/ncs-eris-doc
 /samples/dfu/mcuboot_with_encryption/*.rst @nrfconnect/ncs-eris @nrfconnect/ncs-eris-doc
 /samples/dfu/single_slot/*.rst            @nrfconnect/ncs-eris-doc
 /samples/dfu/smp_svr/*.rst                @nrfconnect/ncs-eris-doc
