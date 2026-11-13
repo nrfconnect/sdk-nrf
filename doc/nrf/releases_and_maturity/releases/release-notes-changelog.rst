@@ -1411,6 +1411,8 @@ Libraries for networking
     * An issue where the :c:func:`nrf_cloud_pending_fota_job_process` function always requested a reboot after a modem delta FOTA update.
       A reboot is no longer requested if the reported DFU result shows that the modem is running, with either the updated or the previous firmware.
 
+  * Updated :c:enumerator:`NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN` to ``1`` to reflect the improvements on the service side.
+
 * :ref:`lib_mqtt_helper` library:
 
   * Fixed an issue where the library could stop after one resolved broker address.

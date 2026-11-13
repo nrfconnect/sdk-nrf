@@ -31,7 +31,7 @@ extern "C" {
 #define NRF_CLOUD_LOCATION_WIFI_OMIT_CHAN	(0)
 
 /** Minimum number of access points required by nRF Cloud */
-#define NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN 2
+#define NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN 1
 
 /** Maximum string length of an anchor name */
 #define NRF_CLOUD_LOCATION_ANCHOR_NAME_MAX 32
