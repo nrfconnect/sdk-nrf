@@ -320,7 +320,7 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 
 		if (agnss_data->type == NRF_CLOUD_AGNSS_GPS_EPHEMERIDES) {
 			processed.system[PROCESSED_SYSTEM_GPS].sv_mask_ephe |=
-				(1 << (agnss_data->ephemeris->sv_id - 1));
+				(1ULL << (agnss_data->ephemeris->sv_id - 1));
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 			if (agnss_data->ephemeris->health == NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH) {
 				LOG_DBG("Skipping empty ephemeris for sv %u",
@@ -330,7 +330,7 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 #endif
 		} else if (agnss_data->type == NRF_CLOUD_AGNSS_QZSS_EPHEMERIDES) {
 			processed.system[PROCESSED_SYSTEM_QZSS].sv_mask_ephe |=
-				(1 << (agnss_data->ephemeris->sv_id - 193));
+				(1ULL << (agnss_data->ephemeris->sv_id - 193));
 		}
 
 		copy_ephemeris(&ephemeris, agnss_data);
@@ -347,10 +347,10 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 
 		if (agnss_data->type == NRF_CLOUD_AGNSS_GPS_ALMANAC) {
 			processed.system[PROCESSED_SYSTEM_GPS].sv_mask_alm |=
-				(1 << (agnss_data->almanac->sv_id - 1));
+				(1ULL << (agnss_data->almanac->sv_id - 1));
 		} else if (agnss_data->type == NRF_CLOUD_AGNSS_QZSS_ALMANAC) {
 			processed.system[PROCESSED_SYSTEM_QZSS].sv_mask_alm |=
-				(1 << (agnss_data->almanac->sv_id - 193));
+				(1ULL << (agnss_data->almanac->sv_id - 193));
 		}
 
 		copy_almanac(&almanac, agnss_data);
@@ -424,7 +424,7 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 		struct nrf_modem_gnss_agnss_gal_data_ephemeris ephemeris;
 
 		processed.system[PROCESSED_SYSTEM_GAL].sv_mask_ephe |=
-			(1 << (agnss_data->gal_ephemeris->sv_id - 1));
+			(1ULL << (agnss_data->gal_ephemeris->sv_id - 1));
 		copy_ephemeris_gal(&ephemeris, agnss_data);
 		LOG_DBG("A-GNSS type: GAL EPHEMERIS %d", agnss_data->gal_ephemeris->sv_id);
 
@@ -435,7 +435,7 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 		struct nrf_modem_gnss_agnss_gal_data_almanac almanac;
 
 		processed.system[PROCESSED_SYSTEM_GAL].sv_mask_alm |=
-			(1 << (agnss_data->gal_almanac->sv_id - 1));
+			(1ULL << (agnss_data->gal_almanac->sv_id - 1));
 		copy_almanac_gal(&almanac, agnss_data);
 		LOG_DBG("A-GNSS type: GAL ALMANAC %d", agnss_data->gal_almanac->sv_id);
 
