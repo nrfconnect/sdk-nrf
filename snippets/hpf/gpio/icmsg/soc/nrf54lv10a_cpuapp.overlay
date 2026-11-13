@@ -35,6 +35,8 @@
 		ipc0: ipc0 {
 			compatible = "zephyr,ipc-icmsg";
 			dcache-alignment = <32>;
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
 			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
@@ -60,9 +62,8 @@
 	reg = <0x0 DT_SIZE_K(1000)>;
 };
 
-&cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(175)>;
-	ranges = <0x0 0x20000000 DT_SIZE_K(175)>;
+&cpuapp_sram_app {
+	reg = <0x60 (DT_SIZE_K(175) - 0x60)>;
 };
 
 &cpuflpr_vpr {

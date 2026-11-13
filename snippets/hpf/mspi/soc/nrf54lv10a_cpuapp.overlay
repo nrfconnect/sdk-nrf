@@ -39,6 +39,8 @@
 			compatible = "zephyr,ipc-icmsg";
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
 			mbox-names = "rx", "tx";
 			status = "okay";
@@ -65,9 +67,8 @@
 	#size-cells = <1>;
 };
 
-&cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(171)>;
-	ranges = <0x0 0x20000000 0x3b400>;
+&cpuapp_sram_app {
+	reg = <0x60 (DT_SIZE_K(171) - 0x60)>;
 };
 
 &cpuflpr_vpr {
