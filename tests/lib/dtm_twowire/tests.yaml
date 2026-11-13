@@ -1,0 +1,31 @@
+common:
+  sysbuild: true
+  platform_allow: native_sim
+  integration_platforms:
+    - native_sim
+  tags:
+    - bluetooth
+    - dtm_twowire
+    - sysbuild
+    - ci_tests_lib_dtm_twowire
+
+tests:
+  lib.dtm_twowire_to_hci: {}
+  lib.dtm_twowire_to_hci.rx_v1_tx_v1:
+    extra_configs:
+      - CONFIG_DTM_TWOWIRE_TO_HCI_RECEIVER_TEST_VERSION=1
+      - CONFIG_DTM_TWOWIRE_TO_HCI_TRANSMITTER_TEST_VERSION=1
+  lib.dtm_twowire_to_hci.rx_v3_tx_v3:
+    extra_configs:
+      - CONFIG_DTM_TWOWIRE_TO_HCI_RECEIVER_TEST_VERSION=3
+      - CONFIG_DTM_TWOWIRE_TO_HCI_TRANSMITTER_TEST_VERSION=3
+  lib.dtm_twowire_to_hci.rx_v3_tx_v4:
+    extra_configs:
+      - CONFIG_DTM_TWOWIRE_TO_HCI_RECEIVER_TEST_VERSION=3
+      - CONFIG_DTM_TWOWIRE_TO_HCI_TRANSMITTER_TEST_VERSION=4
+  lib.dtm_twowire_to_hci.sdc_vs_commands:
+    extra_configs:
+      - CONFIG_BT=y
+      - CONFIG_BT_HCI_RAW=y
+      - CONFIG_BT_HCI_VS=y
+      - CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS=y
