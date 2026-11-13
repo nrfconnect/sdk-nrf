@@ -660,9 +660,9 @@ AZ_DPS_STATIC int provisioning_client_init(struct mqtt_helper_conn_params *conn_
 	az_span dps_hostname = AZ_SPAN_LITERAL_FROM_STR(CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME);
 
 	dps_reg_ctx.operation_id = az_span_create(operation_id_buf, sizeof(operation_id_buf));
-	dps_reg_ctx.assigned_hub = az_span_create(assigned_hub_buf, sizeof(assigned_hub_buf));
-	dps_reg_ctx.assigned_device_id = az_span_create(assigned_device_id_buf,
-							sizeof(assigned_device_id_buf));
+	/* Set only upon assignment, as azure_iot_hub_dps_start() checks them to skip DPS */
+	dps_reg_ctx.assigned_hub = AZ_SPAN_EMPTY;
+	dps_reg_ctx.assigned_device_id = AZ_SPAN_EMPTY;
 	dps_reg_ctx.retry_count = 0;
 
 	/* Reset the Azure SDK client */
