@@ -190,6 +190,7 @@ tests:
       - CONFIG_TEST_PDM_SAMPLING_RATE=44100
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1411200
       - CONFIG_CLOCK_CONTROL=y
+      - CONFIG_AUDIO_DMIC_NRFX_PDM_CUSTOM_RATIO=y
       - DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuapp_audio_auxpll_44k1hz.overlay"
   drivers.audio.pdm_loopback.nrf7120.auxpll.48khz:
     platform_allow:
@@ -199,4 +200,5 @@ tests:
       - CONFIG_TEST_PDM_SAMPLING_RATE=48000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1536000
       - CONFIG_CLOCK_CONTROL=y
+      - CONFIG_AUDIO_DMIC_NRFX_PDM_CUSTOM_RATIO=y
       - DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuapp_audio_auxpll_48khz.overlay"
