@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-NRF54L15 BOOTCONF generator.
+NRF54L BOOTCONF generator.
 """
 
 import argparse
