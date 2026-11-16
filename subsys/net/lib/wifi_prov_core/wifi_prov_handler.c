@@ -399,8 +399,7 @@ static void prov_set_config_handler(Request *req, Response *rsp)
 	}
 
 	cnx_params.channel = WIFI_CHANNEL_ANY;
-	cnx_params.band = config.header.flags & WIFI_CREDENTIALS_FLAG_5GHz ?
-			WIFI_FREQ_BAND_5_GHZ : WIFI_FREQ_BAND_2_4_GHZ;
+	cnx_params.band = WIFI_FREQ_BAND_UNKNOWN;
 	cnx_params.mfp = WIFI_MFP_OPTIONAL;
 
 	rc = net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
