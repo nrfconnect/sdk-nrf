@@ -24,8 +24,6 @@ The mapping of the UART interfaces is done in the following way:
    * - UART_1
      - CDC_1
 
-See :ref:`thingy91_serialports` for information on the baud rate configuration for Thingy:91 serial ports.
-
 The application adds the functionality of a USB Mass Storage device, which contains several utility files such as a :file:`README.txt` file.
 
 The application also provides a Bluetooth® LE UART Service, which can be enabled by the option ``CONFIG_BRIDGE_BLE_ENABLE``.

@@ -139,8 +139,8 @@ Supported modem firmware
 See the following documentation for an overview of which modem firmware versions have been tested with this version of the |NCS|:
 
 * `Modem firmware compatibility matrix for the nRF9151 SoC`_
-* `Modem firmware compatibility matrix for the nRF9161 SoC`_
-* `Modem firmware compatibility matrix for the nRF9160 SoC`_
+* Modem firmware compatibility matrix for the nRF9161 SoC
+* Modem firmware compatibility matrix for the nRF9160 SoC
 
 Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
 See the `Programming nRF91 Series DK firmware`_ page for instructions.
@@ -1423,9 +1423,9 @@ Documentation
     The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programming Nordic Thingy:53 <Programming Nordic Thingy53_>`_ section in the Programmer app documentation.
   * The standalone page for getting started with Nordic Thingy:91.
     The contents of this page are covered by the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
-    The part about connecting the prototyping platform to nRF Cloud is now a standalone :ref:`thingy91_connect_to_cloud` page in the :ref:`thingy91_ug_intro` section.
+    The part about connecting the prototyping platform to nRF Cloud is now a standalone Connecting the Thingy:91 to nRF Cloud page in the Developing with Thingy:91 section.
   * The standalone page for getting started with the nRF9160 DK.
     This page has been replaced by the `Quick Start app`_ that supports the nRF9160 DK.
-    The content about connecting the DK to nRF Cloud is now a standalone :ref:`nrf91_gs_connecting_dk_to_cloud` page in the :ref:`ug_nrf9160` section.
+    The content about connecting the DK to nRF Cloud is now a standalone :ref:`nrf91_gs_connecting_dk_to_cloud` page in the Developing with nRF91 Series section.
   * The guide about migrating from Secure Partition Manager to Trusted Firmware-M (Secure Partition manager was removed in the |NCS| v2.1.0 release).
     If you still need to migrate, see the `information in the nRF Connect SDK v2.0.0 documentation <Migrating from Secure Partition Manager to Trusted Firmware-M_>`_.

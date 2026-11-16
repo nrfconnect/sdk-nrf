@@ -265,7 +265,6 @@ The following are the ways to generate and register device certificates:
 
       .. note::
          Generating a key pair on device requires an nRF91 Series device.
-         If you are using an nRF9160 DK, modem version v1.3.x or later is required.
 
       .. important::
          Program the :ref:`at_client_sample` sample to your device before following this guide.

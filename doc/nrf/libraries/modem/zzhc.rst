@@ -19,7 +19,7 @@ The ZZHC library is started as a background thread on boot and it automatically 
 Once the Internet connectivity is ready and a new SIM card is detected on boot, the library proactively uploads the following information to the ZZHC server:
 
 * IMEI
-* model number (for example, nRF9160)
+* model number (for example, nRF9151)
 * modem revision
 * nRF91 Series SIM ICCID
 * nRF91 Series SIM IMSI

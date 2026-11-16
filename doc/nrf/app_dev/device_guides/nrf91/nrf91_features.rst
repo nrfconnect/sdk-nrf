@@ -14,19 +14,14 @@ Development Kits and Evaluation Kits
   * nRF9151 DK - A development kit for designing and developing application firmware on the nRF9151 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
   * nRF9151 SMA DK - A specialized version of nRF9151 DK with an SMA connector for high-performance external antenna connection or lab equipment for precise characterization and field testing.
     It is recommended for any Non-Terrestrial Network (NTN) development.
-  * nRF9160 DK - A development kit for designing and developing application firmware on the nRF9160 :term:`System in Package (SiP)`, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 13 support.
-  * nRF9161 DK - A development kit for designing and developing application firmware on the nRF9161 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
-  * nRF9131 EK - A single-board evaluation kit for the nRF9131 SiP, designed for DECT NR+ applications.
 
 Prototyping Platforms
-  * Nordic Thingy:91 - A battery-operated prototyping platform for cellular IoT systems, suitable for prototyping asset tracking, environmental monitoring and more.
-    Thingy:91 integrates an nRF9160 SiP that supports LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) and an nRF52840 SoC that supports Bluetooth® Low Energy, Near Field Communication (NFC) and USB.
-  * Nordic Thingy:91 X - An advanced version of the Thingy:91.
+  * Nordic Thingy:91 X - A battery-operated prototyping platform for cellular IoT systems, suitable for prototyping asset tracking, environmental monitoring and more.
     Thingy:91 X integrates the following components:
 
-    * An nRF9151 SiP with LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) support.
+    * An nRF9151 :term:`System in Package (SiP)` with LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) support.
     * The nRF7002 companion IC that adds support for low power Wi-Fi®.
-    * An nRF5340 SoC that supports Bluetooth Low Energy, 802.15.4 protocols, and USB.
+    * An nRF5340 SoC that supports Bluetooth® Low Energy, 802.15.4 protocols, and USB.
 
 With built-in GNSS support, these devices are a great choice for asset tracking applications.
 
@@ -73,9 +68,6 @@ The user application runs in NSPE.
 Therefore, you must build it for any of the following board targets, depending on the device that you are using:
 
 * ``nrf9151dk/nrf9151/ns``
-* ``nrf9161dk/nrf9161/ns``
-* ``nrf9160dk/nrf9160/ns``
-* ``thingy91/nrf9160/ns``
 * ``thingy91x/nrf9151/ns``
 
 The application image might require other images to be present.
@@ -88,28 +80,23 @@ LTE modem
 
 The LTE modem handles LTE communication.
 It is controlled through AT commands.
-The AT commands are documented in the `nRF91x1 AT Commands Reference Guide`_  and `nRF9160 AT Commands Reference Guide`_.
+The AT commands are documented in the `nRF91x1 AT Commands Reference Guide`_.
 
 The firmware for the modem is available as a precompiled binary.
-You can download the firmware from the `nRF9151 product website (compatible downloads)`_, `nRF9161 product website (compatible downloads)`_, or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
+You can download the firmware from the `nRF9151 product website (compatible downloads)`_.
 The zip file contains the release notes, and both the full firmware and patches to update from one version to another.
 A delta patch can only update the modem firmware from one specific version to another version (for example, v1.2.1 to v1.2.2).
 If you need to perform a major version update (for example, v1.2.x to v1.3.x), you need an external flash with a minimum size of 4 MB.
 
 Different versions of the LTE modem firmware are available, and these versions are certified for the mobile network operators having their own certification programs.
-For more information, see the following documents, depending on the SiP you are using:
-
-* `nRF9151 Mobile network operator certifications`_
-* `nRF9161 Mobile network operator certifications`_
-* `nRF9160 Mobile network operator certifications`_
+For more information, see `nRF9151 Mobile network operator certifications`_.
 
 .. note::
 
    Most operators do not require certifications other than GCF or PTCRB.
-   For the current status of GCF and PTCRB certifications, see `nRF9151 certifications`_, `nRF9161 certifications`_, or `nRF9160 certifications`_, depending on the SiP you are using.
+   For the current status of GCF and PTCRB certifications, see `nRF9151 certifications`_.
 
 .. _nrf91_update_modem_fw:
-.. _nrf9160_update_modem_fw:
 
 Modem firmware update
 =====================
@@ -123,7 +110,7 @@ Full update
     Both methods use the :term:`Serial Wire Debug (SWD)` interface to update the firmware.
 
     You can use the Programmer app to perform the update, regardless of the images that are part of the existing firmware of the device.
-    For example, you can update the modem on an nRF9160 DK using the instructions provided in the `Programming nRF91 Series DK firmware`_ page.
+    For example, you can update the modem on an nRF91 Series DK using the instructions provided in the `Programming nRF91 Series DK firmware`_ page.
 
   * When using a wireless connection, the update is applied over-the-air (OTA).
     See :ref:`nrf91_fota` for more information.
@@ -138,7 +125,6 @@ Delta patches
   See :ref:`nrf91_fota` for more information.
 
 .. _nrf91_ug_band_lock:
-.. _nrf9160_ug_band_lock:
 
 Band lock
 =========
@@ -147,7 +133,7 @@ The modem can operate on a number of LTE bands.
 To check which bands are supported by a particular modem firmware version, see the release notes for that version.
 
 You can use band lock to restrict modem operation to a subset of the supported bands, which might improve the performance of your application.
-To check which bands are certified in your region, visit `nRF9151 certifications`_, `nRF9161 certifications`_, or `nRF9160 certifications`_, depending on the SiP you are using.
+To check which bands are certified in your region, visit `nRF9151 certifications`_.
 
 To set the LTE band lock, enable the :ref:`lte_lc_readme` library by setting the Kconfig option :kconfig:option:`CONFIG_LTE_LINK_CONTROL`  to ``y`` in your :file:`prj.conf` project configuration file.
 
@@ -160,10 +146,9 @@ The band lock mask allows you to set the bands on which you want the modem to op
 Each bit in the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
 The maximum length of the string is 88 characters (bit string, 88 bits).
 
-For more detailed information, see the `band lock section in the nRF9160 AT Commands Reference Guide`_ or the `band lock section in the nRF91x1 AT Commands Reference Guide`_, depending on the SiP you are using.
+For more detailed information, see the `band lock section in the nRF91x1 AT Commands Reference Guide`_.
 
 .. _nrf91_ug_network_mode:
-.. _nrf9160_ug_network_mode:
 
 System mode
 ===========
@@ -176,7 +161,7 @@ You can change the enabled systems using the :kconfig:option:`CONFIG_LTE_NETWORK
 When the :ref:`lte_lc_readme` library is not used, the modem starts in LTE-M mode.
 You can change the system mode and the LTE system mode preference using the ``AT%XSYSTEMMODE`` AT command.
 
-For more detailed information, see the `system mode section in the nRF9160 AT Commands Reference Guide`_ or the `system mode section in the nRF91x1 AT Commands Reference Guide`_, depending on the SiP you are using.
+For more detailed information, see the `system mode section in the nRF91x1 AT Commands Reference Guide`_.
 
 Modem library
 *************
@@ -204,7 +189,7 @@ To enable the modem traces in the modem and to forward them to the :ref:`modem_t
    For the :ref:`at_client_sample` sample, you must also run ``AT%XMODEMTRACE=1,2`` to manually activate the predefined trace set.
 
 You can set the trace level using the AT command ``AT%XMODEMTRACE``.
-For more information, see the `modem trace activation %XMODEMTRACE`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 modem trace activation %XMODEMTRACE_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+For more information, see the `modem trace activation %XMODEMTRACE <nRF91x1 modem trace activation %XMODEMTRACE_>`_ section in the nRF91x1 AT Commands Reference Guide.
 
 See :ref:`modem_trace_module` for other backend options.
 If the existing trace backends are not sufficient, it is possible to implement custom trace backends.
@@ -229,18 +214,13 @@ For debugging, any system crashes and modem traces can be remotely collected for
 See the :ref:`ug_memfault` page for more information on how to enable Memfault in your |NCS| project on an nRF91 Series SiP to visualize the data across the fleet and by device.
 
 .. _nrf91_ug_gnss:
-.. _nrf9160_ug_gnss:
 
 GNSS
 ****
 
 An nRF91 Series device is a highly versatile device that integrates both cellular and GNSS functionality.
 Note that GNSS functionality is only available on the SICA variant and not on the SIAA or SIBA variants.
-For more information, see the following documents, depending on the SiP you are using:
-
-* `nRF9151 SiP revisions and variants`_
-* `nRF9161 SiP revisions and variants`_
-* `nRF9160 SiP revisions and variants`_
+For more information, see `nRF9151 SiP revisions and variants`_.
 
 There are many GNSS constellations (GPS, BeiDou, Galileo, GLONASS) available but GPS is the most mature technology.
 An nRF91 Series device supports both GPS L1 C/A (Coarse/Acquisition) and QZSS L1C/A at 1575.42 MHz.
@@ -248,7 +228,6 @@ This frequency band is ideal for penetrating through layers of the atmosphere (t
 GNSS is designed to be used with a line of sight to the sky.
 Therefore, the performance is not ideal when there are obstructions overhead or if the receiver is indoors.
 
-Customers who are developing their own hardware with the nRF9160 are strongly recommended to use the `nRF9160 Antenna and RF Interface Guidelines`_ as a reference.
 See `GPS interface and antenna`_ for more details on GNSS interface and antenna.
 
 .. note::
@@ -280,14 +259,13 @@ Due to the clock bias on the receiver, there are four unknowns when looking for 
 This results in solving an equation system with four unknowns, and therefore a minimum of four satellites must be tracked to acquire a fix.
 
 .. _nrf91_gps_lte:
-.. _nrf9160_gps_lte:
 
 Concurrent GNSS and LTE
 =======================
 
 The GNSS operation in an nRF91 Series device is time-multiplexed with the LTE modem.
 Therefore, the LTE modem must either be completely deactivated or in `RRC idle mode <Radio Resource Control_>`_ or `Power Saving Mode (PSM)`_ when using the GNSS receiver.
-For more information, see the `nRF9151 GPS receiver Specification`_, `nRF9161 GPS receiver Specification`_, or the `nRF9160 GPS receiver Specification`_, depending on the SiP you are using.
+For more information, see the `nRF9151 GPS receiver Specification`_.
 
 Enhancements to GNSS
 ====================

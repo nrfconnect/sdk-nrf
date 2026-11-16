@@ -18,7 +18,7 @@ On nRF91 Series devices, you can enable the following functionalities using snip
      - Compatible board targets
    * - :ref:`nrf91_modem_trace_ext_flash_snippet`
      - ``nrf91-modem-trace-ext-flash``
-     - ``nrf9151dk/nrf9151/ns``, ``nrf9161dk/nrf9161/ns``, ``nrf9160dk/nrf9160/ns``, ``nrf9131ek/nrf9131/ns``
+     - ``nrf9151dk/nrf9151/ns``
    * - :ref:`nrf91_modem_trace_uart_snippet`
      - ``nrf91-modem-trace-uart``
      - :ref:`All nRF91 Series board targets <ug_nrf91>`
@@ -112,9 +112,6 @@ nRF91 modem tracing with UART backend using snippets
 The ``nrf91-modem-trace-uart`` snippet enables the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option and chooses the Zephyr UART driver for the backend, with the necessary Kconfig options.
 The snippet also enables the UART1 peripheral with a baud rate of 1 Mbd and hardware flow control enabled.
 If this configuration does not match your requirements, you can add a snippet or Kconfig and devicetree overlays to your application with the desired setup.
-
-.. note::
-    If you are using the nRF9160 DK, remember to :ref:`set the board controller switch to the **nRF91** position <build_pgm_nrf9160_board_controller>` before programming.
 
 To enable modem tracing with the UART trace backend on a nRF91 Series device, add the ``nrf91-modem-trace-uart`` snippet to the :term:`build configuration`.
 You can do this in one of the following ways:

@@ -10,15 +10,12 @@ Power profiling cellular applications
 In addition to the :ref:`general power optimization recommendations <app_power_opt_general>` and :ref:`cellular-specific power saving techniques <cellular_psm>`, you can use the `Online Power Profiler for LTE`_ browser application when optimizing the power consumption of cellular applications.
 In particular, the tool estimates the current consumption of the nRF91 Series LTE modem.
 
-.. note::
-   Online Power Profiler for LTE is only available for the nRF9160 DK.
-
-The following sections describe how you can use Online Power Profiler and other tools to optimize the power consumption in your nRF9160 DK.
+The following sections describe how you can use Online Power Profiler and other tools to optimize the power consumption in your nRF91 Series DK.
 
 Cellular applications
 *********************
 
-An nRF9160 DK can draw current ranging from a few micro amperes (in sleep mode) to hundreds of milli amperes (when the radio is active).
+An nRF91 Series DK can draw current ranging from a few micro amperes (in sleep mode) to hundreds of milli amperes (when the radio is active).
 To achieve long battery life, it is crucial that the application is optimized in the use of the radio.
 
 PSM usage
@@ -109,9 +106,6 @@ Assumptions:
 * Data is sent on a regular basis.
 * The network is not present in the drop-down list corresponding to :guilabel:`Preset network parameters` in Online Power Profiler.
 
-.. note::
-   All measurements and calculations in the example use case are based on nRF9160 Revision 2.
-
 Simulation using Online Power Profiler
 --------------------------------------
 
@@ -158,12 +152,12 @@ To simulate the use case with Online Power Profiler, complete the following step
 Real-time power measurement using Power Profiler Kit II
 -------------------------------------------------------
 
-After exporting the settings from Online Power Profiler, use the settings while measuring current on an nRF9160 DK.
-To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is connected to a live network, complete the following steps:
+After exporting the settings from Online Power Profiler, use the settings while measuring current on an nRF91 Series DK.
+To measure current on an nRF91 Series DK using the Power Profiler Kit II, while it is connected to a live network, complete the following steps:
 
-1. Connect Power Profiler Kit II to an nRF9160 DK as described in `Power Profiler Kit II user guide <Power Profiler Kit II (PPK2)_>`_.
+1. Connect Power Profiler Kit II to an nRF91 Series DK as described in `Power Profiler Kit II user guide <Power Profiler Kit II (PPK2)_>`_.
 #. Navigate to the :ref:`udp` sample in |NCS| and copy the contents of the :file:`opp.conf` file that you exported from Online Power Profiler into the :file:`prj.conf` file in the UDP sample folder (:file:`samples\cellular\udp`).
-#. :ref:`Build and program the sample onto the nRF9160 DK <programming>`.
+#. :ref:`Build and program the sample onto the nRF91 Series DK <programming>`.
 #. If PSM is available in your network, the power measurement using Power Profiler Kit II produces the following results:
 
    .. figure:: images/app_power_opt_ppk_psm.png

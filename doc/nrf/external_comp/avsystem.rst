@@ -56,7 +56,6 @@ Following are the components that are required for the integration with |NCS|:
  .. note::
 
     Instead of Zephyr stack, you can also use AVSystem's LwM2M Client SDK Anjay that can be ported to the nRF91 Series device.
-    To use Anjay, follow the procedures described in the AVSystem documentation for `nRF9160 integration <nRF9160 Anjay integration_>`_ and `Thingy:91 integration`_.
 
 * `Coiote IoT Device Management <Coiote Device Management_>`_ - Component that accepts communication from devices, performs management functionalities, and acts as a communication hub for third-party cloud solutions.
 

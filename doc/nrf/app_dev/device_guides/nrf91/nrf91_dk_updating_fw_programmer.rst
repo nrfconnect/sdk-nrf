@@ -1,5 +1,4 @@
-.. _nrf9161_ug_updating_fw_programmer:
-.. _nrf9160_ug_updating_fw_programmer:
+.. _nrf91_ug_updating_fw_programmer:
 
 Updating the DK firmware using Programmer
 #########################################

@@ -1,4 +1,4 @@
-.. _nrf9160_gs_testing_cellular:
+.. _nrf91_gs_testing_cellular:
 
 Testing the cellular connection on nRF91 Series DK
 ##################################################
@@ -16,12 +16,10 @@ Complete the following steps to test the cellular connection using the AT Client
    When selecting the HEX file, select the following file:
 
    * nRF9151 DK - :file:`nrf9151dk_at_client_<version-number>.hex`
-   * nRF9161 DK - :file:`nrf9161dk_at_client_<version-number>.hex`
-   * nRF9160 DK - :file:`nrf9160dk_at_client_<version-number>.hex`
 
 #. Test the AT Client sample as described in the Testing section of the :ref:`at_client_sample` documentation.
 
-.. _ug_nrf9160_gs_testing_gnss:
+.. _ug_nrf91_gs_testing_gnss:
 
 Testing the GNSS functionality
 ******************************
@@ -46,7 +44,7 @@ It might also work indoors if the device is near a window.
 Complete the following steps to test the GNSS functionality:
 
 1. If you have an external antenna for your nRF91 Series DK, attach it to connector **J2** to the left of the LTE antenna.
-   For more information, see `nRF9151 GPS receiver specification`_, `nRF9160 GPS receiver specification`_, or `nRF9161 GPS receiver specification`_, depending on the DK you are using.
+   For more information, see `nRF9151 GPS receiver specification`_.
 #. Turn on or reset your DK.
 #. Log in to the `nRF Cloud`_ portal.
 #. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.

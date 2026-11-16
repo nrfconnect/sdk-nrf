@@ -50,7 +50,6 @@ The size and location of the shared memory can be defined in devicetree by creat
   | nRF91         | DECT NR+     | * mfw_nr+_nrf91x1     | 1832 bytes          | first 128 kB of RAM    |
   |               |              | * mfw_nr+-phy_nrf91x1 |                     |                        |
   |               +--------------+-----------------------+---------------------+                        |
-  |               | Cellular     | * mfw_nrf9160         | 1256 bytes          |                        |
-  |               |              | * mfw_nrf91x1         |                     |                        |
+  |               | Cellular     | * mfw_nrf91x1         | 1256 bytes          |                        |
   |               |              | * mfw_nrf9151-ntn     |                     |                        |
   +---------------+--------------+-----------------------+---------------------+------------------------+

@@ -3626,7 +3626,7 @@ NCSDK-5666: LTE Sensor Gateway
 .. rst-class:: v1-2-0
 
 GPS sockets and SUPL client library stops working
-  The `nRF9160: GPS with SUPL client library`_ sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
+  The nRF9160: GPS with SUPL client library sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
 
   **Affected platforms:** nRF9160
 

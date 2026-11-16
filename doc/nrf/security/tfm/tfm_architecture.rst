@@ -42,7 +42,7 @@ Immutable RoT and Updatable RoT
 TF-M implements two types of :term:`Root of Trust (RoT)` in the :term:`Chain of Trust`:
 
 * Immutable Root of Trust (Immutable RoT) - "The combination of hardware and non-modifiable firmware and data installed during manufacturing" (as per `Trusted Base System Architecture for M (TBSA-M) Specification`_).
-  For the nRF5340 and nRF9160 devices, the Immutable RoT consists of an :ref:`immutable_bootloader`, plus certain hardware peripherals such as the Key Management Unit (KMU) and One-Time Programmable (OTP) memory.
+  For the nRF5340 and nRF91 Series devices, the Immutable RoT consists of an :ref:`immutable_bootloader`, plus certain hardware peripherals such as the Key Management Unit (KMU) and One-Time Programmable (OTP) memory.
 
 * Updatable Root of Trust (Updatable RoT) - The remainder of the components in the SPE.
   This includes amongst other the second stage bootloader, TF-M's Secure Partition Manager (SPM), and the Root of Trust services.
@@ -130,7 +130,7 @@ Using this mechanism, the application running in the NSPE can securely communica
 For example, the Non-Secure application can call the `psa_generate_random()`_ function to get a secure random number generated from the Secure image.
 
 For details on the hardware implementation of Non-Secure Callable Interface, see the :term:`System Protection Unit (SPU)` documentation in the respective datasheet.
-For example, in the `nRF9160 Product Specification <nRF9160 System Protection Unit_>`_, the `nRF9161 Product Specification <nRF9161 System Protection Unit_>`_, or the `nRF54L15 Datasheet <nRF54L15 Security_>`_, to name a few.
+For example, in the `nRF54L15 Datasheet <nRF54L15 Security_>`_.
 
 .. note::
    The representation of the NSPE in the TF-M architecture figure at the top of this page serves only to visualize that there are multiple modules inside the Non-Secure image that makes use of PSA Certified APIs.

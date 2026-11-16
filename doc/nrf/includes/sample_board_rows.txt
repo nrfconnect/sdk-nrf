@@ -20,29 +20,29 @@
 
 .. nrf9160dk_nrf9160
 
-| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``  |
+| nRF9160 DK | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``  |
 
 .. nrf9160dk_nrf9160_ns
 
-| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160/ns`` |
+| nRF9160 DK | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160/ns`` |
 
 .. nrf9160dk_nrf9160_and_ns
 
-| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``    |
+| nRF9160 DK | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``    |
 |                                |          |                                             |                          |
 |                                |          |                                             | ``nrf9160dk/nrf9160/ns`` |
 
 .. nrf9160dk_nrf52840
 
-| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf52840>` | ``nrf9160dk/nrf52840`` |
+| nRF9160 DK | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf52840>` | ``nrf9160dk/nrf52840`` |
 
 .. nrf9161dk_nrf9161
 
-| :ref:`nRF9161 DK <ug_nrf9161>` | PCA10153 | :zephyr:board:`nrf9161dk <nrf9161dk>` | ``nrf9161dk/nrf9161``  |
+| nRF9161 DK | PCA10153 | :zephyr:board:`nrf9161dk <nrf9161dk>` | ``nrf9161dk/nrf9161``  |
 
 .. nrf9161dk_nrf9161_ns
 
-| :ref:`nRF9161 DK <ug_nrf9161>` | PCA10153 | :zephyr:board:`nrf9161dk <nrf9161dk>` | ``nrf9161dk/nrf9161/ns`` |
+| nRF9161 DK | PCA10153 | :zephyr:board:`nrf9161dk <nrf9161dk>` | ``nrf9161dk/nrf9161/ns`` |
 
 .. nrf9131ek_nrf9131
 
@@ -90,11 +90,11 @@
 
 .. thingy91_nrf9160
 
-| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | :ref:`thingy91 <ug_thingy91>` | ``thingy91/nrf9160`` |
+| Thingy:91 | PCA20035 | thingy91 | ``thingy91/nrf9160`` |
 
 .. thingy91_nrf9160_ns
 
-| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | :ref:`thingy91 <ug_thingy91>` | ``thingy91/nrf9160/ns`` |
+| Thingy:91 | PCA20035 | thingy91 | ``thingy91/nrf9160/ns`` |
 
 .. thingy91x_nrf9151
 
@@ -134,7 +134,7 @@
 
 .. thingy91_nrf52840
 
-| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | :ref:`thingy91 <ug_thingy91>` | ``thingy91/nrf52840`` |
+| Thingy:91 | PCA20035 | thingy91 | ``thingy91/nrf52840`` |
 
 .. nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns
 
