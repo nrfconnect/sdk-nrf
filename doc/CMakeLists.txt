@@ -340,7 +340,7 @@ add_docset(mcuboot "3.4.0")
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
-add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
+add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "4.7.1" STANDALONE)
 
 #-------------------------------------------------------------------------------
 # docset: tfm

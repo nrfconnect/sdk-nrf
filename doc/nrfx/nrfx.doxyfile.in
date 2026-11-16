@@ -50,7 +50,7 @@ PROJECT_NAME           = nrfx
 
 ### EDIT THIS ###
 
-PROJECT_NUMBER         = 4.5.0
+PROJECT_NUMBER         = @DOCSET_VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewers a
@@ -286,8 +286,9 @@ TAB_SIZE               = 4
 # with the commands \{ and \} for these it is advised to use the version @{ and
 # @} or use a double escape (\\{ and \\})
 
-ALIASES                = "tagGreenTick=\htmlonly<CENTER><font color=\"green\">✔</font></CENTER>\endhtmlonly" \
-                         "tagRedCross=\htmlonly<CENTER><font color=\"red\">✖</font></CENTER>\endhtmlonly" \
+ALIASES                = "tagGreenTick=\htmlonly<CENTER><font color=\"green\">✔</font></CENTER>\endhtmlonly \xmlonly<verbatim>embed:rst:inline :green:`✔`</verbatim>\endxmlonly" \
+                         "tagRedCross=\htmlonly<CENTER><font color=\"red\">✖</font></CENTER>\endhtmlonly \xmlonly<verbatim>embed:rst:inline :red:`✖`</verbatim>\endxmlonly" \
+                         "tagRedCrossNoCenter=\htmlonly<font color=\"red\">✖</font>\endhtmlonly \xmlonly<verbatim>embed:rst:inline :red:`✖`</verbatim>\endxmlonly" \
                          "nRF5340pinAssignmentsURL=\"https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf5340%2Fchapters%2Fpin.html\"" \
                          "refhal{1}=\sa \1 \copydoc \1"
 
@@ -2555,7 +2556,8 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = SUPPRESS_INLINE_IMPLEMENTATION \
                          __NRFX_DOXYGEN__ \
-                         __PACKED=
+                         __PACKED= \
+                         __ALIGN=
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
