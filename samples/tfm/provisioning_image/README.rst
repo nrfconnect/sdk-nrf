@@ -100,7 +100,7 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/provisioning_image`
+.. |sample path| replace:: :ncs-file:`/samples/tfm/provisioning_image`
 
 .. include:: /includes/build_and_run.txt
 
@@ -111,10 +111,12 @@ See :ref:`tfm_psa_template_provisioning_image_bundled`.
 
 If the provisioned key does not match the key used to sign the image chain, b0 rejects MCUboot with error ``-102`` (``ESIGINV``).
 
+.. _provisioning_image_testing:
+
 Testing
 =======
 
-After programming the sample, the following output is displayed in the console on nRF5340 and nRF91x Series devices:
+After programming the sample, the following message text is displayed in the console on nRF5340 and nRF91x Series devices (with the usual log module prefix when :kconfig:option:`CONFIG_LOG` is enabled):
 
 .. code-block:: console
 

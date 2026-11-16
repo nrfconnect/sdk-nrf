@@ -29,6 +29,8 @@ Configuration
 
 |config|
 
+On nRF5340 and nRF91 Series board targets, the board :ncs-file:`boards/` fragments enable the :kconfig:option:`CONFIG_IDENTITY_KEY_TFM` Kconfig option so TF-M can use a KMU-stored identity key for attestation.
+
 Setup
 =====
 
@@ -63,7 +65,8 @@ Building and flashing the provisioning image depends on the target device and it
 Using own NSIB signing key
 ++++++++++++++++++++++++++
 
-By default, the sample signs the NSIB image with the sample key in :file:`samples/tfm/common/keys/`.
+By default, the sample signs the NSIB image with the development key :ncs-file:`/samples/tfm/common/keys/nrf54l_nsib_sample_private.pem` on nRF54L Series devices (default for :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` in :ncs-file:`/samples/tfm/tfm_psa_template/Kconfig.sysbuild`).
+The :ncs-file:`/samples/tfm/common/` directory holds shared TF-M sample assets only and is not a separate build target.
 This is a publicly known development key and must not be used in production.
 
 To use your own NSIB signing key, set the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` Kconfig option to your key file.
@@ -141,7 +144,7 @@ The following steps are an example of how to generate the keys and update the co
         python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ed25519 -k ~/ncs/_keys/mcuboot_priv.pem
         python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ed25519 -k ~/ncs/_keys/nsib_priv.pem
 
-#. Update the :file:`sysbuild.conf` file to set the private signing keys for MCUboot and NSIB.
+#. Update the :ncs-file:`/samples/tfm/tfm_psa_template/sysbuild.conf` file to set the private signing keys for MCUboot and NSIB.
    Paths may be absolute or relative to the application configuration directory (the sample
    directory):
 
@@ -209,8 +212,8 @@ Updating bootloader firmware (nRF5340 and nRF91 Series only)
 ------------------------------------------------------------
 
 .. note::
-   This flow is not supported on nRF54L.
-   The boot chain on nRF54L does not maintain S0/S1 NSIB upgrade slots, so the :file:`signed_by_mcuboot_and_b0_s1_image.bin` artifact referenced below is not produced and there is no in-place mechanism to swap the NSIB image.
+   This flow is not supported on nRF54L Series devices.
+   The boot chain on nRF54L Series devices does not maintain S0/S1 NSIB upgrade slots, so the ``signed_by_mcuboot_and_b0_s1_image.bin`` artifact from the upload steps in this section is not produced and there is no in-place mechanism to swap the NSIB image.
    To rotate the NSIB image or its signing key on nRF54L, the device must be re-provisioned through the :ref:`tfm_psa_template_provisioning_image_setup` flow with ``west flash --recover``.
 
 To upload a new bootloader image, complete the following steps:
@@ -346,12 +349,34 @@ Building and running
    When re-flashing the application after provisioning, use plain programming command (``west flash``) without any additional arguments, such as ``--erase`` or ``--recover``.
    These additional arguments wipe the provisioned lifecycle state and keys.
 
-.. |sample path| replace:: :file:`samples/tfm/tfm_psa_template`
+.. |sample path| replace:: :ncs-file:`/samples/tfm/tfm_psa_template`
 
 .. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
+
+The device must be provisioned before you test this sample.
+See :ref:`tfm_psa_template_provisioning_image_setup` and the warning in `Building and running`_.
+Without provisioning, TF-M does not boot and you do not see the attestation lines under `Manual testing`_.
+
+.. _tfm_psa_template_testing_automated:
+
+Automated testing in CI
+=======================
+
+Twister runs this sample with a **pytest** harness, not a console regex, because provisioning has to complete before the application is programmed.
+The test flow matches :ncs-file:`/samples/tfm/tfm_psa_template/pytest/test_tfm_psa_template.py`:
+
+1. Provision the device (bundled ``provisioning_image`` domain or a standalone provisioning build), and wait for ``Success!`` in the log.
+#. Program the application with a plain ``west flash`` (no ``--erase`` or ``--recover``).
+#. Assert that the log contains:
+
+   * ``Requesting initial attestation token with <N> byte challenge.``
+   * ``Received initial attestation token of <N> bytes.``
+
+Manual testing
+==============
 
 After programming the sample, the boot chain runs in this order on every supported target:
 
@@ -469,7 +494,7 @@ The sample output is similar to `Sample output on nRF5340 DK`_, but with version
 Sample output on nRF54L
 =======================
 
-On nRF54L, the boot chain is as follows:
+On an nRF54L Series device, the boot chain is as follows:
 
 .. msc::
 
@@ -479,11 +504,11 @@ On nRF54L, the boot chain is as follows:
    MCUboot=>"TF-M + App" [label="Verify and boot (single slot)"];
    "TF-M + App"=>"TF-M + App" [label="Run"];
 
-Compared to the `Sample output on nRF5340 DK`_ above, the differences are as follows:
+Compared to the `Sample output on nRF5340 DK`_, the differences are as follows:
 
 * The two ``FW info`` blocks (``S0`` or ``S1``, or both) and the ``Active slot`` line are absent.
   These rely on the S0 and S1 NSIB upgrade slot pair, which only exists on nRF5340 and nRF91 Series.
-  On nRF54L, the ``get_fw_info()`` block is compiled out.
+  On the nRF54L Series devices, the ``get_fw_info()`` block is compiled out because the :kconfig:option:`CONFIG_SECURE_BOOT` Kconfig option is set to ``n`` in the nRF54L board :ncs-file:`boards/` fragments (no non-secure NSIB ``fw_info`` storage).
 * MCUboot prints two harmless warnings on every boot:
 
   .. code-block:: console
@@ -502,7 +527,7 @@ Dependencies
 
 This sample uses the following |NCS| components:
 
-* TF-M module from :file:`modules/tee/tfm/` folder
+* TF-M module from the :ncs-file:`trusted-firmware-m:/` folder
 * The :ref:`lib_tfm_ioctl_api` library
 * On the nRF5340 devices: the :ref:`subsys_pcd` library
 
