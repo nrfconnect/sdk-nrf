@@ -354,7 +354,9 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-|no_changes_yet_note|
+* :ref:`tfm_secure_peripheral_partition` sample:
+
+  * Added support for the ``nrf7120dk/nrf7120/cpuapp/ns`` board target to the Twister configuration.
 
 Thread samples
 --------------
