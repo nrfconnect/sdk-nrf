@@ -622,7 +622,7 @@ struct nrf_wifi_sae {
 	unsigned char sae_data[NRF_WIFI_MAX_SAE_DATA_LENGTH];
 } __NRF_WIFI_PKD;
 
-#define NRF_WIFI_MAX_FRAME_LEN 600
+#define NRF_WIFI_MAX_FRAME_LEN 800
 
 /**
  * @brief This structure defines the frame that is intended for transmission.
