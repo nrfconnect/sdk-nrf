@@ -14,6 +14,7 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
+      - nrf9151dk/nrf9151
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -55,6 +56,7 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
+      - nrf9151dk/nrf9151
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -83,6 +85,7 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
+      - nrf9151dk/nrf9151
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -140,6 +143,7 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
     harness_config:
       pytest_root:
         - "../pytest/test_upgrade.py"
@@ -624,6 +628,7 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
+      - nrf9151dk/nrf9151
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -646,6 +651,7 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
+      - nrf9151dk/nrf9151
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -691,6 +697,7 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
+      - nrf9151dk/nrf9151
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
