@@ -116,7 +116,7 @@ If the provisioned key does not match the key used to sign the image chain, b0 r
 Testing
 =======
 
-After programming the sample, the following message text is displayed in the console on nRF5340 and nRF91x Series devices (with the usual log module prefix when :kconfig:option:`CONFIG_LOG` is enabled):
+After programming the sample, the following message text is displayed in the console on nRF5340 and nRF91x Series devices (with the usual log module prefix when the :kconfig:option:`CONFIG_LOG` Kconfig option is enabled):
 
 .. code-block:: console
 
@@ -136,6 +136,10 @@ On nRF54L Series devices, the identity key step is omitted:
     Success!
 
 If an error occurs, the sample logs a ``Failure: ...`` message describing the failed step and stops without printing ``Success!``.
+
+On the nRF5340 DK, sysbuild also builds and flashes :ref:`provisioning_image_net_core` on the network core, see :ncs-file:`/samples/tfm/provisioning_image/Kconfig.sysbuild`.
+
+See the Testing section in :ref:`provisioning_image_net_core`.
 
 .. note::
    The device cannot transition from **PRoT Provisioning** back to **Device Assembly and Test**.

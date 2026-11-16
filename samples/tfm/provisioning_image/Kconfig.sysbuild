@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Bundle provisioning_image_net_core when building for nRF5340 application core.
+
+if SOC_NRF5340_CPUAPP
+
+choice NETCORE
+	default NETCORE_PROVISIONING_IMAGE_NET_CORE
+
+config NETCORE_PROVISIONING_IMAGE_NET_CORE
+	bool "provisioning_image_net_core"
+	help
+	  Include the TF-M provisioning image for the network core, which locks
+	  network-core debug access (UICR APPROTECT).
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "provisioning_image_net_core" if NETCORE_PROVISIONING_IMAGE_NET_CORE
+
+config NETCORE_IMAGE_PATH
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/tfm/provisioning_image_net_core" if NETCORE_PROVISIONING_IMAGE_NET_CORE
+
+endif # SOC_NRF5340_CPUAPP
+
+source "share/sysbuild/Kconfig"

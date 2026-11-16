@@ -32,7 +32,7 @@ Testing
 
 The sample does not build firmware for the application core and thus cannot be tested separately.
 
-Test it together with :ref:`provisioning_image` on ``nrf5340dk/nrf5340/cpuapp``.
+Test it together with :ref:`provisioning_image` on ``nrf5340dk/nrf5340/cpuapp`` (sysbuild adds this image automatically, see :ncs-file:`/samples/tfm/provisioning_image/Kconfig.sysbuild`).
 See :ref:`provisioning_image_testing` for the expected application-core console output and the parent sample's Twister harness.
 
 If you capture the network-core UART, expect output like the following:
@@ -42,7 +42,7 @@ If you capture the network-core UART, expect output like the following:
    The UICR->APPROTECT register is now configured to deny debugging access for the network core!
    Success!
 
-If UICR is already locked, the network core may instead print:
+If UICR is already locked, the network core may instead print the following:
 
 .. code-block:: console
 

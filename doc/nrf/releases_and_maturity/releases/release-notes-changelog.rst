@@ -1112,6 +1112,7 @@ Trusted Firmware-M (TF-M) samples
 * :ref:`provisioning_image` sample:
 
   * Added support for nRF54L Series devices.
+  * Updated the sample to include :ref:`provisioning_image_net_core` as the default network-core sysbuild image for the ``nrf5340dk/nrf5340/cpuapp`` board target.
 
 Thread samples
 --------------
