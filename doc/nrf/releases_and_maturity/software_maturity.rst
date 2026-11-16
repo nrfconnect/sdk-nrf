@@ -1778,6 +1778,32 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
 
+      .. tab:: nRF71 Series
+         .. list-table:: Wi-Fi feature support
+            :widths: auto
+            :header-rows: 1
+
+            * - Feature
+              - nRF7120
+            * - **Bluetooth LE Coexistence**
+              - Experimental
+            * - **Monitor Mode**
+              - Experimental
+            * - **Promiscuous Mode**
+              - Experimental
+            * - **STA Mode**
+              - Experimental
+            * - **Scan only (for location accuracy)**
+              - Experimental
+            * - **SoftAP Mode (for Wi-Fi provisioning)**
+              - Experimental
+            * - **TX injection Mode**
+              - Experimental
+            * - **Thread Coexistence**
+              - --
+            * - **Wi-Fi Direct (P2P)**
+              - Experimental
+
       .. tab:: nRF91 Series
          .. list-table:: Wi-Fi feature support
             :widths: auto
