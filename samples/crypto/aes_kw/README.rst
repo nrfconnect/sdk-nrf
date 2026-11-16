@@ -61,7 +61,7 @@ Once built and run, the sample performs the following operations:
 1. Initialization:
 
    a. The sample initializes the PSA Crypto API using :c:func:`psa_crypto_init`.
-   #. If :kconfig:option:`CONFIG_SAMPLE_AES_KW_KMU_DEMO` is set, the sample imports a predefined 128-bit or 192-bit AES key (Key Encryption Key) using :c:func:`psa_import_key` and stores it in the PSA crypto keystore.
+   #. If :kconfig:option:`CONFIG_SAMPLE_AES_KW_KMU_DEMO` is set, the sample imports a predefined 128-bit or 256-bit AES key (Key Encryption Key) using :c:func:`psa_import_key` and stores it in the PSA crypto keystore.
       Otherwise, the sample generates the Key Encryption Key using :c:func:`psa_generate_key` and stores it in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_cracen_overview>`.
       The key is configured with usage flags for both wrapping and unwrapping.
    #. The sample imports a predefined plain key using :c:func:`psa_import_key` and stores it in the PSA crypto keystore.
@@ -71,7 +71,7 @@ Once built and run, the sample performs the following operations:
 #. Wrapping and unwrapping of a sample plain key:
 
    a. The sample performs a wrapping operation using :c:func:`psa_wrap_key` with either the ``PSA_ALG_KW`` or ``PSA_ALG_KWP`` algorithm, depending on the sample configuration.
-   #. If :kconfig:option:`CONFIG_SAMPLE_AES_KW_KMU_DEMO` is not set, the sample compares the wrapped key with the expected value defined in RFC3394 or RFC5649.
+   #. If :kconfig:option:`CONFIG_SAMPLE_AES_KW_KMU_DEMO` is not set, the sample compares the wrapped key with the expected value from the RFC3394 test vector for AES-KW or the NIST CAVP test vector for AES-KWP.
    #. The sample removes the plain key from the PSA crypto keystore using :c:func:`psa_destroy_key`.
    #. The sample performs an unwrapping operation using :c:func:`psa_unwrap_key` with key usage configured for export.
       Retrieve the decrypted key value and compare it with the original key when the Key Encryption Key is predefined.
@@ -153,26 +153,24 @@ Testing
    [00:00:00.002,535] <inf> aes_kw: Importing Key-Encryption Key...
    [00:00:00.002,563] <inf> aes_kw: Key-Encryption Key imported successfully!
    [00:00:00.002,568] <inf> aes_kw: Importing key (to wrap)...
-   [00:00:00.002,579] <inf> aes_kw: ---- Source key (len: 20): ----
+   [00:00:00.002,579] <inf> aes_kw: ---- Source key (len: 9): ----
    [00:00:00.002,589] <inf> aes_kw: Content:
-                                    c3 7b 7e 64 92 58 43 40  be d1 22 07 80 89 41 15 |.{~d.XC@ .."...A.
-                                    50 68 f7 38                                      |Ph.8
+                                    ed f1 7d 96 6e d8 96 ae  e3                      |..}.n... .
    [00:00:00.002,598] <inf> aes_kw: ---- Source key end  ----
    [00:00:00.002,622] <inf> aes_kw: KEY key imported successfully!
    [00:00:00.002,627] <inf> aes_kw: Wrapping key...
-   [00:00:00.012,626] <inf> aes_kw: ---- Wrapped key (len: 32): ----
+   [00:00:00.012,626] <inf> aes_kw: ---- Wrapped key (len: 24): ----
    [00:00:00.012,637] <inf> aes_kw: Content:
-                                    13 8b de aa 9b 8f a7 fc  61 f9 77 42 e7 22 48 ee |........ a.wB."H.
-                                    5a e6 ae 53 60 d1 ae 6a  5f 54 f3 73 fa 54 3b 6a |Z..S`..j _T.s.T;j
+                                    d6 7b 5b 2a d1 5c 64 54  50 e2 3b 5e 7b 6d 68 2f |.{[*.\dT P.;^{mh/
+                                    8a e2 0e 71 6d 47 0d b7                          |...qmG..
    [00:00:00.012,647] <inf> aes_kw: ---- Wrapped key end  ----
-   [00:00:00.012,660] <inf> aes_kw: Wrapped key size is expected: 32 bytes
+   [00:00:00.012,660] <inf> aes_kw: Wrapped key size is expected: 24 bytes
    [00:00:00.012,676] <inf> aes_kw: Wrapped key data is correct!
    [00:00:00.012,702] <inf> aes_kw: Unwrapping key...
-   [00:00:00.013,875] <inf> aes_kw: ---- Unwrapped key (len: 20): ----
+   [00:00:00.013,875] <inf> aes_kw: ---- Unwrapped key (len: 9): ----
    [00:00:00.013,886] <inf> aes_kw: Content:
-                                    c3 7b 7e 64 92 58 43 40  be d1 22 07 80 89 41 15 |.{~d.XC@ .."...A.
-                                    50 68 f7 38                                      |Ph.8
+                                    ed f1 7d 96 6e d8 96 ae  e3                      |..}.n... .
    [00:00:00.013,896] <inf> aes_kw: ---- Unwrapped key end  ----
-   [00:00:00.013,909] <inf> aes_kw: Unwrapped key size is expected: 20 bytes
+   [00:00:00.013,909] <inf> aes_kw: Unwrapped key size is expected: 9 bytes
    [00:00:00.013,925] <inf> aes_kw: Unwrapped key data is correct!
    [00:00:00.013,963] <inf> aes_kw: Example finished successfully!
