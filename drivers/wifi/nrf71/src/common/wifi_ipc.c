@@ -29,6 +29,9 @@
 #include <common/fmac_structs_common.h>
 #include <common/wifi_ipc.h>
 #include <system/drv_dbg_stats.h>
+#if defined(CONFIG_NRF71_SYSTEM_MODE) && defined(CONFIG_NRF_WIFI_RPU_RECOVERY)
+#include <system/fmac_api.h>
+#endif
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -753,6 +756,13 @@ enum nrf_wifi_status nrf_wifi_ipc_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_CMD_SEND);
 		if (ret == -ETIMEDOUT) {
 			nrf_wifi_drv_dbg_fmac_tmo(fmac_dev_ctx, NRF_WIFI_DRV_DBG_TMO_IPC_TX);
+#if defined(CONFIG_NRF71_SYSTEM_MODE) && defined(CONFIG_NRF_WIFI_RPU_RECOVERY)
+			if (fmac_dev_ctx->fw_init_done && !fmac_dev_ctx->fw_deinit_done &&
+			    inst->rx_active) {
+				LOG_ERR("Host IPC TX timeout, scheduling RPU recovery");
+				nrf_wifi_sys_fmac_rpu_recovery_callback(fmac_dev_ctx, NULL, 0);
+			}
+#endif
 		}
 		return NRF_WIFI_STATUS_FAIL;
 	}
