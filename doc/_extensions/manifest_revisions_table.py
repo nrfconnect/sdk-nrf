@@ -28,6 +28,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import re
 from typing import Any
+from urllib.parse import urlparse
 
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -65,10 +66,16 @@ class ManifestRevisionsTable(SphinxDirective):
         # remove .git from base_url, if present
         base_url = base_url.split(".git")[0]
 
-        if "github.com" in base_url:
+        parsed = urlparse(base_url if "://" in base_url else f"https://{base_url}")
+        host = (parsed.hostname or "").lower()
+
+        if host == "github.com" or host.endswith(".github.com"):
             commit_fmt = base_url + "/commit/{rev}"
             tag_fmt = base_url + "/releases/tag/{rev}"
-        elif "projecttools.nordicsemi.no" in base_url:
+        elif host == "bitbucket.org":
+            commit_fmt = base_url + "/commits/{rev}"
+            tag_fmt = base_url + "/src/{rev}/"
+        elif host == "projecttools.nordicsemi.no":
             m = re.match(r"^(.*)/scm/(.*)/(.*)$", base_url)
             if not m:
                 raise ExtensionError(f"Invalid base URL: {base_url}")
