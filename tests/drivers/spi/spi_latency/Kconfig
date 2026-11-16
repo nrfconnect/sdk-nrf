@@ -14,13 +14,32 @@ config TEST_MAX_BUFFER_SIZE
 	default 512 if SOC_NRF54H20_CPUPPR
 	default 2000
 
+config TEST_SPI_LATENCY_SHORT_XFER_OVERHEAD_US
+	int "Short transfer overhead time for SPI latency measurement"
+	default 40 if SOC_SERIES_NRF52
+	default 23
+	help
+	  SPI driver takes semaphore after starting the transfer. Timeout is set and context is
+	  switched with interrupts locked. If transfer is short (e.g. 1 byte) then it impacts
+	  latency as SPI interrupt handling is delayed. Overhead is applied only to single byte
+	  transfers.
+
+config TEST_SPI_LATENCY_LONG_XFER_OVERHEAD_US
+	int "Long transfer overhead time for SPI latency measurement"
+	default 18
+	help
+	  When transfer is long then Read-only memory is going to low power mode and waking up
+	  impacts interrupt handling latency. Overhead is applied only to long transfers as for
+	  short (single byte) there is no time to go to sleep and interrupt handling is not delayed.
+
 config TEST_SPI_LATENCY_BASE_OVERHEAD_US
 	int "Base overhead time for SPI latency measurement"
 	default 130 if SOC_NRF9251_CPUPPR || SOC_NRF54H20_CPUPPR
-	default 90 if SOC_SERIES_NRF52
-	default 80 if SOC_NRF5340_CPUAPP
-	default 65 if SOC_NRF54LS05B_CPUAPP || SOC_NRF54LS05A_CPUAPP
-	default 55
+	default 77 if SOC_SERIES_NRF52
+	default 65 if SOC_NRF5340_CPUAPP
+	default 50 if SOC_NRF54LS05B_CPUAPP || SOC_NRF54LS05A_CPUAPP
+	default 45 if SOC_NRF7120 || SOC_NRF7120E
+	default 40
 
 config TEST_SPI_LATENCY_PER_BYTE_OVERHEAD_US
 	int "Overhead time per byte for SPI latency measurement"
