@@ -384,16 +384,17 @@ static int dev_pm_action_cb(const struct device *dev,
 
 	if (IS_ENABLED(CONFIG_PM_DEVICE) &&
 	    action == PM_DEVICE_ACTION_SUSPEND) {
+		if (k_sem_take(&dev_data->ctx_lock, K_NO_WAIT) != 0) {
+			LOG_ERR("Controller in use, cannot be suspended");
+			return -EBUSY;
+		}
+
 		rc = pinctrl_apply_state(dev_config->pcfg,
 					 PINCTRL_STATE_SLEEP);
 		if (rc < 0) {
 			LOG_ERR("Cannot apply sleep pins state (%d)", rc);
+			k_sem_give(&dev_data->ctx_lock);
 			return rc;
-		}
-
-		if (k_sem_take(&dev_data->ctx_lock, K_NO_WAIT) != 0) {
-			LOG_ERR("Controller in use, cannot be suspended");
-			return -EBUSY;
 		}
 
 #if defined(CONFIG_SOC_SERIES_NRF54L)
