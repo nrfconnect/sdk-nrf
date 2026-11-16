@@ -54,7 +54,7 @@ Hardware drivers take precedence over software drivers, which provide fallback o
      - Hardware
      - Closed-source binary
      - nRF52840, nRF5340, nRF91 Series devices
-     - Drivers for the `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware accelerators.
+     - Drivers for the CryptoCell 310 and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware accelerators.
    * - :ref:`CRACEN <crypto_drivers_cracen>`
      - Hardware
      - Open-source
@@ -306,7 +306,7 @@ nrf_cc3xx driver
      - nRF52840, nRF5340, nRF91 Series devices
 
 The nrf_cc3xx driver includes the ``nrf_cc3xx_platform`` and ``nrf_cc3xx_mbedcrypto`` drivers.
-These drivers provide low-level functionalities for hardware-accelerated cryptography using `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ (CC310) and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ (CC312) hardware peripherals.
+These drivers provide low-level functionalities for hardware-accelerated cryptography using CryptoCell 310 (CC310) and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ (CC312) hardware peripherals.
 
 * The :ref:`nrf_cc3xx_platform_readme` provides low-level functionality needed by the nrf_cc3xx mbedcrypto library.
 * The :ref:`nrf_cc3xx_mbedcrypto_readme` provides low-level integration with the Mbed TLS version provided in the |NCS|.

@@ -15,7 +15,7 @@ To build with TF-M, complete the following steps:
    The board files for these board targets have the :kconfig:option:`CONFIG_BUILD_WITH_TFM` Kconfig option enabled by default.
 #. Configure the TF-M build to use the configurable or minimal version.
    By default, TF-M is built with the :ref:`configurable version <tfm_configurable_build>` on most devices.
-   The exceptions are :ref:`Thingy:91 <ug_thingy91>` and the :ref:`Thingy:91 X <ug_thingy91x>`, which default to the :ref:`minimal version <tfm_minimal_build>`.
+   The exception is the :ref:`Thingy:91 X <ug_thingy91x>`, which defaults to the :ref:`minimal version <tfm_minimal_build>`.
 #. If you are using custom devicetree partitions, make sure to update the devicetree files to reflect the custom memory region sizes.
 #. Build your application using :ref:`standard building instructions <building>` for the development environment of your choice.
 
@@ -51,22 +51,10 @@ See :ref:`app_boards_names` for the complete list of boards and board targets su
      - PCA number
      - Board name
      - TF-M board target
-   * - nRF9161 DK
-     - PCA10153
-     - :zephyr:board:`nrf9161dk <nrf9161dk>`
-     - ``nrf9161dk/nrf9161/ns``
-   * - nRF9160 DK
-     - PCA10090
-     - :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>`
-     - ``nrf9160dk/nrf9160/ns``
    * - nRF9151 DK
      - PCA10171
      - :zephyr:board:`nrf9151dk <nrf9151dk>`
      - ``nrf9151dk/nrf9151/ns``
-   * - nRF9131 EK
-     - PCA10165
-     - :zephyr:board:`nrf9131ek <nrf9131ek>`
-     - ``nrf9131ek/nrf9131/ns``
    * - nRF54LV10 DK
      - PCA10188
      - :zephyr:board:`nrf54lv10dk <nrf54lv10dk>`
@@ -96,10 +84,6 @@ See :ref:`app_boards_names` for the complete list of boards and board targets su
      - PCA10143
      - :zephyr:board:`nrf7002dk <nrf7002dk>`
      - ``nrf7002dk/nrf5340/cpuapp/ns``
-   * - Thingy:91
-     - PCA20035
-     - :ref:`thingy91 <ug_thingy91>`
-     - ``thingy91/nrf9160/ns``
    * - Thingy:91 X
      - PCA20065
      - :ref:`thingy91x <ug_thingy91x>`
@@ -139,7 +123,7 @@ Minimal build
    :end-before: minimal_build_overview_end
 
 The minimal build uses an image of 32 kB.
-It is set with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option that is enabled by default on the :ref:`Thingy:91 <ug_thingy91>` and :ref:`Thingy:91 X <ug_thingy91x>` devices.
+It is set with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option that is enabled by default on the :ref:`Thingy:91 X <ug_thingy91x>` device.
 
 With the minimal build, the configuration of TF-M is severely limited.
 The only configurable option is to enable a security service for cryptographic hashes.

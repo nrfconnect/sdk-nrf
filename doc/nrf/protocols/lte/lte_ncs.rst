@@ -10,7 +10,7 @@ Getting started with cellular products
 For getting started with the cellular products, you can refer to the :ref:`ug_nrf91` documentation, which guides through the features, getting started steps, and advanced usage of the boards.
 For a self-paced, hands-on course, enroll in DevAcademy's `Cellular IoT Fundamentals course`_, which describes the LTE-M and NB-IoT technologies and the software architecture of a cellular IoT application based on Nordic Semiconductor nRF91 Series devices.
 
-The :ref:`nrf9160_ug_network_mode` section provides information about switching between LTE-M and NB-IoT.
+The :ref:`nrf91_ug_network_mode` section provides information about switching between LTE-M and NB-IoT.
 
 Cellular IoT in |NCS|
 *********************

@@ -64,7 +64,7 @@ Modem trace flash backend
 
 The flash backend stores :ref:`modem traces <modem_trace_module>` to the external flash storage on the nRF91 Series DK.
 
-First, set up the :ref:`external flash <nrf9160_external_flash>` for your application.
+First, set up the external flash for your application.
 You can then set the following configuration options for the application to decide how to handle when the flash is full:
 
    * :kconfig:option:`CONFIG_NRF_MODEM_TRACE_FLASH_NOSPACE_SIGNAL` - To get notified with a callback when the flash is full, and the application erases or sends the data to the cloud.
@@ -90,7 +90,6 @@ The modem trace flash backend has some additional configuration options:
 It is also recommended to enable high drive mode and high-performance mode in devicetree.
 High drive is to ensure that the communication with the flash device is reliable at high speed.
 High-performance mode is a feature in the flash device that allows it to write and erase faster than in low-power mode.
-See the :ref:`external flash <nrf9160_external_flash>` documentation for more details.
 The trace backend needs to handle trace data at ~1 Mbps to avoid filling up the buffer in the modem.
 If the modem buffer is full, the modem drops modem traces until the buffer has space available again.
 

@@ -97,10 +97,10 @@ While both DECT NR+ and LTE address different needs, DECT NR+ offers distinct ad
 Getting started with DECT NR+
 *****************************
 
-The nRF9161 and nRF9151 SiPs are low power SiPs with an integrated DECT NR+ modem along with 3GPP Release 14 LTE-M/NB-IoT with GNSS.
-For getting started with these DECT NR+ products, you can refer to the :ref:`ug_nrf91` documentation, which guides through the features, getting started steps, and advanced usage of these boards.
+The nRF9151 is a low power SiP with an integrated DECT NR+ modem along with 3GPP Release 14 LTE-M/NB-IoT with GNSS.
+For getting started with this DECT NR+ product, you can refer to the :ref:`ug_nrf91` documentation, which guides through the features, getting started steps, and advanced usage of nRF91 Series boards.
 
-For details about the key hardware capabilities of the nRF9161 and nRF9151 with regards to the DECT NR+ standard, refer to the `nRF9161 DECT NR+ specification`_ and `nRF9151 DECT NR+ specification`_, respectively.
+For details about the key hardware capabilities of the nRF9151 with regards to the DECT NR+ standard, refer to the `nRF9151 DECT NR+ specification`_.
 
 DECT NR+ in |NCS|
 *****************

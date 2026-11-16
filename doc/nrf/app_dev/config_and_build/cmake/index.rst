@@ -119,18 +119,18 @@ This is how you can specify them:
       * :makevar:`SNIPPET` - Select the snippet from the list in the :guilabel:`Snippets` menu.
       * Other variables - Provide CMake arguments in the :guilabel:`Extra CMake arguments` field, preceded by ``--``.
 
-      For example, to build the :ref:`location_sample` sample for the nRF9161 DK with the nRF7002 EK Wi-Fi® support, select ``nrf9161dk/nrf9161/ns`` in the :guilabel:`Board` menu, :file:`overlay-nrf7002ek-wifi-scan-only.conf` in the :guilabel:`Extra Kconfig fragments` menu, and provide ``-- -DSHIELD=nrf7002ek`` in the :guilabel:`Extra CMake arguments` field.
+      For example, to build the :ref:`location_sample` sample for the nRF9151 DK with the nRF7002 EK Wi-Fi® support, select ``nrf9151dk/nrf9151/ns`` in the :guilabel:`Board` menu, :file:`overlay-nrf7002ek-wifi-scan-only.conf` in the :guilabel:`Extra Kconfig fragments` menu, and provide ``-- -DSHIELD=nrf7002ek`` in the :guilabel:`Extra CMake arguments` field.
 
    .. group-tab:: Command line
 
       Pass the additional options to the ``west build`` command when :ref:`building`.
       The CMake arguments must be added after a ``--`` at the end of the command.
 
-      For example, to build the :ref:`location_sample` sample for the nRF9161 DK with the nRF7002 EK Wi-Fi support, the command would look like follows:
+      For example, to build the :ref:`location_sample` sample for the nRF9151 DK with the nRF7002 EK Wi-Fi support, the command would look like follows:
 
       .. code-block::
 
-         west build -p -b nrf9161dk/nrf9161/ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+         west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
 
 See :ref:`configuration_permanent_change` and Zephyr's :ref:`zephyr:west-building-cmake-args` for more information.
 

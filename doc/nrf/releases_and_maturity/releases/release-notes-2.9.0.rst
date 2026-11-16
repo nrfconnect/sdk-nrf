@@ -90,8 +90,8 @@ Supported modem firmware
 See the following documentation for an overview of which modem firmware versions have been tested with this version of the |NCS|:
 
 * `Modem firmware compatibility matrix for the nRF9151 SoC`_
-* `Modem firmware compatibility matrix for the nRF9161 SoC`_
-* `Modem firmware compatibility matrix for the nRF9160 SoC`_
+* Modem firmware compatibility matrix for the nRF9161 SoC
+* Modem firmware compatibility matrix for the nRF9160 SoC
 
 Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
 See the `Programming nRF91 Series DK firmware`_ page for instructions.
@@ -161,7 +161,7 @@ Bootloaders and DFU
 Developing with nRF91 Series
 ============================
 
-* Moved the Thingy:91 and Thingy:91 X guides to new sections, :ref:`thingy91_ug_intro` and :ref:`ug_thingy91x` respectively, under :ref:`ug_app_dev`.
+* Moved the Thingy:91 and Thingy:91 X guides to new sections, Developing with Thingy:91 and :ref:`ug_thingy91x` respectively, under :ref:`ug_app_dev`.
 
 Developing with nRF54L Series
 =============================

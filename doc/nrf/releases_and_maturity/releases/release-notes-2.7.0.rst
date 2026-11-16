@@ -121,8 +121,8 @@ Supported modem firmware
 
 See the following documentation for an overview of which modem firmware versions have been tested with this version of the |NCS|:
 
-* `Modem firmware compatibility matrix for the nRF9160 SoC`_
-* `Modem firmware compatibility matrix for the nRF9161 SoC`_
+* Modem firmware compatibility matrix for the nRF9160 SoC
+* Modem firmware compatibility matrix for the nRF9161 SoC
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
 See the `Programming nRF91 Series DK firmware`_ page for instructions.
@@ -191,7 +191,7 @@ Working with nRF91 Series
 * Updated:
 
   * The name and the structure of the section, with :ref:`ug_nrf91` as the landing page.
-  * The :ref:`Getting started with nRF9160 DK <gsg_guides>` and :ref:`Getting started with Thingy:91 <gsg_guides>` pages have been moved to the :ref:`gsg_guides` section.
+  * The Getting started with nRF9160 DK and Getting started with Thingy:91 pages have been moved to the :ref:`gsg_guides` section.
 
 Working with nRF70 Series
 =========================
@@ -746,7 +746,7 @@ Cryptography samples
     * Support for the nRF54L15 PDK board for all crypto samples.
     * Support for the :zephyr:board:`nrf54h20dk` board in all crypto samples, except :ref:`crypto_persistent_key` and :ref:`crypto_tls`.
     * Support for the :zephyr:board:`nrf9151dk` board for all crypto samples.
-    * Support for the :ref:`nRF9161 DK <ug_nrf9161>` board for the Cryptography tests.
+    * Support for the nRF9161 DK board for the Cryptography tests.
 
 Common samples
 --------------
@@ -776,7 +776,7 @@ Enhanced ShockBurst samples
 Keys samples
 ------------
 
-* Added support for the :zephyr:board:`nrf9151dk` and the :zephyr:board:`nrf9161dk` boards for all keys samples.
+* Added support for the :zephyr:board:`nrf9151dk` and the ``nrf9161dk`` boards for all keys samples.
 
 Matter samples
 --------------
@@ -906,7 +906,7 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-* Added support for the :zephyr:board:`nrf9151dk` and the :zephyr:board:`nrf9161dk` boards for all TF-M samples, except for the :ref:`provisioning_image_net_core` sample.
+* Added support for the :zephyr:board:`nrf9151dk` and the ``nrf9161dk`` boards for all TF-M samples, except for the :ref:`provisioning_image_net_core` sample.
 
 Thread samples
 --------------
@@ -964,7 +964,7 @@ Other samples
 
 * :ref:`bootloader` sample:
 
-  * Added support for the :zephyr:board:`nrf9151dk` and the :zephyr:board:`nrf9161dk` boards.
+  * Added support for the :zephyr:board:`nrf9151dk` and the ``nrf9161dk`` boards.
   * Updated the key revocation handling process to remove a security weakness found in the previous design.
     It is recommended to switch to the improved revocation handling in the newly manufactured devices.
 

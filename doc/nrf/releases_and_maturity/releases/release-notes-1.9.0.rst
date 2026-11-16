@@ -855,8 +855,8 @@ In addition to documentation related to the changes listed above, the following 
 
 * Added:
 
-  * :ref:`Getting started with Thingy:91 <gsg_guides>` guide moved to |NCS| documentation from infocenter. Reworked and renamed the Working with Thingy:91 user guide to :ref:`ug_thingy91`.
-  * :ref:`Getting started with nRF9160 DK <gsg_guides>` guide moved to |NCS| documentation from infocenter. Renamed the Working with nRF9160 DK user guide to :ref:`ug_nrf9160` and removed the redundant modem firmware section from the user guide.
+  * Getting started with Thingy:91 guide moved to |NCS| documentation from infocenter. Reworked and renamed the Working with Thingy:91 user guide to Developing with Thingy:91.
+  * Getting started with nRF9160 DK guide moved to |NCS| documentation from infocenter. Renamed the Working with nRF9160 DK user guide to Developing with nRF91 Series and removed the redundant modem firmware section from the user guide.
 
 * Updated:
 

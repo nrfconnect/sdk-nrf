@@ -511,7 +511,7 @@ Documentation
   * User guides:
 
     * :ref:`ug_nrf5340` - added
-    * :ref:`ug_thingy91` - added
+    * Developing with Thingy:91 - added
     * :ref:`ug_ble_controller` - added
     * Multi-image builds - updated with content that was removed from the Zephyr fork
 

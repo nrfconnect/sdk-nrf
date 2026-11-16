@@ -1,6 +1,4 @@
 .. _ug_nrf91:
-.. _ug_nrf9160:
-.. _ug_nrf9161:
 
 Developing with nRF91 Series
 ############################
@@ -8,6 +6,9 @@ Developing with nRF91 Series
 .. |nrf_series| replace:: devices of the nRF91 Series
 
 .. include:: /includes/guides_complementary_to_app_dev.txt
+
+.. note::
+   Starting with the |NCS| release v3.5.0, the nRF9160, nRF9161, nRF9131, and Thingy:91 devices are no longer supported in the |NCS|.
 
 Zephyr and the |NCS| provide support for developing cellular applications using the following nRF91 Series devices:
 
@@ -34,27 +35,6 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
        | `User Guide <nRF9151 SMA DK Hardware_>`_
      - | `nRF9151 SMA DK product page`_
        | `nRF9151 System in Package (SiP) <nRF9151 product website_>`_
-   * - :zephyr:board:`nrf9161dk`
-     - PCA10153
-     - ``nrf9161dk/nrf9161``, ``nrf9161dk/nrf9161/ns``
-     - | `Product Specification <nRF9161 Product Specification_>`_
-       | `Quick Start app`_
-       | `User Guide <nRF9161 DK Hardware_>`_
-     - | `nRF9161 DK product page`_
-       | `nRF9161 System in Package (SiP) <nRF9161 product website_>`_
-   * - :ref:`zephyr:nrf9160dk_nrf9160`
-     - PCA10090
-     - ``nrf9160dk/nrf9160``, ``nrf9160dk/nrf9160/ns``
-     - | `Product Specification <nRF9160 Product Specification_>`_
-       | :ref:`Getting started <gsg_guides>`
-       | `User Guide <nRF9160 DK Hardware_>`_
-     - | `nRF9160 DK product page`_
-       | `nRF9160 System in Package (SiP) <nRF9160 product website_>`_
-   * - :zephyr:board:`nrf9131ek`
-     - PCA10165
-     - ``nrf9131ek/nrf9131``, ``nrf9131ek/nrf9131/ns``
-     - --
-     - | `nRF9131 System in Package (SiP) <nRF9131 product website_>`_
 
 The nRF Connect SDK also offers :ref:`Cellular samples <cellular_samples>` dedicated to these devices, :ref:`networking_samples`,  as well as compatible :ref:`drivers` and :ref:`libraries`.
 
@@ -75,4 +55,3 @@ If you want to go through a hands-on online training to familiarize yourself wit
    nrf91_programming
    nrf91_testing
    nrf91_snippet
-   nrf9160_external_flash

@@ -93,7 +93,7 @@ Bootloaders and DFU
 Developing with nRF91 Series
 ============================
 
-|no_changes_yet_note|
+* Removed the nRF9160, nRF9161, nRF9131, and Thingy:91 guides and their references from the documentation.
 
 Developing with nRF93M1
 =======================
