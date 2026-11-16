@@ -24,7 +24,7 @@ TF-M already contains standard partitions such as crypto, protected storage and 
 The sample demonstrates how to configure peripherals as secure peripherals and use them in the secure partition.
 In this way, the peripheral is only accessible from the :ref:`Secure Processing Environment (SPE) <app_boards_spe_nspe>`, or from the secure partition with isolation level 2 or higher.
 
-The secure partition is located in the ``secure_peripheral_partition`` directory.
+The TF-M partition used in this sample is located in the :ncs-file:`secure_peripheral_partition` directory at the sample root.
 It contains the partition sources, build files and build configuration files.
 The partition is built by the TF-M build system.
 See :ref:`tfm_build_system` for more details.
@@ -35,6 +35,19 @@ Configuration
 *************
 
 |config|
+
+Configuration files
+===================
+
+The partition configuration and source files are in the :ncs-file:`secure_peripheral_partition` directory.
+
+The following files are available:
+
+* :ncs-file:`secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in` - Partition manifest template for services, MMIO regions, IRQs, and dependencies.
+* :ncs-file:`secure_peripheral_partition/tfm_manifest_list.yaml.in` - Registers the partition with the TF-M manifest list.
+* :ncs-file:`secure_peripheral_partition/CMakeLists.txt` - TF-M partition build configuration.
+* :ncs-file:`secure_peripheral_partition/secure_peripheral_partition.c` - Partition implementation and IRQ handlers.
+* :ncs-file:`secure_peripheral_partition/util.c` and :ncs-file:`secure_peripheral_partition/util.h` - Hex-encoding helpers for SPI output.
 
 To configure a peripheral as secure:
 
@@ -50,7 +63,10 @@ Enabling secure peripheral
 
 To start using a peripheral as a secure peripheral, complete the following steps:
 
-1. In your application's :file:`prj.conf` file, enable the peripheral for use in the SPE by setting the relevant Kconfig options to ``y`` (the following example assigns the TIMER1 peripheral as secure):
+1. In your application's :ncs-file:`prj.conf` file, enable the peripheral for use in the SPE by setting the relevant Kconfig options to ``y`` (the following example assigns the TIMER1 peripheral as secure on nRF5340 or nRF91 Series devices):
+
+   .. note::
+      On nRF54L Series and nRF7120 DK targets, the secure peripheral Kconfig options are set in the board-specific :ncs-file:`boards/` fragments (for example :kconfig:option:`CONFIG_NRF_TIMER10_SECURE` instead of :kconfig:option:`CONFIG_NRF_TIMER1_SECURE`).
 
    .. code-block:: none
 
@@ -64,7 +80,7 @@ To start using a peripheral as a secure peripheral, complete the following steps
 
       CONFIG_NRF_GPIO0_PIN_MASK_SECURE=0x00800000
 
-#. Assign the peripheral to the specific partition in the partition manifest YAML file `tfm_secure_peripheral_partition.yaml`_, located in the :file:`secure_peripheral_partition` directory.
+#. Assign the peripheral to the specific partition in the partition manifest YAML file :ncs-file:`secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
    This step is required when the peripheral has security attributes that can be set by the user (such as split security attributes).
    Assigning the peripheral makes sure that the TF-M configures this peripheral as secure.
 
@@ -87,7 +103,7 @@ Integrating secure interrupt
 
 If the secure peripheral generates interrupts, complete the following steps to integrate the interrupt with the TF-M interrupt mechanism:
 
-1. Define the interrupt source and handling type in the partition manifest YAML file `tfm_secure_peripheral_partition.yaml`_, located in the :file:`secure_peripheral_partition` directory.
+1. Define the interrupt source and handling type in the partition manifest YAML file :ncs-file:`secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
 
    For example, the following IRQ definition configures the TIMER1 peripheral as secure:
 
@@ -150,20 +166,20 @@ If the secure peripheral generates interrupts, complete the following steps to i
 Accessing other TF-M partitions
 ===============================
 
-For a secure peripheral partition to access services from other TF-M partitions (such as Crypto or Protected Storage), you must explicitly list these dependencies in the partition manifest YAML file `tfm_secure_peripheral_partition.yaml`_, located in the :file:`secure_peripheral_partition` directory.
-For example, to allow access to the Protected Storage partition, add it to the ``dependencies`` section:
+For a secure peripheral partition to access services from other TF-M partitions (such as Crypto or Protected Storage), you must explicitly list these dependencies in the partition manifest YAML file :ncs-file:`secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
+For example, to allow access to the Crypto partition, add ``TFM_CRYPTO`` to the ``dependencies`` list (the sample manifest already includes this entry):
 
 .. code-block:: yaml
 
    dependencies:
-     - name: "TFM_SP_PS"
+     - "TFM_CRYPTO"
 
-Building and Running
+Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/tfm_secure_peripheral`
+.. |sample path| replace:: :ncs-file:`/samples/tfm/tfm_secure_peripheral`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -172,24 +188,26 @@ The sample displays the following output in the console from the firmware in the
 
 .. code-block:: console
 
-        SPP: send message: Success
-        SPP: process signals: Success
+        SPP: sending message: Success
+        SPP: processing signals: Success
 
-The sample displays the following output in the console from the firmware in the SPE where ``N`` is the instance of the hardware used:
+The sample is automatically tested in CI using a console harness that matches those two lines.
+
+The secure partition might also emit the following lines on the TF-M secure UART (if your board routes TF-M logs to the same terminal, you see them mixed with the NSPE output):
 
 .. code-block:: console
 
-        IRQ: GPIOTE_N count: 0x00000002
-        IRQ: TIMER_N count: 0x00000001
-        IRQ: GPIOTE_N count: 0x00000003
-        IRQ: TIMER_N count: 0x00000002
+        IRQ: GPIOTE0 count: 2
+        IRQ: TIMER count: 1
+        IRQ: GPIOTE0 count: 3
+        IRQ: TIMER count: 2
 
 In addition, the sample sends a hash as a text output using SPI on two GPIO pins.
 Connect a logic analyzer to the pins that are used for the SPI output.
 
 Dependencies
-*************
+************
 
 This sample uses the TF-M module that can be found in the following location in the |NCS| folder structure:
 
-* :file:`modules/tee/tfm/`
+* :ncs-file:`modules/tee/tf-m/trusted-firmware-m <trusted-firmware-m:/README.md>`

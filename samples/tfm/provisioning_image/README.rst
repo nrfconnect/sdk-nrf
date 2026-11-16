@@ -59,14 +59,16 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/provisioning_image`
+.. |sample path| replace:: :ncs-file:`/samples/tfm/provisioning_image`
 
 .. include:: /includes/build_and_run.txt
+
+.. _provisioning_image_testing:
 
 Testing
 =======
 
-After programming the sample, the following output is displayed in the console:
+After programming the sample, the following message text is displayed in the console:
 
 .. code-block:: console
 
@@ -76,7 +78,7 @@ After programming the sample, the following output is displayed in the console:
     Writing the identity key to KMU
     Success!
 
-If an error occurs, the sample prints a message and raises a kernel panic.
+If an error occurs, the sample logs a ``Failure: ...`` message describing the failed step and stops without printing ``Success!``.
 
 .. note::
    The device cannot transition from the PRoT security lifecycle state **PRoT Provisioning** to the **Device Assembly and Test** state.

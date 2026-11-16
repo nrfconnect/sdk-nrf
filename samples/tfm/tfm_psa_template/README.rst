@@ -26,7 +26,7 @@ On the nRF5340 devices, this sample also includes the :ref:`B0n bootloader <nc_b
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/tfm_psa_template`
+.. |sample path| replace:: :ncs-file:`/samples/tfm/tfm_psa_template`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -329,9 +329,9 @@ This allows you to observe the update process in the application and network cor
 Dependencies
 ************
 
-* This sample uses the TF-M module found in the :file:`modules/tee/tfm/` folder of the |NCS|.
+* This sample uses the TF-M module found in the :ncs-file:`modules/tee/tf-m/trusted-firmware-m <trusted-firmware-m:/README.md>` folder of the |NCS|.
 * This sample uses the :ref:`lib_tfm_ioctl_api` library.
 * On the nRF5340 devices, this sample uses the :ref:`subsys_pcd` library.
 
-.. |mcumgr_installation_step| replace:: Install the :file:`mcumgr` command-line tool if you have not already done so.
+.. |mcumgr_installation_step| replace:: Install the MCUmgr command-line tool if you have not already done so.
    See :ref:`dfu_tools_mcumgr_cli` for installation and usage instructions.
