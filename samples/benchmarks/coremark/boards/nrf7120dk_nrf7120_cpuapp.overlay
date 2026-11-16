@@ -8,16 +8,6 @@
 
 / {
 	soc {
-		reserved-memory {
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			cpuflpr_code_partition: image@3de000 {
-				/* FLPR core code partition */
-				reg = <0x3de000 DT_SIZE_K(116)>;
-			};
-		};
-
 		cpuflpr_sram_code_data: memory@200e0000 {
 			compatible = "mmio-sram";
 			reg = <0x200e0000 DT_SIZE_K(116)>;
@@ -25,6 +15,25 @@
 			#size-cells = <1>;
 			ranges = <0x0 0x200e0000 DT_SIZE_K(116)>;
 		};
+	};
+};
+
+&cpuapp_mram {
+	reg = <0x0 DT_SIZE_K(4076 - 116)>;
+	ranges = <0x0 0x0 DT_SIZE_K(4076 - 116)>;
+
+	/delete-node/ partitions;
+};
+
+&mram_controller {
+	cpuflpr_mram: mram@3de000 {
+		compatible = "soc-nv-flash";
+		reg = <0x3de000 DT_SIZE_K(116)>;
+		ranges = <0x0 0x3de000 DT_SIZE_K(116)>;
+		erase-block-size = <4096>;
+		write-block-size = <16>;
+		#address-cells = <1>;
+		#size-cells = <1>;
 	};
 };
 
@@ -36,7 +45,7 @@
 &cpuflpr_vpr {
 	status = "okay";
 	execution-memory = <&cpuflpr_sram_code_data>;
-	source-memory = <&cpuflpr_code_partition>;
+	source-memory = <&cpuflpr_mram>;
 };
 
 &cpuapp_vevif_tx {
@@ -48,3 +57,6 @@
  * responsible for ensuring that each core exclusively uses the individual GPIO pin and the GPIOTE
  * instance that may be used with the GPIO pin (Button).
  */
+
+#define WITH_FLPR_PARTITIONS
+#include <vendor/nordic/nrf7120_cpuapp_partition.dtsi>
