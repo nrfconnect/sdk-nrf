@@ -23,8 +23,8 @@ tests:
       regex:
         - "Starting .*bootloader"
         - "Jumping to the .*image slot"
-        - "smp_sample: build time"
-        - "smp_bt_sample: Advertising successfully started"
+        - "build time"
+        - "Advertising successfully started"
     tags: bluetooth
     extra_args: EXTRA_CONF_FILE="overlay-bt.conf"
     platform_allow:
