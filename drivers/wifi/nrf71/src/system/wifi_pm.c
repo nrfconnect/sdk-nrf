@@ -47,6 +47,11 @@ LOG_MODULE_REGISTER(wifi_pm, CONFIG_WIFI_NRF71_LOG_LEVEL);
 /* System off token for Wi-Fi subsystem */
 #define WIFI_SYSTEM_OFF_TOKEN           0x280002FCUL
 
+/* OSCILLATORS PLL.DBG.REQUESTMODE, not part of the public MDK. Only the
+ * non-secure alias is writable, a write to the secure one bus faults.
+ */
+#define WIFI_PLL_DBG_REQUESTMODE        (NRF_OSCILLATORS_NS_BASE + 0x834UL)
+
 /* RPU reset poll timeout */
 #define RPU_RESET_TIMEOUT_US            3000
 
@@ -125,6 +130,15 @@ int nrf_wifi_power_off(void)
 	/* Release the RF clock and voltage-upscale requests */
 	sys_write32(WIFI_RF_CLOCK_INT_EXT, WIFI_RF_CLOCK_CTRL_CLR);
 	sys_write32(0, WIFI_UPSCALE_REQ);
+
+	/* The LMAC requests PLL locked mode at boot as a Wi-Fi clock workaround
+	 * and only drops it on its own sleep entry. With the cores halted the
+	 * request stays on, keeping the PLL and HFXO running and the system out
+	 * of ELV (~1.5 mA), so drop it here.
+	 * TODO: Only needed on the first nRF7120 revision, skip it once later
+	 * revisions are supported.
+	 */
+	sys_write32(0, WIFI_PLL_DBG_REQUESTMODE);
 
 	/* Assert RPU reset, wait for reset status, then deassert reset */
 	sys_write32(0xFFFFFFFF, WIFI_RESET_ASSERT1);
