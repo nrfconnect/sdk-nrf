@@ -568,6 +568,8 @@ int nrf_wifi_set_twt(const struct device *dev,
 
 		twt_info.dialog_token = twt_params->dialog_token;
 		twt_info.twt_wake_ahead_duration = twt_params->setup.twt_wake_ahead_duration;
+		twt_info.twt_retry_interval = twt_params->setup.twt_retry_interval;
+		twt_info.twt_retry_count = twt_params->setup.twt_retry_count;
 		status = nrf_wifi_sys_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
 					   vif_ctx_zep->vif_idx,
 					   &twt_info);
