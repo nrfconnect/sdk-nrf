@@ -59,8 +59,8 @@
 / {
 	soc {
 		softperiph_ram: memory@2f890000 {
-			reg = <0x2f890000 0x4140>;
-			ranges = <0 0x2f890000 0x4140>;
+			reg = <0x2f890000 0x4600>;
+			ranges = <0 0x2f890000 0x4600>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
@@ -68,15 +68,15 @@
 				compatible = "nordic,nrf-semmc";
 				#address-cells = <1>;
 				#size-cells = <0>;
-				reg = <0x3f40 0x200>;
+				reg = <0x4400 0x200>;
 				zephyr,pm-device-runtime-auto;
 				memory-regions = <&semmc_buffers>;
 			};
 		};
 
-		semmc_buffers: memory@2f894140 {
+		semmc_buffers: memory@2f894600 {
 			compatible = "zephyr,memory-region", "mmio-sram";
-			reg = <0x2f894140 0x4000>;
+			reg = <0x2f894600 0x4000>;
 			#memory-region-cells = <0>;
 			zephyr,memory-region = "SEMMC_BUFFERS";
 			zephyr,memory-attr = <DT_MEM_CACHEABLE>;
