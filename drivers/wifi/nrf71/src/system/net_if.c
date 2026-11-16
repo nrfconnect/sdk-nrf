@@ -203,6 +203,7 @@ void nrf_wifi_rpu_recovery_cb(void *vif_ctx_handle,
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep;
 
 	if (!vif_ctx) {
 		LOG_ERR("%s: vif_ctx is NULL",
@@ -220,6 +221,15 @@ void nrf_wifi_rpu_recovery_cb(void *vif_ctx_handle,
 
 	vif_ctx_zep = vif_ctx->os_vif_ctx;
 	(void)event_data;
+
+	if (!vif_ctx_zep || vif_ctx_zep->if_op_state != NRF_WIFI_FMAC_IF_OP_STATE_UP) {
+		goto out;
+	}
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || rpu_ctx_zep->rpu_ctx != fmac_dev_ctx ||
+	    rpu_ctx_zep->rpu_recovery_in_progress) {
+		goto out;
+	}
 
 	k_work_submit(&vif_ctx_zep->nrf_wifi_rpu_recovery_work);
 out:
