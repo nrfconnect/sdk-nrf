@@ -344,6 +344,8 @@
     - kernel.workqueue
     - kernel.workqueue.api
     - kernel.workqueue.work_timeout
+    - libraries.div64
+    - libraries.div64.speed
     - libraries.encoding.json
     - libraries.hash_map.cxx.djb2
     - libraries.heap
@@ -425,6 +427,7 @@
     - kernel.common.picolibc
     - kernel.common.tls
     - kernel.timer.timer
+    - libraries.div64.speed
     - libraries.encoding.jwt.rsa.psa
     - libraries.hash_map.cxx.djb2
     - libraries.heap.hardening_full
