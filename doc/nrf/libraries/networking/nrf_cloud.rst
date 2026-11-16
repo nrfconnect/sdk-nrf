@@ -89,9 +89,8 @@ Configuration options for device ID
 The recommended source is the device UUID, which matches the device ID that nRF Cloud provisioning tools default to.
 The library selects one of two UUID retrieval paths depending on the target SoC, so most applications can leave the default unchanged.
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - Default on an nRF9160 device.
-  The ID is the modem's internal UUID, extracted from the ``iss`` claim of a modem-signed JWT.
-  This path is required on an nRF9160 device to remain compatible with field devices provisioned through older nrfcloud-utils flows, which derived the device ID from the same JWT ``iss`` value.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - The ID is the modem's internal UUID, extracted from the ``iss`` claim of a modem-signed JWT.
+  This path remains available for compatibility with field devices provisioned through older nrfcloud-utils flows, which derived the device ID from the same JWT ``iss`` value.
   Selecting this option automatically enables :kconfig:option:`CONFIG_MODEM_JWT`.
   Requires modem firmware v1.3.0 or later.
 
@@ -109,7 +108,7 @@ The library selects one of two UUID retrieval paths depending on the target SoC,
   Use the default UUID source for new applications.
   If you enable this option, the ID is generated using a prefix and the modem's IMEI (``<prefix><IMEI>``).
   Fleet operators with IMEI-provisioned devices already in the field can continue to use this option.
-  The prefix is configured with :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` and defaults to ``nrf-``, which is reserved for Nordic devices such as the Thingy:91, Thingy:91 X, and nRF91 Series DK.
+  The prefix is configured with :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` and defaults to ``nrf-``, which is reserved for Nordic devices such as the Thingy:91 X and nRF91 Series DK.
   For custom hardware, set :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` to a different value to avoid using the reserved ``nrf-`` prefix.
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` - Deprecated.

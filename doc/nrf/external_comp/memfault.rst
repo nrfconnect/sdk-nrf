@@ -89,11 +89,11 @@ You can get your project key after signing up with Memfault.
    Make sure to add your project key in the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY` Kconfig option.
 
 You can also add the configurations using a Kconfig configuration fragment file.
-See the following example on how to set an overlay configuration for Memfault integration on an nRF9160 DK:
+See the following example on how to set an overlay configuration for Memfault integration on an nRF9151 DK:
 
 .. code-block:: console
 
-   west build -b nrf9160dk/nrf9160/ns -- -DEXTRA_CONF_FILE=overlay-memfault.conf
+   west build -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE=overlay-memfault.conf
 
 .. rst-class:: numbered-step
 
@@ -193,7 +193,7 @@ The following samples demonstrate the Memfault integration in |NCS|:
 
 * :ref:`peripheral_mds` - This sample has an implementation of the Memfault Diagnostic Service (MDS).
   It sends data to the Memfault cloud through a Bluetooth gateway.
-* :ref:`memfault_sample` - This sample connects to an LTE network using an nRF91 Series DK, Thingy:91, or Thingy:91 X, or to Wi-Fi® using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
+* :ref:`memfault_sample` - This sample connects to an LTE network using an nRF91 Series DK or Thingy:91 X, or to Wi-Fi® using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
 * :ref:`wifi_nrf_cloud` - This sample connects to Wi-Fi and, when built with the CoAP transport, sends the collected data to Memfault through nRF Cloud CoAP, without a Memfault project key.
   See :ref:`wifi_nrf_cloud_memfault` for details.
 

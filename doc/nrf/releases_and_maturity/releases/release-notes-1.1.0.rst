@@ -481,7 +481,7 @@ Documentation
   * :ref:`app_build_system`
   * :ref:`ug_bootloader`
   * :ref:`dev-model`
-  * :ref:`ug_nrf9160`
+  * Developing with nRF91 Series
   * :ref:`nrfxlib:softdevice_controller`
   * BSD library
   * :ref:`nrfxlib:nrf_cc310_platform_readme`

@@ -49,6 +49,21 @@ Complete the following steps to program firmware onto Thingy:91 X:
 #. Connect the external debug probe to the PC using a USB cable.
 #. Make sure that the Thingy:91 X and the external debug probe are powered on.
 
-.. include:: /app_dev/device_guides/thingy91/thingy91_building_programming.rst
-   :start-after: thingy91_building_pgmin_start
-   :end-before: thingy91_building_pgmin_end
+.. tabs::
+
+   .. group-tab:: nRF Connect for VS Code
+
+      5. In |nRFVSC|, click the :guilabel:`Flash` option in the `Actions View`_.
+
+         If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
+
+         A small notification banner appears in the bottom-right corner of |VSC| to display the progress and confirm when the flash is complete.
+
+   .. group-tab:: Command line
+
+      5. |open_terminal_window_with_environment|
+      6. Program the sample or application to the device using the following command::
+
+           west flash
+
+         The device resets and runs the programmed sample or application.

@@ -7,7 +7,7 @@ Modem antenna
    :local:
    :depth: 2
 
-You can use this library to set the antenna configuration on an nRF91 Series DK, a Thingy:91, or a Thingy:91 X.
+You can use this library to set the antenna configuration on an nRF91 Series DK or a Thingy:91 X.
 
 Overview
 ********
@@ -16,8 +16,6 @@ The library writes the MAGPIO and COEX0 configuration to the modem after the :re
 The configuration depends on the selected board and the used GNSS antenna type, onboard or external.
 
 For an nRF91 Series DK, the library configures the Low Noise Amplifier (LNA) depending on the GNSS antenna type.
-
-For a Thingy:91, it configures the antenna matching network used with both LTE and GNSS.
 
 Configuration
 *************

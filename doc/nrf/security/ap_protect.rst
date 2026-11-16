@@ -26,7 +26,7 @@ Nordic Semiconductor devices implement access port protection using the followin
 AP-Protect controlled by hardware
    * Protection is controlled only by the ``UICR.APPROTECT`` register.
    * Devices ship with AP-Protect disabled (debug access open).
-   * Used on nRF9160 and older HW build codes of nRF52 Series devices.
+   * Used on older HW build codes of nRF52 Series devices.
 
 AP-Protect controlled by hardware and software
    * Protection is controlled by both the ``UICR.APPROTECT`` register and software.
@@ -36,7 +36,7 @@ AP-Protect controlled by hardware and software
 
 Secure AP-Protect
    * An additional protection layer for SoCs or SiPs that support `ARM TrustZone`_ and different :ref:`app_boards_spe_nspe`.
-   * Protection is controlled by the ``UICR.SECUREAPPROTECT`` register and software (nRF9160 is an exception).
+   * Protection is controlled by the ``UICR.SECUREAPPROTECT`` register and software.
      For the |NCS|, the software side is handled using Kconfig options.
    * Devices ship with Secure AP-Protect either enabled or disabled, depending on the device.
    * When enabled, it blocks access only to the Secure Processing Environment (SPE), while allowing non-secure debugging.
@@ -60,7 +60,7 @@ See the following sections for more information about the available implementati
 Flow for AP-Protect controlled by hardware
 ==========================================
 
-This flow applies to the nRF9160 and older HW build codes of nRF52 Series devices.
+This flow applies to older HW build codes of nRF52 Series devices.
 
 .. figure:: images/ap_protect_hw_flow.svg
    :alt: AP-Protect controlled by hardware
@@ -172,7 +172,7 @@ To enable AP-Protect, write ``Enabled`` to ``UICR.APPROTECT`` and reset the devi
 Flow for Secure AP-Protect
 ==========================
 
-This flow applies to TrustZone-enabled devices (nRF5340, most nRF54L Series devices, nRF91 Series devices, with nRF9160 being an exception) when Secure AP-Protect is enabled.
+This flow applies to TrustZone-enabled devices (nRF5340, most nRF54L Series devices, and nRF91 Series devices) when Secure AP-Protect is enabled.
 Such devices use :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` and :ref:`security by separation <app_boards_spe_nspe>`, where a Secure Processing Environment (SPE) is isolated from the Non-Secure Processing Environment (NSPE).
 
 .. figure:: images/ap_protect_secure_flow.svg
@@ -269,75 +269,9 @@ nRF91 Series
 
 .. tabs::
 
-   .. tab:: nRF9160
+   .. tab:: nRF9151
 
-      .. list-table:: nRF9160 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✔
-           - ✗
-           - ✔
-           - `Debugger access protection for nRF9160`_
-
-      .. note::
-         This device supports ``UICR.ERASEPROTECT``, which might prevent the ``ERASEALL`` command from executing when AP-Protect is enabled.
-         See hardware documentation for more information.
-
-      On the nRF9160, AP-Protect and Secure AP-Protect are *hardware-only*; there are no |NCS| Kconfig options for this device.
-      Both mechanisms are controlled solely by writing to the UICR using nRF Util.
-      For more information, see `device protection-set <Configuring readback protection_>`_ command page in the nRF Util documentation.
-
-      **Enabling AP-Protect on the hardware side:**
-
-      To enable AP-Protect on the hardware side, write ``Enabled`` to ``UICR.APPROTECT`` using the following nRF Util command:
-
-      .. nrfutil-command:: console
-
-         nrfutil device protection-set All
-
-      This command enables the AP-Protect on the hardware side and hard resets the device.
-
-      **Enabling Secure AP-Protect on the hardware side:**
-
-      To enable Secure AP-Protect on the hardware side, use the following nRF Util command:
-
-      .. nrfutil-command:: console
-
-         nrfutil device protection-set SecureRegions
-
-      This command enables the Secure AP-Protect on the hardware side and hard resets the device.
-
-      **Keeping AP-Protect disabled after hard reset:**
-
-      To keep AP-Protect disabled on the hardware side after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
-
-      .. nrfutil-command:: console
-
-         nrfutil device recover
-
-      The device is automatically unlocked after erase.
-      No changes in firmware are required because the nRF9160 does not use AP-Protect controlled by software.
-
-      **Production programming:**
-
-      For the devices that are in a production environment, it is highly recommended to lock the ``UICR.APPROTECT`` and ``UICR.SECUREAPPROTECT`` registers to prevent unauthorized access to the device.
-      If the access port protection is configured this way, it cannot be disabled without erasing the non-volatile memory.
-
-      Check also the following documentation pages for more information:
-
-      * `Unlocking nRF91`_
-      * `Enabling device protection on nRF91`_
-      * `Checking AP-Protect status on nRF91`_
-
-   .. tab:: nRF9161
-
-      .. list-table:: nRF9161 AP-Protect support
+      .. list-table:: nRF9151 AP-Protect support
          :header-rows: 1
          :align: center
          :widths: auto
@@ -349,16 +283,11 @@ nRF91 Series
          * - ✗
            - ✔
            - ✔
-           - `AP-Protect for nRF9161`_
-
-      .. note::
-         |errata36_approtect|
+           - `AP-Protect for nRF9151`_
 
       .. note::
          This device supports ``UICR.ERASEPROTECT``, which might prevent the ``ERASEALL`` command from executing when AP-Protect is enabled.
          See hardware documentation for more information.
-
-      .. nrf9161_approtect_tab_start
 
       **Configuring AP-Protect and Secure AP-Protect on the software side:**
 
@@ -490,54 +419,6 @@ nRF91 Series
       * `Unlocking nRF91`_
       * `Enabling device protection on nRF91`_
       * `Checking AP-Protect status on nRF91`_
-
-      .. nrf9161_approtect_tab_end
-
-   .. tab:: nRF9151
-
-      .. list-table:: nRF9151 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✗
-           - ✔
-           - ✔
-           - `AP-Protect for nRF9151`_
-
-      .. note::
-         |errata36_approtect|
-
-      .. include:: ./ap_protect.rst
-         :start-after: .. nrf9161_approtect_tab_start
-         :end-before: .. nrf9161_approtect_tab_end
-
-   .. tab:: nRF9131
-
-      .. list-table:: nRF9131 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✗
-           - ✔
-           - ✔
-           - *Documentation not yet available*
-
-      .. note::
-         |errata36_approtect|
-
-      .. include:: ./ap_protect.rst
-         :start-after: .. nrf9161_approtect_tab_start
-         :end-before: .. nrf9161_approtect_tab_end
 
 
 .. _app_approtect_nrf54l_series:

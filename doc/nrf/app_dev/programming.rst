@@ -86,8 +86,7 @@ Hardware-specific programming steps
 Some hardware has platform-specific requirements that must be met before you program the device.
 For additional information, check the :ref:`user guide for the hardware platform <device_guides>` that you are using.
 
-For example, if you are working with an nRF9160 DK, you need to select the correct position of the :ref:`board controller <nrf9160_ug_intro>` switch **SW10** before you program the application to your development kit.
-Programming to Thingy:91 also requires a :ref:`similar step <building_pgming>`, but using a different switch (**SW2**).
+For example, if you are working with an nRF91 Series DK, you might need to change the :ref:`board controller <nrf91_ug_board_controllers>` configuration before you program the application to your development kit.
 
 Programming the nRF52840 Dongle
   To program the nRF52840 Dongle instead of a development kit, follow the programming instructions in :zephyr:board:`nrf52840dongle` or use the `Programmer app <Programming the nRF52840 Dongle_>`_.

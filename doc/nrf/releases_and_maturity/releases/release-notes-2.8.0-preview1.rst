@@ -543,7 +543,7 @@ Cellular samples
     * A handler for new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON`` to stop sensors and location services.
     * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
     * The ``CONFIG_SEND_ONLINE_ALERT`` Kconfig option to enable calling the ``nrf_cloud_alert`` function on startup.
-    * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
+    * Logging of the reset reason code.
     * The ``CONFIG_POST_PROVISIONING_INTERVAL_M`` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
 
   * Updated:
@@ -565,7 +565,7 @@ Cellular samples
 
     * Support for dictionary logs using REST.
     * The ``CONFIG_SEND_ONLINE_ALERT`` Kconfig option to enable calling the ``nrf_cloud_alert`` function on startup.
-    * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
+    * Logging of the reset reason code.
 
   * Updated:
 

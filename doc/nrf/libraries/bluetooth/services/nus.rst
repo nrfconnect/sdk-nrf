@@ -10,7 +10,7 @@ Nordic UART Service (NUS)
 The Bluetooth® Low Energy (LE) GATT Nordic UART Service is a custom service that receives and writes data and serves as a bridge to the UART interface.
 
 The NUS Service is used in the :ref:`peripheral_uart` sample.
-It is also included with the Thingy:91 :ref:`connectivity_bridge`, but is disabled by default.
+It is also included with the :ref:`connectivity_bridge` application, but is disabled by default.
 
 Service UUID
 ************

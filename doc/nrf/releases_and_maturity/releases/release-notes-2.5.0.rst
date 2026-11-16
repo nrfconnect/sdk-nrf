@@ -181,7 +181,7 @@ Working with nRF91 Series
   For samples where the UART trace backend is enabled by default, the configuration is added to the sample overlays and project configuration.
 
 * The default board revision for nRF9160 DK has changed to v0.14.0.
-  See :ref:`nrf9160_board_revisions` for more details.
+  See nRF9160 DK board revisions for more details.
 
 Working with nRF52 Series
 =========================
@@ -1330,8 +1330,8 @@ Documentation
     * :ref:`release_notes`, :ref:`software_maturity`, :ref:`known_issues`, :ref:`glossary`, and :ref:`dev-model` are now located under :ref:`releases_and_maturity`.
 
   * The :ref:`ug_thread` documentation to improve the overall presentation and add additional details where necessary.
-  * The :ref:`Getting started with nRF9160 DK <gsg_guides>` and :ref:`Getting started with Thingy:91 <gsg_guides>` instructions to use the `Cellular Monitor app`_ instead of Programmer for the respective sections about updating firmware.
-    The instructions for using Programmer were moved to the :ref:`ug_nrf9160` and :ref:`ug_thingy91` pages.
+  * The Getting started with nRF9160 DK and Getting started with Thingy:91 instructions to use the `Cellular Monitor app`_ instead of Programmer for the respective sections about updating firmware.
+    The instructions for using Programmer were moved to the Developing with nRF91 Series and Developing with Thingy:91 pages.
   * All instances of LTE Link Monitor and Trace Collector apps by replacing them with the `Serial Terminal app`_ and the `Cellular Monitor app`_.
-  * Renamed nRF91 AT Commands Reference Guide to `nRF9160 AT Commands Reference Guide`_, and added references to the `nRF91x1 AT Commands Reference Guide`_ in the documentation.
+  * Renamed nRF91 AT Commands Reference Guide to nRF9160 AT Commands Reference Guide, and added references to the `nRF91x1 AT Commands Reference Guide`_ in the documentation.
   * All references to GNSS assistance from ``A-GPS`` to `A-GNSS`_.

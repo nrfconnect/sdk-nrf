@@ -30,7 +30,7 @@ While the board name is always present, other elements, such as the board revisi
 
 * :ref:`Board revision <zephyr:glossary>` - You can use the *board_name@board_revision* board target to get extra devicetree overlays with new features available for a specific board version.
   The board version is printed on the label of your DK, just below the PCA number.
-  For example, :ref:`building <building>` for the ``nRF9160dk@1.0.0/nrf9160`` board target adds the external flash on the nRF9160 DK that was available since :ref:`board version v0.14.0 <nrf9160_board_revisions>`.
+  For example, :ref:`building <building>` for the ``nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp`` board target builds for version 0.2.0 of the nRF54LS05 DK.
 
 * :term:`System on Chip (SoC)` - When you choose a board target with this qualifier, you build for this specific SoC on this board.
   For example, :ref:`building <building>` for the ``thingy53/nrf5340/cpuapp`` board target builds the application core firmware for the nRF5340 SoC on the Nordic Thingy:53 prototyping platform.
@@ -84,23 +84,9 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | Hardware platform | PCA number |                 Board name                             |                             Board targets                                |
 +===================+============+========================================================+==========================================================================+
-| nRF9161 DK        | PCA10153   | :zephyr:board:`nrf9161dk <nrf9161dk>`                  | ``nrf9161dk/nrf9161``                                                    |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf9161dk/nrf9161/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF9160 DK        | PCA10090   | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>`            | ``nrf9160dk/nrf9160``                                                    |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf9160dk/nrf9160/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
-|                   |            +--------------------------------------------------------+--------------------------------------------------------------------------+
-|                   |            | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf52840>`           | ``nrf9160dk/nrf52840``                                                   |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF9151 DK        | PCA10171   | :zephyr:board:`nrf9151dk <nrf9151dk>`                  | ``nrf9151dk/nrf9151``                                                    |
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf9151dk/nrf9151/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF9131 EK        | PCA10165   | :zephyr:board:`nrf9131ek <nrf9131ek>`                  | ``nrf9131ek/nrf9131``                                                    |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf9131ek/nrf9131/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF93M1 DK        |            | :zephyr:board:`nrf93m1dk <nrf93m1dk>`                  | ``nrf93m1dk/nrf54l15/cpuapp``                                            |
 |                   |            |                                                        |                                                                          |
@@ -214,10 +200,7 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 
 .. note::
-   In |NCS| releases before v1.6.1:
-
-   * The board target ``nrf9160dk/nrf9160/ns`` was named ``nrf9160dk_nrf9160ns``.
-   * The board target ``nrf5340dk/nrf5340/cpuapp/ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
+   In |NCS| releases before v1.6.1, the board target ``nrf5340dk/nrf5340/cpuapp/ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
 
 .. _app_boards_names_nrf:
 
@@ -255,12 +238,6 @@ The following boards are defined in the :file:`nrf/boards/nordic/` folder.
 +-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
 | nRF Desktop       | PCA10114   | :ref:`nrf52820dongle <nrf_desktop>`                      | ``nrf52820dongle/nrf52820``                                               |
 | Dongle            |            |                                                          |                                                                           |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
-| Thingy:91         | PCA20035   | :ref:`thingy91 <ug_thingy91>`                            | ``thingy91/nrf9160``                                                      |
-|                   |            |                                                          |                                                                           |
-|                   |            |                                                          | ``thingy91/nrf9160/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)               |
-|                   |            +----------------------------------------------------------+---------------------------------------------------------------------------+
-|                   |            | :ref:`thingy91 <ug_thingy91>`                            | ``thingy91/nrf52840``                                                     |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
 | Thingy:91 X       | PCA20065   | :ref:`thingy91x <ug_thingy91x>`                          | ``thingy91x/nrf9151``                                                     |
 |                   |            |                                                          |                                                                           |

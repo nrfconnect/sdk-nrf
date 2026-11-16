@@ -15,7 +15,7 @@ It contains references and code for Bluetooth Low Energy devices in the nRF52 Se
 Highlights
 **********
 
-* Added support for the new triple mode (LTE-M/NB-IoT/GPS) with ``mfw_nrf9160_0.7.0-29.alpha`` (see :ref:`nrf9160_ug_network_mode` for instructions for changing the network mode)
+* Added support for the new triple mode (LTE-M/NB-IoT/GPS) with ``mfw_nrf9160_0.7.0-29.alpha`` (see System mode for instructions for changing the network mode)
 * Updated BSD library:
 
   * Added API supporting GPS
@@ -199,7 +199,7 @@ Documentation
   * :ref:`gs_modifying` - added
   * :ref:`ug_unity_testing` - added
   * Partition Manager - added
-  * :ref:`ug_nrf9160` - updated Secure Partition Manager and Network mode sections
+  * Developing with nRF91 Series - updated Secure Partition Manager and Network mode sections
 
 
 Known issues

@@ -15,8 +15,6 @@ Certification status
 For certification status of the released versions, see the following documents, depending on the SiP you are using:
 
 * `nRF9151 Mobile network operator certifications`_
-* `nRF9161 Mobile network operator certifications`_
-* `nRF9160 Mobile network operator certifications`_
 
 liblwm2m_carrier 3.7.0
 **********************

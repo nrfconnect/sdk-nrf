@@ -19,8 +19,6 @@ You can find more details about the SPIM hardware peripheral in the respective P
 * `nRF52840 SPIM`_
 * `nRF5340 SPIM`_
 * `nRF9151 SPIM`_
-* `nRF9160 SPIM`_
-* `nRF9161 SPIM`_
 * `nRF54L15 SPIM`_
 * `nRF54LM20A SPIM`_
 * `nRF54LV10A SPIM`_

@@ -12,8 +12,6 @@ The LwM2M carrier library facilitates an nRF91 device to connect to the device m
 For more information, see the following pages:
 
 * `nRF9151 Mobile network operator certifications`_
-* `nRF9161 Mobile network operator certifications`_
-* `nRF9160 Mobile network operator certifications`_
 * :ref:`lwm2m_certification`
 
 .. important::

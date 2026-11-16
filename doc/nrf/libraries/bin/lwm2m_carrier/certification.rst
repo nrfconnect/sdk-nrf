@@ -13,8 +13,6 @@ The LwM2M carrier library is certified together with specific versions of the mo
 For a list of all the carrier certifications (including those certifications with no dependency on the LwM2M carrier library), see the following documents, depending on the SiP you are using:
 
 * `nRF9151 Mobile network operator certifications`_
-* `nRF9161 Mobile network operator certifications`_
-* `nRF9160 Mobile network operator certifications`_
 
 The LwM2M carrier library is used by Nordic during *module certification*.
 Including the library in your application is one way to fulfill the device management requirements of your carrier.

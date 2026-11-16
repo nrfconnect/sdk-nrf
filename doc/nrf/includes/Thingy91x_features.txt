@@ -9,7 +9,7 @@ LTE Band Lock
 *************
 
 For |thingy|, you can configure the modem to use specific LTE bands by using the band lock AT command.
-See :ref:`nrf9160_ug_band_lock` and the |band_lock| for additional information.
+See :ref:`nrf91_ug_band_lock` and the |band_lock| for additional information.
 The preprogrammed firmware configures the modem to use the bands currently certified on the |thingy| hardware.
 When building the firmware, you can configure which bands must be enabled.
 

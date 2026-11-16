@@ -965,7 +965,7 @@ In addition to documentation related to the changes listed above, the following 
   * :ref:`ug_radio_fem`
   * Edge Impulse integration
   * Matter
-* :ref:`ug_nrf9160` - Added information about TF-M, board revisions, and full modem firmware update.
+* Developing with nRF91 Series - Added information about TF-M, board revisions, and full modem firmware update.
 * :ref:`ug_nrf5340` - Added and updated information about:
 
   * TF-M, multiprotocol support, and available samples for Thread and Zigbee.

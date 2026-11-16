@@ -31,7 +31,7 @@ It is designed for indoor coverage, low cost, and long battery life.
 NB-IoT operates in a small radio frequency band of 200 kHz.
 It is ideal for applications like smart metering, environmental monitoring, and smart lighting.
 
-nRF91 Series devices such as nRF9151 DK, nRF9161 DK, nRF9160 DK, Thingy:91, and Thingy:91 X support both LTE-M and NB-IoT technologies.
+nRF91 Series devices such as nRF9151 DK and Thingy:91 X support both LTE-M and NB-IoT technologies.
 
 Comparison between LTE-M and NB-IoT
 ===================================
@@ -72,7 +72,7 @@ Half-duplex operation opens for much simpler multiband support and enables :term
 For LTE-M and NB-IoT, the only known deployment is FDD.
 
 nRF91 Series SiPs support up to 18 LTE bands for global operation.
-For details of LTE band support in an nRF91 Series SiP for LTE-M and NB-IoT, see the `nRF9151 Product Specification`_, the `nRF9161 Product Specification`_, or the `nRF9160 Product Specification`_, depending on the SiP you are using.
+For details of LTE band support in an nRF91 Series SiP for LTE-M and NB-IoT, see the `nRF9151 Product Specification`_.
 
 Physical layer parameters
 -------------------------
@@ -121,8 +121,8 @@ SIM card support
 ================
 
 SIMs that are used with the nRF91 Series devices must support LTE-M, NB-IoT, or both.
-The iBasis SIM is bundled with the nRF9160 DK and Thingy:91, the Onomondo SIM with an nRF91x1 DK and Thingy:91 X, and the Wireless Logic SIM card with the nRF9151 DK and Thingy:91 X.
-Check the `iBasis IoT network coverage`_, `Onomondo LTE-M coverage`_, `Onomondo NB-IoT coverage`_, or `Wireless Logic LTE-M/NB-IoT network coverage`_ pages to see the network coverage for different countries, depending on the SIM card you are using.
+The Onomondo SIM is bundled with an nRF91x1 DK and Thingy:91 X, and the Wireless Logic SIM card with the nRF9151 DK and Thingy:91 X.
+Check the `Onomondo LTE-M coverage`_, `Onomondo NB-IoT coverage`_, or `Wireless Logic LTE-M/NB-IoT network coverage`_ pages to see the network coverage for different countries, depending on the SIM card you are using.
 
 Software SIM
 ------------
@@ -163,5 +163,4 @@ References
 **********
 
 * `nWP044 - Best practices for cellular IoT development`_ whitepaper - Describes the guidelines that you need to consider when you start the development for a low power cellular IoT product.
-* `How nRF9160 enables cellular IoT asset tracking`_ webinar.
 * `Accelerate cellular product development`_ webinar.

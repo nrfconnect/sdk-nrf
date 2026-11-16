@@ -250,15 +250,22 @@ NRF = (
     ("app_dev/device_guides/nrf91/nrf91_testing_at_client", "app_dev/device_guides/nrf91/nrf91_testing"),
     ("device_guides/working_with_nrf/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"), # Snippets for an nRF91 Series device
     ("device_guides/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"),
-    ("device_guides/nrf91/nrf9160_external_flash", "app_dev/device_guides/nrf91/nrf9160_external_flash"), # Configuring external flash memory on the nRF9160 DK
-    ("ug_thingy91", "app_dev/device_guides/thingy91/index"), ## Developing with Thingy:91 (pre-2.7.0; removed)
-    ("working_with_nrf/nrf91/thingy91", "app_dev/device_guides/thingy91/index"),
-    ("device_guides/working_with_nrf/nrf91/thingy91", "app_dev/device_guides/thingy91/index"),
-    ("device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/thingy91/thingy91_connecting"), # Connecting to Thingy:91
-    ("app_dev/device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/thingy91/thingy91_connecting"),
-    ("device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_celmon"), # Updating the Thingy:91 firmware using Programmer (removed in v3.2.0)
-    ("app_dev/device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_celmon"),
-    ("app_dev/device_guides/thingy91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_celmon"),
+    ("device_guides/nrf91/nrf9160_external_flash", "app_dev/device_guides/nrf91/index"), # Configuring external flash memory on the nRF9160 DK (removed in v3.5.0)
+    ("app_dev/device_guides/nrf91/nrf9160_external_flash", "app_dev/device_guides/nrf91/index"),
+    ("ug_thingy91", "app_dev/device_guides/thingy91x/index"), ## Developing with Thingy:91 (removed in v3.5.0)
+    ("working_with_nrf/nrf91/thingy91", "app_dev/device_guides/thingy91x/index"),
+    ("device_guides/working_with_nrf/nrf91/thingy91", "app_dev/device_guides/thingy91x/index"),
+    ("app_dev/device_guides/thingy91/index", "app_dev/device_guides/thingy91x/index"),
+    ("app_dev/device_guides/thingy91/thingy91_features", "app_dev/device_guides/thingy91x/index"), # Features of Thingy:91 (removed in v3.5.0)
+    ("device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/thingy91x/index"), # Connecting to Thingy:91 (removed in v3.5.0)
+    ("app_dev/device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/thingy91x/index"),
+    ("app_dev/device_guides/thingy91/thingy91_connecting", "app_dev/device_guides/thingy91x/index"),
+    ("app_dev/device_guides/thingy91/thingy91_cloud_connecting", "app_dev/device_guides/thingy91x/index"), # Connecting Thingy:91 to nRF Cloud (removed in v3.5.0)
+    ("device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91x/index"), # Updating the Thingy:91 firmware using Programmer (removed in v3.2.0)
+    ("app_dev/device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91x/index"),
+    ("app_dev/device_guides/thingy91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91x/index"),
+    ("app_dev/device_guides/thingy91/thingy91_updating_fw_celmon", "app_dev/device_guides/thingy91x/index"), # Updating the Thingy:91 firmware using Cellular Monitor (removed in v3.5.0)
+    ("app_dev/device_guides/thingy91/thingy91_building_programming", "app_dev/device_guides/thingy91x/index"), # Building and programming with Thingy:91 (removed in v3.5.0)
     ("device_guides/nrf91/thingy91x_updating_fw_programmer", "app_dev/device_guides/thingy91x/thingy91x_updating_fw_programmer"), # Updating the Thingy:91 X firmware using nRF Util
     ("ug_nrf70", "app_dev/device_guides/nrf70/index"), ## Developing with nRF70 Series (post-2.7.0 landing)
     ("device_guides/nrf70", "app_dev/device_guides/nrf70/index"),
