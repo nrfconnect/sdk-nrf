@@ -74,12 +74,7 @@ enum nrf_wifi_fmac_if_carr_state {
 };
 
 #if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
-/**
- * @brief Structure to hold raw rx packet information.
- *
- * This structure holds the information to be sent to higher
- * layers on receive of a raw frame.
- */
+/** @brief Raw RX packet metadata passed to upper layers on a received frame. */
 struct raw_rx_pkt_header {
 	/** Frequency on which this packet received. */
 	unsigned short frequency;
@@ -92,12 +87,7 @@ struct raw_rx_pkt_header {
 };
 #endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 
-/**
- * @brief Callback functions to be invoked by UMAC IF layer when a particular event occurs.
- *
- * This structure contains function pointers to all the callback functions that
- * the UMAC IF layer needs to invoke for various events.
- */
+/** @brief Callbacks registered with the UMAC IF layer for FMAC events. */
 struct nrf_wifi_fmac_callbk_fns {
 	/** Callback function to be called when RPU recovery is required. */
 	void (*rpu_recovery_callbk_fn)(void *os_vif_ctx,
@@ -364,17 +354,15 @@ struct peers_info {
 #define CONFIG_NRF71_WIFI_MAX_TX_TOKENS 12
 #endif
 
-/**
- * @brief Structure to hold TX token (descriptor) debug statistics.
- *
- * These counters are purely for debugging TX performance issues: they show
- * how the TX tokens are being used, how well packets are being aggregated
- * into a single TX command and where packets are being held back or dropped
- * in the host.
- */
 /** Number of buckets in the per-command token fill level histogram. */
 #define TX_TOKEN_FILL_BUCKETS 10
 
+/**
+ * @brief TX token and transmission pipeline statistics.
+ *
+ * Counters for debugging TX performance: per-token usage, aggregation fill
+ * levels, and where the host holds or drops packets.
+ */
 struct tx_token_stats {
 	/** Number of times each TX token (descriptor) was acquired from the free pool. */
 	unsigned int token_acq[CONFIG_NRF71_WIFI_MAX_TX_TOKENS];
@@ -537,12 +525,7 @@ struct nrf_wifi_fmac_tx_done_node {
 };
 #endif /* CONFIG_NRF71_WIFI_TX_DONE_WQ_ENABLED */
 
-/**
- * @brief Structure to hold context information for the UMAC IF layer.
- *
- * This structure maintains the context information necessary for the
- * operation of the UMAC IF layer.
- */
+/** @brief UMAC IF private context (callbacks, pools, and data-path configuration). */
 struct nrf_wifi_sys_fmac_priv {
 	/** Callback functions to be called on various events. */
 	struct nrf_wifi_fmac_callbk_fns callbk_fns;
