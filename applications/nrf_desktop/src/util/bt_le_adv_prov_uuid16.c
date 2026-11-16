@@ -33,4 +33,8 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 	return 0;
 }
 
+#if CONFIG_DESKTOP_ADV_PROV_UUID16_ALL_SD
 BT_LE_ADV_PROV_SD_PROVIDER_REGISTER(uuid16_all, get_data);
+#else
+BT_LE_ADV_PROV_AD_PROVIDER_REGISTER(uuid16_all, get_data);
+#endif
