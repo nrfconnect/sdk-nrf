@@ -120,9 +120,9 @@ class RequiredBuild:
         try:
             run_command(command, timeout=self.timeout)
         except subprocess.CalledProcessError as exc:
-            # create empty file to indicate a build error, will be used
-            # to avoid unnecessary builds in other tests
-            Path(self.build_dir / "build.error").touch()
+            # Cache deterministic build failures, but allow interrupted builds to be retried.
+            if exc.returncode > 0:
+                Path(self.build_dir / "build.error").touch()
             if hasattr(exc, "output") and exc.output:
                 Path(self.build_dir / "_build_log.txt").write_text(exc.output)
             raise RequiredBuildException("Failed to build required app") from None

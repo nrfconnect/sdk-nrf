@@ -44,12 +44,18 @@ def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, tmp_path: Path):
     pytest.LineMatcher(lines).fnmatch_lines(["*Attempting to boot slot 0*", "*Firmware version 1*"])
 
     # build an image with higher firmware version
+    app_build_dir = dut.device_config.app_build_dir
+    assert app_build_dir is not None
     build_dir = get_required_build(
-        dut, extra_args="-- -DCONFIG_FW_INFO_FIRMWARE_VERSION=2", suffix="_v2"
+        dut,
+        extra_args="-- -DCONFIG_FW_INFO_FIRMWARE_VERSION=2",
+        suffix="_v2",
     )
+    s1_image = build_dir / f"signed_by_b0_{app_build_dir.name}_s1_variant.hex"
+    assert s1_image.exists(), f"Required artifact {s1_image} does not exist"
 
     flash_with_nrfutil(
-        build_dir / f"signed_by_b0_{dut.device_config.app_build_dir.name}_s1_variant.hex",  # type: ignore
+        s1_image,
         dut.device_config.id,
         erase_mode="ERASE_RANGES_TOUCHED_BY_FIRMWARE",
     )
@@ -58,7 +64,7 @@ def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, tmp_path: Path):
     lines = dut.readlines_until(regex="Hello World!", print_output=True, timeout=20)
     pytest.LineMatcher(lines).fnmatch_lines(["*Attempting to boot slot 1*", "*Firmware version 2*"])
 
-    edt_data = dut.device_config.app_build_dir / "zephyr" / "edt.pickle"  # type: ignore
+    edt_data = app_build_dir / "zephyr" / "edt.pickle"
     s0_offset = get_partition_address(
         edt_data,
         "s0_partition",
