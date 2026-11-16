@@ -26,6 +26,8 @@ common:
     - nrf54h20dk/nrf54h20/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lm20dk/nrf54lm20b/cpuapp
+    - nrf7120dk/nrf7120/cpuapp
+    - nrf7120dk/nrf7120e/cpuapp
 tests:
   nrf.extended.sample.usbd.hid-keyboard: {}
   nrf.extended.sample.usbd.hid-keyboard.out-report:
