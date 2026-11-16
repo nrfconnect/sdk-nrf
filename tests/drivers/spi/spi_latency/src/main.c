@@ -64,14 +64,20 @@ static uint32_t calculate_theoretical_transsmison_time_us(size_t buffer_size,
 	return (uint32_t)(ceil(ratio * (double)(buffer_size * 8 + NRF_SPIM_CSNDUR_DEFAULT)));
 }
 
+static uint64_t calculate_maximal_overhead_us(size_t buffer_size)
+{
+	return  CONFIG_TEST_SPI_LATENCY_BASE_OVERHEAD_US +
+		CONFIG_TEST_SPI_LATENCY_PER_BYTE_OVERHEAD_US * buffer_size +
+		(buffer_size == 1 ? CONFIG_TEST_SPI_LATENCY_SHORT_XFER_OVERHEAD_US :
+			CONFIG_TEST_SPI_LATENCY_LONG_XFER_OVERHEAD_US);
+}
 static void assess_measurement_result(uint64_t timer_value_us,
 				      uint32_t theoretical_transmission_time_us, size_t buffer_size)
 {
 	uint64_t maximal_allowed_transmission_time_us;
 
 	maximal_allowed_transmission_time_us = theoretical_transmission_time_us +
-		CONFIG_TEST_SPI_LATENCY_BASE_OVERHEAD_US +
-		CONFIG_TEST_SPI_LATENCY_PER_BYTE_OVERHEAD_US * buffer_size;
+		calculate_maximal_overhead_us(buffer_size);
 
 	zassert_true(timer_value_us < maximal_allowed_transmission_time_us,
 		     "Measured transmission call latency is over the specified limit %llu > %llu",
@@ -124,8 +130,10 @@ static void test_spim_transmission_latency(size_t buffer_size)
 		 theoretical_transmission_time_us);
 	TC_PRINT("spi_transceive_dt: measured transmission time (for %u bytes) [us]: %llu\n",
 		 buffer_size, average_timer_value_us);
-	TC_PRINT("spi_transceive_dt: measured - claculated time delta (for %d bytes) [us]: %lld\n",
+	TC_PRINT("spi_transceive_dt: measured - calculated time delta (for %d bytes) [us]: %lld\n",
 		 buffer_size, average_timer_value_us - theoretical_transmission_time_us);
+	TC_PRINT("Maximal allowed time delta (for %d bytes) [us]: %lld\n",
+		 buffer_size, calculate_maximal_overhead_us(buffer_size));
 	TC_PRINT("Theoretical maximal data rate (for buffer size %u bytes) [B/s]: %llu\n",
 		 buffer_size, (uint64_t)(1e6 * buffer_size / theoretical_transmission_time_us));
 	TC_PRINT("Calculated data rate (for buffer size %u bytes) [B/s]: %llu\n", buffer_size,
