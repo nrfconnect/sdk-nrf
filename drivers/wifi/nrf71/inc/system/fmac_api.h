@@ -516,15 +516,20 @@ unsigned char nrf_wifi_sys_fmac_add_vif(void *fmac_dev_ctx,
 
 /**
  * @brief Deletes a virtual interface.
- * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
- * @param if_idx Index of the interface to be deleted.
+ * @param[in] fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
+ * @param[in] if_idx Index of the interface to be deleted.
  *
  * This function is used to send a command to:
  *     - Instruct the RPU firmware to delete an interface which was added using
- *       \p nrf_wifi_sys_fmac_add_vif.
+ *       @ref nrf_wifi_sys_fmac_add_vif.
  *
- *@retval	NRF_WIFI_STATUS_SUCCESS On success
- *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
+ * The default interface (@p if_idx ``0``) is managed internally by the
+ * firmware and is not removed with the DEL_INTERFACE command. For that index,
+ * non-STA modes (AP, P2P, or raw overlays) are reset on the host before return;
+ * only non-default interfaces are deleted in the firmware.
+ *
+ * @retval NRF_WIFI_STATUS_SUCCESS On success.
+ * @retval NRF_WIFI_STATUS_FAIL On failure to execute command.
  */
 enum nrf_wifi_status nrf_wifi_sys_fmac_del_vif(void *fmac_dev_ctx,
 					   unsigned char if_idx);
@@ -1005,15 +1010,14 @@ enum nrf_wifi_status nrf_wifi_fmac_start_rawpkt_xmit(void *dev_ctx,
 
 /**
  * @brief Check if a valid mode is being set.
- * @param mode The mode value attempted to be configured.
+ * @param[in] mode The mode value attempted to be configured.
  *
- * This function checks the mode value attempted to be configured
- * is a valid mode as supported by the driver. If the mode is valid,
- * the mode will be configured to the lower layers, else an error value
- * will be flagged.
+ * This function only checks whether @p mode is valid for the current driver
+ * build. It does not send commands to the RPU or change the interface mode
+ * in the firmware.
  *
- *@retval      NRF_WIFI_STATUS_SUCCESS On success
- *@retval      NRF_WIFI_STATUS_FAIL On failure
+ * @retval NRF_WIFI_STATUS_SUCCESS On success.
+ * @retval NRF_WIFI_STATUS_FAIL On failure.
  */
 enum nrf_wifi_status nrf_wifi_check_mode_validity(unsigned char mode);
 
