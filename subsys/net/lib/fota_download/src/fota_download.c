@@ -630,8 +630,6 @@ int fota_download_start_params(const struct fota_download_params *params)
 	int err;
 	static int sec_tag_list_copy[CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX];
 
-	dfu_img_num = params->img_num;
-
 	/* Non-proxy entry points don't populate the transport-specific fields of dl_host_cfg.
 	 * Reset them to a known baseline so a previous fota_download_with_host_cfg() call can't
 	 * leave a stale proxy_uri that corrupts the resume decision in set_host_and_file(), nor
@@ -656,6 +654,12 @@ int fota_download_start_params(const struct fota_download_params *params)
 	set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR);
 
 	set_host_and_file(params->host, params->file);
+
+	/* Saved progress of another image pair must not be resumed */
+	if (params->img_num != dfu_img_num) {
+		atomic_set_bit(&flags, FLAG_NEW_URI);
+	}
+	dfu_img_num = params->img_num;
 
 	if ((params->sec_tag_list != NULL) && (params->sec_tag_count > 0)) {
 		memcpy(sec_tag_list_copy, params->sec_tag_list,
