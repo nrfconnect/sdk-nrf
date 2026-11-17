@@ -6,7 +6,7 @@
 
 /*
  * Required loopbacks:
- * AIN2 <-> VDDIO (Zephyr test loopback set)
+ * P0.08 (AIN7) <-> VDDIO (Zephyr test loopback set)
  */
 
 / {
@@ -17,7 +17,7 @@
 	zephyr,user {
 		test-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
 		io-channels = <&adc 0>;
-		io-channel-names = "A2";
+		io-channel-names = "A7";
 	};
 };
 
@@ -36,7 +36,7 @@ dut_adc: &adc {
 		zephyr,gain = "ADC_GAIN_1";
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
-		zephyr,input-positive = <NRF_SAADC_AIN1>;
+		zephyr,input-positive = <NRF_SAADC_AIN7>;
 	};
 };
 
