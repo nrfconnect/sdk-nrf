@@ -1406,6 +1406,13 @@ Modem libraries
       * :c:member:`lte_lc_pdn_dynamic_info.apn` - The APN of the active PDN connection as reported by the ``AT+CGCONTRDP`` command.
       * :c:member:`lte_lc_pdn_dynamic_info.ipv4_addr` and :c:member:`lte_lc_pdn_dynamic_info.ipv6_addr` - The IPv4 and IPv6 addresses of the PDN connection as reported by the ``AT+CGPADDR`` command.
 
+    * The following Kconfig options to configure modem features using the ``AT%FEACONF`` command when the modem is initialized:
+
+      * :kconfig:option:`CONFIG_LTE_LIMITED_SERVICE_OPTIMIZATION` - Stops paging reception in cells that do not permit service, to reduce power consumption under limited service conditions.
+        Disabled by default.
+      * :kconfig:option:`CONFIG_LTE_UICC_DEACTIVATION_NO_CELLS` - Deactivates the UICC when no cells are available.
+        Enabled by default.
+
   * Updated:
 
     * The :kconfig:option:`CONFIG_LTE_LOCK_BANDS` Kconfig option to select the :kconfig:option:`CONFIG_LTE_LC_BAND_LOCK_MODULE` Kconfig option.
