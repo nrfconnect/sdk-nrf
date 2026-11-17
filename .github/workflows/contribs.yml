@@ -15,14 +15,12 @@ jobs:
           command: 'external'
           messages: |
                     Thank you for your contribution!
-                    It seems you are not a member of the nrfconnect GitHub organization. External contributions are handled as follows:
-                    Large contributions, affecting multiple subsystems for example, may be rejected if they are complex, may introduce regressions due to lack of test coverage, or if they are not consistent with the architecture of nRF Connect SDK.
-                    PRs will be run in our continuous integration (CI) test system once the correct labels (CI-Requested or CI-trusted-author) are set by code reviewers.
-                    If CI passes, PRs will be tagged for review and merged on successful completion of review. You may be asked to make some modifications to your contribution during review.
-                    If CI fails, PRs may be rejected or may be tagged for review and rework.
-                    PRs that become outdated due to other changes in the repository may be rejected or rework requested.
-                    External contributions will be prioritized for review based on the relevance to current development efforts in nRF Connect SDK.  Bug fix PRs will be prioritized.
-                    You may raise issues or ask for help from our Technical Support team by visiting https://devzone.nordicsemi.com/.
+                    It seems you are not a member of the nrfconnect GitHub organization. Under our current policy, pull requests from external contributors are handled as follows:
+                    - Review: Your pull request is visible to the nRF Connect SDK team, and maintainers may read, comment on, and review it.
+                    - Testing: We do not run internal CI or hardware testing on pull requests from external contributors.
+                    - Merging: We cannot merge pull requests from external contributors.
+                    Review feedback is provided on a best-effort basis and does not mean the pull request will be merged.
+                    If you are reporting a bug, need a feature, or have questions about the nRF Connect SDK, contact our Technical Support team on DevZone: https://devzone.nordicsemi.com/.
                     |
                     The author of this pull request has now been added to the nrfconnect GitHub organization.
           labels: 'external'
