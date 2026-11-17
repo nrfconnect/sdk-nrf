@@ -102,9 +102,9 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
-Sample mouse, LLPM dongle, or HID SCI dongle (``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``)
+Sample mouse or LLPM dongle (``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``)
       * The configuration uses the nRF54LM20 DK.
-      * The build types allow to build the application as a mouse, an LLPM supporting dongle, or an HID SCI (Shorter Connection Intervals) supporting dongle.
+      * The build types allow to build the application as a mouse or an LLPM supporting dongle.
       * In mouse configurations, inputs are simulated based on the hardware button presses.
         Bluetooth LE and USB High-Speed transports are enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
@@ -115,14 +115,10 @@ Sample mouse, LLPM dongle, or HID SCI dongle (``nrf54lm20dk/nrf54lm20a/cpuapp``,
         The dongle is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * In ``dongle_4llpmconn`` and ``release_dongle_4llpmconn`` configurations, the application is configured to act as a dongle that supports up to four simultaneous Bluetooth LE connections in Low Latency Packet Mode.
-      * In ``hid_sci_dongle`` and ``release_hid_sci_dongle`` configurations, the application is configured to act as a dongle that forwards data from both mouse and keyboard.
-        Bluetooth uses Nordic Semiconductor's SoftDevice Link Layer and is configured to act as a central.
-        Input data comes from Bluetooth and is retransmitted to USB.
-        HID Shorter Connection Intervals (SCI) are used to negotiate the connection parameters with the nRF Desktop peripheral.
-      * In ``debug``, ``ram_load``, ``llvm``, ``dongle``, ``dongle_4llpmconn``, and ``hid_sci_dongle`` configurations, logs are provided through the UART.
+      * In ``debug``, ``ram_load``, ``llvm``, ``dongle``, and ``dongle_4llpmconn`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54LM20 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * In ``llvm`` configurations, the partition layout is different to accommodate for the higher memory footprint of the ``llvm``  toolchain.
-      * The ``debug``, ``release``, ``llvm``, ``dongle``, ``release_dongle``, ``dongle_4llpmconn``, ``release_dongle_4llpmconn``, ``hid_sci_dongle``, and ``release_hid_sci_dongle`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+      * The ``debug``, ``release``, ``llvm``, ``dongle``, ``release_dongle``, ``dongle_4llpmconn``, and ``release_dongle_4llpmconn`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
         These configurations enable hardware cryptography using KMU for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
