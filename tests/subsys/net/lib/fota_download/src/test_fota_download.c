@@ -368,6 +368,7 @@ static void test_fota_download_img_num_generic(int img_num)
 		.host = BASE_DOMAIN,
 		.file = buf,
 		.img_num = img_num,
+		.expected_type = DFU_TARGET_IMAGE_TYPE_ANY,
 	};
 
 	err = fota_download_start_params(&params);
