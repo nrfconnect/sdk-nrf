@@ -91,8 +91,6 @@ tests:
   sample.nrf7120.shutdown:
     sysbuild: true
     build_only: true
-    extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -109,7 +107,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shutdown_CONFIG_OPERATION_MODE_ONE_SHOT=y
       - shutdown_SNIPPET="nrf71-idle-power;nrf71-idle-power-quiet"
     integration_platforms:
@@ -125,7 +122,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shutdown_CONFIG_OPERATION_MODE_ONE_SHOT=y
       - shutdown_SNIPPET="nrf71-idle-power;nrf71-idle-power-diag"
     integration_platforms:
