@@ -844,11 +844,10 @@ print_and_return:
 struct foreach_stream_data_by_dir {
 	int ret;
 	enum bt_audio_dir dir;
+	uint8_t streams_checked_cnt;
 	struct bt_bap_qos_cfg_pref common_qos;
-	uint8_t streams_checked;
 	uint32_t existing_pres_dly_us;
 	uint32_t *computed_pres_dly_us;
-	bool *group_reconfig_needed;
 };
 
 static bool stream_check_pd_by_dir(struct bt_cap_stream *existing_stream, void *user_data)
@@ -861,32 +860,31 @@ static bool stream_check_pd_by_dir(struct bt_cap_stream *existing_stream, void *
 
 	struct foreach_stream_data_by_dir *ctx = (struct foreach_stream_data_by_dir *)user_data;
 
-	if (existing_stream == NULL || existing_stream->bap_stream.group == NULL ||
-	    existing_stream->bap_stream.ep == NULL) {
-		LOG_ERR("NULL parameter");
+	if (existing_stream->bap_stream.ep == NULL) {
+		LOG_DBG("Stream %p not configured", (void *)existing_stream);
 		return true;
 	}
 
 	int existing_dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
 	if (existing_dir != ctx->dir) {
-		LOG_DBG("Existing stream dir %d not in same direction as incoming stream dir %d",
-			existing_dir, ctx->dir);
+		LOG_DBG("Existing stream %p dir %d not in same direction as incoming stream dir %d",
+			(void *)existing_stream, existing_dir, ctx->dir);
 		return true;
 	}
 
 	struct bt_bap_ep_info ep_info;
 
 	ret = bt_bap_ep_get_info(existing_stream->bap_stream.ep, &ep_info);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to get endpoint info: %d", ret);
 		ctx->ret = ret;
 		return false;
 	}
 
-	ctx->streams_checked++;
+	ctx->streams_checked_cnt++;
 
 	ctx->ret = pres_delay_compute(&ctx->common_qos, ep_info.qos_pref);
-	if (ctx->ret) {
+	if (ctx->ret != 0) {
 		LOG_ERR("Failed to compute common presentation delay: %d", ctx->ret);
 		return false;
 	}
@@ -895,9 +893,9 @@ static bool stream_check_pd_by_dir(struct bt_cap_stream *existing_stream, void *
 	return true;
 }
 
-int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pres_dly_us,
-				   bool *group_reconfig_needed,
-				   struct bt_cap_unicast_group *unicast_group)
+int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir,
+				   struct bt_cap_unicast_group *unicast_group,
+				   uint32_t *computed_pres_dly_us, bool *group_reconfig_needed)
 {
 	int ret;
 	valid_entry_check(__func__);
@@ -940,9 +938,8 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 	struct foreach_stream_data_by_dir foreach_data = {
 		.ret = 0,
 		.dir = dir,
-		.streams_checked = 0,
+		.streams_checked_cnt = 0,
 		.computed_pres_dly_us = computed_pres_dly_us,
-		.group_reconfig_needed = group_reconfig_needed,
 	};
 
 	/* Common QoS with most permissive values */
@@ -953,11 +950,8 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 
 	if (dir == BT_AUDIO_DIR_SINK) {
 		foreach_data.existing_pres_dly_us = bap_info.sink_pd;
-	} else if (dir == BT_AUDIO_DIR_SOURCE) {
-		foreach_data.existing_pres_dly_us = bap_info.source_pd;
 	} else {
-		__ASSERT(false, "Invalid direction: %d", dir);
-		return -EINVAL;
+		foreach_data.existing_pres_dly_us = bap_info.source_pd;
 	}
 
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_pd_by_dir,
@@ -974,7 +968,7 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 		return ret;
 	}
 
-	if (foreach_data.streams_checked == 0) {
+	if (foreach_data.streams_checked_cnt == 0) {
 		LOG_INF("No streams found for %s dir", bt_audio_dir_to_str(dir));
 		return -ENODATA;
 	}
@@ -1000,7 +994,7 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 	*group_reconfig_needed = foreach_data.existing_pres_dly_us != *computed_pres_dly_us;
 
 	LOG_DBG("Pres. delay check completed for direction: %s. %d streams checked, result: %d",
-		bt_audio_dir_to_str(dir), foreach_data.streams_checked, *computed_pres_dly_us);
+		bt_audio_dir_to_str(dir), foreach_data.streams_checked_cnt, *computed_pres_dly_us);
 	LOG_DBG("Common QoS: pd_min=%u, pref_pd_min=%u, pref_pd_max=%u, pd_max=%u",
 		foreach_data.common_qos.pd_min, foreach_data.common_qos.pref_pd_min,
 		foreach_data.common_qos.pref_pd_max, foreach_data.common_qos.pd_max);

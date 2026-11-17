@@ -28,6 +28,10 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
 
+/* Iterator callback return values used by the unicast client. */
+#define ITER_CONTINUE true
+#define ITER_STOP     false
+
 static struct k_thread cap_state_machine_thread_data;
 static k_tid_t cap_state_machine_thread_id;
 #define CAP_STATE_MACHINE_STACK_SIZE 1024
@@ -57,10 +61,7 @@ static struct k_poll_event poll_evt =
 
 static const k_timeout_t LOCK_WAIT_TIME_MS = K_MSEC(10);
 /* For unicast (as opposed to broadcast) level 2/subgroup is not defined in the specification */
-#define LVL2		 0
-/* Will return 1 if x == 0, due to how locations are defined in LE Audio */
-#define POPCOUNT_ZERO(x) ((x) == 0 ? 1 : POPCOUNT(x))
-
+#define LVL2 0
 /**
  * @brief	Signal that we want to start a CAP action.
  *
@@ -207,7 +208,7 @@ static bool server_discovery_ready(const struct server_store *server)
 // TODO: Remove or refactor
 static int server_source_stream_count_get(const struct server_store *server)
 {
-	int source_count = MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations));
+	int source_count = MIN(server->src.num_eps, bt_audio_get_chan_count(server->src.locations));
 
 	/* The application currently uses only source stream index 0. */
 	return MIN(source_count, 1);
@@ -215,13 +216,7 @@ static int server_source_stream_count_get(const struct server_store *server)
 
 static bool is_pd_set(uint32_t pd)
 {
-	if (pd == 0) {
-		return false;
-	} else if (pd == BT_BAP_PD_UNSET) {
-		return false;
-	} else {
-		return true;
-	}
+	return pd != 0 && pd != BT_BAP_PD_UNSET;
 }
 
 static bool foreach_unicast_group_populate(struct server_store *server, void *user_data)
@@ -241,7 +236,8 @@ static bool foreach_unicast_group_populate(struct server_store *server, void *us
 	}
 
 	/* Add only the streams that has a valid preset set */
-	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
+	for (int j = 0;
+	     j < MIN(server->snk.num_eps, bt_audio_get_chan_count(server->snk.locations)); j++) {
 		if (!is_pd_set(server->snk.lc3_preset[j].qos.pd)) {
 			LOG_WRN("Sink EP %d has no valid preset, skipping", j);
 			continue;
@@ -482,7 +478,8 @@ static bool foreach_server_stream_in_unicast_group_check(struct server_store *se
 	}
 
 	/* Check each eligible sink stream against the streams in the group. */
-	for (int i = 0; i < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); i++) {
+	for (int i = 0;
+	     i < MIN(server->snk.num_eps, bt_audio_get_chan_count(server->snk.locations)); i++) {
 		if (!is_pd_set(server->snk.lc3_preset[i].qos.pd)) {
 			continue;
 		}
@@ -556,7 +553,8 @@ static bool foreach_add_to_start_params(struct server_store *server, void *user_
 		return ITER_CONTINUE;
 	}
 
-	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
+	for (int j = 0;
+	     j < MIN(server->snk.num_eps, bt_audio_get_chan_count(server->snk.locations)); j++) {
 		uint8_t state;
 
 		ret = bt_cap_unicast_group_foreach_stream(
@@ -579,7 +577,8 @@ static bool foreach_add_to_start_params(struct server_store *server, void *user_
 	}
 
 	/* Check if we have valid source endpoints to start */
-	for (int j = 0; j < MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations)); j++) {
+	for (int j = 0;
+	     j < MIN(server->src.num_eps, bt_audio_get_chan_count(server->src.locations)); j++) {
 		uint8_t state;
 
 		ret = bt_cap_unicast_group_foreach_stream(
@@ -982,7 +981,7 @@ static void discover_cb_sink(struct bt_conn *conn, int err, struct server_store 
 	/* Get the valid configuration to set for this stream and put that in the corresponding
 	 * preset
 	 */
-	if (POPCOUNT_ZERO(server->snk.locations) == 1 && server->snk.num_eps >= 1) {
+	if (bt_audio_get_chan_count(server->snk.locations) == 1 && server->snk.num_eps >= 1) {
 		ret = bt_audio_codec_cfg_set_val(
 			&server->snk.lc3_preset[0].codec_cfg, BT_AUDIO_CODEC_CFG_CHAN_ALLOC,
 			(uint8_t *)&server->snk.locations, sizeof(server->snk.locations));
@@ -991,7 +990,8 @@ static void discover_cb_sink(struct bt_conn *conn, int err, struct server_store 
 			return;
 		}
 
-	} else if (POPCOUNT_ZERO(server->snk.locations) == 2 && server->snk.num_eps >= 2 &&
+	} else if (bt_audio_get_chan_count(server->snk.locations) == 2 &&
+		   server->snk.num_eps >= 2 &&
 		   (server->snk.locations &
 		    (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT)) ==
 			   (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT)) {
@@ -1022,7 +1022,7 @@ static void discover_cb_sink(struct bt_conn *conn, int err, struct server_store 
 	} else {
 		LOG_WRN("Unsupported unicast server/headset configuration");
 		LOG_WRN("Number of sink locations: %d, number of sink endpoints: %d",
-			POPCOUNT_ZERO(server->snk.locations), server->snk.num_eps);
+			bt_audio_get_chan_count(server->snk.locations), server->snk.num_eps);
 
 		le_audio_event_publish(LE_AUDIO_EVT_NO_VALID_CFG, conn, NULL, BT_AUDIO_DIR_SINK);
 
@@ -1548,18 +1548,17 @@ static void cap_start_codec_configured_cb(void)
 		return;
 	}
 
-	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &new_pres_dly_snk_us,
-					     &group_reconfigure_needed_due_to_snk_pd,
-					     unicast_group);
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, unicast_group, &new_pres_dly_snk_us,
+					     &group_reconfigure_needed_due_to_snk_pd);
 	if (ret != 0 && ret != -ENODATA) {
 		LOG_ERR("Failed to find presentation delay for sink direction: %d", ret);
 		srv_store_unlock();
 		return;
 	}
 
-	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SOURCE, &new_pres_dly_src_us,
-					     &group_reconfigure_needed_due_to_src_pd,
-					     unicast_group);
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SOURCE, unicast_group,
+					     &new_pres_dly_src_us,
+					     &group_reconfigure_needed_due_to_src_pd);
 	if (ret != 0 && ret != -ENODATA) {
 		LOG_ERR("Failed to find presentation delay for source direction: %d", ret);
 		srv_store_unlock();
@@ -1640,9 +1639,9 @@ static void cap_update_complete_cb(int err, struct bt_conn *conn)
 	if (err != 0) {
 		LOG_ERR("CB CAP update complete for conn: %p, err: %d", conn, err);
 		return;
-	} else {
-		LOG_DBG("CB CAP update complete for conn: %p", conn);
 	}
+
+	LOG_DBG("CB CAP update complete for conn: %p", conn);
 }
 
 static void cap_stop_complete_cb(int err, struct bt_conn *conn)

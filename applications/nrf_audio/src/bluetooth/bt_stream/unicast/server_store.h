@@ -156,19 +156,20 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
  * streams shall be codec configured at this point.
  *
  *
+ * @param[in]	dir			Direction to search for.
+ * @param[in]	unicast_group		Pointer to the unicast group to search within.
  * @param[out]	computed_pres_dly_us	Pointer to store the computed presentation delay in
  *					microseconds.
  * @param[out]	group_reconfig_needed	True if a group reconfiguration is needed.
- * @param[in]	unicast_group		Pointer to the unicast group to search within.
  *
  * @retval	0		Success
  * @retval	-ESPIPE		There is no common presentation delay found.
  * @retval 	-ENODATA 	No streams found in the unicast group for the given direction.
  * @retval	-EINVAL		Illegal argument(s).
  */
-int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pres_dly_us,
-				   bool *group_reconfig_needed,
-				   struct bt_cap_unicast_group *unicast_group);
+int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir,
+				   struct bt_cap_unicast_group *unicast_group,
+				   uint32_t *computed_pres_dly_us, bool *group_reconfig_needed);
 
 /**
  * @brief	Set the valid locations of a unicast server.
