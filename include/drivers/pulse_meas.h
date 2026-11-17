@@ -67,7 +67,7 @@ struct pulse_meas_config {
 	pulse_meas_pulse_t pulse_type;
 	/** Operation mode. See @ref pulse_meas_mode_t. */
 	pulse_meas_mode_t mode;
-	/** GPIO pull configuration applied to both input pins. */
+	/** GPIO pull configuration applied to the input pin(s). */
 	nrf_gpio_pin_pull_t pull_config;
 	/** Latency mode. See @ref pulse_meas_latency_t. */
 	pulse_meas_latency_t latency;

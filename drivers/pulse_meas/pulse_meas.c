@@ -33,6 +33,8 @@ K_FIFO_DEFINE(pulse_meas_fifo);
 
 #define PULSE_MEAS_RESOLUTION MHZ(1)
 
+#define PULSE_MEAS_PIN_UNUSED UINT32_MAX
+
 struct pulse_meas_block {
 	void *fifo_reserved;
 	uint32_t data[];
@@ -163,7 +165,12 @@ static void gpiote_enable(const struct device *dev)
 	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
 
 	nrfx_gpiote_trigger_enable(p_cfg->gpiote, p_cfg->assert_pin, false);
-	nrfx_gpiote_trigger_enable(p_cfg->gpiote, p_cfg->deassert_pin, true);
+
+	if (p_cfg->deassert_pin != PULSE_MEAS_PIN_UNUSED) {
+		nrfx_gpiote_trigger_enable(p_cfg->gpiote, p_cfg->deassert_pin, true);
+	} else {
+		nrfx_gpiote_ext_trigger_enable(p_cfg->gpiote, p_cfg->assert_pin, true);
+	}
 }
 
 static void gpiote_disable(const struct device *dev)
@@ -171,7 +178,11 @@ static void gpiote_disable(const struct device *dev)
 	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
 
 	nrfx_gpiote_trigger_disable(p_cfg->gpiote, p_cfg->assert_pin);
-	nrfx_gpiote_trigger_disable(p_cfg->gpiote, p_cfg->deassert_pin);
+	if (p_cfg->deassert_pin != PULSE_MEAS_PIN_UNUSED) {
+		nrfx_gpiote_trigger_disable(p_cfg->gpiote, p_cfg->deassert_pin);
+	} else {
+		nrfx_gpiote_ext_trigger_disable(p_cfg->gpiote, p_cfg->assert_pin);
+	}
 }
 
 static void gppi_disable(const struct device *dev)
@@ -297,6 +308,17 @@ static void gpiote_handler(nrfx_gpiote_pin_t pin, nrfx_gpiote_trigger_t action, 
 	}
 }
 
+static uint32_t get_deassert_event(const struct device *dev)
+{
+	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
+
+	if (p_cfg->deassert_pin != PULSE_MEAS_PIN_UNUSED) {
+		return nrfx_gpiote_in_event_address_get(p_cfg->gpiote, p_cfg->deassert_pin);
+	} else {
+		return nrfx_gpiote_ext_in_event_address_get(p_cfg->gpiote, p_cfg->assert_pin);
+	}
+}
+
 static void gppi_unconfigure(const struct device *dev)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
@@ -305,7 +327,7 @@ static void gppi_unconfigure(const struct device *dev)
 	uint32_t capture0_task, clear_task;
 
 	assert_event = nrfx_gpiote_in_event_address_get(p_cfg->gpiote, p_cfg->assert_pin);
-	deassert_event = nrfx_gpiote_in_event_address_get(p_cfg->gpiote, p_cfg->deassert_pin);
+	deassert_event = get_deassert_event(dev);
 	clear_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CLEAR);
 	capture0_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CAPTURE0);
 
@@ -322,7 +344,7 @@ static int gppi_configure(const struct device *dev)
 	int ret;
 
 	assert_event = nrfx_gpiote_in_event_address_get(p_cfg->gpiote, p_cfg->assert_pin);
-	deassert_event = nrfx_gpiote_in_event_address_get(p_cfg->gpiote, p_cfg->deassert_pin);
+	deassert_event = get_deassert_event(dev);
 	clear_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CLEAR);
 	capture0_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CAPTURE0);
 
@@ -346,23 +368,33 @@ static void gpiote_unconfigure(const struct device *dev)
 
 	gpiote_disable(dev);
 	(void)nrfx_gpiote_pin_uninit(p_cfg->gpiote, p_cfg->assert_pin);
-	(void)nrfx_gpiote_pin_uninit(p_cfg->gpiote, p_cfg->deassert_pin);
+	if (p_cfg->deassert_pin != PULSE_MEAS_PIN_UNUSED) {
+		(void)nrfx_gpiote_pin_uninit(p_cfg->gpiote, p_cfg->deassert_pin);
+	}
 }
 
 static int gpiote_configure(const struct device *dev)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
 	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
+	bool single_pin_mode = p_cfg->deassert_pin == PULSE_MEAS_PIN_UNUSED;
+	bool positive_pulse;
 	int err;
 
-	const nrfx_gpiote_trigger_config_t rising_trigger_config = {
-		.trigger = NRFX_GPIOTE_TRIGGER_LOTOHI,
-		.p_in_channel = &p_data->gpiote_ch[0],
-	};
+	switch (p_data->pulse_type) {
+	case PULSE_MEAS_PULSE_POSITIVE:
+		positive_pulse = true;
+		break;
+	case PULSE_MEAS_PULSE_NEGATIVE:
+		positive_pulse = false;
+		break;
+	default:
+		return -EINVAL;
+	}
 
-	const nrfx_gpiote_trigger_config_t falling_trigger_config = {
-		.trigger = NRFX_GPIOTE_TRIGGER_HITOLO,
-		.p_in_channel = &p_data->gpiote_ch[1],
+	nrfx_gpiote_trigger_config_t trigger_config = {
+		.trigger = positive_pulse ? NRFX_GPIOTE_TRIGGER_LOTOHI : NRFX_GPIOTE_TRIGGER_HITOLO,
+		.p_in_channel = &p_data->gpiote_ch[0],
 	};
 
 	nrfx_gpiote_handler_config_t handler_config = {
@@ -370,32 +402,31 @@ static int gpiote_configure(const struct device *dev)
 		.p_context = (void *)(uintptr_t)dev,
 	};
 
-	nrfx_gpiote_input_pin_config_t gpiote_cfg_assert = {
+	nrfx_gpiote_input_pin_config_t gpiote_cfg = {
 		.p_pull_config = &p_data->pull_cfg,
-		.p_trigger_config = &rising_trigger_config,
-		.p_handler_config = NULL,
+		.p_trigger_config = &trigger_config,
+		.p_handler_config = single_pin_mode ? &handler_config : NULL,
+		.p_ext_in_channel = single_pin_mode ? &p_data->gpiote_ch[1] : NULL,
 	};
 
-	nrfx_gpiote_input_pin_config_t gpiote_cfg_deassert = {
-		.p_pull_config = &p_data->pull_cfg,
-		.p_trigger_config = &falling_trigger_config,
-		.p_handler_config = &handler_config,
-	};
-
-	if (p_data->pulse_type == PULSE_MEAS_PULSE_NEGATIVE) {
-		gpiote_cfg_assert.p_trigger_config = &falling_trigger_config;
-		gpiote_cfg_deassert.p_trigger_config = &rising_trigger_config;
-	} else if (p_data->pulse_type != PULSE_MEAS_PULSE_POSITIVE) {
-		return -EINVAL;
-	}
-
-	err = nrfx_gpiote_input_configure(p_cfg->gpiote, p_cfg->assert_pin, &gpiote_cfg_assert);
+	err = nrfx_gpiote_input_configure(p_cfg->gpiote, p_cfg->assert_pin, &gpiote_cfg);
 	if (err < 0) {
 		return err;
 	}
 
-	err = nrfx_gpiote_input_configure(p_cfg->gpiote, p_cfg->deassert_pin,
-					  &gpiote_cfg_deassert);
+	if (single_pin_mode) {
+		return 0;
+	}
+
+	/* If deassert pin is used, configure it as an opposite edge trigger, using another
+	 * GPIOTE channel. Assign handler as well.
+	 */
+	trigger_config.trigger =
+		positive_pulse ? NRFX_GPIOTE_TRIGGER_HITOLO : NRFX_GPIOTE_TRIGGER_LOTOHI;
+	trigger_config.p_in_channel = &p_data->gpiote_ch[1];
+	gpiote_cfg.p_handler_config = &handler_config;
+
+	err = nrfx_gpiote_input_configure(p_cfg->gpiote, p_cfg->deassert_pin, &gpiote_cfg);
 	if (err < 0) {
 		return err;
 	}
@@ -670,7 +701,9 @@ static int pulse_meas_pm_suspend(const struct device *dev)
 	}
 
 	pin_low_power_enter(p_config->assert_pin);
-	pin_low_power_enter(p_config->deassert_pin);
+	if (p_config->deassert_pin != PULSE_MEAS_PIN_UNUSED) {
+		pin_low_power_enter(p_config->deassert_pin);
+	}
 
 	return 0;
 }
@@ -681,7 +714,9 @@ static int pulse_meas_pm_resume(const struct device *dev)
 	const struct pulse_meas_drv_cfg *p_config = dev->config;
 
 	pin_low_power_exit(p_config->assert_pin, p_data->pull_cfg);
-	pin_low_power_exit(p_config->deassert_pin, p_data->pull_cfg);
+	if (p_config->deassert_pin != PULSE_MEAS_PIN_UNUSED) {
+		pin_low_power_exit(p_config->deassert_pin, p_data->pull_cfg);
+	}
 
 	return 0;
 }
@@ -758,14 +793,19 @@ static int pulse_meas_init(const struct device *dev)
 #define ABSOLUTE_PIN_NUMBER(instance, gpio)                                                        \
 	NRF_GPIO_PIN_MAP(GPIO_PORT_NUMBER(instance, gpio), GPIO_PIN_NUMBER(instance, gpio))
 
+#define OPT_ABSOLUTE_PIN_NUMBER(instance, gpio)                                                    \
+	COND_CODE_1(DT_HAS_PROP(DT_DRV_INST(instance), gpio),                                      \
+		    (ABSOLUTE_PIN_NUMBER(instance, gpio)), (PULSE_MEAS_PIN_UNUSED))
+
 #define PULSE_MEAS_DEVICE(inst)                                                                    \
-	BUILD_ASSERT(DT_SAME_NODE(GPIOTE_PHANDLE(inst, assert_gpios),                              \
-				  GPIOTE_PHANDLE(inst, deassert_gpios)),                           \
-		     "assert-gpio and deassert-gpio must use the same GPIOTE instance");           \
+	IF_ENABLED(DT_HAS_PROP(DT_DRV_INST(inst), deassert_gpios),                                 \
+		(BUILD_ASSERT(DT_SAME_NODE(GPIOTE_PHANDLE(inst, assert_gpios),                     \
+					   GPIOTE_PHANDLE(inst, deassert_gpios)),                  \
+			      "assert-gpio and deassert-gpio must use the same GPIOTE instance");))\
 	static struct pulse_meas_drv_data drv_data_##inst;                                         \
 	static const struct pulse_meas_drv_cfg drv_cfg_##inst = {                                  \
 		.assert_pin = ABSOLUTE_PIN_NUMBER(inst, assert_gpios),                             \
-		.deassert_pin = ABSOLUTE_PIN_NUMBER(inst, deassert_gpios),                         \
+		.deassert_pin = OPT_ABSOLUTE_PIN_NUMBER(inst, deassert_gpios),                         \
 		.gpiote = &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_PHANDLE(inst, assert_gpios)),           \
 		.timer_reg = (NRF_TIMER_Type *)DT_REG_ADDR(TIMER_PHANDLE(inst)),                   \
 	};                                                                                         \
