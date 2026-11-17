@@ -31,7 +31,7 @@ extern "C" {
 #define PULSE_MEAS_BLOCK_HEADER_SIZE sizeof(void *)
 
 /** Size of a memory slab block for one pulse width measurement series. */
-#define PULSE_MEAS_BLOCK_SIZE(num_meas)                                                        \
+#define PULSE_MEAS_BLOCK_SIZE(num_meas)                                                            \
 	(PULSE_MEAS_BLOCK_HEADER_SIZE + (num_meas) * sizeof(uint32_t))
 
 typedef enum {
