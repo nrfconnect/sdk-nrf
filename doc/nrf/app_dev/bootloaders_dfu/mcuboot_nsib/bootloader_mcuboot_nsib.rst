@@ -24,6 +24,7 @@ Following that, you can :ref:`add an immutable bootloader<ug_bootloader_adding_s
    bootloader_main_config
    bootloader_partitioning
    bootloader_dfu_image_versions
+   bootloader_dfu_test_confirm
    bootloader_config
    bootloader_signature_keys
    bootloader_downgrade_protection
