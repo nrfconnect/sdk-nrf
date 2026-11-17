@@ -449,27 +449,39 @@ The following table indicates the software maturity levels of the support for ea
 
          * -
            - nRF7120
+           - nRF7120E
          * - **Bluetooth®**
+           - Experimental
            - Experimental
          * - **Bluetooth Mesh**
            - --
+           - --
          * - **DECT NR+ PHY**
+           - --
            - --
          * - **ESB**
            - --
+           - --
          * - **LTE**
+           - --
            - --
          * - **Matter**
            - --\ :sup:`8`
+           - --\ :sup:`8`
          * - **NFC**
+           - Experimental
            - Experimental
          * - **Amazon Sidewalk**
            - --\ :sup:`4`
+           - --\ :sup:`4`
          * - **Thread**
+           - --
            - --
          * - **Wi-Fi®**
            - Experimental
+           - Experimental
          * - **Zigbee**
+           - --\ :sup:`5`
            - --\ :sup:`5`
 
    .. group-tab:: nRF91 Series
