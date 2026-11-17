@@ -70,15 +70,31 @@ struct pulse_meas_config {
 /**
  * @brief Configure pulse width measurement.
  *
- * Must be called before @ref pulse_meas_start.
+ * Must be called before @ref pulse_meas_start. The device must not be configured already. To
+ * change the configuration, call @ref pulse_meas_reset first.
  *
  * @param dev Pointer to the pulse width measurement device.
  * @param cfg Pointer to the configuration structure.
  *
  * @retval 0 On success.
  * @retval -EINVAL Invalid argument.
+ * @retval -EBUSY Device is already configured or a measurement is in progress.
  */
 int pulse_meas_configure(const struct device *dev, const struct pulse_meas_config *cfg);
+
+/**
+ * @brief Reset pulse width measurement.
+ *
+ * Releases the resources used by the configuration (GPIOTE pins and (D)PPI connections) and
+ * brings the device back to the state in which @ref pulse_meas_configure can be called.
+ * Must not be called while a measurement is running or stopping.
+ *
+ * @param dev Pointer to the pulse width measurement device.
+ *
+ * @retval 0 On success.
+ * @retval -EBUSY Device is not configured or a measurement is in progress.
+ */
+int pulse_meas_reset(const struct device *dev);
 
 /**
  * @brief Start pulse width measurement.
@@ -93,6 +109,7 @@ int pulse_meas_configure(const struct device *dev, const struct pulse_meas_confi
  * @retval 0 On success.
  * @retval -EINVAL Invalid argument.
  * @retval -ENOMEM Not enough memory in @p slab.
+ * @retval -EBUSY Device is not configured or a measurement is already in progress.
  */
 int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab);
 
@@ -110,6 +127,7 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab);
  *
  * @retval 0 On success.
  * @retval -EINVAL Invalid argument.
+ * @retval -EBUSY No measurement is in progress.
  */
 int pulse_meas_stop(const struct device *dev, bool immediate);
 

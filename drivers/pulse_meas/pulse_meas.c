@@ -33,37 +33,47 @@ struct pulse_meas_block {
 };
 
 typedef enum {
+	/* Device is initialized but not configured */
 	PULSE_MEAS_STATE_IDLE,
+
+	/* Device is configured and ready to start a measurement */
+	PULSE_MEAS_STATE_READY,
+
+	/* Device is running a measurement */
 	PULSE_MEAS_STATE_RUNNING,
+
+	/* Device is stopping a measurement. Transitioning to ready state. */
 	PULSE_MEAS_STATE_STOPPING,
+
+	/* Device encountered an error */
 	PULSE_MEAS_STATE_ERROR,
 } pulse_meas_state_t;
 
 struct pulse_meas_drv_data {
 	nrfx_timer_t timer;
-	nrfx_gpiote_t *gpiote;
 	nrfx_gppi_handle_t ppi_start;
 	nrfx_gppi_handle_t ppi_end;
-	bool gppi_ready;
-	bool gpiote_ready;
-	bool timer_ready;
 	uint32_t timer_frequency;
 	struct pulse_meas_block *curr_block;
 	uint32_t meas_count;
-	pulse_meas_pulse_t pulse_type;
 	uint32_t meas_num;
-	pulse_meas_mode_t mode;
-	nrf_gpio_pin_pull_t pull_cfg;
 	void (*user_handler)(void *context);
 	void *user_context;
 	struct k_mem_slab *mem_slab;
-	volatile pulse_meas_state_t state;
 	atomic_t pending_series;
+
+	uint8_t gpiote_ch[2];
+	pulse_meas_mode_t mode;
+	volatile pulse_meas_state_t state;
+	pulse_meas_pulse_t pulse_type;
+	nrf_gpio_pin_pull_t pull_cfg;
 };
 
 struct pulse_meas_drv_cfg {
 	uint32_t assert_pin;
 	uint32_t deassert_pin;
+	nrfx_gpiote_t *gpiote;
+	NRF_TIMER_Type *timer_reg;
 };
 
 #if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK)
@@ -141,55 +151,33 @@ static int hf_clock_release(void)
 static void gpiote_enable(const struct device *dev)
 {
 	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
-	struct pulse_meas_drv_data *p_data = dev->data;
 
-	nrfx_gpiote_trigger_enable(p_data->gpiote, p_cfg->assert_pin, false);
-	nrfx_gpiote_trigger_enable(p_data->gpiote, p_cfg->deassert_pin, true);
+	nrfx_gpiote_trigger_enable(p_cfg->gpiote, p_cfg->assert_pin, false);
+	nrfx_gpiote_trigger_enable(p_cfg->gpiote, p_cfg->deassert_pin, true);
 }
 
 static void gpiote_disable(const struct device *dev)
 {
 	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
-	struct pulse_meas_drv_data *p_data = dev->data;
 
-	nrfx_gpiote_trigger_disable(p_data->gpiote, p_cfg->assert_pin);
-	nrfx_gpiote_trigger_disable(p_data->gpiote, p_cfg->deassert_pin);
+	nrfx_gpiote_trigger_disable(p_cfg->gpiote, p_cfg->assert_pin);
+	nrfx_gpiote_trigger_disable(p_cfg->gpiote, p_cfg->deassert_pin);
 }
 
 static void gppi_disable(const struct device *dev)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
 
-	if (!p_data->gppi_ready) {
-		return;
-	}
-
 	nrfx_gppi_conn_disable(p_data->ppi_start);
 	nrfx_gppi_conn_disable(p_data->ppi_end);
 }
 
-static void gppi_uninit(const struct device *dev, struct pulse_meas_drv_data *p_data)
+static void gppi_enable(const struct device *dev)
 {
-	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
-	uint32_t evt_to_start;
-	uint32_t evt_to_cpt;
-	uint32_t start_task;
-	uint32_t end_task;
+	struct pulse_meas_drv_data *p_data = dev->data;
 
-	if (!p_data->gppi_ready) {
-		return;
-	}
-
-	gppi_disable(dev);
-
-	evt_to_start = nrfx_gpiote_in_event_address_get(p_data->gpiote, p_cfg->assert_pin);
-	evt_to_cpt = nrfx_gpiote_in_event_address_get(p_data->gpiote, p_cfg->deassert_pin);
-	start_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CLEAR);
-	end_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CAPTURE0);
-
-	nrfx_gppi_conn_free(evt_to_start, start_task, p_data->ppi_start);
-	nrfx_gppi_conn_free(evt_to_cpt, end_task, p_data->ppi_end);
-	p_data->gppi_ready = false;
+	nrfx_gppi_conn_enable(p_data->ppi_start);
+	nrfx_gppi_conn_enable(p_data->ppi_end);
 }
 
 static void meas_stop(const struct device *dev)
@@ -204,8 +192,8 @@ static void meas_stop(const struct device *dev)
 #endif
 	pulse_meas_state_t old_state = p_data->state;
 
-	p_data->state = PULSE_MEAS_STATE_IDLE;
-	if (old_state != PULSE_MEAS_STATE_IDLE) {
+	p_data->state = PULSE_MEAS_STATE_READY;
+	if (old_state != PULSE_MEAS_STATE_READY) {
 		pm_device_runtime_put(dev);
 	}
 }
@@ -271,98 +259,72 @@ static void gpiote_handler(nrfx_gpiote_pin_t pin, nrfx_gpiote_trigger_t action, 
 	}
 }
 
-static void gppi_enable(const struct device *dev)
+static void gppi_unconfigure(const struct device *dev)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
+	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
+	uint32_t assert_event, deassert_event;
+	uint32_t capture0_task, clear_task;
 
-	nrfx_gppi_conn_enable(p_data->ppi_start);
-	nrfx_gppi_conn_enable(p_data->ppi_end);
+	assert_event = nrfx_gpiote_in_event_address_get(p_cfg->gpiote, p_cfg->assert_pin);
+	deassert_event = nrfx_gpiote_in_event_address_get(p_cfg->gpiote, p_cfg->deassert_pin);
+	clear_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CLEAR);
+	capture0_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CAPTURE0);
+
+	nrfx_gppi_conn_free(assert_event, clear_task, p_data->ppi_start);
+	nrfx_gppi_conn_free(deassert_event, capture0_task, p_data->ppi_end);
 }
 
-static int gppi_init(const struct device *dev)
+static int gppi_configure(const struct device *dev)
 {
 	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
 	struct pulse_meas_drv_data *p_data = dev->data;
-	uint32_t evt_to_start;
-	uint32_t evt_to_cpt;
-	uint32_t start_task;
-	uint32_t end_task;
+	uint32_t assert_event, deassert_event;
+	uint32_t capture0_task, clear_task;
 	int ret;
 
-	gppi_uninit(dev, p_data);
+	assert_event = nrfx_gpiote_in_event_address_get(p_cfg->gpiote, p_cfg->assert_pin);
+	deassert_event = nrfx_gpiote_in_event_address_get(p_cfg->gpiote, p_cfg->deassert_pin);
+	clear_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CLEAR);
+	capture0_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CAPTURE0);
 
-	evt_to_start = nrfx_gpiote_in_event_address_get(p_data->gpiote, p_cfg->assert_pin);
-	evt_to_cpt = nrfx_gpiote_in_event_address_get(p_data->gpiote, p_cfg->deassert_pin);
-
-	start_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CLEAR);
-	ret = nrfx_gppi_conn_alloc(evt_to_start, start_task, &p_data->ppi_start);
+	ret = nrfx_gppi_conn_alloc(assert_event, clear_task, &p_data->ppi_start);
 	if (ret < 0) {
 		return ret;
 	}
 
-	end_task = nrfx_timer_task_address_get(&p_data->timer, NRF_TIMER_TASK_CAPTURE0);
-	ret = nrfx_gppi_conn_alloc(evt_to_cpt, end_task, &p_data->ppi_end);
+	ret = nrfx_gppi_conn_alloc(deassert_event, capture0_task, &p_data->ppi_end);
 	if (ret < 0) {
-		nrfx_gppi_conn_free(evt_to_start, start_task, p_data->ppi_start);
+		nrfx_gppi_conn_free(assert_event, clear_task, p_data->ppi_start);
 		return ret;
 	}
-
-	p_data->gppi_ready = true;
 
 	return 0;
 }
 
-static void gpiote_uninit(const struct device *dev, struct pulse_meas_drv_data *p_data)
+static void gpiote_unconfigure(const struct device *dev)
 {
 	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
 
-	if (!p_data->gpiote_ready) {
-		return;
-	}
-
 	gpiote_disable(dev);
-	(void)nrfx_gpiote_pin_uninit(p_data->gpiote, p_cfg->assert_pin);
-	(void)nrfx_gpiote_pin_uninit(p_data->gpiote, p_cfg->deassert_pin);
-	p_data->gpiote_ready = false;
+	(void)nrfx_gpiote_pin_uninit(p_cfg->gpiote, p_cfg->assert_pin);
+	(void)nrfx_gpiote_pin_uninit(p_cfg->gpiote, p_cfg->deassert_pin);
 }
 
 static int gpiote_configure(const struct device *dev)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
 	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
-	uint8_t rising_edge_in_ch;
-	uint8_t falling_edge_in_ch;
 	int err;
-
-	gpiote_uninit(dev, p_data);
-
-	err = nrfx_gpiote_init(p_data->gpiote, NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY);
-	if (err < 0 && err != -EALREADY) {
-		LOG_ERR("Failed to initialize GPIOTE: %d", err);
-		return err;
-	}
-
-	err = nrfx_gpiote_channel_alloc(p_data->gpiote, &rising_edge_in_ch);
-	if (err < 0) {
-		LOG_ERR("Failed to allocate GPIOTE channel: %d", err);
-		return err;
-	}
-
-	err = nrfx_gpiote_channel_alloc(p_data->gpiote, &falling_edge_in_ch);
-	if (err < 0) {
-		LOG_ERR("Failed to allocate GPIOTE channel: %d", err);
-		(void)nrfx_gpiote_channel_free(p_data->gpiote, rising_edge_in_ch);
-		return err;
-	}
 
 	const nrfx_gpiote_trigger_config_t rising_trigger_config = {
 		.trigger = NRFX_GPIOTE_TRIGGER_LOTOHI,
-		.p_in_channel = &rising_edge_in_ch,
+		.p_in_channel = &p_data->gpiote_ch[0],
 	};
 
 	const nrfx_gpiote_trigger_config_t falling_trigger_config = {
 		.trigger = NRFX_GPIOTE_TRIGGER_HITOLO,
-		.p_in_channel = &falling_edge_in_ch,
+		.p_in_channel = &p_data->gpiote_ch[1],
 	};
 
 	nrfx_gpiote_handler_config_t handler_config = {
@@ -389,57 +351,25 @@ static int gpiote_configure(const struct device *dev)
 		return -EINVAL;
 	}
 
-	err = nrfx_gpiote_input_configure(p_data->gpiote, p_cfg->assert_pin, &gpiote_cfg_assert);
+	err = nrfx_gpiote_input_configure(p_cfg->gpiote, p_cfg->assert_pin, &gpiote_cfg_assert);
 	if (err < 0) {
 		return err;
 	}
 
-	err = nrfx_gpiote_input_configure(p_data->gpiote, p_cfg->deassert_pin,
+	err = nrfx_gpiote_input_configure(p_cfg->gpiote, p_cfg->deassert_pin,
 					  &gpiote_cfg_deassert);
 	if (err < 0) {
 		return err;
 	}
 
-	p_data->gpiote_ready = true;
-
 	return 0;
 }
 
-static void timer_uninit(struct pulse_meas_drv_data *p_data)
-{
-	if (!p_data->timer_ready) {
-		return;
-	}
-
-	nrfx_timer_disable(&p_data->timer);
-	nrfx_timer_uninit(&p_data->timer);
-	p_data->timer_ready = false;
-}
-
-static int timer_init(const struct device *dev)
+static void timer_prepare(const struct device *dev)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
-	static const nrfx_timer_config_t timer_cfg = {
-		.frequency = PULSE_MEAS_RESOLUTION,
-		.mode = NRF_TIMER_MODE_TIMER,
-		.bit_width = NRF_TIMER_BIT_WIDTH_32,
-		.interrupt_priority = NRFX_TIMER_DEFAULT_CONFIG_IRQ_PRIORITY,
-		.p_context = NULL,
-	};
-	int rc;
 
-	timer_uninit(p_data);
-
-	rc = nrfx_timer_init(&p_data->timer, &timer_cfg, NULL);
-	if (rc < 0) {
-		return rc;
-	}
-
-	p_data->timer_frequency = timer_cfg.frequency;
-	p_data->timer_ready = true;
 	nrfx_timer_clear(&p_data->timer);
-
-	return 0;
 }
 
 static int validate_config(const struct pulse_meas_config *cfg)
@@ -465,6 +395,10 @@ int pulse_meas_configure(const struct device *dev, const struct pulse_meas_confi
 	struct pulse_meas_drv_data *p_data = dev->data;
 	int ret;
 
+	if (p_data->state != PULSE_MEAS_STATE_IDLE) {
+		return -EBUSY;
+	}
+
 	ret = validate_config(cfg);
 	if (ret < 0) {
 		return ret;
@@ -477,25 +411,36 @@ int pulse_meas_configure(const struct device *dev, const struct pulse_meas_confi
 	p_data->user_handler = cfg->user_handler;
 	p_data->user_context = cfg->user_context;
 
-	ret = pm_device_runtime_get(dev);
-	if (ret < 0) {
-		return ret;
-	}
-
 	ret = gpiote_configure(dev);
 	if (ret < 0) {
 		return ret;
 	}
 
-	ret = timer_init(dev);
+	timer_prepare(dev);
+
+	ret = gppi_configure(dev);
 	if (ret < 0) {
 		return ret;
 	}
 
-	ret = gppi_init(dev);
-	pm_device_runtime_put(dev);
+	p_data->state = PULSE_MEAS_STATE_READY;
+	return 0;
+}
 
-	return ret;
+int pulse_meas_reset(const struct device *dev)
+{
+	struct pulse_meas_drv_data *p_data = dev->data;
+
+	if (p_data->state != PULSE_MEAS_STATE_READY) {
+		return -EBUSY;
+	}
+
+	gppi_unconfigure(dev);
+	gpiote_unconfigure(dev);
+
+	p_data->state = PULSE_MEAS_STATE_IDLE;
+
+	return 0;
 }
 
 static void discard_active_buffers(struct pulse_meas_drv_data *p_data)
@@ -510,6 +455,10 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
 	int ret;
+
+	if (p_data->state != PULSE_MEAS_STATE_READY) {
+		return -EBUSY;
+	}
 
 	if (slab == NULL) {
 		return -EINVAL;
@@ -531,7 +480,7 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 	ret = hf_clock_request();
 	if (ret < 0) {
 		discard_active_buffers(p_data);
-		p_data->state = PULSE_MEAS_STATE_IDLE;
+		p_data->state = PULSE_MEAS_STATE_READY;
 		return ret;
 	}
 #endif
@@ -542,7 +491,7 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 		hf_clock_release();
 #endif
 		discard_active_buffers(p_data);
-		p_data->state = PULSE_MEAS_STATE_IDLE;
+		p_data->state = PULSE_MEAS_STATE_READY;
 		return ret;
 	}
 
@@ -554,9 +503,19 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 	return 0;
 }
 
+static bool measurement_active(struct pulse_meas_drv_data *p_data)
+{
+	return p_data->state == PULSE_MEAS_STATE_RUNNING ||
+	       p_data->state == PULSE_MEAS_STATE_STOPPING;
+}
+
 int pulse_meas_stop(const struct device *dev, bool immediate)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
+
+	if (!measurement_active(p_data)) {
+		return -EBUSY;
+	}
 
 	if (immediate) {
 		struct pulse_meas_block *block = p_data->curr_block;
@@ -574,12 +533,6 @@ int pulse_meas_stop(const struct device *dev, bool immediate)
 	p_data->state = PULSE_MEAS_STATE_STOPPING;
 
 	return 0;
-}
-
-static bool measurement_active(struct pulse_meas_drv_data *p_data)
-{
-	return p_data->state == PULSE_MEAS_STATE_RUNNING ||
-	       p_data->state == PULSE_MEAS_STATE_STOPPING;
 }
 
 int pulse_meas_get(const struct device *dev, uint32_t **data)
@@ -669,12 +622,8 @@ static int pulse_meas_pm_suspend(const struct device *dev)
 	struct pulse_meas_drv_data *p_data = dev->data;
 	const struct pulse_meas_drv_cfg *p_config = dev->config;
 
-	if (p_data->state != PULSE_MEAS_STATE_IDLE) {
+	if (measurement_active(p_data)) {
 		return -EBUSY;
-	}
-
-	if (!p_data->gpiote_ready) {
-		return 0;
 	}
 
 	pin_low_power_enter(p_config->assert_pin);
@@ -687,10 +636,6 @@ static int pulse_meas_pm_resume(const struct device *dev)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
 	const struct pulse_meas_drv_cfg *p_config = dev->config;
-
-	if (!p_data->gpiote_ready) {
-		return 0;
-	}
 
 	pin_low_power_exit(p_config->assert_pin, p_data->pull_cfg);
 	pin_low_power_exit(p_config->deassert_pin, p_data->pull_cfg);
@@ -724,6 +669,43 @@ static int pulse_meas_pm_action(const struct device *dev, enum pm_device_action 
 	return ret;
 }
 
+static int pulse_meas_init(const struct device *dev)
+{
+	struct pulse_meas_drv_data *p_data = dev->data;
+	const struct pulse_meas_drv_cfg *p_cfg = dev->config;
+	static const nrfx_timer_config_t timer_cfg = {
+		.frequency = PULSE_MEAS_RESOLUTION,
+		.mode = NRF_TIMER_MODE_TIMER,
+		.bit_width = NRF_TIMER_BIT_WIDTH_32,
+		.interrupt_priority = NRFX_TIMER_DEFAULT_CONFIG_IRQ_PRIORITY,
+		.p_context = NULL,
+	};
+	int rc;
+
+	p_data->timer_frequency = timer_cfg.frequency;
+	p_data->timer.p_reg = p_cfg->timer_reg;
+	rc = nrfx_timer_init(&p_data->timer, &timer_cfg, NULL);
+	if (rc < 0) {
+		return rc;
+	}
+
+	rc = nrfx_gpiote_init(p_cfg->gpiote, NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY);
+	if (rc < 0 && rc != -EALREADY) {
+		LOG_ERR("Failed to initialize GPIOTE: %d", rc);
+		return rc;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(p_data->gpiote_ch); i++) {
+		rc = nrfx_gpiote_channel_alloc(p_cfg->gpiote, &p_data->gpiote_ch[i]);
+		if (rc < 0) {
+			LOG_ERR("Failed to allocate GPIOTE channel: %d", rc);
+			return rc;
+		}
+	}
+
+	return pm_device_driver_init(dev, pulse_meas_pm_action);
+}
+
 #define GPIOTE_PHANDLE(instance, gpio)                                                             \
 	DT_PROP(DT_GPIO_CTLR(DT_DRV_INST(instance), gpio), gpiote_instance)
 #define TIMER_PHANDLE(instance) DT_INST_PHANDLE(instance, timer_instance)
@@ -737,20 +719,15 @@ static int pulse_meas_pm_action(const struct device *dev, enum pm_device_action 
 	BUILD_ASSERT(DT_SAME_NODE(GPIOTE_PHANDLE(inst, assert_gpios),                              \
 				  GPIOTE_PHANDLE(inst, deassert_gpios)),                           \
 		     "assert-gpio and deassert-gpio must use the same GPIOTE instance");           \
-	static struct pulse_meas_drv_data drv_data_##inst = {                                      \
-		.timer = NRFX_TIMER_INSTANCE(DT_REG_ADDR(TIMER_PHANDLE(inst))),                    \
-		.gpiote = &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_PHANDLE(inst, assert_gpios)),           \
-	};                                                                                         \
+	static struct pulse_meas_drv_data drv_data_##inst;                                         \
 	static const struct pulse_meas_drv_cfg drv_cfg_##inst = {                                  \
 		.assert_pin = ABSOLUTE_PIN_NUMBER(inst, assert_gpios),                             \
 		.deassert_pin = ABSOLUTE_PIN_NUMBER(inst, deassert_gpios),                         \
+		.gpiote = &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_PHANDLE(inst, assert_gpios)),           \
+		.timer_reg = (NRF_TIMER_Type *)DT_REG_ADDR(TIMER_PHANDLE(inst)),                   \
 	};                                                                                         \
-	static int pulse_meas_##inst##_init(const struct device *dev)                              \
-	{                                                                                          \
-		return pm_device_driver_init(dev, pulse_meas_pm_action);                           \
-	}                                                                                          \
 	PM_DEVICE_DT_INST_DEFINE(inst, pulse_meas_pm_action, PM_DEVICE_ISR_SAFE);                  \
-	DEVICE_DT_INST_DEFINE(inst, pulse_meas_##inst##_init, PM_DEVICE_DT_INST_GET(inst),         \
+	DEVICE_DT_INST_DEFINE(inst, pulse_meas_init, PM_DEVICE_DT_INST_GET(inst),                  \
 			      &drv_data_##inst, &drv_cfg_##inst, POST_KERNEL,                      \
 			      CONFIG_PULSE_MEAS_INIT_PRIORITY, NULL);
 
