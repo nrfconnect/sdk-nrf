@@ -50,6 +50,7 @@ K_SEM_DEFINE(stop_sem, 0, 1);
 
 static int dfu_target_init_img_num;
 static int dfu_target_schedule_img_num;
+static int dfu_target_reset_calls;
 
 int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_callback_t cb)
 {
@@ -89,6 +90,7 @@ int dfu_target_done(bool successful)
 
 int dfu_target_reset(void)
 {
+	dfu_target_reset_calls++;
 	return 0;
 }
 
@@ -295,6 +297,7 @@ static void init(void)
 	spm_s0_active_retval = false;
 	dfu_target_init_img_num = -1;
 	dfu_target_schedule_img_num = -1;
+	dfu_target_reset_calls = 0;
 
 	k_sem_reset(&stop_sem);
 	k_sem_reset(&download_with_offset_sem);
@@ -455,6 +458,57 @@ ZTEST(fota_download_tests, test_download_img_num_not_sticky)
 	zassert_equal(dfu_target_init_img_num, 0,
 		      "legacy entry point inherited img_num %d from previous download",
 		      dfu_target_init_img_num);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+}
+
+ZTEST(fota_download_tests, test_download_img_num_change_no_resume)
+{
+	int err;
+	static uint8_t fragment_data[32];
+	const struct downloader_evt evt = {
+		.id = DOWNLOADER_EVT_FRAGMENT,
+		.fragment = {
+			.buf = fragment_data,
+			.len = sizeof(fragment_data),
+		},
+	};
+	struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = buf,
+		.img_num = 1,
+		.expected_type = DFU_TARGET_IMAGE_TYPE_ANY,
+	};
+
+	if (IMG_NUM_MAX < 1) {
+		ztest_test_skip();
+	}
+
+	init();
+
+	/* Interrupted download to image pair 1 */
+	strcpy(buf, S0_A);
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, NULL);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+
+	/* Same URI to image pair 0, whose DFU target reports progress. The progress
+	 * belongs to another download, so it must be discarded, not resumed.
+	 */
+	start_with_offset = true;
+	params.img_num = 0;
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, NULL);
+
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, 0, "progress of another image pair was resumed");
+	zassert_equal(dfu_target_reset_calls, 1, "DFU target not reset");
+	zassert_equal(dfu_target_init_img_num, 0, NULL);
 
 	err = fota_download_cancel();
 	zassert_equal(err, 0, NULL);
