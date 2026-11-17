@@ -261,10 +261,11 @@ Configuration
 
 |config|
 
-Disabling key features
-======================
+Configuring key features
+========================
 
-You can independently disable the following key features of this sample by setting their respective Kconfig option disabled:
+The following key features of this sample are enabled by default, except location tracking on the nRF7120 DK.
+You can enable or disable each of them independently using the respective Kconfig option:
 
 .. list-table::
    :widths: 50 50
