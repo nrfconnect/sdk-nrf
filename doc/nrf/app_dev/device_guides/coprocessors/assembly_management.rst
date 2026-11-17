@@ -64,7 +64,7 @@ If discrepancies are found, it triggers a CMake error (in user mode) or warning 
 hpf_assembly_prepare_install
 ============================
 
-The :c:func:`hpf_assembly_prepare_install` function creates a build target (asm_install) that replaces the :file:`file-soc.s` file in the source directory with :file:`file-soc-temp.s` from the build directory.
+The :c:func:`hpf_assembly_prepare_install` function creates a build target (asm_install) that generates the :file:`file-soc-temp.s` file in the build directory and replaces the :file:`file-soc.s` file in the source directory with it.
 
 hpf_assembly_target_sources
 ===========================
@@ -91,9 +91,41 @@ When working in user or developer mode, you must verify the integrity and accura
   Depending on the outcome, do the following:
 
   * If the differences are acceptable, execute the ``ninja asm_install`` command in the FLPR application's build directory to use the new assembly files.
+    To update the assembly files for all supported SoCs at once, use the :ref:`west ncs-hpf-asm-update <hpf_assembly_management_west>` command.
   * If the differences are significant, investigate and adjust the code, or re-run hardware characterization tests to ensure compliance with the required specifications.
 
 * In developer mode, if you wish to update the source directory with newly generated assembly files, invoke the ``ninja asm_install`` command in the ``build/hpf`` directory.
+
+.. _hpf_assembly_management_west:
+
+Updating assembly files for all SoCs
+====================================
+
+A change in the HRT source files, in the headers they include, or in the toolchain usually requires regenerating the assembly files for every supported SoC.
+The ``west ncs-hpf-asm-update`` command automates this process for the HPF applications in the :file:`applications/hpf` directory.
+
+For each application and for each SoC listed in the application's :file:`sample.yaml` file, the command configures the FLPR image in developer mode in a temporary build directory, builds the asm_gen target, and replaces the :file:`file-soc.s` file in the source directory if the newly generated assembly differs from it.
+If the :file:`file-soc.s` file does not exist yet, for example when adding support for a new SoC, the command creates it.
+The command uses the snippets required by the matching :file:`sample.yaml` scenario.
+It fails if the toolchain is not the Zephyr SDK version specified in the :file:`zephyr/SDK_VERSION` file, unless you use the ``--force`` option.
+
+Run the command from the |NCS| workspace:
+
+.. code-block:: console
+
+   west ncs-hpf-asm-update
+
+The following options are commonly used:
+
+* ``--check`` - Reports outdated or missing assembly files without modifying the source directory, and fails if any are found.
+* ``--soc SOC`` - Processes only the given SoC, for example ``nrf54l15``.
+* ``APP_DIR`` - Processes only the given application directory, for example :file:`nrf/applications/hpf/mspi`.
+* ``--board BOARD`` - Builds the given board target instead of the platforms listed in :file:`sample.yaml`, for example for an application outside of the |NCS|.
+* ``--list`` - Lists the applications and board targets to process without building them.
+* ``-j JOBS`` - Runs the given number of builds in parallel.
+
+Run ``west ncs-hpf-asm-update --help`` for the full list of options.
+After updating the assembly files, review the changes with ``git diff`` and verify that the timing requirements are still met, as described in `Verifiying assembly files and managing updates`_.
 
 Running CMake targets
 *********************
@@ -104,7 +136,7 @@ There are three CMake targets that can be executed:
   This target is established by the :c:func:`hpf_assembly_generate` function.
 * asm_check - Checks if newly generated assembly files differ from the existing ones and prints the result to the console.
   This target is established by the :c:func:`hpf_assembly_check` function.
-* asm_install - Replaces assembly files in the source directory with newly generated ones, assuming the asm_gen was called before.
+* asm_install - Generates new assembly files and replaces the assembly files in the source directory with them.
 
 You must run all assembly management CMake targets in the VPR application's build directory. They can be executed using the command ``ninja target_name``.
 For example, to run the asm_install target, you would use the command ``ninja asm_install``.
