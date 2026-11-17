@@ -300,19 +300,14 @@ static void gpiote_handler(nrfx_gpiote_pin_t pin, nrfx_gpiote_trigger_t action, 
 	struct pulse_meas_drv_data *p_data = dev->data;
 	uint32_t idx = p_data->meas_count;
 	struct pulse_meas_block *block = p_data->curr_block;
-	uint32_t timer_cc_val;
-
-	ARG_UNUSED(pin);
-	ARG_UNUSED(action);
 
 	if (block == NULL) {
 		return;
 	}
 
-	timer_cc_val = nrf_timer_cc_get(p_data->timer.p_reg, NRF_TIMER_CC_CHANNEL0);
-	block->data[idx] = timer_cc_val;
-	p_data->meas_count = idx + 1;
+	block->data[idx] = nrf_timer_cc_get(p_data->timer.p_reg, NRF_TIMER_CC_CHANNEL0);
 
+	p_data->meas_count = idx + 1;
 	if (p_data->meas_count < p_data->meas_num) {
 		return;
 	}
@@ -605,7 +600,6 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 	nrfx_timer_enable(&p_data->timer);
 	gppi_enable(dev);
 	gpiote_enable(dev);
-
 	return 0;
 }
 
@@ -841,7 +835,7 @@ static int pulse_meas_init(const struct device *dev)
 	static struct pulse_meas_drv_data drv_data_##inst;                                         \
 	static const struct pulse_meas_drv_cfg drv_cfg_##inst = {                                  \
 		.assert_pin = ABSOLUTE_PIN_NUMBER(inst, assert_gpios),                             \
-		.deassert_pin = OPT_ABSOLUTE_PIN_NUMBER(inst, deassert_gpios),                         \
+		.deassert_pin = OPT_ABSOLUTE_PIN_NUMBER(inst, deassert_gpios),                     \
 		.gpiote = &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_PHANDLE(inst, assert_gpios)),           \
 		.timer_reg = (NRF_TIMER_Type *)DT_REG_ADDR(TIMER_PHANDLE(inst)),                   \
 	};                                                                                         \
