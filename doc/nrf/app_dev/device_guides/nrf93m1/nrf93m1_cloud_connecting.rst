@@ -59,6 +59,10 @@ Each device presents two stable identities and two short-lived credentials.
    Device system time must be valid for a JWT to be accepted by the cloud.
    If authentication fails immediately after a cold boot, check time before investigating anything else.
 
+   Read the clock of the module with ``AT+CCLK?``.
+   The ``%JWT`` command fails if the time has not been set.
+   Most networks set the time when the device goes online, so register the device to the network before you request a JWT.
+
 .. _ug_93m1_cloud_connecting_provisioning:
 
 Provisioning a device
@@ -157,8 +161,17 @@ Messaging and shadow
 
    * - Command
      - Purpose
-   * - ``AT%NRFCLOUDMESSAGE``
-     - Publish a JSON payload over CoAP, for example ``{"appId":"BUTTON","data":"1"}``
+   * - ``AT%NRFCLOUDMESSAGE=[<fmt>,]<message>``
+     - Publish a device-to-cloud (D2C) message over CoAP.
+       The ``<fmt>`` parameter selects one of the following formats:
+
+       * ``0`` for JSON, which is the default, with up to 511 characters, sent to ``msg/d2c``
+       * ``1`` for CBOR, sent to ``msg/d2c``
+       * ``2`` for raw binary, sent to ``msg/d2c/raw``
+
+       For CBOR and raw binary, give the payload as base64, up to 1024 bytes after decoding.
+       Only the decoded bytes are sent over the air.
+       For example, ``AT%NRFCLOUDMESSAGE={"appId":"BUTTON","data":"1"}`` or ``AT%NRFCLOUDMESSAGE=1,"oWRkYXRhYTE="``.
    * - ``AT%NRFCLOUDSHADOW``
      - Read a dotted path from the desired shadow, and write a dotted path into the reported shadow
 
@@ -168,7 +181,9 @@ Firmware observability
 **********************
 
 The module integrates Memfault firmware observability.
-Coredumps and periodic metrics heartbeats are captured on the device, stored in the secure file system, and uploaded over the existing cellular connection.
+Periodic metrics heartbeats are captured on the device and uploaded over the existing cellular connection.
+The modem collects coredumps when it crashes, but they are uploaded only if you enable the upload.
+See :ref:`ug_nrf93m1_debugging_coredump`.
 
 .. list-table::
    :header-rows: 1
@@ -187,13 +202,145 @@ Observability is the practical way to diagnose intermittent field faults, where 
 .. note::
    Forwarding host MCU chunks means your host application can report its own diagnostics through the module's existing connection, without opening a second channel.
 
+.. _ug_93m1_cloud_connecting_lte_metrics:
+
+LTE metrics
+===========
+
+The modem collects LTE metrics about how the device connects to the network, and reports them to nRF Cloud as part of the observability data.
+The modem closes a *heartbeat*, a snapshot of the collected metrics, once every hour and puts it in a small chunk queue.
+The module does not upload the queue by itself.
+Your host must send ``AT%NRFCLOUDOBSUPLOAD`` regularly.
+The queue holds only a few heartbeats.
+When the queue is full, new heartbeats are discarded.
+The queued data is lost on reset and in deep sleep modes.
+
+The following table lists the metrics.
+The modem updates some metrics automatically, if network registration reports are enabled at the listed ``AT+CEREG`` level.
+The modem updates the other metrics only when you run the listed AT command, so run these commands before the heartbeat closes to include them.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Metric
+     - Description
+     - Updated
+     - Name in nRF Cloud
+   * - Time to connect
+     - Time to join the network after a start-up or dropout
+     - Automatically, requires ``AT+CEREG=1`` or higher
+     - ``time_to_connect_ms``
+   * - Connection losses
+     - Number of times the module lost its network registration during the heartbeat interval
+     - Automatically, requires ``AT+CEREG=1`` or higher
+     - ``connection_loss_count``
+   * - Time connected
+     - Duration for which the module stays connected to the network per heartbeat interval
+     - Automatically, requires ``AT+CEREG=1`` or higher
+     - ``on_time_ms``
+   * - Network type
+     - LTE technology used by the connection
+     - Automatically, requires ``AT+CEREG=2`` or higher
+     - ``mode``
+   * - Check-in interval
+     - Periodic Tracking Area Update (TAU) interval granted by the network for PSM
+     - Automatically, requires ``AT+CEREG=4`` or higher
+     - ``psm_tau_seconds``
+   * - Awake time
+     - Duration for which the module remains reachable before entering PSM
+     - Automatically, requires ``AT+CEREG=4`` or higher
+     - ``psm_active_time_seconds``
+   * - Listening cycle
+     - eDRX cycle length granted by the network
+     - Automatically
+     - ``edrx_interval_ms``
+   * - Listening window
+     - Duration for which the module listens to the network in eDRX
+     - Automatically
+     - ``edrx_ptw_ms``
+   * - Signal strength
+     - RSRP from the cell in dBm
+     - When you run ``AT%BCINFO``
+     - ``rsrp_dbm``
+   * - Frequency band
+     - LTE band used by the cell
+     - When you run ``AT%BCINFO``
+     - ``band``
+   * - Modem firmware
+     - Modem firmware version running on the module
+     - First time you run ``AT+CGMR``
+     - ``modem_fw_version``
+   * - Operator
+     - Mobile operator to which the module is registered
+     - When you run ``AT+COPS?``
+     - ``operator_plmn``
+
+To send LTE metrics to nRF Cloud, complete the following steps:
+
+1. Read the modem firmware version:
+
+   .. code-block:: console
+
+      AT+CGMR
+      mfw_nrf93m1_1.5.1
+      OK
+
+#. Download the symbol file that matches this modem firmware version from the `nRF93M1 guide <https://docs.nrfcloud.com/docs/mcu/nrf93m1-guide>`_ in the nRF Cloud documentation.
+#. In nRF Cloud, open :guilabel:`Symbol Files` and upload the ``.elf`` file.
+   nRF Cloud needs the symbol file to decode the metrics.
+#. Turn on network status reports.
+#. Restart the modem so that it reconnects and records the connection metrics:
+
+   .. code-block:: console
+
+      AT+CEREG=5
+      OK
+      AT+CFUN=0
+      OK
+      +CEREG: 0
+      AT+CFUN=1
+      OK
+      +CEREG: 2
+      +CEREG: 1,"5A00","00197803",7
+
+#. Update the signal strength and band, and the operator metrics:
+
+   .. code-block:: console
+
+      AT%BCINFO=1
+      %BCINFOSC: 1825,49,-85,-6,"244","05","00197803","5A00"
+      %BCINFONC: 1825,49,-85,-6,"244","45","00197803","5A00"
+      OK
+      AT+COPS?
+      +COPS: 0,2,"24405",7
+      OK
+
+#. Close the current heartbeat and upload the metrics:
+
+   .. code-block:: console
+
+      AT%NRFCLOUDOBSHEARTBEAT
+      OK
+      AT%NRFCLOUDOBSUPLOAD
+      %COAP: RESPONSE,2.01
+      %COAP: DATA,8,Accepted
+      %COAP: RESPONSE,2.01
+      %COAP: DATA,8,Accepted
+      %NRFCLOUDOBSUPLOAD: UPLOADED,2
+      OK
+
+#. In nRF Cloud, open the device page and check :guilabel:`Timeline` and :guilabel:`Processing Log` for the uploaded metrics.
+
+Use the ``AT%NRFCLOUDOBSHEARTBEAT`` command for debugging.
+In normal operation, rely on the hourly heartbeat and upload regularly.
+
 .. _ug_93m1_cloud_connecting_fota:
 
 Firmware updates
 ****************
 
 Both modem firmware and host application firmware updates are delivered through nRF Cloud with ``AT%NRFCLOUDFOTA``.
-See :ref:`ug_nrf93m1_updating_modem_fw`.
+See :ref:`ug_nrf93m1_updating_modem_fw_ota` for the procedure to update the modem firmware of a provisioned device and for the other update methods.
 
 .. _ug_93m1_cloud_connecting_production:
 

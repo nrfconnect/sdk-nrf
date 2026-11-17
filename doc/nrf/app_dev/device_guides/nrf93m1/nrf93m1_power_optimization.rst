@@ -321,7 +321,7 @@ Before you start any power measurements or use the power management commands, co
       OK
       AT%MODULECFG="autoPowerSave",1  // Enable System ON Idle with power saving
       OK
-      AT%MUCFG=1,4 // Enter System OFF mode
+      AT%SYSOFF=1 // Enter System OFF mode
       OK
 
 Guidelines for exiting sleep
@@ -357,6 +357,8 @@ Current measurements
 
 To reproduce these results, set the UART to 9600 bps or lower, then enter System OFF as described in the :ref:`ug_nrf93m1_power_optimization_measure` section.
 
+The following plots are generated using the nRF Connect for Desktop Power Profiler app in source meter mode.
+
 In the first measurement, the modem is set to minimal functionality:
 
 .. code-block:: console
@@ -364,14 +366,14 @@ In the first measurement, the modem is set to minimal functionality:
    AT+CFUN=0 // Modem set to minimal functionality
    OK
 
-The following plot is generated using the nRF Connect for Desktop Power Profiler app in source meter mode:
+The average current in offline or flight mode is 2.03 µA, as shown in the following figure:
 
-.. figure:: images/nRF93M1-iDRX-640-Sysoff-enabled.png
-   :alt: nRF93M1 iDRX 640 Sysoff-enabled
+.. figure:: images/nRF93M1-offline-Sysoff-enabled.png
+   :alt: nRF93M1 offline current measurement
 
-The average current in offline or flight mode is 2.03 µA.
+   nRF93M1 offline current measurement
 
-The nRF93M1 is set in full functionality mode.
+The nRF93M1 is then set in full functionality mode.
 During this measurement, the network configured the nRF93M1 to enter RCC Idle with a 640 ms DRX cycle.
 
 .. code-block:: console
@@ -379,12 +381,14 @@ During this measurement, the network configured the nRF93M1 to enter RCC Idle wi
    AT+CFUN=1 // Modem set to full functionality
    OK
 
-The average current in RCC Idle with 640 ms DRX cycle is 345 µA.
+The average current in RCC Idle with 640 ms DRX cycle is 966.14 µA, as shown in the following figure:
 
-.. figure:: images/nRF93M1-eDRX-8192-512-Sysoff-enabled.png
-   :alt: nRF93M1 eDRX Sysoff-enabled
+.. figure:: images/nRF93M1-iDRX-640-Sysoff-enabled.png
+   :alt: nRF93M1 RCC Idle with 640 ms DRX current measurement
 
-The nRF93M1 is configured to enter eDRX sleep mode and is granted 81.92 seconds eDRX intervals with 5.12 seconds Paging Time Window (PTW) and 640ms Paging Occasion.
+   nRF93M1 RCC Idle with 640 ms DRX current measurement
+
+The nRF93M1 is then configured to enter eDRX sleep mode and is granted 81.92 seconds eDRX intervals with 5.12 seconds Paging Time Window (PTW) and 640ms Paging Occasion.
 
 .. note::
    Most mobile networks have not yet rolled out eDRX support for LTE Cat 1 bis devices.
@@ -399,11 +403,20 @@ The nRF93M1 is configured to enter eDRX sleep mode and is granted 81.92 seconds 
    +CEDRXRDP: 4,"0101","0101","0011"
    OK
 
-The average eDRX floor current is around 15.82 µA.
-The complete eDRX cycle average is 100 µA, including the 5.12 s PTW and 640 ms PO interval where the nRF93M1 will have 8 RX events with around 100 mA peak current.
+The complete eDRX cycle average is 113.48 µA, including the 5.12 s PTW and 640 ms PO interval where the nRF93M1 will have 8 RX events with peak currents of up to about 150 mA.
+The following figure shows one complete eDRX cycle, from one wake-up to the next:
+
+.. figure:: images/nRF93M1-eDRX-8192-512-Sysoff-enabled.png
+   :alt: nRF93M1 eDRX cycle current measurement
+
+   nRF93M1 eDRX cycle current measurement
+
+The average eDRX floor current is around 15.82 µA, as shown in the following figure:
 
 .. figure:: images/nRF93M1-eDRX-floor-Sysoff-enabled.png
-   :alt: nRF93M1 eDRX floor Sysoff-enabled
+   :alt: nRF93M1 eDRX floor current measurement
+
+   nRF93M1 eDRX floor current measurement
 
 The nRF93M1 is now configured for PSM sleep, requesting a periodic update interval of 3600 seconds (1 hour) with an active time of 60 seconds.
 
@@ -414,21 +427,34 @@ The nRF93M1 is now configured for PSM sleep, requesting a periodic update interv
    AT+CPSMS=1,,,"00000110","00100001" // Request PSM 3600 seconds
    OK
 
-The average PSM floor current is around 2 µA.
+The average PSM floor current is around 2 µA, as shown in the following figure:
 
 .. figure:: images/nrf93m1_psm_sleep_current_measurement.png
    :alt: nRF93M1 PSM sleep current measurement
 
    nRF93M1 PSM sleep current measurement
 
-The following is the complete cycle that includes the Tracking Area Update (TAU) of 60 minutes and 60 seconds of active time, where the modem monitors for paging occasions (DRX) to receive any pending data for the network.
+The following figure shows the complete cycle that includes the Tracking Area Update (TAU) of 60 minutes and 60 seconds of active time, where the modem monitors for paging occasions (DRX) to receive any pending data for the network.
+The average current for the complete cycle is 24.68 µA.
 
 .. figure:: images/nrf93m1_psm_cycle_active_time.png
    :alt: nRF93M1 PSM cycle with active time
 
    nRF93M1 PSM cycle with active time
 
-The average current for the complete cycle is 24.68 µA.
+Finally, the nRF93M1 is put in System Disabled, where it retains nothing and is deregistered from the network:
+
+.. code-block:: console
+
+   AT%POWD // Enter System Disabled
+
+To wake the module, pull ``POWERKEY`` low for at least 10 ms.
+The average System Disabled current is 0.40 µA, as shown in the following figure:
+
+.. figure:: images/nRF93M1-system-disabled.png
+   :alt: nRF93M1 System Disabled current measurement
+
+   nRF93M1 System Disabled current measurement
 
 Interpreting results
 ====================
