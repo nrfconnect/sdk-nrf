@@ -241,7 +241,7 @@ class NcsLn(WestCommand):
 
             linked = links_inv[links[file]]
             registered_linked_files = list(set(files) & set(linked))
-            other_linked_files = list(set(files) ^ set(linked))
+            other_linked_files = list(set(linked) - set(files))
 
             result = set(self._git_run(repo, 'hash-object', registered_linked_files))
             if len(result) > 1:
@@ -286,7 +286,7 @@ class NcsLn(WestCommand):
 
             linked = links_inv[links[file]]
             staged_linked_files = list(set(files) & set(linked))
-            other_linked_files = list(set(files) ^ set(linked))
+            other_linked_files = list(set(linked) - set(files))
 
             result = set(self._git_run(repo, 'hash-object', staged_linked_files))
             if len(result) > 1:
