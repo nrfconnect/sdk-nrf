@@ -206,8 +206,6 @@ nRF Desktop event propagation
 +-----------------------------------------------+                                  |                     |                             |                                             |
 | :ref:`nrf_desktop_ble_state`                  |                                  |                     |                             |                                             |
 +-----------------------------------------------+----------------------------------+                     |                             |                                             |
-| :ref:`nrf_desktop_hid_forward`                | ``hogp_sci_mode_changed_event``  |                     |                             |                                             |
-+-----------------------------------------------+----------------------------------+                     |                             |                                             |
 | :ref:`nrf_desktop_module_state_event_sources` | ``module_state_event``           |                     |                             |                                             |
 +-----------------------------------------------+----------------------------------+                     |                             |                                             |
 | :ref:`nrf_desktop_usb_state`                  | ``usb_state_event``              |                     |                             |                                             |
@@ -812,7 +810,7 @@ nRF Desktop event propagation
 |                                               |                                   |                 +---------------------------------+---------------------------------------------+
 |                                               |                                   |                 | ``hid_report_event``            | :ref:`nrf_desktop_hid_report_event_sinks`   |
 |                                               |                                   |                 +---------------------------------+---------------------------------------------+
-|                                               |                                   |                 | ``hogp_sci_mode_changed_event`` | :ref:`nrf_desktop_ble_conn_params`          |
+|                                               |                                   |                 | ``hogp_sci_mode_changed_event`` |                                             |
 |                                               |                                   |                 +---------------------------------+---------------------------------------------+
 |                                               |                                   |                 | ``module_state_event``          | :ref:`nrf_desktop_module_state_event_sinks` |
 |                                               |                                   |                 +---------------------------------+---------------------------------------------+
