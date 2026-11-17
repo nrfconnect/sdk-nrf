@@ -71,7 +71,6 @@ struct pulse_meas_drv_cfg {
 static struct onoff_manager *clk_mgr;
 static struct onoff_client clk_cli;
 static K_SEM_DEFINE(clock_ready_sem, 0, 1);
-static bool clock_requested;
 
 static void clock_started_callback(struct onoff_manager *mgr, struct onoff_client *cli,
 				   uint32_t state, int res)
@@ -101,58 +100,30 @@ static int hf_clock_request(void)
 		return ret;
 	}
 
-	clock_requested = true;
-
 	return 0;
 }
 
 static int hf_clock_release(void)
 {
-	if (!clock_requested) {
-		return 0;
-	}
-
-	clock_requested = false;
-
 	return onoff_release(clk_mgr);
 }
 
 #elif defined(CONFIG_CLOCK_CONTROL_NRF54H_HFXO) ||                                                 \
 	(IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON) && !IS_ENABLED(CONFIG_SOC_SERIES_NRF92) &&    \
 	 !IS_ENABLED(CONFIG_SOC_SERIES_NRF54L))
-static bool clock_requested;
-
-static int hf_clock_request(void)
-{
-	const struct device *dev =
+static const struct device *clock_dev =
 		COND_CODE_1(NRF_CLOCK_HAS_HFCLK, (DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk)),
 			    (COND_CODE_1(NRF_CLOCK_HAS_XO, (DEVICE_DT_GET_ONE(nordic_nrf_clock_xo)),
 					 (DEVICE_DT_GET_ONE(nordic_nrf54h_hfxo)))));
-	int ret;
 
-	ret = nrf_clock_control_request_sync(dev, NULL, K_MSEC(2000));
-	if (ret < 0) {
-		return ret;
-	}
-
-	clock_requested = true;
-
-	return 0;
+static int hf_clock_request(void)
+{
+	return nrf_clock_control_request_sync(clock_dev, NULL, K_MSEC(2000));
 }
 
 static int hf_clock_release(void)
 {
-	if (!clock_requested) {
-		return 0;
-	}
-
-	const struct device *dev =
-		COND_CODE_1(NRF_CLOCK_HAS_HFCLK, (DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk)),
-			    (COND_CODE_1(NRF_CLOCK_HAS_XO, (DEVICE_DT_GET_ONE(nordic_nrf_clock_xo)),
-					 (DEVICE_DT_GET_ONE(nordic_nrf54h_hfxo)))));
-	clock_requested = false;
-
-	return nrf_clock_control_release(dev, NULL);
+	return nrf_clock_control_release(clock_dev, NULL);
 }
 #else
 static int hf_clock_request(void)
@@ -221,13 +192,6 @@ static void gppi_uninit(const struct device *dev, struct pulse_meas_drv_data *p_
 	p_data->gppi_ready = false;
 }
 
-#if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK)
-static void clock_release(void)
-{
-	(void)hf_clock_release();
-}
-#endif
-
 static void meas_stop(const struct device *dev)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
@@ -236,7 +200,7 @@ static void meas_stop(const struct device *dev)
 	gpiote_disable(dev);
 	nrfx_timer_disable(&p_data->timer);
 #if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK)
-	clock_release();
+	hf_clock_release();
 #endif
 	pulse_meas_state_t old_state = p_data->state;
 
