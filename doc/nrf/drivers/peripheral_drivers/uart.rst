@@ -129,7 +129,8 @@ Reliable reception on nRF52, nRF53 and nRF91 Series
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To enable reliable reception without HWFC, you need to provide a TIMER instance.
-For example, enabling the :kconfig:option:`CONFIG_UART_1_NRF_HW_ASYNC` Kconfig option and setting :kconfig:option:`CONFIG_UART_1_NRF_HW_ASYNC_TIMER` to ``2`` ensure reliable reception for a UARTE1 instance using the TIMER2 peripheral.
+To do so, add the ``timer`` property to the UART node in the devicetree.
+For example, setting ``timer = <&timer2>;`` in the ``uart1`` node ensures reliable reception for a UARTE1 instance using the TIMER2 peripheral.
 This mode is using TIMER and PPI to count the number of received bytes without stopping the DMA transfer.
 When an idle gap is detected by the receiver, the driver can report data that is already received.
 
