@@ -1,13 +1,11 @@
 samples/net/aws_iot/socs/nrf7120_cpuapp_ns.conf cc3132e5426b15eee323d89c2af5ff34
 samples/wifi/shell/socs/nrf7120_cpuapp.conf cc3132e5426b15eee323d89c2af5ff34
-samples/net/aws_iot/socs/nrf7120_cpuapp_ns.overlay 73a3701b828f93ae4cd87d7eb7fe4a92
 samples/wifi/shell/socs/nrf7120_cpuapp.overlay 73a3701b828f93ae4cd87d7eb7fe4a92
 samples/net/aws_iot/socs/nrf7120e_cpuapp.conf cc3132e5426b15eee323d89c2af5ff34
 samples/net/aws_iot/socs/nrf7120e_cpuapp_ns.conf cc3132e5426b15eee323d89c2af5ff34
 samples/net/aws_iot/socs/nrf7120_cpuapp.conf cc3132e5426b15eee323d89c2af5ff34
 samples/net/aws_iot/socs/nrf7120_cpuapp.overlay 73a3701b828f93ae4cd87d7eb7fe4a92
 samples/net/azure_iot_hub/socs/nrf7120_cpuapp_ns.conf cc3132e5426b15eee323d89c2af5ff34
-samples/net/azure_iot_hub/socs/nrf7120_cpuapp_ns.overlay 73a3701b828f93ae4cd87d7eb7fe4a92
 samples/net/azure_iot_hub/socs/nrf7120e_cpuapp.conf cc3132e5426b15eee323d89c2af5ff34
 samples/net/azure_iot_hub/socs/nrf7120e_cpuapp_ns.conf cc3132e5426b15eee323d89c2af5ff34
 samples/net/azure_iot_hub/socs/nrf7120_cpuapp.conf cc3132e5426b15eee323d89c2af5ff34
@@ -55,7 +53,6 @@ samples/wifi/monitor/socs/nrf7120e_cpuapp_ns.conf cc3132e5426b15eee323d89c2af5ff
 samples/wifi/monitor/socs/nrf7120_cpuapp.conf cc3132e5426b15eee323d89c2af5ff34
 samples/wifi/monitor/socs/nrf7120_cpuapp.overlay 73a3701b828f93ae4cd87d7eb7fe4a92
 samples/wifi/nrf_cloud/socs/nrf7120_cpuapp_ns.conf cc3132e5426b15eee323d89c2af5ff34
-samples/wifi/nrf_cloud/socs/nrf7120_cpuapp_ns.overlay 73a3701b828f93ae4cd87d7eb7fe4a92
 samples/wifi/nrf_cloud/socs/nrf7120e_cpuapp_ns.conf cc3132e5426b15eee323d89c2af5ff34
 samples/wifi/offloaded_raw_tx/socs/nrf7120_cpuapp_ns.conf cc3132e5426b15eee323d89c2af5ff34
 samples/wifi/offloaded_raw_tx/socs/nrf7120_cpuapp_ns.overlay 73a3701b828f93ae4cd87d7eb7fe4a92
@@ -298,3 +295,6 @@ samples/wifi/coex_shell/boards/nrf7120dk_nrf7120e_cpuapp.conf a4a1d6b1dd0e496c1f
 samples/wifi/coex_shell/boards/nrf7120dk_nrf7120_cpuapp.conf a4a1d6b1dd0e496c1fe8678837774ba5
 samples/benchmarks/coremark/boards/nrf7120dk_nrf7120e_cpuflpr.conf ad7876ba7d7a28b349c87ae6e21a8180
 samples/benchmarks/coremark/boards/nrf7120dk_nrf7120_cpuflpr.conf ad7876ba7d7a28b349c87ae6e21a8180
+samples/net/azure_iot_hub/socs/nrf7120_cpuapp_ns.overlay 61299c9b38bc8db2b497424768cca85b
+samples/net/aws_iot/socs/nrf7120_cpuapp_ns.overlay 61299c9b38bc8db2b497424768cca85b
+samples/wifi/nrf_cloud/socs/nrf7120_cpuapp_ns.overlay 61299c9b38bc8db2b497424768cca85b
