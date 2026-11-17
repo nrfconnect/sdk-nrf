@@ -27,6 +27,7 @@ void img_upload_init_verify(struct net_buf *nb);
 void img_state_write_verify(struct net_buf *nb);
 void img_gr_stub_data_init(uint8_t *hash_ptr);
 void img_confirmation_bit_clear(void);
+void img_slot_num_set(int index, uint32_t slot_num);
 
 #ifdef __cplusplus
 }

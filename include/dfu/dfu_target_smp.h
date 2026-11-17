@@ -85,7 +85,7 @@ bool dfu_target_smp_identify(const void *const buf);
  * @brief Initialize DFU target, perform steps necessary to receive firmware.
  *
  * @param[in] file_size Size of the current file being downloaded.
- * @param[in] img_num Image pair index.
+ * @param[in] img_num Image pair index. Must be 0 in MCUboot recovery mode.
  * @param[in] cb Callback for signaling events (unused).
  *
  * @retval 0 on success, negative errno otherwise.
@@ -124,10 +124,9 @@ int dfu_target_smp_done(bool successful);
  * @brief Schedule update of image.
  *
  * This call requests image update. The update will be performed after
- * the device resets.
+ * the device resets. The image pair given to @ref dfu_target_smp_init() is updated.
  *
- * @param[in] img_num Given image pair index or -1 for all
- *		      of image pair indexes.
+ * @param[in] img_num Unused.
  *
  * @return 0 for a successful request or a negative error
  *	   code identicating reason of failure.

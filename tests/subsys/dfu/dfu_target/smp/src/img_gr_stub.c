@@ -326,3 +326,8 @@ void img_confirmation_bit_clear(void)
 {
 	image_dummy_info[0].flags.confirmed = false;
 }
+
+void img_slot_num_set(int index, uint32_t slot_num)
+{
+	image_dummy_info[index].slot_num = slot_num;
+}
