@@ -167,7 +167,6 @@ tests:
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE=nrf71-iot-devices.conf
-      - SB_CONFIG_WIFI_NRF70=n
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -183,7 +182,6 @@ tests:
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE=nrf71-high-performance.conf
-      - SB_CONFIG_WIFI_NRF70=n
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -199,7 +197,6 @@ tests:
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE=nrf71-memory-optimized.conf
-      - SB_CONFIG_WIFI_NRF70=n
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -215,7 +212,6 @@ tests:
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE=nrf71-rx-prio.conf
-      - SB_CONFIG_WIFI_NRF70=n
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -231,7 +227,6 @@ tests:
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE=nrf71-tx-prio.conf
-      - SB_CONFIG_WIFI_NRF70=n
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
