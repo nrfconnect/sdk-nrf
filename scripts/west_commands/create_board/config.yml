@@ -85,7 +85,7 @@ products:
             cores:
               - name: cpuapp
                 arch: arm
-                ram: 188
+                ram: 256
                 flash: 1428
               - name: cpuflpr
                 arch: riscv
