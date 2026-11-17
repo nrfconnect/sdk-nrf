@@ -217,6 +217,7 @@ tests:
       - ipc_service_SNIPPET=nordic-flpr
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     timeout: 20
@@ -229,6 +230,7 @@ tests:
       - remote_EXTRA_DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuflpr_icbmsg.overlay"
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     timeout: 20

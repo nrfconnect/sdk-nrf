@@ -549,6 +549,8 @@ tests:
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -562,6 +564,7 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -575,6 +578,7 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -588,6 +592,7 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -601,6 +606,7 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -613,9 +619,11 @@ tests:
       - CONFIG_NET_DHCPV4_SERVER=y
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     # Fails to link: Wi-Fi patch region overlaps Zephyr build on nrf7120dk
     platform_exclude:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -639,7 +647,9 @@ tests:
       - EXTRA_CONF_FILE=nrf71-zperf.conf
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
-    platform_allow: nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -653,6 +663,7 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -667,7 +678,9 @@ tests:
       - CONFIG_NET_IPV4_FRAGMENT_MAX_PKT=24
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
-    platform_allow: nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - ci_build_superset
       - sysbuild

@@ -16,6 +16,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
       - nrf7120dk/nrf7120e/cpuapp
     harness: console
     harness_config:
@@ -36,6 +37,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
       - nrf7120dk/nrf7120e/cpuapp
     extra_configs:
       - CONFIG_APP_USE_RETAINED_MEM=y
@@ -61,6 +63,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
       - nrf7120dk/nrf7120e/cpuapp
     extra_configs:
       - CONFIG_GRTC_WAKEUP_ENABLE=y
@@ -91,6 +94,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
       - nrf7120dk/nrf7120e/cpuapp
     extra_configs:
       - CONFIG_APP_USE_RETAINED_MEM=y

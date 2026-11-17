@@ -11,6 +11,7 @@ common:
     - nrf54h20dk/nrf54h20/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf7120dk/nrf7120/cpuapp
+    - nrf7120dk/nrf7120e/cpuapp
   build_only: true
   sysbuild: true
 tests:
