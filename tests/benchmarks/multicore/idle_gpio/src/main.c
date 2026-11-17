@@ -11,6 +11,10 @@
 #include <zephyr/drivers/gpio/gpio_nrf.h>
 #include <zephyr/pm/pm.h>
 
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+#include <modem/nrf_modem_lib.h>
+#endif
+
 LOG_MODULE_REGISTER(idle_gpio);
 
 #if IS_ENABLED(CONFIG_SOC_NRF54H20_CPUAPP) || IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
@@ -60,6 +64,14 @@ int main(void)
 {
 	unsigned int cnt = 0;
 	int rc;
+
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+	rc = nrf_modem_lib_init();
+	if (rc < 0) {
+		LOG_ERR("Failed to initialize modem library (%d)", rc);
+		return 0;
+	}
+#endif
 
 	rc = gpio_is_ready_dt(&led);
 	if (rc < 0) {
