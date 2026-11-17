@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Extra overlay selecting FLPR instead of PPR as the remote core.
+ * Use together with the nordic-flpr snippet, applied after
+ * nrf9251dk_nrf9251_cpuapp.overlay.
+ */
+
+/ {
+	aliases {
+		remote-temp-monitor-ipc = &cpuapp_cpuflpr_ipc;
+	};
+};
+
+&cpuapp_cpuppr_ipc {
+	status = "disabled";
+};
+
+&cpuapp_cpuflpr_ipc {
+	status = "okay";
+	compatible = "zephyr,ipc-icbmsg";
+	tx-blocks = <16>;
+	rx-blocks = <16>;
+};
+
+&cpuflpr_vevif {
+	status = "okay";
+};

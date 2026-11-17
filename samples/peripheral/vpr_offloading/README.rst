@@ -23,6 +23,7 @@ You can use VPR cores to offload background tasks from the application core.
 This reduces both the CPU load on the main core and the overall power consumption.
 VPR cores execute code from RAM, which means non-volatile memory (NVM) does not need to be woken up.
 On the nRF54H20 SoC, PPR runs in the low-power domain clocked at 16 MHz, so the power savings can be significant compared to the application core running at 320 MHz.
+On the nRF9251 SoC, PPR runs at 16 MHz in the low-power domain, which can save significant power compared to the 256 MHz application core.
 However, the VPR code space is limited, so it requires a lightweight offloading framework.
 
 The sample demonstrates a lightweight framework for offloading tasks to the VPR core.
@@ -103,6 +104,8 @@ The sample supports the following configurations defined in the :file:`sample.ya
      - Offloads modules to the FLPR core.
    * - ``sample.vpr_offloading.ppr``
      - Offloads modules to the PPR core.
+   * - ``sample.vpr_offloading.flpr.nrf9251``
+     - Offloads modules to the FLPR core of the nRF9251 SoC.
 
 Building and running
 ********************
