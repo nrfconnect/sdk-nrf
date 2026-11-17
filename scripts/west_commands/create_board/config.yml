@@ -90,6 +90,7 @@ products:
               - name: cpuflpr
                 arch: riscv
                 ram: 96
+                xip_ram: 68
                 flash: 96
                 xip: true
   - series: nrf54lm
