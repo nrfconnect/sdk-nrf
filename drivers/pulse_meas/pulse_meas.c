@@ -29,8 +29,6 @@
 
 LOG_MODULE_REGISTER(pulse_meas, CONFIG_PULSE_MEAS_LOG_LEVEL);
 
-K_FIFO_DEFINE(pulse_meas_fifo);
-
 #define PULSE_MEAS_RESOLUTION MHZ(1)
 
 #define PULSE_MEAS_PIN_UNUSED UINT32_MAX
@@ -72,6 +70,11 @@ struct pulse_meas_drv_data {
 	void *user_context;
 	struct k_mem_slab *mem_slab;
 	atomic_t pending_series;
+	struct k_fifo fifo;
+#if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK) && IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
+	struct onoff_client clk_cli;
+	struct k_sem clock_ready_sem;
+#endif
 
 	uint8_t gpiote_ch[2];
 	pulse_meas_mode_t mode;
@@ -90,43 +93,54 @@ struct pulse_meas_drv_cfg {
 
 #if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK)
 #if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
+/* The onoff manager is the same for all instances, the client is kept in the instance data. */
 static struct onoff_manager *clk_mgr;
-static struct onoff_client clk_cli;
-static K_SEM_DEFINE(clock_ready_sem, 0, 1);
 
 static void clock_started_callback(struct onoff_manager *mgr, struct onoff_client *cli,
 				   uint32_t state, int res)
 {
+	struct pulse_meas_drv_data *p_data =
+		CONTAINER_OF(cli, struct pulse_meas_drv_data, clk_cli);
+
 	ARG_UNUSED(mgr);
-	ARG_UNUSED(cli);
 	ARG_UNUSED(state);
 	ARG_UNUSED(res);
 
-	k_sem_give(&clock_ready_sem);
+	k_sem_give(&p_data->clock_ready_sem);
 }
 
-static int hf_clock_request(void)
+static void hf_clock_init(const struct device *dev)
 {
+	struct pulse_meas_drv_data *p_data = dev->data;
+
+	k_sem_init(&p_data->clock_ready_sem, 0, 1);
+	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+}
+
+static int hf_clock_request(const struct device *dev)
+{
+	struct pulse_meas_drv_data *p_data = dev->data;
 	int ret;
 
-	sys_notify_init_callback(&clk_cli.notify, clock_started_callback);
-	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
-	ret = onoff_request(clk_mgr, &clk_cli);
+	sys_notify_init_callback(&p_data->clk_cli.notify, clock_started_callback);
+	ret = onoff_request(clk_mgr, &p_data->clk_cli);
 	if (ret < 0) {
 		return ret;
 	}
 
-	ret = k_sem_take(&clock_ready_sem, K_MSEC(50));
+	ret = k_sem_take(&p_data->clock_ready_sem, K_MSEC(50));
 	if (ret < 0) {
-		(void)onoff_cancel_or_release(clk_mgr, &clk_cli);
+		(void)onoff_cancel_or_release(clk_mgr, &p_data->clk_cli);
 		return ret;
 	}
 
 	return 0;
 }
 
-static int hf_clock_release(void)
+static int hf_clock_release(const struct device *dev)
 {
+	ARG_UNUSED(dev);
+
 	return onoff_release(clk_mgr);
 }
 
@@ -138,23 +152,41 @@ static const struct device *clock_dev =
 			    (COND_CODE_1(NRF_CLOCK_HAS_XO, (DEVICE_DT_GET_ONE(nordic_nrf_clock_xo)),
 					 (DEVICE_DT_GET_ONE(nordic_nrf54h_hfxo)))));
 
-static int hf_clock_request(void)
+static void hf_clock_init(const struct device *dev)
 {
+	ARG_UNUSED(dev);
+}
+
+static int hf_clock_request(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
 	return nrf_clock_control_request_sync(clock_dev, NULL, K_MSEC(2000));
 }
 
-static int hf_clock_release(void)
+static int hf_clock_release(const struct device *dev)
 {
+	ARG_UNUSED(dev);
+
 	return nrf_clock_control_release(clock_dev, NULL);
 }
 #else
-static int hf_clock_request(void)
+static void hf_clock_init(const struct device *dev)
 {
+	ARG_UNUSED(dev);
+}
+
+static int hf_clock_request(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
 	return 0;
 }
 
-static int hf_clock_release(void)
+static int hf_clock_release(const struct device *dev)
 {
+	ARG_UNUSED(dev);
+
 	return 0;
 }
 #endif /* CONFIG_CLOCK_CONTROL_NRF */
@@ -233,7 +265,7 @@ static void meas_stop(const struct device *dev)
 	gpiote_disable(dev);
 	nrfx_timer_disable(&p_data->timer);
 #if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK)
-	hf_clock_release();
+	hf_clock_release(dev);
 #endif
 	pulse_meas_state_t old_state = p_data->state;
 
@@ -285,7 +317,7 @@ static void gpiote_handler(nrfx_gpiote_pin_t pin, nrfx_gpiote_trigger_t action, 
 		return;
 	}
 
-	k_fifo_put(&pulse_meas_fifo, block);
+	k_fifo_put(&p_data->fifo, block);
 	atomic_inc(&p_data->pending_series);
 	p_data->meas_count = 0;
 
@@ -547,7 +579,7 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 								   : PULSE_MEAS_STATE_RUNNING;
 
 #if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK)
-	ret = hf_clock_request();
+	ret = hf_clock_request(dev);
 	if (ret < 0) {
 		discard_active_buffers(p_data);
 		p_data->state = PULSE_MEAS_STATE_READY;
@@ -558,7 +590,7 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 	ret = pm_device_runtime_get(dev);
 	if (ret < 0) {
 #ifdef CONFIG_PULSE_MEAS_USE_HFCLK
-		hf_clock_release();
+		hf_clock_release(dev);
 #endif
 		discard_active_buffers(p_data);
 		p_data->state = PULSE_MEAS_STATE_READY;
@@ -618,7 +650,7 @@ int pulse_meas_get(const struct device *dev, uint32_t **data)
 		return -EINVAL;
 	}
 
-	block = k_fifo_get(&pulse_meas_fifo, K_NO_WAIT);
+	block = k_fifo_get(&p_data->fifo, K_NO_WAIT);
 	if (block == NULL) {
 		if (atomic_get(&p_data->pending_series) > 0 ||
 		    k_mem_slab_num_used_get(p_data->mem_slab) > 0 || measurement_active(p_data)) {
@@ -760,6 +792,10 @@ static int pulse_meas_init(const struct device *dev)
 	};
 	int rc;
 
+	k_fifo_init(&p_data->fifo);
+#if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK)
+	hf_clock_init(dev);
+#endif
 	p_data->timer_frequency = timer_cfg.frequency;
 	p_data->timer.p_reg = p_cfg->timer_reg;
 	rc = nrfx_timer_init(&p_data->timer, &timer_cfg, NULL);
