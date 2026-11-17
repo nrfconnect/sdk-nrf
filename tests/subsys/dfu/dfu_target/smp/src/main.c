@@ -70,6 +70,9 @@ ZTEST(dfu_target_smp, test_image_schedule)
 	int rc;
 	struct mcumgr_image_state res_buf;
 
+	rc = dfu_target_smp_init(TEST_IMAGE_SIZE, TEST_IMAGE_NUM, NULL);
+	zassert_equal(rc, MGMT_ERR_EOK, "DFU target Init fail");
+
 	/* Force list size to 1 */
 	img_read_response(1);
 	rc = dfu_target_smp_image_list_get(&res_buf);
@@ -94,6 +97,42 @@ ZTEST(dfu_target_smp, test_image_schedule)
 	zassert_equal(true, res_buf.image_list[1].flags.pending,
 		      "Expected to receive %d response %d", true,
 		      res_buf.image_list[1].flags.pending);
+}
+
+ZTEST(dfu_target_smp, test_image_schedule_uploaded_image)
+{
+	int rc;
+	struct mcumgr_image_state res_buf;
+
+	/* Image 0 also has an image in its secondary slot, listed before the uploaded image */
+	img_slot_num_set(0, 1);
+
+	rc = dfu_target_smp_init(TEST_IMAGE_SIZE, TEST_IMAGE_NUM, NULL);
+	zassert_equal(rc, MGMT_ERR_EOK, "DFU target Init fail");
+
+	img_read_response(2);
+	rc = dfu_target_smp_image_list_get(&res_buf);
+	zassert_equal(MGMT_ERR_EOK, rc, "Expected to receive %d response %d", MGMT_ERR_EOK, rc);
+
+	/* Only the uploaded image must be marked for test */
+	smp_stub_set_rx_data_verify(img_state_write_verify);
+	rc = dfu_target_smp_schedule_update(1);
+	zassert_equal(rc, MGMT_ERR_EOK, "Uploaded image not scheduled: %d", rc);
+	zassert_true(res_buf.image_list[1].flags.pending, "Uploaded image not pending");
+}
+
+ZTEST(dfu_target_smp, test_recovery_mode_image_num)
+{
+	int rc;
+
+	/* Recovery mode always uploads to the secondary slot of image 0 */
+	dfu_target_smp_recovery_mode_enable(dfu_target_reset_call);
+
+	rc = dfu_target_smp_init(TEST_IMAGE_SIZE, 1, NULL);
+	zassert_equal(rc, -ENOTSUP, "Expected to receive %d response %d", -ENOTSUP, rc);
+
+	rc = dfu_target_smp_init(TEST_IMAGE_SIZE, 0, NULL);
+	zassert_equal(rc, MGMT_ERR_EOK, "DFU target Init fail");
 }
 
 ZTEST(dfu_target_smp, test_image_confirm)
