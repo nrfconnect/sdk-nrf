@@ -7,6 +7,7 @@
 #include <openthread/platform/crypto.h>
 #include <psa/crypto.h>
 #include <zephyr/sys/__assert.h>
+#include <zephyr/sys/util.h>
 #include <string.h>
 
 #if !defined(CONFIG_BUILD_WITH_TFM) && defined(CONFIG_OPENTHREAD_CRYPTO_PSA)
@@ -24,6 +25,11 @@
 /* Reserved for six 128-bit keys, and one 256-bit key */
 #define OPENTHREAD_KMU_DEDICATED_SLOTS	    (8)
 #endif /* CONFIG_OPENTHREAD_PSA_NVM_BACKEND_KMU */
+
+#if !IS_ENABLED(CONFIG_OPENTHREAD_PLATFORM_KEY_REF)
+#define AES_128_KEY_SIZE (16)
+#define AES_256_KEY_SIZE (32)
+#endif /* CONFIG_OPENTHREAD_PLATFORM_KEY_REF */
 
 /**
  * @brief Returns a PSA key reference.
@@ -341,6 +347,47 @@ otError otPlatCryptoImportKey(otCryptoKeyRef *aKeyRef, otCryptoKeyType aKeyType,
 	return psaToOtError(status);
 }
 
+#if !IS_ENABLED(CONFIG_OPENTHREAD_PLATFORM_KEY_REF)
+static otError import_literal_aes_key(psa_key_id_t *key_ref, const otCryptoKey *key)
+{
+	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+	psa_status_t status;
+
+	if (key->mKey == NULL ||
+	    (key->mKeyLength != AES_128_KEY_SIZE && key->mKeyLength != AES_256_KEY_SIZE)) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	psa_set_key_type(&attributes, PSA_KEY_TYPE_AES);
+	psa_set_key_algorithm(&attributes, PSA_ALG_ECB_NO_PADDING);
+	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_ENCRYPT);
+	psa_set_key_lifetime(&attributes, PSA_KEY_LIFETIME_VOLATILE);
+
+	status = psa_import_key(&attributes, key->mKey, key->mKeyLength, key_ref);
+	psa_reset_key_attributes(&attributes);
+
+	return psaToOtError(status);
+}
+
+static otError destroy_literal_key(psa_key_id_t *key_ref)
+{
+	psa_status_t status;
+
+	if (*key_ref == PSA_KEY_ID_NULL) {
+		return OT_ERROR_NONE;
+	}
+
+	status = psa_destroy_key(*key_ref);
+	if (status != PSA_SUCCESS) {
+		return psaToOtError(status);
+	}
+
+	*key_ref = PSA_KEY_ID_NULL;
+
+	return OT_ERROR_NONE;
+}
+#endif /* !IS_ENABLED(CONFIG_OPENTHREAD_PLATFORM_KEY_REF) */
+
 otError otPlatCryptoExportKey(otCryptoKeyRef aKeyRef, uint8_t *aBuffer, size_t aBufferLen,
 			      size_t *aKeyLen)
 {
@@ -608,12 +655,26 @@ otError otPlatCryptoAesSetKey(otCryptoContext *aContext, const otCryptoKey *aKey
 		return OT_ERROR_INVALID_ARGS;
 	}
 
+	key_ref = aContext->mContext;
+
+#if !IS_ENABLED(CONFIG_OPENTHREAD_PLATFORM_KEY_REF)
+	otError error = OT_ERROR_NONE;
+
+	if (aKey->mKey != NULL) {
+		error = destroy_literal_key(key_ref);
+		if (error != OT_ERROR_NONE) {
+			return error;
+		}
+
+		return import_literal_aes_key(key_ref, aKey);
+	}
+#endif /* !IS_ENABLED(CONFIG_OPENTHREAD_PLATFORM_KEY_REF) */
+
 	if (aKey->mKey != NULL || aKey->mKeyRef == PSA_KEY_ID_NULL ||
 	    !otPlatCryptoHasKey(aKey->mKeyRef)) {
 		return OT_ERROR_INVALID_ARGS;
 	}
 
-	key_ref = aContext->mContext;
 	*key_ref = aKey->mKeyRef;
 
 	return OT_ERROR_NONE;
@@ -650,6 +711,20 @@ otError otPlatCryptoAesEncrypt(otCryptoContext *aContext, const uint8_t *aInput,
 
 otError otPlatCryptoAesFree(otCryptoContext *aContext)
 {
+#if !IS_ENABLED(CONFIG_OPENTHREAD_PLATFORM_KEY_REF)
+	psa_key_id_t *key_ref;
+
+	if (!checkContext(aContext, sizeof(psa_key_id_t))) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	key_ref = aContext->mContext;
+
+	return destroy_literal_key(key_ref);
+#else
+	ARG_UNUSED(aContext);
+#endif /* !IS_ENABLED(CONFIG_OPENTHREAD_PLATFORM_KEY_REF) */
+
 	return OT_ERROR_NONE;
 }
 
