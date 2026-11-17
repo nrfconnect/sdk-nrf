@@ -70,7 +70,7 @@ To download an upgrade candidate for a specific image pair:
 
 The library rejects a negative index, or an index greater than or equal to the one set by the :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` Kconfig option, with ``-EINVAL`` before the download starts.
 The index is ignored for modem image types.
-For :c:enumerator:`DFU_TARGET_IMAGE_TYPE_SMP`, the index selects the image number on the SMP server.
+For :c:enumerator:`DFU_TARGET_IMAGE_TYPE_SMP`, the index selects the image number on the SMP server, and the upper limit does not apply.
 
 All other start functions use image pair ``0``, which is the main application.
 
