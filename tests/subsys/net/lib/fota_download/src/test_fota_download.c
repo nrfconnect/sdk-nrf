@@ -557,6 +557,46 @@ ZTEST(fota_download_tests, test_download_img_num_out_of_range)
 	err = fota_download_cancel();
 	zassert_equal(err, -EAGAIN, NULL);
 }
+
+ZTEST(fota_download_tests, test_download_img_num_smp_no_local_bound)
+{
+	int err;
+	static uint8_t fragment_data[32];
+	const struct downloader_evt evt = {
+		.id = DOWNLOADER_EVT_FRAGMENT,
+		.fragment = {
+			.buf = fragment_data,
+			.len = sizeof(fragment_data),
+		},
+	};
+
+	init();
+
+	/* The SMP server has its own image count, the local one does not apply */
+	err = fota_download_util_client_init(client_callback, true);
+	zassert_equal(err, 0, NULL);
+
+	strcpy(buf, S0_A);
+	const struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = buf,
+		.img_num = CONFIG_UPDATEABLE_IMAGE_NUMBER,
+		.expected_type = DFU_TARGET_IMAGE_TYPE_SMP,
+	};
+
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, "SMP img_num %d rejected: %d", CONFIG_UPDATEABLE_IMAGE_NUMBER, err);
+
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, 0, NULL);
+	zassert_equal(dfu_target_init_img_num, CONFIG_UPDATEABLE_IMAGE_NUMBER,
+		      "dfu_target_init() got img_num %d, expected %d",
+		      dfu_target_init_img_num, CONFIG_UPDATEABLE_IMAGE_NUMBER);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+}
 #endif
 
 ZTEST(fota_download_tests, test_download_params_null)
