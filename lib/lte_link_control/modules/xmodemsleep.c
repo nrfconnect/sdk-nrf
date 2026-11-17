@@ -123,7 +123,6 @@ int xmodemsleep_notifications_enable(void)
 					  CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS);
 		if (err) {
 			LOG_WRN("Enabling modem sleep notifications failed, error: %d", err);
-			LOG_WRN("Modem sleep notifications require nRF9160 modem >= v1.3.0");
 			return err;
 		}
 	}

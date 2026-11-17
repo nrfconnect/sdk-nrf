@@ -27,12 +27,12 @@ void mfw_type_init(void)
 		return;
 	}
 
-	if (strstr(buf, "nrf9160_") != NULL) {
-		mfw_type = MFW_TYPE_NRF9160;
-	} else if (strstr(buf, "nrf91x1_") != NULL) {
+	if (strstr(buf, "nrf91x1_") != NULL) {
 		mfw_type = MFW_TYPE_NRF91X1;
 	} else if (strstr(buf, "nrf9151-ntn_") != NULL) {
 		mfw_type = MFW_TYPE_NRF9151_NTN;
+	} else if (strstr(buf, "lpwa-cellular_nrf92_") != NULL) {
+		mfw_type = MFW_TYPE_NRF92;
 	}
 }
 

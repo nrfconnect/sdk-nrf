@@ -101,7 +101,8 @@ static void edrx_ptw_send_work_fn(struct k_work *work_item)
 	uint8_t actt_count = 0;
 	enum mfw_type mfw_type = mfw_type_get();
 
-	if (mfw_type == MFW_TYPE_NRF9151_NTN || mfw_type == MFW_TYPE_UNKNOWN) {
+	if (mfw_type == MFW_TYPE_NRF9151_NTN || mfw_type == MFW_TYPE_NRF92 ||
+	    mfw_type == MFW_TYPE_UNKNOWN) {
 		actt[actt_count] = AT_CEDRXS_ACTT_NTN_NB;
 		actt_count++;
 	}
@@ -406,7 +407,8 @@ int edrx_request(bool enable)
 	 * the +CEDRXS notification subscription. eDRX is configured for NTN NB-IoT only when
 	 * when modem firmware has NTN support or when firmware type can not be determined.
 	 */
-	if (mfw_type == MFW_TYPE_NRF9151_NTN || mfw_type == MFW_TYPE_UNKNOWN) {
+	if (mfw_type == MFW_TYPE_NRF9151_NTN || mfw_type == MFW_TYPE_NRF92 ||
+	    mfw_type == MFW_TYPE_UNKNOWN) {
 		actt[actt_count] = AT_CEDRXS_ACTT_NTN_NB;
 		actt_count++;
 	}
