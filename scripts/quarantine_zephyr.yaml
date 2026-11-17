@@ -724,13 +724,6 @@
   comment: "https://github.com/zephyrproject-rtos/zephyr/pull/107156 - changes in robot framework"
 
 - scenarios:
-    - bluetooth.mesh.settings
-    - bluetooth.mesh.settings.no_bt_settings
-  platforms:
-    - native_sim/native
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41602"
-
-- scenarios:
     - sample.bluetooth.audio.ccp_call_control_client
     - sample.bluetooth.audio.ccp_call_control_server
   platforms:
