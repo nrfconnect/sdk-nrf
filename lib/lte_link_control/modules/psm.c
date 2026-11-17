@@ -15,6 +15,7 @@
 #include <nrf_modem_at.h>
 
 #include "common/event_handler_list.h"
+#include "common/helpers.h"
 #include "modules/psm.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
@@ -60,23 +61,6 @@ static char requested_psm_param_rat[9] = CONFIG_LTE_PSM_REQ_RAT;
 static char requested_psm_param_rptau[9] = CONFIG_LTE_PSM_REQ_RPTAU;
 /* Request PSM to be disabled and timers set to default values */
 static const char psm_disable[] = "AT+CPSMS=";
-
-/* Internal enums */
-
-enum feaconf_oper {
-	FEACONF_OPER_WRITE = 0,
-	FEACONF_OPER_READ = 1,
-	FEACONF_OPER_LIST = 2
-};
-
-enum feaconf_feat {
-	FEACONF_FEAT_PROPRIETARY_PSM = 0
-};
-
-static int feaconf_write(enum feaconf_feat feat, bool state)
-{
-	return nrf_modem_at_printf("AT%%FEACONF=%d,%d,%u", FEACONF_OPER_WRITE, feat, state);
-}
 
 void psm_evt_update_send(struct lte_lc_psm_cfg *psm_cfg)
 {

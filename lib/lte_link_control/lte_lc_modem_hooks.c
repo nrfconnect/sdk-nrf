@@ -18,6 +18,20 @@
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
+/* Features configured here can only be changed when the modem is inactive. */
+static void feaconf_set(enum feaconf_feat feature, bool enable)
+{
+	int err;
+
+	err = feaconf_write(feature, enable);
+	if (err && enable) {
+		LOG_WRN("Failed to enable %%FEACONF feature %d, err %d", feature, err);
+	} else if (err) {
+		/* Not all modem firmware versions support all features. */
+		LOG_DBG("Failed to disable %%FEACONF feature %d, err %d", feature, err);
+	}
+}
+
 #if defined(CONFIG_UNITY)
 void on_modem_init(int err, void *ctx)
 #else
@@ -84,13 +98,12 @@ static void on_modem_init(int err, void *ctx)
 	}
 #endif
 
-	/* Only supported in mfw 2.0.1 and newer.
-	 * Ignore the return value; an error likely means that the feature
-	 * is not supported. This optimization was enabled by default in firmware v2.0.0,
-	 * so that should not be a problem.
-	 */
-	(void)nrf_modem_at_printf("AT%%FEACONF=0,3,%d",
-		IS_ENABLED(CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION));
+	feaconf_set(FEACONF_FEAT_PLMN_SELECTION_OPTIMIZATION,
+		    IS_ENABLED(CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION));
+	feaconf_set(FEACONF_FEAT_DISABLE_PAGING_NO_SERVICE,
+		    IS_ENABLED(CONFIG_LTE_LIMITED_SERVICE_OPTIMIZATION));
+	feaconf_set(FEACONF_FEAT_UICC_DEACTIVATION_NO_CELLS,
+		    IS_ENABLED(CONFIG_LTE_UICC_DEACTIVATION_NO_CELLS));
 
 #if defined(CONFIG_LTE_LC_EDRX_MODULE)
 	err = lte_lc_edrx_req(IS_ENABLED(CONFIG_LTE_EDRX_REQ));

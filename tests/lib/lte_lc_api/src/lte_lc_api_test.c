@@ -421,6 +421,10 @@ void lte_lc_on_modem_init_with_firmware(const char *cgmr_resp, uint16_t cgmr_res
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", EXIT_SUCCESS);
 	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", EXIT_SUCCESS);
+	/* CONFIG_LTE_LIMITED_SERVICE_OPTIMIZATION=n */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,4,0", EXIT_SUCCESS);
+	/* CONFIG_LTE_UICC_DEACTIVATION_NO_CELLS=y */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,5,1", EXIT_SUCCESS);
 	/* lte_lc_edrx_req(false) */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	/* CONFIG_LTE_RAI_REQ=n */
@@ -467,6 +471,10 @@ void test_lte_lc_on_modem_init_all_fails(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", -NRF_EFAULT);
 	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", -NRF_EFAULT);
+	/* CONFIG_LTE_LIMITED_SERVICE_OPTIMIZATION=n */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,4,0", -NRF_EFAULT);
+	/* CONFIG_LTE_UICC_DEACTIVATION_NO_CELLS=y */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,5,1", -NRF_EFAULT);
 	/* lte_lc_edrx_req(false) */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", -NRF_EFAULT);
 	/* CONFIG_LTE_RAI_REQ=n */
@@ -499,6 +507,10 @@ void test_lte_lc_on_modem_init_dns_fail(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", EXIT_SUCCESS);
 	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", EXIT_SUCCESS);
+	/* CONFIG_LTE_LIMITED_SERVICE_OPTIMIZATION=n */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,4,0", EXIT_SUCCESS);
+	/* CONFIG_LTE_UICC_DEACTIVATION_NO_CELLS=y */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,5,1", EXIT_SUCCESS);
 	/* lte_lc_edrx_req(false) */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	/* CONFIG_LTE_RAI_REQ=n */
@@ -529,6 +541,10 @@ void test_lte_lc_on_modem_init_dns_fail(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", EXIT_SUCCESS);
 	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", EXIT_SUCCESS);
+	/* CONFIG_LTE_LIMITED_SERVICE_OPTIMIZATION=n */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,4,0", EXIT_SUCCESS);
+	/* CONFIG_LTE_UICC_DEACTIVATION_NO_CELLS=y */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,5,1", EXIT_SUCCESS);
 	/* lte_lc_edrx_req(false) */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	/* CONFIG_LTE_RAI_REQ=n */

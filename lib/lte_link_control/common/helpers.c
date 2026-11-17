@@ -14,6 +14,12 @@
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
+enum feaconf_oper {
+	FEACONF_OPER_WRITE = 0,
+	FEACONF_OPER_READ = 1,
+	FEACONF_OPER_LIST = 2
+};
+
 static enum mfw_type mfw_type = MFW_TYPE_UNKNOWN;
 
 void mfw_type_init(void)
@@ -39,6 +45,11 @@ void mfw_type_init(void)
 enum mfw_type mfw_type_get(void)
 {
 	return mfw_type;
+}
+
+int feaconf_write(enum feaconf_feat feature, bool enable)
+{
+	return nrf_modem_at_printf("AT%%FEACONF=%d,%d,%u", FEACONF_OPER_WRITE, feature, enable);
 }
 
 int string_to_int(const char *str_buf, int base, int *output)

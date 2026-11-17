@@ -157,8 +157,29 @@ config LTE_PLMN_SELECTION_OPTIMIZATION
 	default y
 	help
 	  Enable PLMN selection optimization during initial search.
-	  This optimization typically makes PLMN selection faster, especially for stationary devices.
-	  Refer to the AT%FEACONF command in the AT command manual for more details.
+	  This optimization typically makes PLMN selection faster, especially for non-stationary
+	  devices.
+	  This option configures %FEACONF feature ID 3. Refer to the AT%FEACONF command in the
+	  AT command manual for more details.
+
+config LTE_LIMITED_SERVICE_OPTIMIZATION
+	bool "Limited service optimization"
+	help
+	  Stop paging reception in cells that do not permit service. When no allowed network is
+	  found, the modem enters a power saving state and runs the configured periodic searches
+	  until an acceptable network is found. This reduces power consumption under limited
+	  service conditions. The feature is not used in manual PLMN selection mode.
+	  This option configures %FEACONF feature ID 4. Refer to the AT%FEACONF command in the
+	  AT command manual for more details.
+
+config LTE_UICC_DEACTIVATION_NO_CELLS
+	bool "UICC deactivation when no cells are available"
+	default y
+	help
+	  Deactivate the UICC when the modem detects that it is in an area where no cells are
+	  available. The UICC is reactivated when a cell is found.
+	  This option configures %FEACONF feature ID 5. Refer to the AT%FEACONF command in the
+	  AT command manual for more details.
 
 config LTE_LOCK_PLMN
 	bool "LTE PLMN lock"
@@ -243,9 +264,10 @@ config LTE_PSM_REQ_RAT_SECONDS
 config LTE_PROPRIETARY_PSM_REQ
 	bool "Proprietary PSM"
 	help
-	  Enable use of proprietary PSM using AT%FEACONF. To use this feature, also PSM request
+	  Enable use of proprietary PSM. To use this feature, also PSM request
 	  must be enabled using CONFIG_LTE_PSM_REQ or lte_lc_psm_req().
-	  Refer to the AT command guide for guidance and limitations of this feature.
+	  This option configures %FEACONF feature ID 0. Refer to the AT%FEACONF command in the
+	  AT command manual for more details.
 
 endif # LTE_LC_PSM_MODULE
 
