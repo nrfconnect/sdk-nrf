@@ -783,12 +783,6 @@ static int pulse_meas_pm_action(const struct device *dev, enum pm_device_action 
 	};                                                                                         \
 	static int pulse_meas_##inst##_init(const struct device *dev)                              \
 	{                                                                                          \
-		COND_CODE_0(                                                                       \
-			IS_ENABLED(CONFIG_GPIO),                                                   \
-			(NRF_DT_IRQ_CONNECT(                                                       \
-				 GPIOTE_PHANDLE(inst, assert_gpios), nrfx_gpiote_irq_handler,      \
-				 &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_PHANDLE(inst, assert_gpios)));), \
-			())                                                                        \
 		return pm_device_driver_init(dev, pulse_meas_pm_action);                           \
 	}                                                                                          \
 	PM_DEVICE_DT_INST_DEFINE(inst, pulse_meas_pm_action, PM_DEVICE_ISR_SAFE);                  \
