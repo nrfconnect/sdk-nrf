@@ -39,8 +39,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_CONN_PARAMS_LOG_LEVEL);
 #define CONN_INTERVAL_USB_SUSPEND CONN_INTERVAL_MS_TO_REG(CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE)
 #define CONN_LATENCY_USB_SUSPEND CONFIG_DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE
 
-#define SCI_ALLOWED_RANGE_UPDATE_RETRY_TIMEOUT	K_SECONDS(2)
-
 struct connected_peer {
 	struct bt_conn *conn;
 	bool discovered;
@@ -48,8 +46,6 @@ struct connected_peer {
 	bool use_sci;
 	uint16_t requested_latency;
 	bool conn_param_update_pending;
-	bool sci_params_range_update_in_progress;
-	bool sci_min_interval_update_pending;
 };
 
 static struct connected_peer peers[CONFIG_BT_MAX_CONN];
@@ -58,8 +54,6 @@ static bool usb_suspended;
 static void conn_params_update_fn(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(conn_params_update, conn_params_update_fn);
 
-static void sci_allowed_range_update_retry_fn(struct k_work *work);
-static struct k_work_delayable sci_allowed_range_update_retry;
 
 static struct connected_peer *find_connected_peer(const struct bt_conn *conn)
 {
@@ -176,7 +170,7 @@ static void update_peer_conn_params(struct connected_peer *peer)
 		LOG_WRN("Cannot update conn parameters for peer %p (err:%d)",
 			(void *)peer->conn, err);
 		/* Retry to update the connection parameters after an error. */
-		(void)k_work_reschedule(&conn_params_update, CONN_PARAMS_ERROR_TIMEOUT);
+		k_work_reschedule(&conn_params_update, CONN_PARAMS_ERROR_TIMEOUT);
 	} else {
 		LOG_INF("Update conn params for peer: %p (%s, requested latency: %" PRIu16
 			", USB suspended: %s)",
@@ -249,36 +243,6 @@ static void request_sci_mode(struct bt_conn *conn, enum bt_hids_sci_mode_value m
 	APP_EVENT_SUBMIT(sci_event);
 }
 
-static void preferred_sci_mode_request(struct connected_peer *peer)
-{
-	if (peer->sci_params_range_update_in_progress) {
-		/* The mode change request is postponed until
-		 * the connection rate update completes.
-		 */
-		return;
-	}
-
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USB_MANAGED_CI) && usb_suspended) {
-		LOG_INF("Request LOW POWER SCI mode for peer %p",
-			(void *)peer->conn);
-		request_sci_mode(peer->conn, BT_HIDS_SCI_MODE_LOW_POWER);
-	} else {
-		/* Note: currently the dongle only uses FAST SCI mode
-		 * for "active" operation.
-		 * If this changes in the future, the dongle will need to
-		 * cache the SCI mode and restore it when the USB is resumed.
-		 *
-		 * Also note that this dongle works under the assumption that
-		 * it is the peripheral's responsibility to either not change
-		 * the HID SCI mode or re-request LOW_POWER
-		 * mode if it wants to remain in the LOW_POWER mode.
-		 */
-		LOG_INF("Request FAST SCI mode for peer %p",
-			(void *)peer->conn);
-		request_sci_mode(peer->conn, BT_HIDS_SCI_MODE_FAST);
-	}
-}
-
 static void sci_usb_state_change_handler(bool *non_sci_peers_present)
 {
 	*non_sci_peers_present = false;
@@ -295,7 +259,25 @@ static void sci_usb_state_change_handler(bool *non_sci_peers_present)
 			continue;
 		}
 
-		preferred_sci_mode_request(peer);
+		if (usb_suspended) {
+			request_sci_mode(peer->conn, BT_HIDS_SCI_MODE_LOW_POWER);
+			LOG_INF("USB suspend: request LOW POWER SCI mode for peer %p",
+				(void *)peer->conn);
+		} else {
+			/* Note: currently the dongle only uses FAST SCI mode
+			 * for "active" operation.
+			 * If this changes in the future, the dongle will need to
+			 * cache the SCI mode and restore it when the USB is resumed.
+			 *
+			 * Also note that this dongle works under the assumption that
+			 * it is the peripheral's responsibility to either not change
+			 * the HID SCI mode or re-request LOW_POWER
+			 * mode if it wants to remain in the LOW_POWER mode.
+			 */
+			request_sci_mode(peer->conn, BT_HIDS_SCI_MODE_FAST);
+			LOG_INF("USB resume: request FAST SCI mode for peer %p",
+				(void *)peer->conn);
+		}
 	}
 }
 
@@ -352,226 +334,6 @@ static void usb_state_event_handler(enum usb_state new_state)
 	}
 }
 
-static uint8_t get_sci_peer_count(void)
-{
-	size_t sci_peer_count = 0;
-
-	for (size_t i = 0; i < ARRAY_SIZE(peers); i++) {
-		if (peers[i].conn && peers[i].use_sci) {
-			sci_peer_count++;
-		}
-	}
-
-	return sci_peer_count;
-}
-
-#if CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
-BUILD_ASSERT((CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MIN_125US * CONFIG_BT_MAX_CONN) <=
-	     UINT16_MAX,
-	     "Minimum SCI connection interval times max connections exceeds uint16_t");
-BUILD_ASSERT((CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MIN_125US * CONFIG_BT_MAX_CONN) <=
-	     CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MAX_125US,
-	     "Minimum SCI connection interval times max connections exceeds configured maximum "
-	     "connection interval. Connection interval scaling will not be possible.");
-#endif
-
-static int get_allowed_sci_conn_rate_params(uint8_t sci_peers_count,
-					    struct bt_conn_le_conn_rate_param *params)
-{
-	__ASSERT_NO_MSG(sci_peers_count > 0);
-
-#if CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
-	static const uint16_t sci_interval_min_125us =
-		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MIN_125US;
-	static const uint16_t sci_interval_max_125us =
-		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MAX_125US;
-	static const uint16_t sci_subrate_min =
-		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUBRATE_MIN;
-	static const uint16_t sci_subrate_max =
-		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUBRATE_MAX;
-	static const uint16_t sci_max_latency =
-		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_MAX_LATENCY;
-	static const uint16_t sci_continuation_num =
-		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_CONTINUATION_NUM;
-	static const uint16_t sci_supervision_timeout_10ms =
-		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUPERVISION_TIMEOUT_10MS;
-#else /* CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE */
-	/* SCI Kconfig symbols are unavailable when HID SCI is disabled; use placeholders so
-	 * this function still compiles (it is never called in that case).
-	 */
-	static const uint16_t sci_interval_min_125us;
-	static const uint16_t sci_interval_max_125us;
-	static const uint16_t sci_subrate_min;
-	static const uint16_t sci_subrate_max;
-	static const uint16_t sci_max_latency;
-	static const uint16_t sci_continuation_num;
-	static const uint16_t sci_supervision_timeout_10ms;
-
-	__ASSERT_NO_MSG(false);
-#endif /* CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE */
-
-	int err;
-	uint16_t local_min_interval_us = 0;
-	uint16_t interval_min_125us = sci_interval_min_125us * sci_peers_count;
-
-	err = bt_conn_le_read_min_conn_interval(&local_min_interval_us);
-	if (!err) {
-		__ASSERT_NO_MSG(local_min_interval_us % 125U == 0);
-		__ASSERT_NO_MSG(local_min_interval_us != 0);
-
-		if (BT_CONN_SCI_INTERVAL_TO_US(sci_interval_min_125us) < local_min_interval_us) {
-			LOG_WRN("Configured minimum connection interval (%u us) is below "
-				"controller minimum (%u us); using %u * %u (peers count) = %u us",
-				BT_CONN_SCI_INTERVAL_TO_US(sci_interval_min_125us),
-				local_min_interval_us,
-				local_min_interval_us, sci_peers_count,
-				local_min_interval_us * sci_peers_count);
-
-			interval_min_125us = (local_min_interval_us / 125U) * sci_peers_count;
-		}
-		if (interval_min_125us > sci_interval_max_125us) {
-			LOG_WRN("Calculated minimum connection interval (%u us) "
-				"is larger than configured maximum (%u us); using %u us",
-				BT_CONN_SCI_INTERVAL_TO_US(interval_min_125us),
-				BT_CONN_SCI_INTERVAL_TO_US(sci_interval_max_125us),
-				BT_CONN_SCI_INTERVAL_TO_US(sci_interval_max_125us));
-			interval_min_125us = sci_interval_max_125us;
-		}
-
-	} else {
-		LOG_ERR("Failed to read min conn interval (err %d)", err);
-	}
-
-	params->interval_min_125us = interval_min_125us;
-	params->interval_max_125us = sci_interval_max_125us;
-	params->subrate_min = sci_subrate_min;
-	params->subrate_max = sci_subrate_max;
-	params->max_latency = sci_max_latency;
-	params->continuation_number = sci_continuation_num;
-	params->supervision_timeout_10ms = sci_supervision_timeout_10ms;
-	params->min_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MIN_125US;
-	params->max_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MAX_125US;
-
-	return err;
-}
-
-static void update_single_sci_peer_allowed_range(struct connected_peer *peer,
-	const struct bt_conn_le_conn_rate_param *conn_rate_params)
-{
-	if (peer->conn && peer->use_sci) {
-		if (peer->sci_params_range_update_in_progress) {
-			peer->sci_min_interval_update_pending = true;
-			return;
-		}
-
-		int err = bt_conn_le_conn_rate_request(peer->conn, conn_rate_params);
-
-		if (!err) {
-			peer->sci_params_range_update_in_progress = true;
-		} else {
-			LOG_WRN("Failed to set conn rate params for peer %p (err %d)",
-				(void *)peer->conn, err);
-			preferred_sci_mode_request(peer);
-
-			/* Reattempt to update the allowed SCI range for this peer after some time
-			 * so that the peripheral can use the proper parameters if possible.
-			 */
-			peer->sci_min_interval_update_pending = true;
-			k_work_reschedule(&sci_allowed_range_update_retry,
-					  SCI_ALLOWED_RANGE_UPDATE_RETRY_TIMEOUT);
-		}
-	}
-}
-
-static void update_sci_peers_allowed_range(void)
-{
-	struct bt_conn_le_conn_rate_param conn_rate_params;
-
-	int err = get_allowed_sci_conn_rate_params(get_sci_peer_count(), &conn_rate_params);
-
-	if (err) {
-		return;
-	}
-
-	for (size_t i = 0; i < ARRAY_SIZE(peers); i++) {
-		update_single_sci_peer_allowed_range(&peers[i], &conn_rate_params);
-	}
-}
-
-static void sci_allowed_range_update_retry_fn(struct k_work *work)
-{
-	/* Unused parameter */
-	(void) work;
-
-	struct bt_conn_le_conn_rate_param conn_rate_params;
-	int err = get_allowed_sci_conn_rate_params(get_sci_peer_count(), &conn_rate_params);
-
-	if (err) {
-		return;
-	}
-
-	for (size_t i = 0; i < ARRAY_SIZE(peers); i++) {
-		if (peers[i].sci_min_interval_update_pending) {
-			peers[i].sci_min_interval_update_pending = false;
-			update_single_sci_peer_allowed_range(&peers[i], &conn_rate_params);
-		}
-	}
-}
-
-static void ble_peer_sci_conn_rate_event_handler(const struct ble_peer_sci_conn_rate_event *event)
-{
-	struct connected_peer *peer = find_connected_peer(event->id);
-
-	if (!peer) {
-		return;
-	}
-
-	if (!peer->sci_params_range_update_in_progress) {
-		/* This event originated from a peripheral request, ignore it. */
-		return;
-	}
-
-	peer->sci_params_range_update_in_progress = false;
-
-	__ASSERT_NO_MSG(peer->use_sci);
-
-	if (event->status != BT_HCI_ERR_SUCCESS) {
-		LOG_ERR("Failed to set conn rate params for peer %p (err 0x%02" PRIx8 ")",
-			(void *)peer->conn, event->status);
-		/* Still try to request the preferred SCI mode on the peripheral,
-		 * even though the parameters might not be optimal.
-		 */
-	}
-
-	if ((event->status == BT_HCI_ERR_LL_PROC_COLLISION) ||
-	    (event->status == BT_HCI_ERR_DIFF_TRANS_COLLISION)) {
-		/* Conn rate request failed due to a collision with another
-		 * procedure. Retry.
-		 */
-		peer->sci_min_interval_update_pending = true;
-	}
-
-	if (peer->sci_min_interval_update_pending) {
-		struct bt_conn_le_conn_rate_param conn_rate_params;
-		int err;
-
-		peer->sci_min_interval_update_pending = false;
-
-		err = get_allowed_sci_conn_rate_params(get_sci_peer_count(), &conn_rate_params);
-		if (!err) {
-			update_single_sci_peer_allowed_range(peer, &conn_rate_params);
-		}
-	} else {
-		/* As the Connection Rate Update Request came directly from the central
-		 * (not through the HID Control Point SCI Mode request), the peripheral
-		 * is currently in the out-of-spec state.
-		 * Request the preferred SCI mode to clear the out-of-spec state
-		 * on the peripheral so that it resumes normal operation.
-		 */
-		preferred_sci_mode_request(peer);
-	}
-}
-
 static void peer_connected(struct bt_conn *conn)
 {
 	struct connected_peer *new_peer = NULL;
@@ -598,13 +360,6 @@ static void peer_disconnected(struct bt_conn *conn)
 		peer->discovered = false;
 		peer->requested_latency = 0;
 		peer->conn_param_update_pending = false;
-		peer->sci_params_range_update_in_progress = false;
-		peer->sci_min_interval_update_pending = false;
-	}
-
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE) &&
-	    get_sci_peer_count() > 0) {
-		update_sci_peers_allowed_range();
 	}
 }
 
@@ -626,11 +381,13 @@ static void peer_discovered(struct bt_conn *conn, bool peer_llpm_support, bool p
 		(void)k_work_reschedule(&conn_params_update, K_NO_WAIT);
 
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE) && peer->use_sci) {
-			if (get_sci_peer_count() > 1) {
-				update_sci_peers_allowed_range();
-			} else {
-				preferred_sci_mode_request(peer);
+			enum bt_hids_sci_mode_value mode_to_request = BT_HIDS_SCI_MODE_FAST;
+
+			if (IS_ENABLED(CONFIG_DESKTOP_BLE_USB_MANAGED_CI) && usb_suspended) {
+				mode_to_request = BT_HIDS_SCI_MODE_LOW_POWER;
 			}
+
+			request_sci_mode(conn, mode_to_request);
 		}
 	}
 }
@@ -663,9 +420,76 @@ static void hogp_sci_mode_changed_event_handler(const struct hogp_sci_mode_chang
 
 static int set_default_sci_conn_params(void)
 {
-	struct bt_conn_le_conn_rate_param params;
+#if CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
+	static const uint16_t sci_interval_min_125us =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MIN_125US;
+	static const uint16_t sci_interval_max_125us =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MAX_125US;
+	static const uint16_t sci_subrate_min =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUBRATE_MIN;
+	static const uint16_t sci_subrate_max =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUBRATE_MAX;
+	static const uint16_t sci_max_latency =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_MAX_LATENCY;
+	static const uint16_t sci_continuation_num =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_CONTINUATION_NUM;
+	static const uint16_t sci_supervision_timeout_10ms =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUPERVISION_TIMEOUT_10MS;
+#else /* CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE */
+	/* SCI Kconfig symbols are unavailable when HID SCI is disabled; use placeholders so
+	 * this function still compiles (it is never called in that case).
+	 */
+	static const uint16_t sci_interval_min_125us;
+	static const uint16_t sci_interval_max_125us;
+	static const uint16_t sci_subrate_min;
+	static const uint16_t sci_subrate_max;
+	static const uint16_t sci_max_latency;
+	static const uint16_t sci_continuation_num;
+	static const uint16_t sci_supervision_timeout_10ms;
 
-	(void)get_allowed_sci_conn_rate_params(1, &params);
+	__ASSERT_NO_MSG(false);
+#endif /* CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE */
+
+	int err;
+	uint16_t local_min_interval_us = 0;
+	uint16_t interval_min_125us = sci_interval_min_125us;
+
+	err = bt_conn_le_read_min_conn_interval(&local_min_interval_us);
+	if (!err) {
+		__ASSERT_NO_MSG(local_min_interval_us % 125U == 0);
+		__ASSERT_NO_MSG(local_min_interval_us != 0);
+
+		if (BT_CONN_SCI_INTERVAL_TO_US(interval_min_125us) < local_min_interval_us) {
+			LOG_WRN("Configured minimum connection interval (%u us) is below "
+				"controller minimum (%u us); using %u us",
+				BT_CONN_SCI_INTERVAL_TO_US(interval_min_125us),
+				local_min_interval_us,
+				local_min_interval_us);
+
+			interval_min_125us = local_min_interval_us / 125U;
+		}
+		if (interval_min_125us > sci_interval_max_125us) {
+			LOG_ERR("Controller connection interval minimum is larger "
+				"than configured maximum (%u > %u)",
+				interval_min_125us,
+				sci_interval_max_125us);
+			return -EINVAL;
+		}
+	} else {
+		LOG_ERR("Failed to read min conn interval (err %d)", err);
+	}
+
+	const struct bt_conn_le_conn_rate_param params = {
+		.interval_min_125us = interval_min_125us,
+		.interval_max_125us = sci_interval_max_125us,
+		.subrate_min = sci_subrate_min,
+		.subrate_max = sci_subrate_max,
+		.max_latency = sci_max_latency,
+		.continuation_number = sci_continuation_num,
+		.supervision_timeout_10ms = sci_supervision_timeout_10ms,
+		.min_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MIN_125US,
+		.max_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MAX_125US,
+	};
 
 	return bt_conn_le_conn_rate_set_defaults(&params);
 }
@@ -683,9 +507,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			initialized = true;
 
 			if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE)) {
-				k_work_init_delayable(&sci_allowed_range_update_retry,
-						      sci_allowed_range_update_retry_fn);
-
 				int err = set_default_sci_conn_params();
 
 				if (err) {
@@ -748,13 +569,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE) &&
-	    is_ble_peer_sci_conn_rate_event(aeh)) {
-		ble_peer_sci_conn_rate_event_handler(cast_ble_peer_sci_conn_rate_event(aeh));
-
-		return false;
-	}
-
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -771,5 +585,4 @@ APP_EVENT_SUBSCRIBE(MODULE, usb_state_event);
 #endif
 #ifdef CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, hogp_sci_mode_changed_event);
-APP_EVENT_SUBSCRIBE(MODULE, ble_peer_sci_conn_rate_event);
 #endif
