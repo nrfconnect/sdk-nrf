@@ -30,6 +30,7 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
       - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf9160dk/nrf9160/ns
@@ -66,6 +67,7 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
       - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -119,6 +121,7 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
       - nrf7120dk/nrf7120e/cpuapp
     tags: ppk_power_measure
     harness: pytest
@@ -167,6 +170,7 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
       - nrf7120dk/nrf7120e/cpuapp
     harness: console
     harness_config:

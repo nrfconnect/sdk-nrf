@@ -228,7 +228,7 @@ class NcsProvision(WestCommand):
                 "nrf54lm20a", "nrf54lm20b",
                 "nrf54lv10a", "nrf54lc10a",
                 "nrf54ls05a", "nrf54ls05b",
-                "nrf7120",
+                "nrf7120", "nrf7120e",
                 "nrf54h20",
                 "nrf9251",
             ],

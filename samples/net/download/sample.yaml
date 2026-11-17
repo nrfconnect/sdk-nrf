@@ -22,6 +22,7 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -37,6 +38,7 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -52,6 +54,7 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp/ns
     extra_args:
       - download_EXTRA_CONF_FILE=wifi.conf
     # No real mutual-TLS-enabled HTTPS server is used; this reuses the sample's
