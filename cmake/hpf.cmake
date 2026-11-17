@@ -133,4 +133,6 @@ function(hpf_assembly_prepare_install soc hrt_srcs)
     COMMENT ${asm_install_msg}
   )
 
+  add_dependencies(asm_install asm_gen)
+
 endfunction()
