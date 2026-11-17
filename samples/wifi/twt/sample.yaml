@@ -69,7 +69,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       # Dummy IP address for building the sample
       - CONFIG_TRAFFIC_GEN_REMOTE_IPV4_ADDR="1.2.3.4"
     integration_platforms:
