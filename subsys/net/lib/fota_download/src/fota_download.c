@@ -595,8 +595,10 @@ static bool img_num_valid(int img_num)
 	}
 
 #if defined(CONFIG_DFU_TARGET_MCUBOOT) && defined(CONFIG_UPDATEABLE_IMAGE_NUMBER)
-	/* dfu_target_mcuboot indexes its slot tables with img_num without a range check. */
-	if (img_num >= CONFIG_UPDATEABLE_IMAGE_NUMBER) {
+	/* dfu_target_mcuboot indexes its slot tables with img_num without a range check.
+	 * The SMP target updates another device, which has its own image count.
+	 */
+	if (!use_smp_dfu_target && img_num >= CONFIG_UPDATEABLE_IMAGE_NUMBER) {
 		return false;
 	}
 #endif
