@@ -34,11 +34,14 @@ function(asm_check)
         message(WARNING "${asm_filename}-${soc}.s ASM file content has changed.\
                 The new version will be included in build, but it will not be moved to the source \
                 directory. If you want to update ASM file in source directory with the new one \
-                run `ninja asm_install` in FLPR build directory.")
+                run `ninja asm_install` in FLPR build directory, or `west ncs-hpf-asm-update` \
+                to update ASM files for all supported SoCs.")
       else()
         message(FATAL_ERROR "${asm_filename}-${soc}.s ASM file content has changed.\
                 If you want to include the new ASM in build, \
-                please run `ninja asm_install` in FLPR build directory and build again. \
+                please run `ninja asm_install` in FLPR build directory, or \
+                `west ncs-hpf-asm-update` to update ASM files for all supported SoCs, \
+                and build again. \
                 If you want to disable this error and include new ASM in build every time,\
                 enable SB_CONFIG_HPF_DEVELOPER_MODE option (when building for cpuapp) \
                 or CONFIG_HPF_DEVELOPER_MODE option (when building for cpuflpr).")
