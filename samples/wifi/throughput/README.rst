@@ -99,6 +99,50 @@ To build for the nRF7002 DK with different profiles for Station mode, use the fo
 
          west build -p -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-rx-prio.conf
 
+To build for the nRF7120 DK with different profiles for Station mode, use the following CLI commands:
+
+.. tabs::
+
+   .. group-tab:: IoT devices
+
+      To build for the nRF7120 DK, with the IoT device profile for Station mode, use the ``nrf71-iot-devices`` configuration.
+
+      .. code-block:: console
+
+         west build -p -b nrf7120dk/nrf7120/cpuapp -- -DEXTRA_CONF_FILE=nrf71-iot-devices.conf
+
+   .. group-tab:: Memory-optimized
+
+      To build for the nRF7120 DK, with the memory-optimized profile for Station mode, use the ``nrf71-memory-optimized`` configuration.
+
+      .. code-block:: console
+
+         west build -p -b nrf7120dk/nrf7120/cpuapp -- -DEXTRA_CONF_FILE=nrf71-memory-optimized.conf
+
+   .. group-tab:: High performance
+
+      To build for the nRF7120 DK, with the high performance profile for Station mode, use the ``nrf71-high-performance`` configuration.
+
+      .. code-block:: console
+
+         west build -p -b nrf7120dk/nrf7120/cpuapp -- -DEXTRA_CONF_FILE=nrf71-high-performance.conf
+
+   .. group-tab:: TX prioritized
+
+      To build for the nRF7120 DK, with the TX prioritized profile for Station mode, use the ``nrf71-tx-prio`` configuration.
+
+      .. code-block:: console
+
+         west build -p -b nrf7120dk/nrf7120/cpuapp -- -DEXTRA_CONF_FILE=nrf71-tx-prio.conf
+
+   .. group-tab:: RX prioritized
+
+      To build for the nRF7120 DK, with the RX prioritized profile for Station mode, use the ``nrf71-rx-prio`` configuration.
+
+      .. code-block:: console
+
+         west build -p -b nrf7120dk/nrf7120/cpuapp -- -DEXTRA_CONF_FILE=nrf71-rx-prio.conf
+
 .. include:: /includes/wifi_refer_sample_yaml_file.txt
 
 Supported CLI commands
@@ -288,8 +332,10 @@ Testing
 Results
 =======
 
-The following table collects a summary of results obtained when throughput tests are run for different profiles.
+The following tables collect a summary of results obtained when throughput tests are run for different profiles.
 
+nRF7002 DK
+----------
 
 +------------------------+-----------+-----------+-----------+-----------+
 | Profile                | UDP TX    | UDP RX    | TCP TX    | TCP RX    |
@@ -309,6 +355,27 @@ The following table collects a summary of results obtained when throughput tests
 .. note::
    As shown in the table above, the measured throughputs are based on tests conducted using the nRF7002 DK.
    The results represent the best throughput, averaged over three iterations, and were obtained with a good RSSI signal in a clean environment(RF Chamber).
+
+nRF7120 DK
+----------
+
++------------------------+-----------+-----------+-----------+-----------+
+| Profile                | UDP TX    | UDP RX    | TCP TX    | TCP RX    |
+|                        |           |           |           |           |
++========================+===========+===========+===========+===========+
+| IoT devices            | 13.5 Mbps | 60.7 Mbps | 12 Mbps   | 8.3 Mbps  |
++------------------------+-----------+-----------+-----------+-----------+
+| Memory-optimized       | 13.6 Mbps | 59 Mbps   | 3 Mbps    | 6.5 Mbps  |
++------------------------+-----------+-----------+-----------+-----------+
+| High performance       | 50.3 Mbps | 62.9 Mbps | 31 Mbps   | 32.6 Mbps |
++------------------------+-----------+-----------+-----------+-----------+
+| TX prioritized         | 50.4 Mbps | 64 Mbps   | 36.1 Mbps | 11.8 Mbps |
++------------------------+-----------+-----------+-----------+-----------+
+| RX prioritized         | 21.7 Mbps | 68.2 Mbps | 14.5 Mbps | 32.5 Mbps |
++------------------------+-----------+-----------+-----------+-----------+
+
+.. note::
+   The measured throughputs are based on tests conducted using the nRF7120 DK in the 5 GHz band (802.11ax, 20 MHz, channel 36) with WPA3-SAE security.
 
 Dependencies
 ************
