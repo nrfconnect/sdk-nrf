@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Single pin configuration: two pulse_meas instances, each measuring pulses on one pin. */
+
 &pulse_meas {
 	/delete-property/ deassert-gpios;
+};
+
+&pulse_meas1 {
+	status = "okay";
 };

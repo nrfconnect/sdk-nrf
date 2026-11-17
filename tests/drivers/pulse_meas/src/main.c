@@ -8,6 +8,8 @@
 #include <zephyr/ztest.h>
 #include <drivers/pulse_meas.h>
 #include <nrfx_pwm.h>
+#include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
 #include <pinctrl_soc.h>
 #include <zephyr/devicetree/pinctrl.h>
 #ifdef CONFIG_HAS_NORDIC_DMM
@@ -30,19 +32,65 @@ LOG_MODULE_REGISTER(test);
 
 #define SEM_TIMEOUT K_MSEC(100)
 
-static const struct device *const pulse_meas_dev = DEVICE_DT_GET(DT_NODELABEL(pulse_meas));
+#define PULSE_MEAS_DEV(node) DEVICE_DT_GET(node),
 
-#define GPIOTE_INST NRF_DT_GPIOTE_NODE(DT_NODELABEL(pulse_meas), assert_gpios)
+/* Test is executed on all enabled pulse_meas instances at the same time. Each instance is
+ * connected to one of the PWM outputs. All PWM outputs generate the same signal.
+ */
+static const struct device *const pulse_meas_devs[] = {
+	DT_FOREACH_STATUS_OKAY(nordic_pulse_meas, PULSE_MEAS_DEV)
+};
+
+#define NUM_INSTANCES ARRAY_SIZE(pulse_meas_devs)
+
+#define GPIOTE_INST(node) NRF_DT_GPIOTE_NODE(node, assert_gpios)
+
+/* GPIOTE interrupt must be connected by the application if GPIO driver is not used. It is
+ * connected for the first instance and for the second instance only if it uses a different GPIOTE
+ * instance.
+ */
+#define GPIOTE_IRQ_CONNECT(node)                                                                   \
+	NRF_DT_IRQ_CONNECT(GPIOTE_INST(node), nrfx_gpiote_irq_handler,                             \
+			   &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_INST(node)))
+
 #define PULSE_BLOCK_SIZE PULSE_MEAS_BLOCK_SIZE(NUMBER_OF_MEASUREMENTS)
 
 K_MEM_SLAB_DEFINE(meas_slab, PULSE_BLOCK_SIZE, 128, 4);
 
-static K_SEM_DEFINE(pulse_meas_sem, 0, 1);
+static struct k_sem pulse_meas_sems[NUM_INSTANCES];
 static nrfx_pwm_t pwm = NRFX_PWM_INSTANCE(DT_REG_ADDR(DT_NODELABEL(tester_pwm)));
 
 static void pulse_meas_handler(void *context)
 {
 	k_sem_give(context);
+}
+
+/* Configure and start measurement on all instances. The semaphore of the given instance is
+ * given when a series is completed on that instance.
+ */
+static void configure_and_start_all(const struct pulse_meas_config *cfg_template)
+{
+	for (size_t i = 0; i < NUM_INSTANCES; i++) {
+		struct pulse_meas_config cfg = *cfg_template;
+
+		cfg.user_handler = &pulse_meas_handler;
+		cfg.user_context = &pulse_meas_sems[i];
+
+		k_sem_reset(&pulse_meas_sems[i]);
+
+		int ret = pulse_meas_configure(pulse_meas_devs[i], &cfg);
+
+		zassert_ok(ret, "Instance %zu, configure failed: %d", i, ret);
+
+		ret = pulse_meas_start(pulse_meas_devs[i], &meas_slab);
+		zassert_ok(ret, "Instance %zu, start failed: %d", i, ret);
+	}
+}
+
+static void wait_for_series(size_t inst_idx)
+{
+	zassert_ok(k_sem_take(&pulse_meas_sems[inst_idx], SEM_TIMEOUT), "Instance %zu",
+		   inst_idx);
 }
 
 static nrf_pwm_values_t buf_prepare(void *buf, size_t size)
@@ -78,32 +126,29 @@ static void run_pulse_meas_test(bool positive)
 		.num_of_meas = ARRAY_SIZE(pwm_duty_cycle_values),
 		.mode = PULSE_MEAS_MODE_ONE_SHOT,
 		.pull_config = NRF_GPIO_PIN_NOPULL,
-		.user_handler = &pulse_meas_handler,
-		.user_context = &pulse_meas_sem,
 	};
 
 	pulse_meas_cfg.pulse_type = positive ? PULSE_MEAS_PULSE_POSITIVE : PULSE_MEAS_PULSE_NEGATIVE;
 
-	k_sem_reset(&pulse_meas_sem);
-
-	zassert_ok(pulse_meas_configure(pulse_meas_dev, &pulse_meas_cfg));
-
-	zassert_ok(pulse_meas_start(pulse_meas_dev, &meas_slab));
+	configure_and_start_all(&pulse_meas_cfg);
 
 	zassert_ok(nrfx_pwm_simple_playback(&pwm, &pwm_sequence, 1, NRFX_PWM_FLAG_STOP));
 
-	zassert_ok(k_sem_take(&pulse_meas_sem, SEM_TIMEOUT));
+	for (size_t inst = 0; inst < NUM_INSTANCES; inst++) {
+		uint32_t *data;
 
-	uint32_t *data;
+		wait_for_series(inst);
 
-	zassert_ok(pulse_meas_get(pulse_meas_dev, &data));
+		zassert_ok(pulse_meas_get(pulse_meas_devs[inst], &data), "Instance %zu", inst);
 
-	/* The first measurement is skipped for the negative pulse. */
-	for (uint32_t i = positive ? 0 : 1; i < ARRAY_SIZE(pwm_duty_cycle_values); i++) {
-		uint32_t expected = positive ? PWM_TOP_VALUE - pwm_duty_cycle_values[i]
-					     : pwm_duty_cycle_values[i];
+		/* The first measurement is skipped for the negative pulse. */
+		for (uint32_t i = positive ? 0 : 1; i < ARRAY_SIZE(pwm_duty_cycle_values); i++) {
+			uint32_t expected = positive ? PWM_TOP_VALUE - pwm_duty_cycle_values[i]
+						     : pwm_duty_cycle_values[i];
 
-		zassert_within(data[i], expected, MEASUREMENT_PRECISION_US);
+			zassert_within(data[i], expected, MEASUREMENT_PRECISION_US,
+				       "Instance %zu, measurement %u", inst, i);
+		}
 	}
 
 	nrfx_pwm_uninit(&pwm);
@@ -143,35 +188,31 @@ static void test_pulse_meas_short_pulse(uint16_t pulse_width, bool low_latency)
 		.num_of_meas = ARRAY_SIZE(pwm_duty_cycle_values),
 		.mode = PULSE_MEAS_MODE_ONE_SHOT,
 		.pull_config = NRF_GPIO_PIN_NOPULL,
-		.user_handler = &pulse_meas_handler,
-		.user_context = &pulse_meas_sem,
 		.latency = low_latency ? PULSE_MEAS_LATENCY_LOW : PULSE_MEAS_LATENCY_DEFAULT,
 		.pulse_type = PULSE_MEAS_PULSE_POSITIVE,
 	};
 
-
-	k_sem_reset(&pulse_meas_sem);
-
-	zassert_ok(pulse_meas_configure(pulse_meas_dev, &pulse_meas_cfg));
-
-	zassert_ok(pulse_meas_start(pulse_meas_dev, &meas_slab));
+	configure_and_start_all(&pulse_meas_cfg);
 
 	zassert_ok(nrfx_pwm_simple_playback(&pwm, &pwm_sequence, 1, NRFX_PWM_FLAG_STOP));
 
-	zassert_ok(k_sem_take(&pulse_meas_sem, SEM_TIMEOUT));
+	for (size_t inst = 0; inst < NUM_INSTANCES; inst++) {
+		uint32_t *data;
 
-	uint32_t *data;
+		wait_for_series(inst);
 
-	zassert_ok(pulse_meas_get(pulse_meas_dev, &data));
+		zassert_ok(pulse_meas_get(pulse_meas_devs[inst], &data), "Instance %zu", inst);
 
-	/* The first measurement is skipped for the negative pulse. */
-	for (uint32_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values); i++) {
-		uint32_t expected = pwm_config.top_value - pwm_duty_cycle_values[i];
+		for (uint32_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values); i++) {
+			uint32_t expected = pwm_config.top_value - pwm_duty_cycle_values[i];
 
-		zassert_within(data[i], expected, MEASUREMENT_PRECISION_US);
+			zassert_within(data[i], expected, MEASUREMENT_PRECISION_US,
+				       "Instance %zu, measurement %u", inst, i);
+		}
+
+		zassert_equal(pulse_meas_pending(pulse_meas_devs[inst]), 0, "Instance %zu", inst);
 	}
 
-	zassert_equal(pulse_meas_pending(pulse_meas_dev), 0);
 	nrfx_pwm_uninit(&pwm);
 }
 
@@ -219,64 +260,81 @@ ZTEST(test_pulse_meas, test_pulse_meas_continuous)
 
 	zassert_ok(nrfx_pwm_init(&pwm, &pwm_config, NULL, NULL));
 
-	static struct pulse_meas_config pulse_meas_cfg = {
+	struct pulse_meas_config pulse_meas_cfg = {
 		.num_of_meas = ARRAY_SIZE(pwm_duty_cycle_values1),
 		.pulse_type = PULSE_MEAS_PULSE_POSITIVE,
 		.mode = PULSE_MEAS_MODE_CONTINUOUS,
 		.pull_config = NRF_GPIO_PIN_NOPULL,
-		.user_handler = &pulse_meas_handler,
-		.user_context = &pulse_meas_sem,
 	};
 
-	k_sem_reset(&pulse_meas_sem);
-
-	zassert_ok(pulse_meas_configure(pulse_meas_dev, &pulse_meas_cfg));
-
-	zassert_ok(pulse_meas_start(pulse_meas_dev, &meas_slab));
+	configure_and_start_all(&pulse_meas_cfg);
 
 	zassert_ok(nrfx_pwm_simple_playback(&pwm, &pwm_sequence1, 1, NRFX_PWM_FLAG_STOP));
 
-	zassert_ok(k_sem_take(&pulse_meas_sem, SEM_TIMEOUT));
+	for (size_t inst = 0; inst < NUM_INSTANCES; inst++) {
+		uint32_t *data;
 
-	zassert_equal(pulse_meas_pending(pulse_meas_dev), 1);
+		wait_for_series(inst);
 
-	uint32_t *data;
+		zassert_equal(pulse_meas_pending(pulse_meas_devs[inst]), 1, "Instance %zu", inst);
 
-	zassert_ok(pulse_meas_get(pulse_meas_dev, &data));
+		zassert_ok(pulse_meas_get(pulse_meas_devs[inst], &data), "Instance %zu", inst);
 
-	for (uint32_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values1); i++) {
-		zassert_within(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values1[i],
-			MEASUREMENT_PRECISION_US);
+		for (uint32_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values1); i++) {
+			zassert_within(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values1[i],
+				       MEASUREMENT_PRECISION_US, "Instance %zu, measurement %u",
+				       inst, i);
+		}
 	}
 
 	zassert_ok(nrfx_pwm_simple_playback(&pwm, &pwm_sequence2, 1, NRFX_PWM_FLAG_STOP));
-	zassert_ok(k_sem_take(&pulse_meas_sem, SEM_TIMEOUT));
 
-	zassert_equal(pulse_meas_pending(pulse_meas_dev), 1);
+	for (size_t inst = 0; inst < NUM_INSTANCES; inst++) {
+		uint32_t *data;
 
-	zassert_ok(pulse_meas_get(pulse_meas_dev, &data));
+		wait_for_series(inst);
 
-	for (uint32_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values1); i++) {
-		zassert_within(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values2[i],
-			       MEASUREMENT_PRECISION_US);
+		zassert_equal(pulse_meas_pending(pulse_meas_devs[inst]), 1, "Instance %zu", inst);
+
+		zassert_ok(pulse_meas_get(pulse_meas_devs[inst], &data), "Instance %zu", inst);
+
+		for (uint32_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values2); i++) {
+			zassert_within(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values2[i],
+				       MEASUREMENT_PRECISION_US, "Instance %zu, measurement %u",
+				       inst, i);
+		}
 	}
 
-	pulse_meas_stop(pulse_meas_dev, true);
+	for (size_t inst = 0; inst < NUM_INSTANCES; inst++) {
+		pulse_meas_stop(pulse_meas_devs[inst], true);
+	}
 
 	zassert_ok(nrfx_pwm_simple_playback(&pwm, &pwm_sequence1, 1, NRFX_PWM_FLAG_STOP));
 
-	zassert_equal(k_sem_take(&pulse_meas_sem, K_MSEC(1000)), -EAGAIN);
+	/* No series is expected on any instance after the measurement was stopped. */
+	k_sleep(K_MSEC(1000));
 
-	zassert_equal(pulse_meas_pending(pulse_meas_dev), 0);
+	for (size_t inst = 0; inst < NUM_INSTANCES; inst++) {
+		zassert_equal(k_sem_take(&pulse_meas_sems[inst], K_NO_WAIT), -EBUSY,
+			      "Instance %zu", inst);
+		zassert_equal(pulse_meas_pending(pulse_meas_devs[inst]), 0, "Instance %zu", inst);
+	}
 }
 
 static void *suite_setup(void)
 {
-	zassert_true(device_is_ready(pulse_meas_dev));
+	for (size_t i = 0; i < NUM_INSTANCES; i++) {
+		zassert_true(device_is_ready(pulse_meas_devs[i]), "Instance %zu", i);
+		k_sem_init(&pulse_meas_sems[i], 0, 1);
+	}
 
 #ifndef CONFIG_GPIO
-	NRF_DT_IRQ_CONNECT(GPIOTE_INST, nrfx_gpiote_irq_handler,
-			   &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_INST));
+	GPIOTE_IRQ_CONNECT(DT_NODELABEL(pulse_meas));
+#if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(pulse_meas1))
+	IF_DISABLED(DT_SAME_NODE(GPIOTE_INST(DT_NODELABEL(pulse_meas)),
+				 GPIOTE_INST(DT_NODELABEL(pulse_meas1))),
+		    (GPIOTE_IRQ_CONNECT(DT_NODELABEL(pulse_meas1));))
+#endif
 #endif
 
 	return NULL;
@@ -285,7 +343,14 @@ static void *suite_setup(void)
 static void teardown(void *fixture)
 {
 	ARG_UNUSED(fixture);
-	pulse_meas_reset(pulse_meas_dev);
+
+	for (size_t i = 0; i < NUM_INSTANCES; i++) {
+		/* Make sure that the instance is in the state in which it can be reset, even if the
+		 * test failed in the middle of the measurement.
+		 */
+		(void)pulse_meas_stop(pulse_meas_devs[i], true);
+		(void)pulse_meas_reset(pulse_meas_devs[i]);
+	}
 }
 
 ZTEST_SUITE(test_pulse_meas, NULL, suite_setup, NULL, teardown, NULL);

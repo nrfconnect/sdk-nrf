@@ -8,6 +8,10 @@
 	status = "reserved";
 };
 
+&timer130 {
+	status = "reserved";
+};
+
 &gpio0 {
 	status = "okay";
 };
@@ -43,5 +47,16 @@ tester_pwm: &pwm130 {
 		timer-instance = <&timer131>;
 		assert-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
 		deassert-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
+	};
+
+	/* Second instance, enabled only in the single pin configuration (see single_pin.overlay).
+	 * It uses the pin which is used as deassert pin by the first instance in the pin pair
+	 * configuration.
+	 */
+	pulse_meas1: pulse-meas1 {
+		compatible = "nordic,pulse-meas";
+		status = "disabled";
+		timer-instance = <&timer130>;
+		assert-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
 	};
 };
