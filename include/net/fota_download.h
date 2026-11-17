@@ -172,7 +172,7 @@ struct fota_download_params {
 	 *  for example https://google.com:443.
 	 */
 	const char *host;
-	/** Path to the file to download. See fota_download_any() for details on
+	/** Path to the file to download. See @ref fota_download_any() for details on
 	 *  the expected format.
 	 */
 	const char *file;
