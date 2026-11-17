@@ -92,7 +92,6 @@ int xt3412_notifications_enable(void)
 					  CONFIG_LTE_LC_TAU_PRE_WARNING_THRESHOLD_MS);
 		if (err) {
 			LOG_WRN("Enabling TAU pre-warning notifications failed, error: %d", err);
-			LOG_WRN("TAU pre-warning notifications require nRF9160 modem >= v1.3.0");
 			return err;
 		}
 	}

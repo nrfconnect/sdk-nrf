@@ -134,8 +134,7 @@ Data Profile:
   It activates the UICC again on every eDRX wake-up before it sets up any signaling or data connection.
   With the ultra-low power profile, the modem deactivates the UICC if the eDRX cycle is longer than 60 seconds and the UICC allows it.
   With the other profiles, the modem deactivates the UICC if the eDRX cycle is longer than 5 minutes.
-  On the nRF9160, this requires modem firmware v1.3.2 or later.
-  On the nRF91x1, the ``AT%UICCPOWERSAVE`` command can overrule these conditions.
+  The ``AT%UICCPOWERSAVE`` command can overrule these conditions.
 
   Each profile has a default periodic search pattern.
   The sleep times of the defaults are the same as in the following ``AT%PERIODICSEARCHCONF`` commands:
@@ -159,7 +158,7 @@ Data Profile:
   The commands use the default band optimization of the modem, which also depends on the data profile.
 
   If you set a periodic search configuration using the :c:func:`lte_lc_periodic_search_set` function, it replaces the default pattern of the current data profile.
-  For the meaning of the parameters, see the `nRF91x1 AT Commands Reference Guide`_ or the `nRF9160 AT Commands Reference Guide`_, depending on the SiP you are using.
+  For the parameter descriptions, see the `nRF91x1 AT Commands Reference Guide`_ or the `nRF91x1 NTN AT Commands Reference Guide`_, depending on the modem firmware you are using.
 
   The modem stores the data profile to non-volatile memory about every 48 hours and when the functional mode is set to power off.
   Consider UICC non-volatile memory wear when you select the profile.
@@ -246,7 +245,7 @@ For more information on the functions and data associated with each, refer to th
 
 .. note::
    Some of the functionalities might not be compatible with certain modem firmware versions.
-   To check if a desired feature is compatible with a certain modem firmware version, see the AT commands that are documented in the `nRF91x1 AT Commands Reference Guide`_  or `nRF9160 AT Commands Reference Guide`_ depending on the SiP you are using.
+   To check if a desired feature is compatible with a certain modem firmware version, see the AT commands that are documented in the `nRF91x1 AT Commands Reference Guide`_ or the `nRF91x1 NTN AT Commands Reference Guide`_, depending on the modem firmware you are using.
 
 .. _lte_lc_power_saving:
 
@@ -279,7 +278,7 @@ You can set the timer values requested by the modem using the following options:
 Connection pre-evaluation
 =========================
 
-Modem firmware versions 1.3.0 and higher support a connection pre-evaluation feature that allows the application to get information about a cell that is likely to be used for an RRC connection.
+The connection pre-evaluation feature allows the application to get information about a cell that is likely to be used for an RRC connection.
 Based on the parameters received in the function call, the application can decide whether to send application data or not.
 To enable this module, use the :kconfig:option:`CONFIG_LTE_LC_CONN_EVAL_MODULE` Kconfig option.
 The function :c:func:`lte_lc_conn_eval_params_get` populates a structure of type :c:struct:`lte_lc_conn_eval_params` that includes information on the current consumption cost by the data transmission when utilizing the given cell.
@@ -321,7 +320,7 @@ The :c:struct:`lte_lc_conn_eval_params` structure lists all information that is 
 Modem sleep and TAU pre-warning notifications
 =============================================
 
-Modem firmware versions 1.3.0 and higher support receiving callbacks from the modem related to Tracking Area Updates (TAU) and modem sleep.
+The application can receive callbacks from the modem related to Tracking Area Updates (TAU) and modem sleep.
 Based on these notifications, the application can alter its behavior to optimize for a given metric.
 
 For instance, TAU pre-warning notifications can be used to schedule data transfers before a TAU so that data transfer and TAU occurs within the same RRC connection window, thereby saving the potential overhead associated with the additional data exchange.
@@ -402,9 +401,9 @@ AT commands used
 The PDN functionality uses several AT commands, and it relies on the following two types of AT notifications to work:
 
 * Packet domain events notifications (``+CGEV``) - Subscribed by using the ``AT+CGEREP=1`` command.
-  See the `AT+CGEREP set command`_ section in the nRF9160 AT Commands Reference Guide or the `nRF91x1 AT+CGEREP set command`_  section in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+  See the `nRF91x1 AT+CGEREP set command`_ section in the nRF91x1 AT Commands Reference Guide or the `nRF91x1 NTN AT+CGEREP set command`_ section in the nRF91x1 NTN AT Commands Reference Guide.
 * Notifications for unsolicited reporting of error codes sent by the network (``+CNEC``) - Subscribed by using the ``AT+CNEC=16`` command.
-  See the `AT+CNEC set command`_ section in the nRF9160 AT Commands Reference Guide or the `nRF91x1 AT+CNEC set command`_  section in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+  See the `nRF91x1 AT+CNEC set command`_ section in the nRF91x1 AT Commands Reference Guide or the `nRF91x1 NTN AT+CNEC set command`_ section in the nRF91x1 NTN AT Commands Reference Guide.
 
 The LTE link control library automatically subscribes to the necessary AT notifications.
 This includes automatically resubscribing to the notifications upon functional mode changes.
@@ -423,7 +422,7 @@ Following are the AT commands that are used by the PDN functionality:
 * ``AT+CGCONTRDP`` - To retrieve the dynamic parameters of a PDN connection
 * ``AT+CGPADDR`` - To retrieve the IP addresses of a PDN connection (as part of the dynamic parameters)
 
-For more information about these commands, see `Packet Domain AT commands`_ in the nRF9160 AT Commands Reference Guide or the `nRF91x1 packet Domain AT commands`_ section in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+For more information about these commands, see the `nRF91x1 packet domain AT commands`_ section in the nRF91x1 AT Commands Reference Guide or the `nRF91x1 NTN packet domain AT commands`_ section in the nRF91x1 NTN AT Commands Reference Guide.
 
 Creating and managing PDN connections
 --------------------------------------

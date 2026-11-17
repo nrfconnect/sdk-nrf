@@ -20,9 +20,9 @@
 #define TEST_EVENT_MAX_COUNT 20
 #define IGNORE NULL
 
-static const char cgmr_resp_9160[] = "mfw_nrf9160_1.3.7\r\nOK\r\n";
 static const char cgmr_resp_91x1[] = "mfw_nrf91x1_2.0.3\r\nOK\r\n";
 static const char cgmr_resp_9151_ntn[] = "mfw_nrf9151-ntn_1.0.0\r\nOK\r\n";
+static const char cgmr_resp_nrf92[] = "lpwa-cellular_nrf92_0.7.0\r\nOK\r\n";
 static const char cgmr_resp_unknown[] = "foobar\r\nOK\r\n";
 
 static struct lte_lc_evt test_event_data[TEST_EVENT_MAX_COUNT];
@@ -990,6 +990,34 @@ void test_lte_lc_rx_only(void)
 	k_sleep(K_MSEC(1));
 }
 
+void test_lte_lc_search_done_not_delayed_nrf92(void)
+{
+	int ret;
+
+	if (!IS_ENABLED(CONFIG_LTE_LC_MODEM_EVENTS_MODULE)) {
+		TEST_IGNORE();
+	}
+
+	/* Executed with nrf92 firmware, search done event is not delayed. */
+
+	lte_lc_on_modem_init_with_firmware(cgmr_resp_nrf92, sizeof(cgmr_resp_nrf92));
+
+	lte_lc_callback_count_expected = 1;
+
+	test_event_data[0].type = LTE_LC_EVT_MODEM_EVENT;
+	test_event_data[0].modem_evt.type = LTE_LC_MODEM_EVT_SEARCH_DONE;
+
+	strcpy(at_notif, "%MDMEV: SEARCH STATUS 2\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* The event must be dispatched well before the 100 ms delay used with mfw_nrf91x1. */
+	ret = k_sem_take(&event_handler_called_sem, K_MSEC(10));
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Wait past the delay to verify that the event is not dispatched again. */
+	k_sleep(K_MSEC(150));
+}
+
 void test_lte_lc_psm_param_set_good_weather(void)
 {
 	int ret;
@@ -1495,9 +1523,9 @@ void test_lte_lc_edrx_req_enable_cedrxs2_fail(void)
 {
 	int ret;
 
-	/* Executed with nrf9160 firmware, NTN NB-IoT not supported. */
+	/* Executed with nrf91x1 firmware, NTN NB-IoT not supported. */
 
-	lte_lc_on_modem_init_with_firmware(cgmr_resp_9160, sizeof(cgmr_resp_9160));
+	lte_lc_on_modem_init_with_firmware(cgmr_resp_91x1, sizeof(cgmr_resp_91x1));
 
 	ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_LTEM, "0101");
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -2920,7 +2948,7 @@ void test_lte_lc_neighbor_cell_measurement_normal(void)
 
 	lte_lc_callback_count_expected = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3117,11 +3145,11 @@ void test_lte_lc_neighbor_cell_measurement_normal_no_ncells(void)
 		.gci_count = 0,
 	};
 	strcpy(at_notif,
-	       "%NCELLMEAS: 0,\"1FFFFFFF\",\"98712\",\"0AB9\",4800,7,63,31,456,4800\r\n");
+	       "%NCELLMEAS: 0,\"1FFFFFFF\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,11\r\n");
 
 	lte_lc_callback_count_expected = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3133,7 +3161,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_no_ncells(void)
 	test_event_data[0].cells_info.current_cell.tac = 0x0AB9;
 	test_event_data[0].cells_info.current_cell.earfcn = 7;
 	test_event_data[0].cells_info.current_cell.timing_advance = 4800;
-	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 0;
+	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 11;
 	test_event_data[0].cells_info.current_cell.measurement_time = 4800;
 	test_event_data[0].cells_info.current_cell.phys_cell_id = 63;
 	test_event_data[0].cells_info.current_cell.rsrp = 31;
@@ -3158,7 +3186,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_status_failed(void)
 
 	lte_lc_callback_count_expected = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3181,7 +3209,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_status_incomplete(void)
 
 	lte_lc_callback_count_expected = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3226,7 +3254,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_status_incomplete_no_cells(voi
 
 	lte_lc_callback_count_expected = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3265,7 +3293,7 @@ void test_lte_lc_neighbor_cell_measurement_cell_id_missing_fail(void)
 	test_event_data[0].cells_info.ncells_count = 0;
 	test_event_data[0].cells_info.gci_cells_count = 0;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3289,7 +3317,7 @@ void test_lte_lc_neighbor_cell_measurement_cell_id_too_big_fail(void)
 	test_event_data[0].cells_info.ncells_count = 0;
 	test_event_data[0].cells_info.gci_cells_count = 0;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3313,7 +3341,7 @@ void test_lte_lc_neighbor_cell_measurement_malformed_fail(void)
 	test_event_data[0].cells_info.ncells_count = 0;
 	test_event_data[0].cells_info.gci_cells_count = 0;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3965,7 +3993,7 @@ void test_lte_lc_neighbor_cell_measurement_cancel(void)
 	test_neighbor_cells[1].rsrp = 18;
 	test_neighbor_cells[1].rsrq = 5;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3981,7 +4009,7 @@ void test_lte_lc_neighbor_cell_measurement_cancel(void)
 	 * things up.
 	 */
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -4005,7 +4033,7 @@ void test_lte_lc_neighbor_cell_measurement_cancel_no_notif(void)
 	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
 	test_event_data[0].cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -4062,7 +4090,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	 */
 
 	/* status */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4071,7 +4099,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <cell_id> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4080,7 +4108,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <plmn> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4089,7 +4117,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <tac> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4098,7 +4126,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <ta> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4107,7 +4135,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <earfcn> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4116,7 +4144,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <phys_cell_id> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4125,7 +4153,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <rsrp> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4134,7 +4162,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <rsrq> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4143,7 +4171,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <meas_time> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4152,7 +4180,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	at_monitor_dispatch(at_notif);
 
 	/* <timing_advance_measurement_time>: this is the last field after all neighbors */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4168,7 +4196,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
 	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
-	       "8,60,29,4,3500,invalid,99,18,5,5300\r\n");
+	       "8,60,29,4,3500,invalid,99,18,5,5300,11\r\n");
 	at_monitor_dispatch(at_notif);
 
 	/* <n_phys_cell_id> */
@@ -4177,7 +4205,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
 	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
-	       "8,60,29,4,3500,9,invalid,18,5,5300\r\n");
+	       "8,60,29,4,3500,9,invalid,18,5,5300,11\r\n");
 	at_monitor_dispatch(at_notif);
 
 	/* <n_rsrp> */
@@ -4186,7 +4214,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
 	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
-	       "8,60,29,4,3500,9,99,invalid,5,5300\r\n");
+	       "8,60,29,4,3500,9,99,invalid,5,5300,11\r\n");
 	at_monitor_dispatch(at_notif);
 
 	/* <n_rsrq> */
@@ -4195,16 +4223,16 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
 	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
-	       "8,60,29,4,3500,9,99,18,invalid,5300\r\n");
+	       "8,60,29,4,3500,9,99,18,invalid,5300,11\r\n");
 	at_monitor_dispatch(at_notif);
 
 	/* <time_diff> */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
 	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
-	       "8,60,29,4,3500,9,99,18,5,invalid\r\n");
+	       "8,60,29,4,3500,9,99,18,5,invalid,11\r\n");
 	at_monitor_dispatch(at_notif);
 }
 
@@ -4447,7 +4475,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_mccmnc_fail(void)
 	}
 
 	/* Invalid MCC */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4456,7 +4484,7 @@ void test_lte_lc_neighbor_cell_measurement_normal_invalid_mccmnc_fail(void)
 	at_monitor_dispatch(at_notif);
 
 	/* Invalid MNC */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=0", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement(NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	strcpy(at_notif,
@@ -4521,6 +4549,22 @@ void test_lte_lc_neighbor_cell_measurement_invalid_gci_cell_count_fail(void)
 
 	params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE;
 	params.gci_count = 16;
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_neighbor_cell_measurement_invalid_search_type_fail(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.gci_count = 10,
+	};
+
+	params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT - 1;
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE + 1;
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }

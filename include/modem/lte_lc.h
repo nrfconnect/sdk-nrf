@@ -59,6 +59,7 @@ enum lte_lc_nw_reg_status {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_NW_REG_RX_ONLY_NOT_REGISTERED		= 50,
 
@@ -67,6 +68,7 @@ enum lte_lc_nw_reg_status {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_NW_REG_RX_ONLY_REGISTERED_HOME		= 51,
 
@@ -76,6 +78,7 @@ enum lte_lc_nw_reg_status {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_NW_REG_RX_ONLY_SEARCHING			= 52,
 
@@ -84,6 +87,7 @@ enum lte_lc_nw_reg_status {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_NW_REG_RX_ONLY_REGISTRATION_DENIED	= 53,
 
@@ -92,6 +96,7 @@ enum lte_lc_nw_reg_status {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_NW_REG_RX_ONLY_UNKNOWN			= 54,
 
@@ -100,6 +105,7 @@ enum lte_lc_nw_reg_status {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_NW_REG_RX_ONLY_REGISTERED_ROAMING	= 55,
 
@@ -113,6 +119,7 @@ enum lte_lc_nw_reg_status {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_NW_REG_NO_SUITABLE_CELL			= 91
 };
@@ -145,6 +152,7 @@ enum lte_lc_system_mode {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_SYSTEM_MODE_NTN_NBIOT
 };
@@ -169,6 +177,7 @@ enum lte_lc_lte_mode {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_LTE_MODE_NTN_NBIOT	= 14
 };
@@ -234,18 +243,18 @@ enum lte_lc_func_mode {
 	/**
 	 * Sets the device to receive only functionality.
 	 *
-	 * Features supported by mfw_nrf9160 in receive only mode:
+	 * Features supported by mfw_nrf91x1 v2.0.2 or earlier in receive only mode:
 	 * - lte_lc_conn_eval_params_get()
 	 *
-	 * Features supported by mfw_nrf91x1 and mfw_nrf9151-ntn in receive only mode:
+	 * Features supported by other modem firmwares in receive only mode:
 	 * - Network selection
 	 * - lte_lc_conn_eval_params_get()
 	 * - lte_lc_neighbor_cell_measurement()
 	 * - lte_lc_env_eval()
 	 *
-	 * mfw_nrf91x1 and mfw_nrf9151-ntn perform network selection in receive only mode.
-	 * When the search has been completed, an @ref LTE_LC_EVT_MODEM_EVENT is sent with modem
-	 * event @ref LTE_LC_MODEM_EVT_SEARCH_DONE. The application can check the last received
+	 * Device performs network selection in receive only mode. When the search has been
+	 * completed, an @ref LTE_LC_EVT_MODEM_EVENT is sent with modem event
+	 * @ref LTE_LC_MODEM_EVT_SEARCH_DONE. The application can check the last received
 	 * @ref LTE_LC_EVT_CELL_UPDATE to see if a suitable cell was found or not.
 	 *
 	 * After network selection, device remains camped on the found cell, but will not try to
@@ -292,6 +301,7 @@ enum lte_lc_func_mode {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG		= 45,
 
@@ -304,6 +314,7 @@ enum lte_lc_func_mode {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON	= 46
 };
@@ -446,6 +457,7 @@ enum lte_lc_evt_type {
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf91x1 v2.0.2 or later
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_EVT_RAI_UPDATE			= 12,
 #endif /* CONFIG_LTE_LC_RAI_MODULE */
@@ -460,6 +472,7 @@ enum lte_lc_evt_type {
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf91x1 v2.0.3 or later
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_EVT_ENV_EVAL_RESULT		= 13,
 #endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
@@ -724,13 +737,7 @@ enum lte_lc_modem_sleep_type {
 	/** Flight mode. */
 	LTE_LC_MODEM_SLEEP_FLIGHT_MODE		= 4,
 
-	/**
-	 * Proprietary PSM.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
-	 */
+	/** Proprietary PSM. */
 	LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM	= 7,
 };
 
@@ -898,20 +905,10 @@ enum lte_lc_modem_evt_type {
 	 *
 	 * The associated payload is the @c lte_lc_modem_evt.ce_level member of type
 	 * @ref lte_lc_ce_level in the event.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_MODEM_EVT_CE_LEVEL,
 
-	/**
-	 * RF calibration or power class selection not done.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
-	 */
+	/** RF calibration or power class selection not done. */
 	LTE_LC_MODEM_EVT_RF_CAL_NOT_DONE,
 
 	/**
@@ -919,10 +916,6 @@ enum lte_lc_modem_evt_type {
 	 *
 	 * The associated payload is the @c lte_lc_modem_evt.invalid_band_conf member of type
 	 * @ref lte_lc_invalid_band_conf in the event.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_MODEM_EVT_INVALID_BAND_CONF,
 
@@ -934,6 +927,7 @@ enum lte_lc_modem_evt_type {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_MODEM_EVT_DETECTED_COUNTRY
 };
@@ -1455,8 +1449,6 @@ struct lte_lc_periodic_search_cfg {
  * a list of sleep times, the last one is repeated, as the default patterns do not loop or return
  * to an earlier pattern.
  *
- * UICC deactivation during eDRX requires modem firmware v1.3.2 or later on the nRF9160.
- *
  * @note Only the sleep times are specified. The search times depend on enabled bands, the number
  *       of PLMNs to search for, and the network conditions. The default band optimization of the
  *       modem also depends on the profile.
@@ -1602,6 +1594,7 @@ enum lte_lc_pdn_evt_type {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_EVT_PDN_SUSPENDED,
 
@@ -1613,6 +1606,7 @@ enum lte_lc_pdn_evt_type {
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_EVT_PDN_RESUMED,
 
@@ -2243,10 +2237,6 @@ int lte_lc_psm_get(int *tau, int *active_time);
  *       noted that conflicts may arise with the value set by
  *       `CONFIG_LTE_PROPRIETARY_PSM_REQ` if it is called during modem initialization.
  *
- * @note This is only supported by the following modem firmware:
- *       - mfw_nrf91x1
- *       - mfw_nrf9151-ntn
- *
  * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.
  *
  * @retval 0 if successful.
@@ -2434,6 +2424,7 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  *       modem firmware:
  *       - mfw_nrf91x1 v2.0.3 or later
  *       - mfw_nrf9151-ntn
+ *       - lpwa-cellular_nrf92
  *
  * @note Requires `CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` to be enabled.
  *
@@ -2464,10 +2455,10 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
  * transmission before the actual data transmission. Connection evaluation is based on collected
  * cell history.
  *
- * In receive only functional mode with modem firmware mfw_nrf91x1 v2.0.3 and higher, and
- * mfw_nrf9151-ntn, it is recommended to wait for the modem to complete the network selection
- * before calling this function. This can be determined from the @ref LTE_LC_EVT_MODEM_EVENT event
- * with modem event @ref LTE_LC_MODEM_EVT_SEARCH_DONE.
+ * In receive only functional mode with modem firmware mfw_nrf91x1 v2.0.3 and higher,
+ * mfw_nrf9151-ntn, and lpwa-cellular_nrf92, it is recommended to wait for the modem to complete
+ * the network selection before calling this function. This can be determined from the
+ * @ref LTE_LC_EVT_MODEM_EVENT event with modem event @ref LTE_LC_MODEM_EVT_SEARCH_DONE.
  *
  * @note Requires `CONFIG_LTE_LC_CONN_EVAL_MODULE` to be enabled.
  *
@@ -2510,6 +2501,7 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
  * @note This is only supported by the following modem firmware:
  *       - mfw_nrf91x1 v2.0.3 or later
  *       - mfw_nrf9151-ntn
+ *       - lpwa-cellular_nrf92
  *
  * @note Requires `CONFIG_LTE_LC_ENV_EVAL_MODULE` to be enabled.
  *

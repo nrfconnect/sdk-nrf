@@ -19,9 +19,9 @@ extern "C" {
 
 enum mfw_type {
 	MFW_TYPE_UNKNOWN,
-	MFW_TYPE_NRF9160,
 	MFW_TYPE_NRF91X1,
-	MFW_TYPE_NRF9151_NTN
+	MFW_TYPE_NRF9151_NTN,
+	MFW_TYPE_NRF92
 };
 
 /* Initialize the modem firmware type (read it from the modem). */

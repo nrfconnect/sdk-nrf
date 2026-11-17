@@ -528,20 +528,13 @@ static int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *ce
 	/* Neighbor cell count */
 	cells->ncells_count = neighborcell_count_get(at_response);
 
-	/* Starting from modem firmware v1.3.1, timing advance measurement time
-	 * information is added as the last parameter in the response.
-	 */
 	size_t ta_meas_time_index = AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +
 				    cells->ncells_count * AT_NCELLMEAS_N_PARAMS_COUNT;
 
-	if (count > ta_meas_time_index) {
-		err = at_parser_num_get(&parser, ta_meas_time_index,
-					&cells->current_cell.timing_advance_meas_time);
-		if (err) {
-			goto clean_exit;
-		}
-	} else {
-		cells->current_cell.timing_advance_meas_time = 0;
+	err = at_parser_num_get(&parser, ta_meas_time_index,
+				&cells->current_cell.timing_advance_meas_time);
+	if (err) {
+		goto clean_exit;
 	}
 
 	if (cells->ncells_count == 0) {
@@ -771,6 +764,13 @@ int ncellmeas_start(struct lte_lc_ncellmeas_params *params)
 		 "Invalid argument, API does not accept enum values directly anymore");
 
 	if (params != NULL &&
+	    !IN_RANGE(params->search_type, LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
+		      LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE)) {
+		LOG_ERR("Invalid search type: %d", params->search_type);
+		return -EINVAL;
+	}
+
+	if (params != NULL &&
 	    (params->search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT ||
 	     params->search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT ||
 	     params->search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE)) {
@@ -790,13 +790,6 @@ int ncellmeas_start(struct lte_lc_ncellmeas_params *params)
 	}
 	ncellmeas_params = used_params;
 
-	/* Starting from modem firmware v1.3.1, there is an optional parameter to specify
-	 * the type of search.
-	 * If the type is LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT, we therefore use the AT
-	 * command without parameters to avoid error messages for older firmware version.
-	 * Starting from modem firmware v1.3.4, additional CGI search types and
-	 * GCI count are supported.
-	 */
 	if (used_params.search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT) {
 		err = nrf_modem_at_printf("AT%%NCELLMEAS=1");
 	} else if (used_params.search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE) {
@@ -808,8 +801,8 @@ int ncellmeas_start(struct lte_lc_ncellmeas_params *params)
 	} else if (used_params.search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE) {
 		err = nrf_modem_at_printf("AT%%NCELLMEAS=5,%d", used_params.gci_count);
 	} else {
-		/* Defaulting to use LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT */
-		err = nrf_modem_at_printf("AT%%NCELLMEAS");
+		/* LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT */
+		err = nrf_modem_at_printf("AT%%NCELLMEAS=0");
 	}
 
 	if (err) {

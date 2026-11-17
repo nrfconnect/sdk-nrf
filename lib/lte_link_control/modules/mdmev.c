@@ -156,13 +156,14 @@ static void at_handler_mdmev(const char *notif)
 	evt.type = LTE_LC_EVT_MODEM_EVENT;
 
 	if (evt.modem_evt.type == LTE_LC_MODEM_EVT_SEARCH_DONE &&
-	    mfw_type_get() != MFW_TYPE_NRF9151_NTN) {
-		/* With mfw_nrf9160 and mfw_nrf91x1, modem sends the SEARCH STATUS 2 notification
-		 * before the +CEREG notification. To simplify application implementation, the
-		 * search done event is delayed a bit. When application receives the search done
-		 * event, it can check the last received cell information to see if a cell was
-		 * found or not.
-		 * With mfw_nrf9151-ntn, modem sends the SEARCH STATUS 2 notification
+	    (mfw_type_get() == MFW_TYPE_NRF91X1 ||
+	     mfw_type_get() == MFW_TYPE_UNKNOWN)) {
+		/* With mfw_nrf91x1, modem sends the SEARCH STATUS 2 notification before
+		 * the +CEREG notification. To simplify application implementation, the search
+		 * done event is delayed a bit. When application receives the search done event,
+		 * it can check the last received cell information to see if a cell was found
+		 * or not.
+		 * With other modem firmwares, modem sends the SEARCH STATUS 2 notification
 		 * after the +CEREG notification, so no need to delay it there.
 		 */
 		k_work_schedule(&search_done_event_send_work, K_MSEC(100));
