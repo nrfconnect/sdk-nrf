@@ -160,7 +160,8 @@ static int setup_raw_pkt_socket(int *sockfd, struct sockaddr_ll *sa)
 	struct net_if *iface;
 	int ret;
 
-	*sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+	/* proto=0 implies a TX only socket */
+	*sockfd = socket(AF_PACKET, SOCK_RAW, 0);
 	if (*sockfd < 0) {
 		LOG_ERR("Unable to create a socket %d", errno);
 		return -1;
