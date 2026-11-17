@@ -90,18 +90,18 @@ See an example of memory partition configuration:
                            reg = <0x98000 0x20000>;
                            };
                   };
-                  cpuflpr_sram_code_data: memory@20028000 {
+                  cpuflpr_sram_code_data: memory@20027c00 {
                            compatible = "mmio-sram";
-                           reg = <0x20028000 DT_SIZE_K(96)>;
+                           reg = <0x20027c00 DT_SIZE_K(96)>;
                            #address-cells = <1>;
                            #size-cells = <1>;
-                           ranges = <0x0 0x20028000 0x18000>;
+                           ranges = <0x0 0x20027c00 0x18000>;
                   };
          };
    };
    &cpuapp_sram {
-         reg = <0x20000000 DT_SIZE_K(160)>;
-         ranges = <0x0 0x20000000 0x28000>;
+         reg = <0x20000000 DT_SIZE_K(159)>;
+         ranges = <0x0 0x20000000 0x27c00>;
    };
 
 1. Adjust the following partitions:
@@ -124,13 +124,15 @@ See an example of memory partition configuration:
      It is not available for the application core and should be excluded from its memory allocation.
 
       * Compatible with ``mmio-sram``.
-      * Location: 0x20028000
+      * Location: 0x20027c00
       * Size: 96KB
+
+     The region ends at 0x2003fc00, so it does not cover the VPR saved context in the last 1 KB of RAM.
 
    * ``cpuapp_sram`` - This configuration defines the RAM limit for the CPUAPP application.
 
       * Location: 0x20000000
-      * Size: 160KB
+      * Size: 159KB
 
 #. Configure the CPUAPP application as follows for it to recognize the placement of the FLPR code:
 

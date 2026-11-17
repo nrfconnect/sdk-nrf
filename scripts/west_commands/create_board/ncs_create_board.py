@@ -116,8 +116,10 @@ class NcsCreateBoard(WestCommand):
                             target_ns["ns"] = False
                             targets.append(target_ns)
                         elif target["xip"]:
+                            target["ram"] = core.get("xip_ram", core["ram"])
                             target_xip = target.copy()
                             target_xip["xip"] = False
+                            target_xip["ram"] = core["ram"]
                             targets.append(target_xip)
                 else:
                     target = {

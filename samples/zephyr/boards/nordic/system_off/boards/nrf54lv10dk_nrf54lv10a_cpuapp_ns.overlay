@@ -23,8 +23,8 @@
 };
 
 &cpuapp_sram {
-	/* Shrink SRAM size to avoid overlap with retained memory region:
-	 * 191 - 4 = 187 = 0x2ec00
+	/* Shrink SRAM size to end where the retained memory region starts:
+	 * 187 kB = 0x2ec00
 	 */
 	reg = <0x20000000 DT_SIZE_K(187)>;
 	ranges = <0x0 0x20000000 0x2ec00>;
