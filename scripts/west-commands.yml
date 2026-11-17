@@ -64,3 +64,8 @@ west-commands:
       - name: ncs-ln
         class: NcsLn
         help: west link handling
+  - file: scripts/west_commands/ncs_hpf_asm_update.py
+    commands:
+      - name: ncs-hpf-asm-update
+        class: NcsHpfAsmUpdate
+        help: update HPF hard real-time assembly files
