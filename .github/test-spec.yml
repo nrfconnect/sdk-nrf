@@ -37,17 +37,9 @@
 
 "CI-iot-zephyr-lwm2m-test":
   - "lib/nrf_modem_lib/**/*"
-  - "lib/at_monitor/**/*"
-  - "lib/lte_link_control/**/*"
   - "lib/modem_info/**/*"
   - "lib/modem_key_mgmt/**/*"
-  - "lib/date_time/**/*"
-  - "subsys/net/lib/downloader/**/*"
-  - "subsys/net/lib/fota_download/**/*"
   - "subsys/net/lib/lwm2m_client_utils/**/*"
-  - "subsys/dfu/dfu_target/**/*"
-  - "subsys/dfu/fmfu_fdev/**/*"
-  - "subsys/fw_info/**/*"
   - "samples/cellular/lwm2m_client/**/*"
 
 "CI-audio-test":
