@@ -115,6 +115,16 @@ enum dfu_target_image_type dfu_target_smp_img_type_check(const void *const buf, 
 	return DFU_TARGET_IMAGE_TYPE_SMP;
 }
 
+int dfu_target_mcuboot_set_buf(uint8_t *buf, size_t len)
+{
+	return 0;
+}
+
+int fota_download_mcuboot_target_init(void)
+{
+	return 0;
+}
+
 int downloader_get_with_host_and_file(struct downloader *dl,
 				      const struct downloader_host_cfg *dl_host_cfg,
 				      const char *host, const char *file, size_t from)
