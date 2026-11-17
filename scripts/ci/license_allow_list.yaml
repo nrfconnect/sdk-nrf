@@ -108,6 +108,7 @@ BSD-3-CLAUSE: |
   ^modules/tee/tf-m/psa-arch-tests/
   ^modules/tee/tf-m/trusted-firmware-m/
   ^nrfxlib/openthread/include/openthread/
+  ^nrfxlib/nrf_802154/
   ^nrf/ext/
   ^nrf/drivers/wifi/nrf71/
 BSD-2-CLAUSE-NETBSD: "^nrf/ext/"
