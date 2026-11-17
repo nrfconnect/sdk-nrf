@@ -19,6 +19,17 @@
 		assert-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
 		deassert-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
 	};
+
+	/* Second instance, enabled only in the single pin configuration (see single_pin.overlay).
+	 * It uses the pin which is used as deassert pin by the first instance in the pin pair
+	 * configuration.
+	 */
+	pulse_meas1: pulse-meas1 {
+		compatible = "nordic,pulse-meas";
+		status = "disabled";
+		timer-instance = <&timer21>;
+		assert-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+	};
 };
 
 &pinctrl {
@@ -46,6 +57,10 @@ tester_pwm: &pwm20 {
 };
 
 &timer20 {
+	status = "reserved";
+};
+
+&timer21 {
 	status = "reserved";
 };
 

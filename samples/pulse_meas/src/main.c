@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <drivers/pulse_meas.h>
+#include <gpiote_nrfx.h>
 
 LOG_MODULE_REGISTER(pulse_meas_sample, LOG_LEVEL_INF);
 
@@ -16,6 +17,8 @@ LOG_MODULE_REGISTER(pulse_meas_sample, LOG_LEVEL_INF);
 K_MEM_SLAB_DEFINE(my_meas_slab, PULSE_MEAS_BLOCK_SIZE(NUMBER_OF_MEASUREMENTS), 128, 4);
 
 static const struct device *const pulse_meas_dev = DEVICE_DT_GET(DT_NODELABEL(pulse_meas));
+
+#define GPIOTE_INST NRF_DT_GPIOTE_NODE(DT_NODELABEL(pulse_meas), assert_gpios)
 
 static atomic_t handler_cnt;
 
@@ -39,6 +42,12 @@ int main(void)
 	uint32_t *widths;
 	int ret;
 	uint32_t series_cnt = 0;
+
+
+#ifndef CONFIG_GPIO
+	NRF_DT_IRQ_CONNECT(GPIOTE_INST, nrfx_gpiote_irq_handler,
+			   &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_INST));
+#endif
 
 	printk("Pulse width measurement sample start\n");
 

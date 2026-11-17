@@ -18,10 +18,12 @@ properties:
     type: phandle-array
     required: true
     description:
-      GPIO for detectiong start of impulse.
+      GPIO for detecting start of impulse if deassert-gpios is provided. If it is not
+      provided (single pin mode), both edges of the pulse are detected on this pin.
 
   deassert-gpios:
     type: phandle-array
-    required: true
+    required: false
     description:
-      GPIO for detecting end of impulse.
+      Optional GPIO for detecting end of impulse. If not provided, the pulse is measured
+      on the assert-gpios pin only (single pin mode).

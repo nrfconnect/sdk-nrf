@@ -31,7 +31,7 @@ extern "C" {
 #define PULSE_MEAS_BLOCK_HEADER_SIZE sizeof(void *)
 
 /** Size of a memory slab block for one pulse width measurement series. */
-#define PULSE_MEAS_BLOCK_SIZE(num_meas)                                                        \
+#define PULSE_MEAS_BLOCK_SIZE(num_meas)                                                            \
 	(PULSE_MEAS_BLOCK_HEADER_SIZE + (num_meas) * sizeof(uint32_t))
 
 typedef enum {
@@ -48,6 +48,18 @@ typedef enum {
 	PULSE_MEAS_MODE_CONTINUOUS,
 } pulse_meas_mode_t;
 
+typedef enum {
+	/** Support default latency (low power). Due to interrupt latency, too short gaps between pulses
+	 *  may lead to missed pulses.
+	 */
+	PULSE_MEAS_LATENCY_DEFAULT,
+
+	/** Support low latency (high power). Driver enables low interrupt latency (if possible) to
+	 * reduce the risk of missed pulses.
+	 */
+	PULSE_MEAS_LATENCY_LOW,
+} pulse_meas_latency_t;
+
 struct pulse_meas_config {
 	/** Number of pulse widths in one series. */
 	uint32_t num_of_meas;
@@ -55,8 +67,10 @@ struct pulse_meas_config {
 	pulse_meas_pulse_t pulse_type;
 	/** Operation mode. See @ref pulse_meas_mode_t. */
 	pulse_meas_mode_t mode;
-	/** GPIO pull configuration applied to both input pins. */
+	/** GPIO pull configuration applied to the input pin(s). */
 	nrf_gpio_pin_pull_t pull_config;
+	/** Latency mode. See @ref pulse_meas_latency_t. */
+	pulse_meas_latency_t latency;
 	/**
 	 * Optional callback invoked when a measurement series completes.
 	 *
@@ -70,15 +84,31 @@ struct pulse_meas_config {
 /**
  * @brief Configure pulse width measurement.
  *
- * Must be called before @ref pulse_meas_start.
+ * Must be called before @ref pulse_meas_start. The device must not be configured already. To
+ * change the configuration, call @ref pulse_meas_reset first.
  *
  * @param dev Pointer to the pulse width measurement device.
  * @param cfg Pointer to the configuration structure.
  *
  * @retval 0 On success.
  * @retval -EINVAL Invalid argument.
+ * @retval -EBUSY Device is already configured or a measurement is in progress.
  */
 int pulse_meas_configure(const struct device *dev, const struct pulse_meas_config *cfg);
+
+/**
+ * @brief Reset pulse width measurement.
+ *
+ * Releases the resources used by the configuration (GPIOTE pins and (D)PPI connections) and
+ * brings the device back to the state in which @ref pulse_meas_configure can be called.
+ * Must not be called while a measurement is running or stopping.
+ *
+ * @param dev Pointer to the pulse width measurement device.
+ *
+ * @retval 0 On success.
+ * @retval -EBUSY Device is not configured or a measurement is in progress.
+ */
+int pulse_meas_reset(const struct device *dev);
 
 /**
  * @brief Start pulse width measurement.
@@ -93,6 +123,7 @@ int pulse_meas_configure(const struct device *dev, const struct pulse_meas_confi
  * @retval 0 On success.
  * @retval -EINVAL Invalid argument.
  * @retval -ENOMEM Not enough memory in @p slab.
+ * @retval -EBUSY Device is not configured or a measurement is already in progress.
  */
 int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab);
 
@@ -110,6 +141,7 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab);
  *
  * @retval 0 On success.
  * @retval -EINVAL Invalid argument.
+ * @retval -EBUSY No measurement is in progress.
  */
 int pulse_meas_stop(const struct device *dev, bool immediate);
 
