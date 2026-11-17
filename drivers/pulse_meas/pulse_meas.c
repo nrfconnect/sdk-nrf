@@ -21,6 +21,12 @@
 #include <zephyr/pm/device.h>
 #include <zephyr/pm/device_runtime.h>
 
+#if defined(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
+#include <nrf_sys_event.h>
+#elif defined(CONFIG_MRAM_LATENCY)
+#include <mram_latency.h>
+#endif
+
 LOG_MODULE_REGISTER(pulse_meas, CONFIG_PULSE_MEAS_LOG_LEVEL);
 
 K_FIFO_DEFINE(pulse_meas_fifo);
@@ -53,6 +59,9 @@ struct pulse_meas_drv_data {
 	nrfx_timer_t timer;
 	nrfx_gppi_handle_t ppi_start;
 	nrfx_gppi_handle_t ppi_end;
+#if defined(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
+	int sys_event_handle;
+#endif
 	uint32_t timer_frequency;
 	struct pulse_meas_block *curr_block;
 	uint32_t meas_count;
@@ -67,6 +76,7 @@ struct pulse_meas_drv_data {
 	volatile pulse_meas_state_t state;
 	pulse_meas_pulse_t pulse_type;
 	nrf_gpio_pin_pull_t pull_cfg;
+	pulse_meas_latency_t latency;
 };
 
 struct pulse_meas_drv_cfg {
@@ -180,6 +190,30 @@ static void gppi_enable(const struct device *dev)
 	nrfx_gppi_conn_enable(p_data->ppi_end);
 }
 
+static void low_latency_request(const struct device *dev)
+{
+#if defined(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
+	struct pulse_meas_drv_data *p_data = dev->data;
+
+	p_data->sys_event_handle = nrf_sys_event_register(0, true);
+#elif defined(CONFIG_MRAM_LATENCY)
+	mram_no_latency_sync_request();
+#endif
+}
+
+static void low_latency_release(const struct device *dev)
+{
+#if defined(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
+	struct pulse_meas_drv_data *p_data = dev->data;
+
+	if (p_data->sys_event_handle >= 0) {
+		nrf_sys_event_unregister(p_data->sys_event_handle, false);
+	}
+#elif defined(CONFIG_MRAM_LATENCY)
+	mram_no_latency_sync_release();
+#endif
+}
+
 static void meas_stop(const struct device *dev)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
@@ -191,6 +225,10 @@ static void meas_stop(const struct device *dev)
 	hf_clock_release();
 #endif
 	pulse_meas_state_t old_state = p_data->state;
+
+	if (p_data->latency == PULSE_MEAS_LATENCY_LOW) {
+		low_latency_release(dev);
+	}
 
 	p_data->state = PULSE_MEAS_STATE_READY;
 	if (old_state != PULSE_MEAS_STATE_READY) {
@@ -410,6 +448,7 @@ int pulse_meas_configure(const struct device *dev, const struct pulse_meas_confi
 	p_data->pull_cfg = cfg->pull_config;
 	p_data->user_handler = cfg->user_handler;
 	p_data->user_context = cfg->user_context;
+	p_data->latency = cfg->latency;
 
 	ret = gpiote_configure(dev);
 	if (ret < 0) {
@@ -493,6 +532,10 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 		discard_active_buffers(p_data);
 		p_data->state = PULSE_MEAS_STATE_READY;
 		return ret;
+	}
+
+	if (p_data->latency == PULSE_MEAS_LATENCY_LOW) {
+		low_latency_request(dev);
 	}
 
 	nrfx_timer_clear(&p_data->timer);

@@ -13,6 +13,9 @@ config PULSE_MEAS
 	select NRFX_GPIOTE
 	select NRFX_TIMER
 	select NRFX_GPPI
+	imply NRF_SYS_EVENT
+	imply NRF_SYS_EVENT_IRQ_LATENCY
+	imply MRAM_LATENCY if NRFS_HAS_MRAM_SERVICE
 	help
 	  Enable the pulse width measurement shim that uses GPIOTE, TIMER, and
 	  GPPI to measure pulse widths on two GPIO inputs.

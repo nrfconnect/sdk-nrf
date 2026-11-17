@@ -48,6 +48,18 @@ typedef enum {
 	PULSE_MEAS_MODE_CONTINUOUS,
 } pulse_meas_mode_t;
 
+typedef enum {
+	/** Support default latency (low power). Due to interrupt latency, too short gaps between
+	 *  pulses may lead to missed pulses.
+	 */
+	PULSE_MEAS_LATENCY_DEFAULT,
+
+	/** Support low latency (high power). Driver enables low interrupt latency (if possible) to
+	 * reduce the risk of missed pulses.
+	 */
+	PULSE_MEAS_LATENCY_LOW,
+} pulse_meas_latency_t;
+
 struct pulse_meas_config {
 	/** Number of pulse widths in one series. */
 	uint32_t num_of_meas;
@@ -57,6 +69,8 @@ struct pulse_meas_config {
 	pulse_meas_mode_t mode;
 	/** GPIO pull configuration applied to both input pins. */
 	nrf_gpio_pin_pull_t pull_config;
+	/** Latency mode. See @ref pulse_meas_latency_t. */
+	pulse_meas_latency_t latency;
 	/**
 	 * Optional callback invoked when a measurement series completes.
 	 *
