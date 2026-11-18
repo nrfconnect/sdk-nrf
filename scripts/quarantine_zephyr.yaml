@@ -618,8 +618,11 @@
   comment: "FLASH overflowed"
 
 - scenarios:
+    - net.conn_mgr.dns
+    - net.conn_mgr.dns.direct
     - net.shell
     - net.socket.get_addr_info
+    - net.socket.get_addr_info.prefer_ipv4
     - net.socket.get_addr_info.timeout
     - sample.net.capture
     - sample.net.dns_resolve.llmnr
