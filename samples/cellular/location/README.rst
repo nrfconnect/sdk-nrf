@@ -104,6 +104,12 @@ To build the Location sample with P-GPS support, use the following commands:
 
 |board_target|
 
+For the nRF9251 DK, use the :ncs-file:`/samples/cellular/location/nrf9251dk_pgps.overlay` overlay file instead of :ncs-file:`/samples/cellular/location/pgps.overlay`:
+
+.. code-block:: console
+
+   west build -p -b nrf9251dk/nrf9251/cpuapp -- -DEXTRA_CONF_FILE=pgps.conf -DEXTRA_DTC_OVERLAY_FILE=nrf9251dk_pgps.overlay
+
 See :ref:`cmake_options` for more instructions on how to add this option.
 
 Testing

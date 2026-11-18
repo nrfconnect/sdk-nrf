@@ -8,6 +8,32 @@ menu "Location sample"
 
 endmenu
 
+if NRF_CLOUD_PGPS
+
+configdefault ZMS
+	default y if SOC_FLASH_NRF_MRAM
+
+configdefault NVS
+	default y if !SOC_FLASH_NRF_MRAM
+
+if ZMS
+
+choice ZMS_LOG_LEVEL_CHOICE
+	default ZMS_LOG_LEVEL_WRN
+endchoice
+
+endif # ZMS
+
+if NVS
+
+choice NVS_LOG_LEVEL_CHOICE
+	default NVS_LOG_LEVEL_WRN
+endchoice
+
+endif # NVS
+
+endif # NRF_CLOUD_PGPS
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
