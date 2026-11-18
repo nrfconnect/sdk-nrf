@@ -21,8 +21,10 @@ It can be used for the following purposes:
 * `Playing LED stream`_
 
 .. note::
-   Future development of the HID configurator for nRF Desktop will move to a dedicated `HID Add-on`_.
-   Existing feature set will be maintained in the |NCS| 3.4.x Long-term support (LTS) releases, but new features will be introduced only in the Add-on.
+   The HID configurator for nRF Desktop in the |NCS| is deprecated and will be removed from in the future, together with the :ref:`nrf_desktop` application.
+   Development continues in the dedicated `HID Add-on`_.
+   The in-tree script remains available in the |NCS| v3.4.x long-term support (LTS) release branch until its removal
+   New features are introduced only in the Add-on.
 
 Overview
 ********

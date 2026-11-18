@@ -8,9 +8,10 @@
    See `nRF Desktop reference design page`_ for an overview of supported features.
 
    .. note::
-      Future development of the nRF Desktop HID application reference design will move to a dedicated `HID Add-on`_.
-      Existing feature set will be maintained in the |NCS| 3.4.x Long-term support (LTS) releases, but new features will be introduced only in the Add-on.
-      The Add-on will support nRF54L Series devices.
+      The nRF Desktop application in the |NCS| is deprecated and will be removed in the future.
+      Development of the HID application reference design continues in the dedicated `HID Add-on`_.
+      The in-tree application remains available in the |NCS| v3.4.x long-term support (LTS) release branch until its removal.
+      New features are introduced only in the Add-on.
 
    .. tip::
       To get started with hardware programmed with pre-configured software, go to the :ref:`nrf_desktop_user_interface` section.

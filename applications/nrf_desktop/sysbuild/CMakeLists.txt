@@ -45,13 +45,11 @@ if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU)
           ")
 endif()
 
-if((NOT SB_CONFIG_SOC_SERIES_NRF53) AND
-   (NOT SB_CONFIG_SOC_SERIES_NRF54H))
-  message(DEPRECATION "
+message(DEPRECATION "
           ------------------------------------------------------------------------------
-          --- Future development of the nRF Desktop HID application reference design ---
-          --- will move to HID Add-on. New features will be introduced only in the   ---
-          --- Add-on. See application documentation for details.                     ---
+          --- The nRF Desktop application in sdk-nrf is deprecated and will be       ---
+          --- removed from NCS in the future.                                        ---
+          --- Development continues in the dedicated HID Add-on.                     ---
+          --- See the application documentation for details.                         ---
           ------------------------------------------------------------------------------
           ")
-endif()
