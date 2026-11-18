@@ -58,6 +58,8 @@ static const struct bt_mesh_comp2 comp_p2 = {
 static struct k_work_delayable attention_blink_work;
 static bool attention;
 
+static uint16_t last_led_lvl;
+
 static void attention_blink(struct k_work *work)
 {
 	static int idx;
@@ -81,6 +83,7 @@ static void attention_blink(struct k_work *work)
 		k_work_reschedule(&attention_blink_work, K_MSEC(30));
 	} else {
 		dk_set_leds(DK_NO_LEDS_MSK);
+		lc_pwm_led_set(last_led_lvl);
 	}
 }
 
@@ -152,6 +155,7 @@ static void periodic_led_work(struct k_work *work)
 	k_work_reschedule(&l_ctx->per_work, K_MSEC(l_ctx->time_per));
 apply_and_print:
 	clamped_lvl = bt_mesh_lightness_clamp(&l_ctx->lightness_srv, l_ctx->current_lvl);
+	last_led_lvl = clamped_lvl;
 	lc_pwm_led_set(clamped_lvl);
 	printk("Current light lvl: %u/65535\n", clamped_lvl);
 }
