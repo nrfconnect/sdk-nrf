@@ -34,7 +34,7 @@ LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
 
 static struct k_thread cap_state_machine_thread_data;
 static k_tid_t cap_state_machine_thread_id;
-#define CAP_STATE_MACHINE_STACK_SIZE 1024
+#define CAP_STATE_MACHINE_STACK_SIZE CONFIG_CAP_STATE_MACHINE_STACK_SIZE
 K_THREAD_STACK_DEFINE(cap_state_machine_thread_stack, CAP_STATE_MACHINE_STACK_SIZE);
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,

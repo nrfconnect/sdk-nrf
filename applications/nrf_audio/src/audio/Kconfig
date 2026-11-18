@@ -405,6 +405,10 @@ config CONTENT_CONTROL_MSG_SUB_STACK_SIZE
 	int "Stack size for content control subscriber"
 	default 1200
 
+config CAP_STATE_MACHINE_STACK_SIZE
+	int "Stack size for CAP state machine thread"
+	default 1024
+
 endmenu # Stack sizes
 
 #----------------------------------------------------------------------------#
