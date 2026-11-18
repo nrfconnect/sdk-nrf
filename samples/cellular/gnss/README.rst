@@ -172,6 +172,18 @@ If the sample is to be used with the SUPL client library, the library must be do
 You can download it from the `Nordic Semiconductor website`_.
 See :ref:`supl_client` for information on installing and enabling the SUPL client library.
 
+To build the sample with P-GPS support for the nRF9151 DK, use the :ncs-file:`/samples/cellular/gnss/pgps.conf` configuration file and the :ncs-file:`/samples/cellular/gnss/pgps.overlay` overlay file:
+
+.. code-block:: console
+
+   west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE=pgps.conf -DEXTRA_DTC_OVERLAY_FILE=pgps.overlay
+
+For the nRF9251 DK, use the :ncs-file:`/samples/cellular/gnss/nrf9251dk_pgps.overlay` overlay file instead:
+
+.. code-block:: console
+
+   west build -p -b nrf9251dk/nrf9251/cpuapp -- -DEXTRA_CONF_FILE=pgps.conf -DEXTRA_DTC_OVERLAY_FILE=nrf9251dk_pgps.overlay
+
 Testing
 =======
 

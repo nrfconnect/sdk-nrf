@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		nordic,pgps_partition = &pgps_partition;
+	};
+};
+
+/* P-GPS predictions are stored in the 512 kB common DFU area (0x4af000-0x52f000), which is only
+ * used during firmware updates. A firmware update may overwrite the predictions, after which they
+ * must be downloaded again.
+ */
+&mram1x {
+	partitions {
+		pgps_partition: partition@4af000 {
+			compatible = "zephyr,mapped-partition";
+			label = "pgps";
+			reg = <0x4af000 DT_SIZE_K(80)>;
+		};
+	};
+};
