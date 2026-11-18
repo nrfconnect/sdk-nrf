@@ -609,8 +609,17 @@ Bluetooth Mesh samples
 
   * Support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target in the following samples:
 
+    * :ref:`bluetooth_ble_peripheral_lbs_coex`
+    * :ref:`bt_mesh_chat`
     * :ref:`bluetooth_mesh_light`
+    * :ref:`bluetooth_mesh_light_lc`
+    * :ref:`bluetooth_mesh_light_dim`
     * :ref:`bluetooth_mesh_light_switch`
+    * :ref:`bluetooth_mesh_sensor_client`
+    * :ref:`bluetooth_mesh_sensor_server`
+    * :ref:`bluetooth_mesh_silvair_enocean`
+    * :ref:`ble_mesh_dfu_target`
+    * :ref:`ble_mesh_dfu_distributor`
 
 * Removed support for the ``thingy53/nrf5340/cpuapp`` board target from the following samples:
 
@@ -619,6 +628,10 @@ Bluetooth Mesh samples
   * :ref:`bluetooth_mesh_light_dim`
   * :ref:`bluetooth_mesh_light_switch`
   * :ref:`bluetooth_mesh_sensor_server`
+
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * Added on/off LED control over GPIO for the nRF54LC10 DK, which has no PWM peripheral. LED dimming is not supported on this board.
 
 * :ref:`bluetooth_mesh_light_switch` sample:
 
