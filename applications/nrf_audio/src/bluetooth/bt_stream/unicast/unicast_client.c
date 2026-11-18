@@ -69,12 +69,28 @@ static const k_timeout_t LOCK_WAIT_TIME_MS = K_MSEC(10);
  */
 static void cap_thread_next_evt_set(enum cap_action_type action)
 {
-	k_mutex_lock(&next_action_lock, K_FOREVER);
+	int ret;
+
+	ret = k_mutex_lock(&next_action_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("Failed to lock next action mutex: %d", ret);
+		return;
+	}
+
 	if (action < next_action) {
 		next_action = action;
 	}
-	k_poll_signal_raise(poll_evt.signal, 1);
-	k_mutex_unlock(&next_action_lock);
+
+	int signal_ret = k_poll_signal_raise(poll_evt.signal, 1);
+	if (signal_ret != 0) {
+		LOG_ERR("Failed to raise CAP state machine signal: %d", signal_ret);
+	}
+
+	ret = k_mutex_unlock(&next_action_lock);
+	if (ret != 0) {
+		LOG_ERR("Failed to unlock next action mutex: %d", ret);
+		return;
+	}
 }
 
 /**
@@ -125,7 +141,9 @@ static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn 
 	msg.dir = dir;
 
 	ret = zbus_chan_pub(&le_audio_chan, &msg, LE_AUDIO_ZBUS_EVENT_WAIT_TIME);
-	ERR_CHK(ret);
+	if (ret != 0) {
+		LOG_ERR("Failed to publish LE Audio event: %d", ret);
+	}
 }
 
 static int stream_idx_get(struct bt_bap_stream *stream, struct stream_index *idx)
@@ -491,6 +509,9 @@ static bool foreach_server_stream_in_unicast_group_check(struct server_store *se
 				server->name, i, &server->snk.cap_streams[i]);
 			/* A stream is missing from the group, stop iterating */
 			return ITER_STOP;
+		} else if (ret != -ECANCELED) {
+			LOG_ERR("Failed to check sink stream %d in unicast group: %d", i, ret);
+			return ITER_STOP;
 		}
 	}
 
@@ -505,6 +526,9 @@ static bool foreach_server_stream_in_unicast_group_check(struct server_store *se
 		if (ret == 0) {
 			LOG_INF("Server %s source stream %d (%p) not found in unicast group",
 				server->name, i, &server->src.cap_streams[i]);
+			return ITER_STOP;
+		} else if (ret != -ECANCELED) {
+			LOG_ERR("Failed to check source stream %d in unicast group: %d", i, ret);
 			return ITER_STOP;
 		}
 	}
@@ -559,12 +583,20 @@ static bool foreach_add_to_start_params(struct server_store *server, void *user_
 
 		ret = bt_cap_unicast_group_foreach_stream(
 			unicast_group, foreach_stream_in_group_check, &server->snk.cap_streams[j]);
-		if (ret != -ECANCELED) {
+		if (ret == 0) {
 			continue;
+		}
+		if (ret != -ECANCELED) {
+			LOG_ERR("Failed to check sink stream %d in unicast group: %d", j, ret);
+			return ITER_STOP;
 		}
 
 		ret = le_audio_ep_state_get(server->snk.eps[j], &state);
-		if (ret || state == BT_BAP_EP_STATE_STREAMING) {
+		if (ret != 0) {
+			LOG_ERR("Failed to get sink endpoint state: %d", ret);
+			return ITER_STOP;
+		}
+		if (state == BT_BAP_EP_STATE_STREAMING) {
 			LOG_DBG("Sink endpoint is already streaming, skipping start");
 			continue;
 		}
@@ -583,12 +615,20 @@ static bool foreach_add_to_start_params(struct server_store *server, void *user_
 
 		ret = bt_cap_unicast_group_foreach_stream(
 			unicast_group, foreach_stream_in_group_check, &server->src.cap_streams[j]);
-		if (ret != -ECANCELED) {
+		if (ret == 0) {
 			continue;
+		}
+		if (ret != -ECANCELED) {
+			LOG_ERR("Failed to check source stream %d in unicast group: %d", j, ret);
+			return ITER_STOP;
 		}
 
 		ret = le_audio_ep_state_get(server->src.eps[j], &state);
-		if (ret || state == BT_BAP_EP_STATE_STREAMING) {
+		if (ret != 0) {
+			LOG_ERR("Failed to get source endpoint state: %d", ret);
+			return ITER_STOP;
+		}
+		if (state == BT_BAP_EP_STATE_STREAMING) {
 			LOG_DBG("Source endpoint is already streaming, skipping start");
 			continue;
 		}
@@ -1058,6 +1098,11 @@ static void discover_cb_source(struct bt_conn *conn, int err, struct server_stor
 
 	ret = srv_store_valid_codec_cap_check(conn, BT_AUDIO_DIR_SOURCE, &valid_source_caps, NULL,
 					      0);
+	if (ret != 0) {
+		LOG_ERR("Failed to check for valid codec capabilities: %d", ret);
+		return;
+	}
+
 	if (!valid_source_caps) {
 		LOG_WRN("No valid codec capability found for %s source", server->name);
 		return;
@@ -1315,7 +1360,11 @@ static void bap_stream_started_cb(struct bt_bap_stream *stream)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		ERR_CHK(bt_le_audio_tx_stream_started(bt_le_audio_tx, idx));
+		ret = bt_le_audio_tx_stream_started(bt_le_audio_tx, idx);
+		if (ret != 0) {
+			LOG_ERR("Failed to mark TX stream started: %d", ret);
+			return;
+		}
 	}
 
 	/* NOTE: The string below is used by the Nordic CI system */
@@ -1340,8 +1389,17 @@ static void bap_stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 	}
 
 	/* Check if the other streams are streaming, send event if not */
-	if (srv_store_all_ep_state_count(BT_BAP_EP_STATE_STREAMING, BT_AUDIO_DIR_SINK) ||
-	    srv_store_all_ep_state_count(BT_BAP_EP_STATE_STREAMING, BT_AUDIO_DIR_SOURCE)) {
+	int snk_count = srv_store_all_ep_state_count(BT_BAP_EP_STATE_STREAMING, BT_AUDIO_DIR_SINK);
+	int src_count =
+		srv_store_all_ep_state_count(BT_BAP_EP_STATE_STREAMING, BT_AUDIO_DIR_SOURCE);
+
+	if (snk_count < 0 || src_count < 0) {
+		LOG_ERR("Failed to get streaming count: snk %d, src %d", snk_count, src_count);
+		srv_store_unlock();
+		return;
+	}
+
+	if (snk_count > 0 || src_count > 0) {
 		LOG_DBG("Other streams are still streaming, not publishing NOT_STREAMING event");
 		srv_store_unlock();
 		return;
@@ -1354,6 +1412,7 @@ static void bap_stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 	dir = le_audio_stream_dir_get(stream);
 	if (dir <= 0) {
 		LOG_ERR("Failed to get dir of stream %p", stream);
+		return;
 	}
 
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, stream, dir);
@@ -1408,7 +1467,11 @@ static void bap_stream_sent_cb(struct bt_bap_stream *stream)
 			LOG_ERR("Failed to get stream index: %d", ret);
 			return;
 		}
-		ERR_CHK(bt_le_audio_tx_stream_sent(bt_le_audio_tx, idx));
+		ret = bt_le_audio_tx_stream_sent(bt_le_audio_tx, idx);
+		if (ret != 0) {
+			LOG_ERR("Failed to mark TX stream sent: %d", ret);
+			return;
+		}
 	} else {
 		LOG_WRN("Not in streaming state: %d", state);
 	}
@@ -1496,7 +1559,9 @@ static void cap_discovery_complete_cb(struct bt_conn *conn, int err,
 	msg.conn = conn;
 
 	ret = zbus_chan_pub(&le_audio_chan, &msg, LE_AUDIO_ZBUS_EVENT_WAIT_TIME);
-	ERR_CHK(ret);
+	if (ret != 0) {
+		LOG_ERR("Failed to publish LE Audio event: %d", ret);
+	}
 
 	srv_store_unlock();
 }
@@ -1703,7 +1768,12 @@ static bool foreach_first_source_location_get(struct bt_cap_stream *stream, void
 
 	enum bt_audio_location *locations = (enum bt_audio_location *)user_data;
 
-	dir = le_audio_stream_dir_get(&stream->bap_stream);
+	ret = le_audio_stream_dir_get(&stream->bap_stream);
+	if (ret < 0) {
+		LOG_ERR("Failed to get stream direction: %d", ret);
+		return ITER_STOP;
+	}
+	dir = (enum bt_audio_dir)ret;
 
 	ret = stream_idx_get(&stream->bap_stream, &idx);
 	if (ret != 0) {
@@ -2221,8 +2291,14 @@ int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_ind
 		return ret;
 	}
 
-	uint8_t num_streaming =
+	int num_streaming =
 		srv_store_all_ep_state_count(BT_BAP_EP_STATE_STREAMING, BT_AUDIO_DIR_SINK);
+	if (num_streaming < 0) {
+		LOG_ERR("Failed to get streaming count: %d", num_streaming);
+		srv_store_unlock();
+		return num_streaming;
+	}
+
 	struct le_audio_tx_info tx[num_streaming];
 
 	struct unicast_send_info info = {
@@ -2266,16 +2342,40 @@ int unicast_client_disable(uint8_t cig_index)
 
 enum cap_action_type cap_thread_next_event_get(void)
 {
+	int ret;
+
 	LOG_DBG("Waiting for next event");
-	(void)k_poll(&poll_evt, 1, K_FOREVER);
+	ret = k_poll(&poll_evt, 1, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("Failed to poll for CAP state machine event: %d", ret);
+		return CAP_ACTION_NONE;
+	}
+
 	LOG_DBG("Waiting for CAP state machine semaphore");
-	k_sem_take(&cap_state_machine_sem, K_FOREVER);
-	k_mutex_lock(&next_action_lock, K_FOREVER);
+	ret = k_sem_take(&cap_state_machine_sem, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("Failed to take CAP state machine semaphore: %d", ret);
+		return CAP_ACTION_NONE;
+	}
+
+	ret = k_mutex_lock(&next_action_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("Failed to lock next action mutex: %d", ret);
+		return CAP_ACTION_NONE;
+	}
+
 	enum cap_action_type action = next_action;
 	next_action = CAP_ACTION_NONE;
 	k_poll_signal_reset(&poll_sig);
 	poll_evt.state = K_POLL_STATE_NOT_READY;
-	k_mutex_unlock(&next_action_lock);
+
+	ret = k_mutex_unlock(&next_action_lock);
+	if (ret != 0) {
+		LOG_ERR("Failed to unlock next action mutex: %d", ret);
+		k_oops();
+		return CAP_ACTION_NONE;
+	}
+
 	return action;
 }
 
@@ -2303,15 +2403,29 @@ static void cap_state_machine_runner(void)
 		unicast_group_recreate_pending = true;
 		ret = unicast_client_internal_stop();
 		if (ret == 0) {
-			k_sem_take(&cap_state_machine_sem, K_FOREVER);
+			ret = k_sem_take(&cap_state_machine_sem, K_FOREVER);
+			if (ret != 0) {
+				LOG_ERR("Failed to take CAP state machine semaphore: %d", ret);
+				break;
+			}
 		} else if (ret != -EAGAIN) {
 			unicast_group_recreate_pending = false;
 			break;
 		}
 
-		k_mutex_lock(&next_action_lock, K_FOREVER);
+		ret = k_mutex_lock(&next_action_lock, K_FOREVER);
+		if (ret != 0) {
+			LOG_ERR("Failed to lock next action mutex: %d", ret);
+			break;
+		}
+
 		bool stop_pending = (next_action == CAP_ACTION_STOP);
-		k_mutex_unlock(&next_action_lock);
+		ret = k_mutex_unlock(&next_action_lock);
+		if (ret != 0) {
+			LOG_ERR("Failed to unlock next action mutex: %d", ret);
+			k_oops();
+			break;
+		}
 
 		if (stop_pending) {
 			in_playing_state = false;
