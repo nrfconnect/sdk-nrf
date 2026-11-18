@@ -1192,6 +1192,15 @@ For example:
 
 |board_target|
 
+For the nRF9251 DK, use the :ncs-file:`/samples/cellular/modem_shell/nrf9251dk_pgps.overlay` overlay file instead of :ncs-file:`/samples/cellular/modem_shell/pgps.overlay`.
+The overlay stores the P-GPS predictions in the common DFU area of the MRAM, which is only used during firmware updates.
+A firmware update may overwrite the predictions, after which they must be downloaded again.
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9251dk/nrf9251/cpuapp -- -DEXTRA_CONF_FILE=pgps.conf -DEXTRA_DTC_OVERLAY_FILE=nrf9251dk_pgps.overlay
+
 .. _cloud_build:
 
 Cloud over MQTT
