@@ -784,38 +784,53 @@ Testing
 
          .. figure:: /images/bt_fast_pair_locator_tag_discoverable_notification.png
             :scale: 80 %
-            :alt: Fast Pair discoverable notification with support for the `Find Hub app`_
+            :alt: Fast Pair discoverable notification
 
       #. Initiate the connection and trigger the Fast Pair procedure by tapping the :guilabel:`Connect` button.
-         After the procedure is complete, you will see a pop-up with the Acceptable Use Policy for the `Find Hub app`_.
+         After the procedure is complete, you will see the **Use responsibly** screen with the Acceptable Use Policy for the `Find Hub app`_.
 
          .. note::
             If you use the default debug device model and you have the `nRF Connect Device Manager`_ application installed on your test Android device, you may get the Android notification from this mobile application about the new firmware update.
             You can ignore this notification, as it is not related to the Fast Pair provisioning process.
             To test the notification feature, follow the :ref:`fast_pair_locator_tag_testing_fw_update_notifications` test section.
 
-      #. If you want to start the FHN provisioning, accept the Acceptable Use Policy by tapping the :guilabel:`Agree and continue` button.
+      #. To start FHN provisioning, tap the :guilabel:`Continue` button to accept the Acceptable Use Policy.
 
          .. figure:: /images/bt_fast_pair_locator_tag_acceptable_use_policy.png
             :scale: 80 %
             :alt: The Find Hub Acceptable Use Policy
 
-      #. Wait for the Android device's notification that indicates completion of the provisioning process.
+      #. Wait for the FHN provisioning process to complete.
+         The **Adding to Find Hub...** screen is displayed while the provisioning is in progress.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_provisioning_in_progress.png
+            :scale: 80 %
+            :alt: The Adding to Find Hub screen displayed during the FHN provisioning
+
+      #. In the **Choose a category for your tag** screen, select a category for your locator tag (for example, :guilabel:`Keys`) and tap the :guilabel:`Continue` button.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_category_selection.png
+            :scale: 80 %
+            :alt: The category selection screen for the locator tag
+
+      #. Wait for the **What next?** screen that indicates the completion of the setup process.
+         Optionally, use this screen to configure additional settings for your locator tag, such as its name.
+         You can also change these settings later in the `Find Hub app`_.
 
          .. figure:: /images/bt_fast_pair_locator_tag_provisioning_complete.png
             :scale: 80 %
-            :alt: Notification about provisioning completion for the `Find Hub app`_
+            :alt: The What next screen displayed after the FHN provisioning completion
 
       #. Observe that **LED 3** is lit, which indicates that the device is provisioned as an FHN beacon and the Fast Pair advertising is disabled.
-      #. Open the `Find Hub app`_ by tapping the :guilabel:`Open app` button.
+      #. Open the `Find Hub app`_ by tapping the :guilabel:`Open Find Hub` button.
       #. In your accessory view, tap the :guilabel:`Find nearby` button.
       #. Observe in the Find nearby view that the grey shape shrinks when you move your Android device further away from your locator tag device.
          The shape also grows when you move your Android device closer to the locator tag.
          The closest proximity level is indicated by the device logo displayed inside the grey shape.
 
-         .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_nearby_view.png
+         .. figure:: /images/bt_fast_pair_locator_tag_find_hub_app_nearby_view.png
             :scale: 80 %
-            :alt: Find nearby view of the `Find Hub app`_
+            :alt: Find nearby view of the Find Hub app
 
       #. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
       #. Observe that **LED 2** is lit, which indicates that the ringing action is in progress.
@@ -832,7 +847,7 @@ Testing
       #. Start the unprovisioning operation by tapping the :guilabel:`Remove from Find Hub` button at the bottom of the screen.
       #. Confirm the operation by tapping the :guilabel:`Remove` button in the **Remove from Find Hub** view.
 
-         .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_unprovision.png
+         .. figure:: /images/bt_fast_pair_locator_tag_find_hub_app_unprovision.png
             :scale: 80 %
             :alt: Remove from Find Hub view
 
@@ -854,38 +869,53 @@ Testing
 
          .. figure:: /images/bt_fast_pair_locator_tag_discoverable_notification.png
             :scale: 80 %
-            :alt: Fast Pair discoverable notification with support for the `Find Hub app`_
+            :alt: Fast Pair discoverable notification
 
       #. Initiate the connection and trigger the Fast Pair procedure by tapping the :guilabel:`Connect` button.
-         After the procedure is complete, you will see a pop-up with the Acceptable Use Policy for the `Find Hub app`_.
+         After the procedure is complete, you will see the **Use responsibly** screen with the Acceptable Use Policy for the `Find Hub app`_.
 
          .. note::
             If you use the default debug device model and you have the `nRF Connect Device Manager`_ application installed on your test Android device, you may get the Android notification from this mobile application about the new firmware update.
             You can ignore this notification, as it is not related to the Fast Pair provisioning process.
             To test the notification feature, follow the :ref:`fast_pair_locator_tag_testing_fw_update_notifications` test section.
 
-      #. If you want to start the FHN provisioning, accept the Acceptable Use Policy by tapping the :guilabel:`Agree and continue` button.
+      #. To start FHN provisioning, tap the :guilabel:`Continue` button to accept the Acceptable Use Policy.
 
          .. figure:: /images/bt_fast_pair_locator_tag_acceptable_use_policy.png
             :scale: 80 %
             :alt: The Find Hub Acceptable Use Policy
 
-      #. Wait for the Android device's notification that indicates completion of the provisioning process.
+      #. Wait for the FHN provisioning process to complete.
+         The **Adding to Find Hub...** screen is displayed while the provisioning is in progress.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_provisioning_in_progress.png
+            :scale: 80 %
+            :alt: The Adding to Find Hub screen displayed during the FHN provisioning
+
+      #. In the **Choose a category for your tag** screen, select a category for your locator tag (for example, :guilabel:`Keys`) and tap the :guilabel:`Continue` button.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_category_selection.png
+            :scale: 80 %
+            :alt: The category selection screen for the locator tag
+
+      #. Wait for the **What next?** screen that indicates the completion of the setup process.
+         Optionally, use this screen to configure additional settings for your locator tag, such as its name.
+         You can also change these settings later in the `Find Hub app`_.
 
          .. figure:: /images/bt_fast_pair_locator_tag_provisioning_complete.png
             :scale: 80 %
-            :alt: Notification about provisioning completion for the `Find Hub app`_
+            :alt: The What next screen displayed after the FHN provisioning completion
 
       #. Observe that **LED 2** is lit, which indicates that the device is provisioned as an FHN beacon and the Fast Pair advertising is disabled.
-      #. Open the `Find Hub app`_ by tapping the :guilabel:`Open app` button.
+      #. Open the `Find Hub app`_ by tapping the :guilabel:`Open Find Hub` button.
       #. In your accessory view, tap the :guilabel:`Find nearby` button.
       #. Observe in the Find nearby view that the grey shape shrinks when you move your Android device further away from your locator tag device.
          The shape also grows when you move your Android device closer to the locator tag.
          The closest proximity level is indicated by the device logo displayed inside the grey shape.
 
-         .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_nearby_view.png
+         .. figure:: /images/bt_fast_pair_locator_tag_find_hub_app_nearby_view.png
             :scale: 80 %
-            :alt: Find nearby view of the `Find Hub app`_
+            :alt: Find nearby view of the Find Hub app
 
          .. note::
             If the :ref:`ug_bt_fast_pair_fhn_pf` is enabled for the chosen board target and you use the Android test device with the Bluetooth Low Energy CS support, the Find nearby view may also display the estimated distance from the locator tag in meters.
@@ -906,7 +936,7 @@ Testing
       #. Start the unprovisioning operation by tapping the :guilabel:`Remove from Find Hub` button at the bottom of the screen.
       #. Confirm the operation by tapping the :guilabel:`Remove` button in the **Remove from Find Hub** view.
 
-         .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_unprovision.png
+         .. figure:: /images/bt_fast_pair_locator_tag_find_hub_app_unprovision.png
             :scale: 80 %
             :alt: Remove from Find Hub view
 
@@ -945,7 +975,7 @@ To test this feature, complete the following steps:
       Ranging: pairing completed (bonded) with ...
 
 #. Observe that **LED 2** is lit, which indicates that the device is provisioned as an FHN beacon.
-#. Open the `Find Hub app`_ by tapping the :guilabel:`Open app` button.
+#. Open the `Find Hub app`_ by tapping the :guilabel:`Open Find Hub` button.
 #. In your accessory view, tap the :guilabel:`Find nearby` button.
 #. Wait for the Bluetooth Low Energy CS ranging session to be established.
    In the terminal, observe the log messages confirming that the ranging capability exchange and configuration have been completed.
