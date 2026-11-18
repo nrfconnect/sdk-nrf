@@ -158,7 +158,7 @@ Data Profile:
   The commands use the default band optimization of the modem, which also depends on the data profile.
 
   If you set a periodic search configuration using the :c:func:`lte_lc_periodic_search_set` function, it replaces the default pattern of the current data profile.
-  For the parameter descriptions, see the `nRF91x1 AT Commands Reference Guide`_ or the `nRF91x1 NTN AT Commands Reference Guide`_, depending on the modem firmware you are using.
+  For the parameter descriptions, see the `nRF91x1 Cellular AT Commands Reference Guide`_ or the `nRF91x1 NTN AT Commands Reference Guide`_, depending on the modem firmware you are using.
 
   The modem stores the data profile to non-volatile memory about every 48 hours and when the functional mode is set to power off.
   Consider UICC non-volatile memory wear when you select the profile.
@@ -245,7 +245,7 @@ For more information on the functions and data associated with each, refer to th
 
 .. note::
    Some of the functionalities might not be compatible with certain modem firmware versions.
-   To check if a desired feature is compatible with a certain modem firmware version, see the AT commands that are documented in the `nRF91x1 AT Commands Reference Guide`_ or the `nRF91x1 NTN AT Commands Reference Guide`_, depending on the modem firmware you are using.
+   To check if a desired feature is compatible with a certain modem firmware version, see the AT commands that are documented in the `nRF91x1 Cellular AT Commands Reference Guide`_ or the `nRF91x1 NTN AT Commands Reference Guide`_, depending on the modem firmware you are using.
 
 .. _lte_lc_power_saving:
 
@@ -401,7 +401,7 @@ AT commands used
 The PDN functionality uses several AT commands, and it relies on the following two types of AT notifications to work:
 
 * Packet domain events notifications (``+CGEV``) - Subscribed by using the ``AT+CGEREP=1`` command.
-  See the `nRF91x1 AT+CGEREP set command`_ section in the nRF91x1 AT Commands Reference Guide or the `nRF91x1 NTN AT+CGEREP set command`_ section in the nRF91x1 NTN AT Commands Reference Guide.
+  See the `nRF91x1 AT+CGEREP set command`_ section in the nRF91x1 Cellular AT Commands Reference Guide or the `nRF91x1 NTN AT+CGEREP set command`_ section in the nRF91x1 NTN AT Commands Reference Guide.
 * Notifications for unsolicited reporting of error codes sent by the network (``+CNEC``) - Subscribed by using the ``AT+CNEC=16`` command.
   See the `nRF91x1 AT+CNEC set command`_ section in the nRF91x1 AT Commands Reference Guide or the `nRF91x1 NTN AT+CNEC set command`_ section in the nRF91x1 NTN AT Commands Reference Guide.
 
@@ -422,7 +422,7 @@ Following are the AT commands that are used by the PDN functionality:
 * ``AT+CGCONTRDP`` - To retrieve the dynamic parameters of a PDN connection
 * ``AT+CGPADDR`` - To retrieve the IP addresses of a PDN connection (as part of the dynamic parameters)
 
-For more information about these commands, see the `nRF91x1 packet domain AT commands`_ section in the nRF91x1 AT Commands Reference Guide or the `nRF91x1 NTN packet domain AT commands`_ section in the nRF91x1 NTN AT Commands Reference Guide.
+For more information about these commands, see the `nRF91x1 packet domain AT commands`_ section in the nRF91x1 Cellular AT Commands Reference Guide or the `nRF91x1 NTN packet domain AT commands`_ section in the nRF91x1 NTN AT Commands Reference Guide.
 
 Creating and managing PDN connections
 --------------------------------------

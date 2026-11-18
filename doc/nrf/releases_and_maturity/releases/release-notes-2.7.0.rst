@@ -1094,7 +1094,7 @@ Modem libraries
 
   * Added the :kconfig:option:`CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION` to enable PLMN selection optimization on network search.
     This option is enabled by default.
-    For more information, see the ``AT%FEACONF`` command documentation in the `nRF91x1 AT Commands Reference Guide`_.
+    For more information, see the ``AT%FEACONF`` command documentation in the `nRF91x1 Cellular AT Commands Reference Guide`_.
 
   * Removed ``AT%XRAI`` related deprecated functions ``lte_lc_rai_param_set()`` and ``lte_lc_rai_req()``, and Kconfig option ``CONFIG_LTE_RAI_REQ_VALUE``.
     The application uses the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ` and ``SO_RAI`` socket option instead.

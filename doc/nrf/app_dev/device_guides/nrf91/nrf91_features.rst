@@ -88,7 +88,7 @@ LTE modem
 
 The LTE modem handles LTE communication.
 It is controlled through AT commands.
-The AT commands are documented in the `nRF91x1 AT Commands Reference Guide`_  and `nRF9160 AT Commands Reference Guide`_.
+The AT commands are documented in the `nRF91x1 Cellular AT Commands Reference Guide`_  and `nRF9160 AT Commands Reference Guide`_.
 
 The firmware for the modem is available as a precompiled binary.
 You can download the firmware from the `nRF9151 product website (compatible downloads)`_, `nRF9161 product website (compatible downloads)`_, or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
@@ -160,7 +160,7 @@ The band lock mask allows you to set the bands on which you want the modem to op
 Each bit in the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
 The maximum length of the string is 88 characters (bit string, 88 bits).
 
-For more detailed information, see the `band lock section in the nRF9160 AT Commands Reference Guide`_ or the `band lock section in the nRF91x1 AT Commands Reference Guide`_, depending on the SiP you are using.
+For more detailed information, see the `band lock section in the nRF9160 AT Commands Reference Guide`_ or the `band lock section in the nRF91x1 Cellular AT Commands Reference Guide`_, depending on the SiP you are using.
 
 .. _nrf91_ug_network_mode:
 .. _nrf9160_ug_network_mode:
@@ -176,7 +176,7 @@ You can change the enabled systems using the :kconfig:option:`CONFIG_LTE_NETWORK
 When the :ref:`lte_lc_readme` library is not used, the modem starts in LTE-M mode.
 You can change the system mode and the LTE system mode preference using the ``AT%XSYSTEMMODE`` AT command.
 
-For more detailed information, see the `system mode section in the nRF9160 AT Commands Reference Guide`_ or the `system mode section in the nRF91x1 AT Commands Reference Guide`_, depending on the SiP you are using.
+For more detailed information, see the `system mode section in the nRF9160 AT Commands Reference Guide`_ or the `system mode section in the nRF91x1 Cellular AT Commands Reference Guide`_, depending on the SiP you are using.
 
 Modem library
 *************
@@ -204,7 +204,7 @@ To enable the modem traces in the modem and to forward them to the :ref:`modem_t
    For the :ref:`at_client_sample` sample, you must also run ``AT%XMODEMTRACE=1,2`` to manually activate the predefined trace set.
 
 You can set the trace level using the AT command ``AT%XMODEMTRACE``.
-For more information, see the `modem trace activation %XMODEMTRACE`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 modem trace activation %XMODEMTRACE_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+For more information, see the `modem trace activation %XMODEMTRACE`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 modem trace activation %XMODEMTRACE_>`_ in the nRF91x1 Cellular AT Commands Reference Guide, depending on the SiP you are using.
 
 See :ref:`modem_trace_module` for other backend options.
 If the existing trace backends are not sufficient, it is possible to implement custom trace backends.

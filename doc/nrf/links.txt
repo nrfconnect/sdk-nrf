@@ -620,8 +620,13 @@
 .. _`Power saving mode setting`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/nw_service/cpsms.html
 .. _`Release Assistance Indication (RAI)`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/nw_service/xrai.html
 
+.. _`nRF91x1 Cellular AT Commands Reference Guide`:
 .. _`nRF91x1 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/intro_nrf91x1.html
+
+.. _`band lock section in the nRF91x1 Cellular AT Commands Reference Guide`:
 .. _`band lock section in the nRF91x1 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
+
+.. _`system mode section in the nRF91x1 Cellular AT Commands Reference Guide`:
 .. _`system mode section in the nRF91x1 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
 .. _`nRF91x1 battery voltage low level %XVBATLOWLVL`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mob_termination_ctrl_status/xvbatlvl.html
 .. _`nRF91x1 credential storage management %CMNG`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/security/cmng.html

@@ -332,7 +332,7 @@ Examples
 
   .. note::
      The certificate must have been written beforehand to security tag ``123``.
-     See the `nRF91x1 credential storage management %CMNG`_ section in the nRF91x1 AT Commands Reference Guide.
+     See the `nRF91x1 credential storage management %CMNG`_ section in the nRF91x1 Cellular AT Commands Reference Guide.
 
 * Open a raw socket:
 
