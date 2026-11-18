@@ -347,6 +347,15 @@ This section describes the changes related to libraries.
        Alternatively, unprovision the devices before the update and reprovision them afterwards.
        For details, see the Security toolbox section in :ref:`ug_bt_mesh_configuring` page.
 
+   * :ref:`ble_rpc` library:
+
+     * The deprecated ``bt_passkey_set()`` function and ``CONFIG_BT_FIXED_PASSKEY`` Kconfig option are removed in Zephyr v4.5.
+       To use a fixed passkey for pairing, complete the following steps:
+
+       1. Enable the :kconfig:option:`CONFIG_BT_APP_PASSKEY` Kconfig option in both the application image (Bluetooth RPC Client) and the image running the Bluetooth LE stack (Bluetooth RPC Host), for example the :ref:`ipc_radio` image.
+       #. Register a :c:struct:`bt_conn_auth_cb` structure with the :c:member:`bt_conn_auth_cb.app_passkey` callback set, and return the fixed passkey from that callback instead of calling ``bt_passkey_set()``.
+          Return :c:macro:`BT_PASSKEY_RAND` to let the host generate a random passkey, instead of calling ``bt_passkey_set()`` with ``BT_PASSKEY_INVALID``.
+
 Drivers
 =======
 
