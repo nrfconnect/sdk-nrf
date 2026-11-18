@@ -515,6 +515,142 @@ ZTEST(fota_download_tests, test_download_img_num_change_no_resume)
 	k_sem_take(&stop_sem, K_FOREVER);
 }
 
+/**
+ * @brief Interrupt a download after its first fragment.
+ *
+ * The progress in the DFU target then belongs to this download.
+ */
+static void test_fota_download_interrupted(const char *file, int img_num)
+{
+	int err;
+	static uint8_t fragment_data[32];
+	const struct downloader_evt evt = {
+		.id = DOWNLOADER_EVT_FRAGMENT,
+		.fragment = {
+			.buf = fragment_data,
+			.len = sizeof(fragment_data),
+		},
+	};
+	const struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = buf,
+		.img_num = img_num,
+		.expected_type = DFU_TARGET_IMAGE_TYPE_ANY,
+	};
+
+	strcpy(buf, file);
+	start_with_offset = false;
+
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, NULL);
+
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, 0, NULL);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+}
+
+/**
+ * @brief Test that a retry does not resume the progress of another download.
+ *
+ * Stop the download before its first fragment (cancelled, then failing to start),
+ * retry it and verify that the DFU target is reset, then that its own progress
+ * is resumed.
+ */
+static void test_fota_download_retry_no_resume(const char *file, int img_num)
+{
+	int err;
+	static uint8_t fragment_data[32];
+	const struct downloader_evt evt = {
+		.id = DOWNLOADER_EVT_FRAGMENT,
+		.fragment = {
+			.buf = fragment_data,
+			.len = sizeof(fragment_data),
+		},
+	};
+	const struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = buf,
+		.img_num = img_num,
+		.expected_type = DFU_TARGET_IMAGE_TYPE_ANY,
+	};
+
+	strcpy(buf, file);
+
+	/* Cancelled before the first fragment */
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, NULL);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+
+	/* Failed to start. Drop the stop that the mocked downloader reports when cancelled. */
+	fail_on_connect = true;
+	err = fota_download_start_params(&params);
+	zassert_equal(err, -1, NULL);
+	fail_on_connect = false;
+	k_sem_reset(&stop_sem);
+
+	/* The DFU target reports progress, which was saved by another download */
+	start_with_offset = true;
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, NULL);
+
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, 0, "progress of another download was resumed");
+	zassert_equal(dfu_target_reset_calls, 1, "DFU target not reset");
+	zassert_equal(dfu_target_init_img_num, img_num, NULL);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+
+	/* The progress now belongs to this download */
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, NULL);
+
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, -1, "own progress was not resumed");
+	zassert_equal(dfu_target_reset_calls, 1, "DFU target reset again");
+
+	download_with_offset_success = false;
+	k_sem_take(&download_with_offset_sem, K_SECONDS(2));
+	zassert_true(download_with_offset_success, NULL);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+}
+
+ZTEST(fota_download_tests, test_download_img_num_change_retry_no_resume)
+{
+	if (IMG_NUM_MAX < 1) {
+		ztest_test_skip();
+	}
+
+	init();
+
+	/* Interrupted download to image pair 1 */
+	test_fota_download_interrupted(S0_A, 1);
+
+	/* Same URI to image pair 0 */
+	test_fota_download_retry_no_resume(S0_A, 0);
+}
+
+ZTEST(fota_download_tests, test_download_uri_change_retry_no_resume)
+{
+	init();
+
+	/* Interrupted download of one file */
+	test_fota_download_interrupted(S0_A, 0);
+
+	/* Another file to the same image pair */
+	test_fota_download_retry_no_resume(S1_A, 0);
+}
+
 ZTEST(fota_download_tests, test_download_img_num_negative)
 {
 	int err;
@@ -633,6 +769,9 @@ ZTEST(fota_download_tests, test_download_with_offset)
 
 	/* Init */
 	init();
+
+	/* Only the progress of an interrupted download of the same file is resumed */
+	test_fota_download_interrupted(S0_A, 0);
 
 	/* Cause subsequent downloads to start with an offset */
 	start_with_offset = true;
