@@ -439,11 +439,23 @@ int lte_net_if_enable(void)
 
 int lte_net_if_disable(void)
 {
+	int ret;
+
 	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT)) {
 		return lte_net_if_disconnect(NULL);
-	} else {
-		return nrf_modem_lib_shutdown();
 	}
+
+	k_work_cancel_delayable(&connection_timeout_work);
+
+	/* The modem library requires minimal functional mode before shutdown.
+	 * Use the link controller so that subscribers are notified of the mode change.
+	 */
+	ret = lte_lc_power_off();
+	if (ret) {
+		LOG_ERR("lte_lc_power_off, error: %d", ret);
+	}
+
+	return nrf_modem_lib_shutdown();
 }
 
 static int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
