@@ -1314,6 +1314,11 @@ Gazell libraries
 Modem libraries
 ---------------
 
+* :ref:`lib_at_host` library:
+
+  * Updated the library to use the UART device chosen as ``zephyr,console`` in the devicetree when the ``ncs,at-host-uart`` chosen node is not set.
+    If neither is set, ``uart0`` is used as before.
+
 * :ref:`nrf_modem_lib_readme`:
 
   * Updated the diagnostic counters of memory allocation failures to depend on the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` Kconfig option.

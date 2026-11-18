@@ -24,7 +24,7 @@ The various configuration options used in the library are listed below:
 * :kconfig:option:`CONFIG_AT_HOST_CMD_MAX_LEN` - Sets the maximum length for an AT command
 * :kconfig:option:`CONFIG_AT_HOST_THREAD_PRIO` - Sets the priority level for the AT host work queue thread
 
-The library will use ``uart0`` by default.
+By default, the library uses the UART device chosen as ``zephyr,console`` in the devicetree, or ``uart0`` if no console is chosen.
 However, ``ncs,at-host-uart`` choice in devicetree can be used to change the UART device in the following way:
 
 .. code-block:: devicetree

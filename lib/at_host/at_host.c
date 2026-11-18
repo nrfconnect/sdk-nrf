@@ -33,9 +33,15 @@ enum term_modes {
 	MODE_COUNT      /* Counter of term_modes */
 };
 
-#define AT_HOST_UART_DEV_GET()                                                                     \
-	DEVICE_DT_GET(COND_CODE_1(DT_HAS_CHOSEN(ncs_at_host_uart),                                 \
-		(DT_CHOSEN(ncs_at_host_uart)), (DT_NODELABEL(uart0))))
+#if DT_HAS_CHOSEN(ncs_at_host_uart)
+#define AT_HOST_UART_NODE DT_CHOSEN(ncs_at_host_uart)
+#elif DT_HAS_CHOSEN(zephyr_console)
+#define AT_HOST_UART_NODE DT_CHOSEN(zephyr_console)
+#else
+#define AT_HOST_UART_NODE DT_NODELABEL(uart0)
+#endif
+
+#define AT_HOST_UART_DEV_GET() DEVICE_DT_GET(AT_HOST_UART_NODE)
 
 #define IS_LOG_BACKEND_UART(_uart_dev)                                                             \
 	(IS_ENABLED(CONFIG_LOG_BACKEND_UART) && COND_CODE_1(DT_HAS_CHOSEN(zephyr_log_uart),        \
