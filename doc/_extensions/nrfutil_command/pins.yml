@@ -4,4 +4,5 @@
 #
 # The documentation build regenerates the json-args snapshot when any of these versions changes.
 mcu-manager: 0.12.2
+nrf5sdk-tools: 1.1.0
 sdk-manager: 1.16.1

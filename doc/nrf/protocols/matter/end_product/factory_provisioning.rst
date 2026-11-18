@@ -881,12 +881,9 @@ Programming factory data
 You can program the HEX file containing factory data into the device's flash memory using ``nrfutil device`` and the J-Link programmer.
 Use the following command:
 
-.. code-block:: console
+.. nrfutil-command:: console
 
-   $ nrfutil device program --firmware factory_data.hex
-
-.. note::
-   For more information about how to use the ``nrfutil device`` utility, see `nRF Util`_.
+   nrfutil device program --firmware factory_data.hex
 
 Another way to program the factory data to a device is to use the nRF Connect platform build system described in :ref:`ug_matter_device_factory_provisioning_building_example_with_factory_data`, and build an example with the additional :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option set to ``y``:
 
