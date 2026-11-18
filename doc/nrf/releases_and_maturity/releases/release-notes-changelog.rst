@@ -462,6 +462,10 @@ nRF Audio (formerly nRF5340 Audio)
 nRF Desktop
 -----------
 
+* Deprecated the :ref:`nrf_desktop` application and the :ref:`nrf_desktop_config_channel_script`.
+  Development of the HID reference design continues in the `HID Add-on`_.
+  The in-tree application and HID configurator remain available in the |NCS| v3.4.x long-term support (LTS) release branch until its removal.
+
 * Added:
 
   * Support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` and ``nrf54ls05dk/nrf54ls05a/cpuapp`` board targets.
