@@ -12,7 +12,10 @@ project(bluetooth_mesh_light_ctrl)
 target_sources(app PRIVATE
   src/main.c
   src/model_handler.c
-  src/lc_pwm_led.c
 )
+
+target_sources_ifdef(CONFIG_SOC_NRF54LC10A app PRIVATE src/lc_gpio_led.c)
+target_sources_ifndef(CONFIG_SOC_NRF54LC10A app PRIVATE src/lc_pwm_led.c)
+
 target_include_directories(app PRIVATE include)
 # NORDIC SDK APP END

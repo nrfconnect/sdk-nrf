@@ -119,6 +119,12 @@ They can also fetch the current value of the :c:var:`bt_mesh_sensor_precise_tot_
 
 The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/light_ctrl/src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the development kit.
 
+.. note::
+   The nRF54LC10 SoC does not include a PWM peripheral, so the sample cannot dim the LED on the DK.
+   Instead, the LED is driven using GPIO.
+   It is on for any non-zero lightness level, and off otherwise.
+   The Light Lightness Server still tracks the full lightness range, but the LED does not show intermediate brightness or fades.
+
 User interface
 **************
 
@@ -166,7 +172,7 @@ This sample is split into the following source files:
 
 * A :ncs-file:`src/main.c` file to handle initialization.
 * A file for handling mesh models, :ncs-file:`src/model_handler.c`.
-* A file for handling PWM driven control of the dimmable LED, :ncs-file:`src/lc_pwm_led.c`.
+* A file for handling PWM driven control of the dimmable LED, :ncs-file:`src/lc_pwm_led.c` (on the nRF54LC10 DK: :ncs-file:`src/lc_gpio_led.c`).
 
 FEM support
 ===========
