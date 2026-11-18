@@ -63,7 +63,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
 .. note::
    None of the drivers support deriving an RSA key pair from a key derivation operation.
-   The :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE` Kconfig option is available, but enabling it does not add RSA key pair derivation support.
+   The :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE` Kconfig option is available, but enabling it does not add support for RSA key pair derivation.
 
 .. tabs::
 
@@ -978,178 +978,178 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
               * - ML-DSA-44
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-DSA-65
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-DSA-87
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-DSA Key Pair Import
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-DSA Key Pair Export
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-DSA Key Pair Generate
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-DSA Key Pair Derive
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-DSA Public Key
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-KEM-512
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-KEM-768
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-KEM-1024
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-KEM Key Pair Import
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-KEM Key Pair Export
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-KEM Key Pair Generate
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-KEM Key Pair Derive
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - ML-KEM Public Key
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
-                - Experimental
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - WPA3-SAE key
@@ -1174,9 +1174,6 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
-
-            .. note::
-               ML-DSA and ML-KEM key pair generate and derive operations are implemented in TF-PSA-Crypto (Oberon PSA Crypto), not in the CRACEN driver.
 
          .. tab:: nrf_oberon
 
@@ -2644,7 +2641,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver.
+               192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A devices when using the CRACEN driver.
                See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
          .. tab:: nrf_oberon
@@ -4575,7 +4572,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver.
+               192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A devices when using the CRACEN driver.
                See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
          .. tab:: nrf_oberon
@@ -5069,7 +5066,7 @@ The options are grouped by Series and drivers available for the device Series, a
             .. note::
 
                * CRACEN only supports a 96-bit IV for AES GCM.
-               * 192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver.
+               * 192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A devices when using the CRACEN driver.
                  See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
          .. tab:: nrf_oberon
@@ -5858,13 +5855,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
                * - XMSS
@@ -5891,41 +5888,37 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Hash ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HASH_ML_DSA`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
                  - --
                * - Deterministic ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ML_DSA`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
                  - --
                * - Deterministic Hash ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
                  - --
                  - --
                  - --
-
-            .. note::
-
-               For ML-DSA algorithms, CRACEN only supports signature verification.
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
 
          .. tab:: nrf_oberon
 
@@ -10351,7 +10344,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
 .. note::
    None of the drivers support deriving an RSA key pair from a key derivation operation.
-   The :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE` Kconfig option is available, but enabling it does not add RSA key pair derivation support.
+   The :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE` Kconfig option is available, but enabling it does not add support for RSA key pair derivation.
 
 .. tabs::
 
