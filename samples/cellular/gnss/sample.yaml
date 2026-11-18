@@ -14,6 +14,20 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+  sample.cellular.gnss.pgps_nrf9251:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE=pgps.conf
+      - EXTRA_DTC_OVERLAY_FILE=nrf9251dk_pgps.overlay
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
   # Following configurations will be used by the positioning CI integration job to verify PRs
   sample.cellular.gnss.integration_config_positioning_agnss_nrfcloud_ltem_pvt:
     sysbuild: true
