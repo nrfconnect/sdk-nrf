@@ -1,9 +1,10 @@
 tests:
   at_cmd_custom.functionality_test:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
     integration_platforms:
-      - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
     tags:
       - at_cmd_custom
       - sysbuild
