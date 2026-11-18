@@ -1,6 +1,5 @@
 Test can be run in two configurations: loopback or two chip setup.
-Loopback test requires two pair of shortened pins. Two chip setup
-requiers flashing nrf52 and nrf91 on nrf9160dk.
+Loopback test requires two pair of shortened pins.
 
 Loopback test validates basic communication using low power UART.
 
