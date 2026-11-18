@@ -5,8 +5,8 @@
  */
 
 #include <zephyr/kernel.h>
-#include <nrfx_nvmc.h>
 #include <zephyr/device.h>
+#include <zephyr/drivers/flash.h>
 #include <zephyr/storage/stream_flash.h>
 #include <zephyr/storage/flash_map.h>
 
@@ -92,6 +92,8 @@ static uint8_t flash_area_id;
 static const struct device *prediction_flash_dev;
 static uint32_t flash_page_size;
 static uint32_t storage_addr;
+/* CPU address of the storage, which differs from storage_addr if flash is not mapped at 0. */
+static uintptr_t storage_mem_addr;
 static uint32_t storage_size;
 
 static pgps_event_handler_t evt_handler;
@@ -141,7 +143,7 @@ static struct nrf_cloud_pgps_prediction *get_prediction(int pnum)
 
 static struct nrf_cloud_pgps_prediction *get_prediction_slot(int slot, off_t *flash_off)
 {
-	off_t off = storage_addr + slot * PGPS_PREDICTION_STORAGE_SIZE;
+	off_t off = storage_mem_addr + slot * PGPS_PREDICTION_STORAGE_SIZE;
 
 	if (flash_off) {
 		*flash_off = off;
@@ -1519,6 +1521,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 {
 	__ASSERT(param != NULL, "param must be provided");
 	int err = 0;
+	uintptr_t mem_addr;
 	struct nrf_cloud_pgps_event evt = {
 		.type = PGPS_EVT_INIT,
 	};
@@ -1534,6 +1537,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	}
 	param->storage_base = PARTITION_NODE_OFFSET(DT_CHOSEN(nordic_pgps_partition));
 	param->storage_size = PARTITION_NODE_SIZE(DT_CHOSEN(nordic_pgps_partition));
+	mem_addr = PARTITION_NODE_ADDRESS(DT_CHOSEN(nordic_pgps_partition));
 #else
 #error "NRF_CLOUD_PGPS_STORAGE_PARTITION requires a DTS nordic,pgps-partition chosen node"
 #endif /* PM_PGPS_ADDRESS / DT_HAS_CHOSEN */
@@ -1543,6 +1547,9 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	}
 	param->storage_base = PARTITION_NODE_OFFSET(DT_NODELABEL(slot1_partition));
 	param->storage_size = PARTITION_NODE_SIZE(DT_NODELABEL(slot1_partition));
+	mem_addr = PARTITION_NODE_ADDRESS(DT_NODELABEL(slot1_partition));
+#else
+	mem_addr = param->storage_base;
 #endif
 
 	__ASSERT((param->storage_size >= (NUM_BLOCKS * BLOCK_SIZE)),
@@ -1556,15 +1563,19 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 		evt_handler(&evt);
 	}
 
-	flash_page_size = nrfx_nvmc_flash_page_size_get();
-	if (!flash_page_size) {
-		flash_page_size = 4096;
-	}
-
 	err = open_flash();
 	if (err) {
 		return err;
 	}
+
+	flash_page_size = 4096;
+#if defined(CONFIG_FLASH_PAGE_LAYOUT)
+	struct flash_pages_info page_info;
+
+	if (!flash_get_page_info_by_offs(prediction_flash_dev, param->storage_base, &page_info)) {
+		flash_page_size = page_info.size;
+	}
+#endif
 
 	if (nrf_cloud_pgps_loading()) {
 		return 0;
@@ -1591,8 +1602,9 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	}
 
 	storage_addr = param->storage_base;
+	storage_mem_addr = mem_addr;
 	storage_size = param->storage_size;
-	(void)ngps_block_pool_init(param->storage_base, NUM_PREDICTIONS);
+	(void)ngps_block_pool_init(storage_mem_addr, NUM_PREDICTIONS);
 
 	memset(&index, 0, sizeof(index));
 	(void)npgps_settings_init();
