@@ -264,6 +264,9 @@ static int downloader_callback(const struct downloader_evt *event)
 			} else {
 				atomic_clear_bit(&flags, FLAG_RESUME);
 			}
+
+			/* The DFU target holds no progress of another download anymore */
+			atomic_clear_bit(&flags, FLAG_NEW_URI);
 		}
 
 		err = dfu_target_write(event->fragment.buf, event->fragment.len);
@@ -543,12 +546,12 @@ static void set_host_and_file(char const *const host, char const *const file)
 		proxy_uri_hash = sys_hash32(dl_host_cfg.proxy_uri, strlen(dl_host_cfg.proxy_uri));
 	}
 
-	/* Verify if the URI is same as last time, if not, prevent resuming. */
+	/* Verify if the URI is same as last time, if not, prevent resuming.
+	 * Cleared only once the first fragment has checked the DFU target.
+	 */
 	if (dl_host_hash != host_hash || dl_file_hash != file_hash ||
 	    dl_proxy_uri_hash != proxy_uri_hash) {
 		atomic_set_bit(&flags, FLAG_NEW_URI);
-	} else {
-		atomic_clear_bit(&flags, FLAG_NEW_URI);
 	}
 
 	dl_host_hash = host_hash;
