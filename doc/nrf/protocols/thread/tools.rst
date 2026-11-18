@@ -108,26 +108,28 @@ To program the nRF device with the RCP application, complete the following steps
             See `Locking nRF Util home directory`_ in the tool documentation for more information.
          #. Install nRF Util's ``nrf5sdk-tools`` command:
 
-            .. code-block:: console
+            .. nrfutil-command:: console
 
                nrfutil install nrf5sdk-tools
 
-            See `nrfutil nrf5sdk-tools`_ command page for more information.
          #. Generate the RCP firmware package:
 
-            .. code-block:: console
+            .. nrfutil-command:: console
+               :values: application_hex=build/zephyr/zephyr.hex output_zip=build/zephyr/zephyr.zip
 
                nrfutil nrf5sdk-tools pkg generate --hw-version 52 --sd-req=0x00 \
-                --application build/zephyr/zephyr.hex --application-version 1 build/zephyr/zephyr.zip
+                --application <application_hex> --application-version 1 <output_zip>
 
          #. Connect the nRF52840 Dongle to the USB port.
          #. Press the **RESET** button on the dongle to put it into the DFU mode.
             The LED on the dongle starts blinking red.
-         #. Install the RCP firmware package onto the dongle by running the following command, with ``/dev/ttyACM0`` replaced with the device node name of your nRF52840 Dongle:
+         #. Install the RCP firmware package onto the dongle by running the following command.
+            Replace ``<device_node>`` with the device node name of your nRF52840 Dongle:
 
-            .. code-block:: console
+            .. nrfutil-command:: console
+               :values: device_node=/dev/ttyACM0 package=build/zephyr/zephyr.zip
 
-               nrfutil nrf5sdk-tools dfu usb-serial -pkg build/zephyr/zephyr.zip -p /dev/ttyACM0
+               nrfutil nrf5sdk-tools dfu usb-serial --package <package> --port <device_node>
 
       .. tab:: nRF52840 Development Kit (UART transport)
 

@@ -207,16 +207,23 @@ You can configure the EUI-64 for a device in the following ways depending on cho
                 west build -b nrf52840dk/nrf52840 -p always
                 west flash --snr *serial_number* --erase
 
-          #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value (replace *serial_number* with the serial number of your debugger):
+          #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value.
+             Replace ``<serial_number>`` with the serial number of your debugger:
 
-              .. parsed-literal::
-               :class: highlight
+             .. nrfutil-command:: console
+                :values: serial_number=1051164514 uicr_customer_0=0x10001080 uicr_customer_1=0x10001084 eui64_low=0x11223344 eui64_high=0x55667788
 
-                nrfutil device x-write --serial-number *serial_number* --address 0x10001080 --value 0x11223344
-                nrfutil device x-write --serial-number *serial_number* --address 0x10001084 --value 0x55667788
-                nrfutil device reset --reset-kind=RESET_PIN
+                nrfutil device write --serial-number <serial_number> --address <uicr_customer_0> --value <eui64_low>
+                nrfutil device write --serial-number <serial_number> --address <uicr_customer_1> --value <eui64_high>
 
+             With the example values, this programs the example EUI-64 ``8877665544332211``.
              If you used a different value for :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`, you must use different register addresses.
+
+          #. Reset your device:
+
+             .. nrfutil-command:: console
+
+                nrfutil device reset --reset-kind=RESET_PIN
 
              At the end of the configuration process, you can check the EUI-64 value using the OpenThread CLI as follows:
 
@@ -260,16 +267,23 @@ You can configure the EUI-64 for a device in the following ways depending on cho
                west build -b nrf52840dk/nrf52840 -p always
                west flash --snr *serial_number* --erase
 
-          #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value (replace *serial_number* with the serial number of your debugger):
+          #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value.
+             Replace ``<serial_number>`` with the serial number of your debugger:
 
-              .. parsed-literal::
-                :class: highlight
+             .. nrfutil-command:: console
+                :values: serial_number=1051164514 uicr_customer_0=0x10001080 uicr_customer_1=0x10001084 eui64_low=0x11223344 eui64_high=0x55667788
 
-                nrfutil device x-write --serial-number *serial_number* --address 0x10001080 --value 0x11223344
-                nrfutil device x-write --serial-number *serial_number* --address 0x10001084 --value 0x55667788
-                nrfutil device reset --reset-kind=RESET_PIN
+                nrfutil device write --serial-number <serial_number> --address <uicr_customer_0> --value <eui64_low>
+                nrfutil device write --serial-number <serial_number> --address <uicr_customer_1> --value <eui64_high>
 
+             With the example values, this programs the example EUI-64 ``8877665544332211``.
              If you used a different value for :kconfig:option:`CONFIG_NRF5_UICR_EUI64_REG`, you must use different register addresses.
+
+          #. Reset your device:
+
+             .. nrfutil-command:: console
+
+                nrfutil device reset --reset-kind=RESET_PIN
 
              At the end of the configuration process, you can check the EUI-64 value using OpenThread CLI:
 
