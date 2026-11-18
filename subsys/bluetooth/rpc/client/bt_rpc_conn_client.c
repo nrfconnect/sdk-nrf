@@ -1407,24 +1407,6 @@ int bt_le_oob_get_sc_data(struct bt_conn *conn,
 }
 #endif /* !defined(CONFIG_BT_SMP_OOB_LEGACY_PAIR_ONLY) */
 
-#if defined(CONFIG_BT_FIXED_PASSKEY)
-int bt_passkey_set(unsigned int passkey)
-{
-	struct nrf_rpc_cbor_ctx ctx;
-	int result;
-	size_t buffer_size_max = 5;
-
-	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-
-	nrf_rpc_encode_uint(&ctx, passkey);
-
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_PASSKEY_SET_RPC_CMD,
-				&ctx, nrf_rpc_rsp_decode_i32, &result);
-
-	return result;
-}
-#endif /* defined(CONFIG_BT_FIXED_PASSKEY) */
-
 static const struct bt_conn_auth_cb *auth_cb;
 
 #if defined(CONFIG_BT_SMP_APP_PAIRING_ACCEPT)

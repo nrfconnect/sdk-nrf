@@ -58,7 +58,6 @@ Set the following options in the same way for the :ref:`ipc_radio` or :ref:`ble_
   * :kconfig:option:`CONFIG_BT_SMP`
   * :kconfig:option:`CONFIG_BT_CONN` - hidden option that depends on :kconfig:option:`CONFIG_BT_CENTRAL` or :kconfig:option:`CONFIG_BT_PERIPHERAL`.
   * :kconfig:option:`CONFIG_BT_REMOTE_INFO`
-  * :kconfig:option:`CONFIG_BT_FIXED_PASSKEY`
   * :kconfig:option:`CONFIG_BT_SMP_APP_PAIRING_ACCEPT`
   * :kconfig:option:`CONFIG_BT_EXT_ADV`
   * :kconfig:option:`CONFIG_BT_OBSERVER`

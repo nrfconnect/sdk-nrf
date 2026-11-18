@@ -1153,32 +1153,6 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_get_sc_data, BT_LE_OOB_GET_SC_DAT
 			 bt_le_oob_get_sc_data_rpc_handler, NULL);
 #endif /* defined(CONFIG_BT_SMP) && !defined(CONFIG_BT_SMP_OOB_LEGACY_PAIR_ONLY) */
 
-#if defined(CONFIG_BT_FIXED_PASSKEY)
-static void bt_passkey_set_rpc_handler(const struct nrf_rpc_group *group,
-				       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
-{
-	unsigned int passkey;
-	int result;
-
-	passkey = nrf_rpc_decode_uint(ctx);
-
-	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		goto decoding_error;
-	}
-
-	result = bt_passkey_set(passkey);
-
-	nrf_rpc_rsp_send_int(group, result);
-
-	return;
-decoding_error:
-	bt_rpc_report_decoding_error(BT_PASSKEY_SET_RPC_CMD);
-}
-
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_passkey_set, BT_PASSKEY_SET_RPC_CMD,
-			 bt_passkey_set_rpc_handler, NULL);
-#endif /* defined(CONFIG_BT_FIXED_PASSKEY) */
-
 static struct bt_conn_auth_cb remote_auth_cb;
 
 #if defined(CONFIG_BT_SMP_APP_PAIRING_ACCEPT)

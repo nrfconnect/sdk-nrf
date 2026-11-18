@@ -1296,6 +1296,11 @@ Bluetooth libraries and services
       The option is enabled by default if :kconfig:option:`CONFIG_BT_HCI_VS` is enabled.
     * A vendor-specific DTM 2-wire command for constant carrier transmission.
 
+* :ref:`ble_rpc` library:
+
+  * Removed the serialization of the ``bt_passkey_set()`` function, following the removal of the deprecated ``CONFIG_BT_FIXED_PASSKEY`` Kconfig option and the ``bt_passkey_set()`` function in Zephyr.
+    Setting a fixed passkey is not supported over Bluetooth LE RPC.
+
 Common Application Framework
 ----------------------------
 
