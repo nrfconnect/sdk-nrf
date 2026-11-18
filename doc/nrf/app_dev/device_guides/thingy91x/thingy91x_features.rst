@@ -16,6 +16,6 @@ Thingy:91 X integrates the following components:
 
 .. |thingy| replace:: Thingy:91 X
 
-.. |band_lock| replace:: `band lock section in the nRF91x1 AT Commands Reference Guide`_
+.. |band_lock| replace:: `band lock section in the nRF91x1 Cellular AT Commands Reference Guide`_
 
 .. include:: /includes/Thingy91_91x_features.txt

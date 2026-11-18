@@ -122,7 +122,7 @@ The following configurations are recommended for low power behavior:
    In applications where downlink messaging from the cloud to the device is expected, it is recommended to set the :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` option to a value higher than ``0`` to ensure data is received before the device enters PSM.
 
 PSM and eDRX timers are set with binary strings that signify a time duration in seconds.
-For a conversion chart of these timer values, see the `nRF91x1 Power saving mode setting`_ in the nRF91x1 AT Commands Reference Guide.
+For a conversion chart of these timer values, see the `nRF91x1 Power saving mode setting`_ in the nRF91x1 Cellular AT Commands Reference Guide.
 
 .. note::
    The availability of power saving features or timers is entirely dependent on the cellular network.

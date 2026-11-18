@@ -80,7 +80,7 @@ In order for your device to comply with the carrier's specifications, the follow
 
           * If the :ref:`lte_lc_readme` library is used, you can enable the Kconfig option :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NBIOT` to set the system mode.
 
-          * If the :ref:`lte_lc_readme` library is not used, see the `system mode section in the nRF9160 AT Commands Reference Guide`_ or the `system mode section in the nRF91x1 AT Commands Reference Guide`_, depending on the SiP you are using for more information on setting the NB-IoT system mode.
+          * If the :ref:`lte_lc_readme` library is not used, see the `system mode section in the nRF9160 AT Commands Reference Guide`_ or the `system mode section in the nRF91x1 Cellular AT Commands Reference Guide`_, depending on the SiP you are using for more information on setting the NB-IoT system mode.
 
    .. group-tab:: LG U+
 

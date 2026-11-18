@@ -23,7 +23,7 @@ This facilitates the reading of responses or analyzing of events related to the 
 You can initiate the commands manually from a terminal such as the `Serial Terminal app`_, or visually using the `Cellular Monitor app`_.
 Both apps are part of `nRF Connect for Desktop`_.
 
-For more information on the AT commands, see the `nRF91x1 AT Commands Reference Guide`_.
+For more information on the AT commands, see the `nRF91x1 Cellular AT Commands Reference Guide`_.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

@@ -1333,5 +1333,5 @@ Documentation
   * The :ref:`Getting started with nRF9160 DK <gsg_guides>` and :ref:`Getting started with Thingy:91 <gsg_guides>` instructions to use the `Cellular Monitor app`_ instead of Programmer for the respective sections about updating firmware.
     The instructions for using Programmer were moved to the :ref:`ug_nrf9160` and :ref:`ug_thingy91` pages.
   * All instances of LTE Link Monitor and Trace Collector apps by replacing them with the `Serial Terminal app`_ and the `Cellular Monitor app`_.
-  * Renamed nRF91 AT Commands Reference Guide to `nRF9160 AT Commands Reference Guide`_, and added references to the `nRF91x1 AT Commands Reference Guide`_ in the documentation.
+  * Renamed nRF91 AT Commands Reference Guide to `nRF9160 AT Commands Reference Guide`_, and added references to the `nRF91x1 Cellular AT Commands Reference Guide`_ in the documentation.
   * All references to GNSS assistance from ``A-GPS`` to `A-GNSS`_.
