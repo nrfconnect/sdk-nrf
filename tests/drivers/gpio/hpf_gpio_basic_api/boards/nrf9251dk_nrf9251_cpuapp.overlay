@@ -4,21 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Test requires GPIO loopback between P2.03 and P2.09. */
+/* Test requires GPIO loopbacks between P2.03 and P2.09, and between P5.04 and P5.05. */
 
 / {
 	resources {
 		compatible = "test-hpf-gpio";
-		out-gpios = <&hpf_gpio2 3 GPIO_ACTIVE_HIGH>;
-		in-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
+		out-gpios = <&hpf_gpio2 3 GPIO_ACTIVE_HIGH>, <&hpf_gpio5 4 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>, <&gpio5 5 GPIO_ACTIVE_HIGH>;
 	};
 };
 
-/* Route the output pin to the FLPR VPR. */
+/* Route the output pins to the FLPR VPR. */
 &pinctrl {
 	flpr_vio_default: flpr_vio_default {
 		group1 {
-			psels = <NRF_PSEL(VPR_VIO, 2, 3)>;
+			psels = <NRF_PSEL(VPR_VIO, 2, 3)>,
+				<NRF_PSEL(VPR_VIO, 5, 4)>;
 		};
 	};
 };
@@ -33,5 +34,9 @@
 };
 
 &gpio2 {
+	status = "okay";
+};
+
+&gpio5 {
 	status = "okay";
 };
