@@ -1463,6 +1463,8 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
+  * Added support for storing predictions in MRAM.
+
   * Updated to use a new parser for assistance data.
 
 * :ref:`lib_nrf_cloud_agnss` library:
