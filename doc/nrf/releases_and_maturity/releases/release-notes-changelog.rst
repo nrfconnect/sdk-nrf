@@ -1630,6 +1630,11 @@ Libraries for networking
     * The library to enable the TLS Server Name Indication (SNI) extension (:kconfig:option:`CONFIG_MBEDTLS_SSL_SERVER_NAME_INDICATION`) by default when Mbed TLS is used.
       AWS IoT Core rejects TLS connections without SNI, so the TLS handshake failed for applications that did not enable the option.
 
+* :ref:`lib_azure_iot_hub` library:
+
+  * Fixed an issue where the device did not load the stored DPS assignment after a reboot when the NVS settings backend was used.
+    The device then ran the DPS registration again.
+
 Libraries for NFC
 -----------------
 
