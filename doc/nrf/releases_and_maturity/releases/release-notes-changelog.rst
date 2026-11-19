@@ -1279,6 +1279,11 @@ Bluetooth libraries and services
       The option is enabled by default if :kconfig:option:`CONFIG_BT_HCI_VS` is enabled.
     * A vendor-specific DTM 2-wire command for constant carrier transmission.
 
+* :ref:`ble_rpc` library:
+
+  * Added serialization of the :c:member:`bt_conn_auth_cb.app_passkey` callback, enabled with the :kconfig:option:`CONFIG_BT_APP_PASSKEY` Kconfig option.
+    The option must be enabled in the Bluetooth RPC Client and Bluetooth RPC Host images.
+
 Common Application Framework
 ----------------------------
 

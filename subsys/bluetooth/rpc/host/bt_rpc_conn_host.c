@@ -1314,6 +1314,24 @@ static void bt_rpc_auth_cb_pairing_confirm(struct bt_conn *conn)
 				nrf_rpc_rsp_decode_void, NULL);
 }
 
+#if defined(CONFIG_BT_APP_PASSKEY)
+static uint32_t bt_rpc_auth_cb_app_passkey(struct bt_conn *conn)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	uint32_t passkey;
+	size_t buffer_size_max = 3;
+
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
+
+	bt_rpc_encode_bt_conn(&ctx, conn);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_AUTH_CB_APP_PASSKEY_RPC_CMD, &ctx,
+				nrf_rpc_rsp_decode_u32, &passkey);
+
+	return passkey;
+}
+#endif /* CONFIG_BT_APP_PASSKEY */
+
 static int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 {
 	if (flags & FLAG_AUTH_CB_IS_NULL) {
@@ -1335,6 +1353,10 @@ static int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 	remote_auth_cb.cancel = (flags & FLAG_CANCEL_PRESENT) ? bt_rpc_auth_cb_cancel : NULL;
 	remote_auth_cb.pairing_confirm = (flags & FLAG_PAIRING_CONFIRM_PRESENT) ?
 					 bt_rpc_auth_cb_pairing_confirm : NULL;
+#if defined(CONFIG_BT_APP_PASSKEY)
+	remote_auth_cb.app_passkey = (flags & FLAG_APP_PASSKEY_PRESENT) ?
+				     bt_rpc_auth_cb_app_passkey : NULL;
+#endif /* CONFIG_BT_APP_PASSKEY */
 
 	return bt_conn_auth_cb_register(&remote_auth_cb);
 }

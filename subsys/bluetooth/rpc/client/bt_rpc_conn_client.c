@@ -1648,6 +1648,36 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_confirm,
 			 BT_RPC_AUTH_CB_PAIRING_CONFIRM_RPC_CMD,
 			 bt_rpc_auth_cb_pairing_confirm_rpc_handler, NULL);
 
+#if defined(CONFIG_BT_APP_PASSKEY)
+static void bt_rpc_auth_cb_app_passkey_rpc_handler(const struct nrf_rpc_group *group,
+						   struct nrf_rpc_cbor_ctx *ctx,
+						   void *handler_data)
+{
+	struct bt_conn *conn;
+	uint32_t passkey = BT_PASSKEY_RAND;
+
+	conn = bt_rpc_decode_bt_conn(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		goto decoding_error;
+	}
+
+	if (auth_cb && auth_cb->app_passkey) {
+		passkey = auth_cb->app_passkey(conn);
+	}
+
+	nrf_rpc_rsp_send_uint(group, passkey);
+
+	return;
+decoding_error:
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_CB_APP_PASSKEY_RPC_CMD);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_app_passkey,
+			 BT_RPC_AUTH_CB_APP_PASSKEY_RPC_CMD,
+			 bt_rpc_auth_cb_app_passkey_rpc_handler, NULL);
+#endif /* CONFIG_BT_APP_PASSKEY */
+
 static int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 {
 	struct nrf_rpc_cbor_ctx ctx;
@@ -1679,6 +1709,9 @@ int bt_conn_auth_cb_register(const struct bt_conn_auth_cb *cb)
 		flags |= cb->oob_data_request ? FLAG_OOB_DATA_REQUEST_PRESENT : 0;
 		flags |= cb->cancel ? FLAG_CANCEL_PRESENT : 0;
 		flags |= cb->pairing_confirm ? FLAG_PAIRING_CONFIRM_PRESENT : 0;
+#if defined(CONFIG_BT_APP_PASSKEY)
+		flags |= cb->app_passkey ? FLAG_APP_PASSKEY_PRESENT : 0;
+#endif /* CONFIG_BT_APP_PASSKEY */
 	} else {
 		flags = FLAG_AUTH_CB_IS_NULL;
 	}

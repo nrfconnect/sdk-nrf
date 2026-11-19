@@ -74,6 +74,7 @@ Set the following options in the same way for the :ref:`ipc_radio` or :ref:`ble_
   * :kconfig:option:`CONFIG_BT_GATT_CLIENT`
   * :kconfig:option:`CONFIG_BT_RPC_INTERNAL_FUNCTIONS`
   * :kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC`
+  * :kconfig:option:`CONFIG_BT_APP_PASSKEY`
   * :kconfig:option:`CONFIG_BT_MAX_CONN`
   * :kconfig:option:`CONFIG_BT_ID_MAX`
   * :kconfig:option:`CONFIG_BT_EXT_ADV_MAX_ADV_SET`
