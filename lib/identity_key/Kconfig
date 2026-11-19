@@ -20,7 +20,7 @@ if IDENTITY_KEY
 
 config IDENTITY_KEY_RANDOM
 	bool "Support writing random Identity Keys"
-	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
+	depends on PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
 	select PSA_WANT_ECC_SECP_R1_256
 	help
