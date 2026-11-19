@@ -175,6 +175,9 @@ To build for the nRF54LM20 DK with the nRF7002-EB II, also set the shield and th
 
    west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -Daws_iot_SHIELD="nrf7002eb2" -Daws_iot_SNIPPET="nrf70-wifi;wifi-credentials" -Daws_iot_EXTRA_CONF_FILE="wifi.conf"
 
+The :ncs-file:`/samples/net/aws_iot/wifi.conf` file enables TLS 1.3 with TLS 1.2 as a fallback.
+AWS IoT Core negotiates TLS 1.3 when the security policy of the endpoint allows it.
+
 .. _aws_iot_sample_building_and_running:
 
 Building and running
