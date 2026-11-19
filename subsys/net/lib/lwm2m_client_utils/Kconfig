@@ -105,7 +105,7 @@ config LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_THREAD_STACK_SIZE
 endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 
 config LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
-	bool "Advanced Firmware Update object support (EXPERIMENTAL)"
+	bool "Advanced Firmware Update object support [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
 	  This is a non standard Advanced Firmware Update object which is still
@@ -124,12 +124,12 @@ config LWM2M_CLIENT_UTILS_ADV_FOTA_INSTANCE_COUNT
 endif # LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
 
 config LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT
-	bool "Support ground fix object"
+	bool "Support ground fix object [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	select LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 
 config LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT
-	bool "Support GNSS assistance obj"
+	bool "Support GNSS assistance obj [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	select LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 
@@ -271,6 +271,7 @@ config LWM2M_CLIENT_UTILS_LTE_CONNEVAL
 config LWM2M_CLIENT_UTILS_DTLS_CID
 	bool "DTLS Connection Identifier [DEPRECATED]"
 	select LWM2M_DTLS_CID
+	select DEPRECATED
 	help
 	  Deprecated. Use CONFIG_LWM2M_DTLS_CID instead.
 
