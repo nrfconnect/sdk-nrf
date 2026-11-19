@@ -5,3 +5,9 @@
  */
 
 #include "../../../dts/nrf7120dk_nrf7120_cpuapp_common.dtsi"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
