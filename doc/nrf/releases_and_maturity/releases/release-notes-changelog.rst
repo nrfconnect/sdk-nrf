@@ -1023,6 +1023,8 @@ Networking samples
       In Wi-Fi builds, the sample no longer reads the credentials from the :file:`certs/` folder.
       You install the certificates with the TLS credentials shell.
       To keep the previous behavior, enable the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option instead.
+    * The settings storage backend to ZMS on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20b/cpuapp/ns``, ``nrf7120dk/nrf7120/cpuapp/ns`` and ``nrf7120dk/nrf7120e/cpuapp/ns`` board targets, and to NVS on the ``nrf7002dk/nrf5340/cpuapp/ns`` board target.
+      The :file:`dps.conf` file no longer selects NVS for all board targets.
 
   * Fixed:
 
