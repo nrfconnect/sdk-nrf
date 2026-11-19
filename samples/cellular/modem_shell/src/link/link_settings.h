@@ -38,8 +38,7 @@ int link_sett_save_dnsaddr_ip(const char *dnsaddr_ip_str);
 const char *link_sett_dnsaddr_ip_get(void);
 void link_sett_dnsaddr_conf_shell_print(void);
 
-int link_sett_sysmode_save(enum lte_lc_system_mode mode,
-			    enum lte_lc_system_mode_preference lte_pref);
+int link_sett_sysmode_save(uint32_t mode, enum lte_lc_system_mode_preference lte_pref);
 int link_sett_sysmode_get(void);
 int link_sett_sysmode_lte_preference_get(void);
 int link_sett_sysmode_default_set(void);

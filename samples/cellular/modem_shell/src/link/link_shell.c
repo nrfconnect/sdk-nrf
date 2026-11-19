@@ -130,7 +130,10 @@ static const char link_sysmode_usage_str[] =
 	"  -M, --ltem_gnss,        Set LTE-M + GNSS system mode\n"
 	"  -N, --nbiot_gnss,       Set NB-IoT + GNSS system mode\n"
 	"      --ltem_nbiot_gnss,  Set LTE-M + NB-IoT + GNSS system mode\n"
-	"      --ntn,              Set NTN NB-IoT system mode\n"
+	"      --ntn_fdd,          Set NTN NB-IoT FDD system mode\n"
+	"      --ntn_fdd_gnss,     Set NTN NB-IoT FDD + GNSS system mode\n"
+	"      --ntn_tdd,          Set NTN NB-IoT TDD system mode\n"
+	"      --ntn_tdd_gnss,     Set NTN NB-IoT TDD + GNSS system mode\n"
 	"  -h, --help,             Shows this help information\n"
 	"\n"
 	"Additional LTE mode preference that can be optionally given\n"
@@ -419,7 +422,10 @@ enum {
 	LINK_SHELL_OPT_MRESET_USER,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS,
-	LINK_SHELL_OPT_SYSMODE_NTN,
+	LINK_SHELL_OPT_SYSMODE_NTN_FDD,
+	LINK_SHELL_OPT_SYSMODE_NTN_FDD_GNSS,
+	LINK_SHELL_OPT_SYSMODE_NTN_TDD,
+	LINK_SHELL_OPT_SYSMODE_NTN_TDD_GNSS,
 	LINK_SHELL_OPT_SYSMODE_PREF_AUTO,
 	LINK_SHELL_OPT_SYSMODE_PREF_LTEM,
 	LINK_SHELL_OPT_SYSMODE_PREF_NBIOT,
@@ -517,7 +523,10 @@ static struct sys_getopt_option long_options[] = {
 	{"mreset_user", sys_getopt_no_argument, 0, LINK_SHELL_OPT_MRESET_USER},
 	{"ltem_nbiot", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT},
 	{"ltem_nbiot_gnss", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS},
-	{"ntn", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN},
+	{"ntn_fdd", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN_FDD},
+	{"ntn_fdd_gnss", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN_FDD_GNSS},
+	{"ntn_tdd", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN_TDD},
+	{"ntn_tdd_gnss", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN_TDD_GNSS},
 	{"pref_auto", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_AUTO},
 	{"pref_ltem", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_LTEM},
 	{"pref_nbiot", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_NBIOT},
@@ -631,28 +640,35 @@ static void link_shell_print_usage(enum link_shell_command command)
 }
 
 /* From lte_lc.c, and TODO: to be updated if something is added */
-#define SYS_MODE_PREFERRED					   \
-	(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)              ?  \
-	 LTE_LC_SYSTEM_MODE_LTEM                         :	   \
-	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT)               ? \
-	 LTE_LC_SYSTEM_MODE_NBIOT                        :	   \
-	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)           ? \
-	 LTE_LC_SYSTEM_MODE_LTEM_GPS                     :	   \
-	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)           ? \
-	 LTE_LC_SYSTEM_MODE_NBIOT_GPS                    :	   \
-	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT)         ? \
-	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT                   :	   \
-	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS)     ? \
-	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS               :	   \
-	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NTN_NBIOT)           ? \
-	 LTE_LC_SYSTEM_MODE_NTN_NBIOT                    :	   \
+#define SYS_MODE_PREFERRED							     \
+	(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)              ?		     \
+	 LTE_LC_SYSTEM_MODE_BIT_LTEM :						     \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT)               ?		     \
+	 LTE_LC_SYSTEM_MODE_BIT_NBIOT :						     \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)           ?		     \
+	 (LTE_LC_SYSTEM_MODE_BIT_LTEM | LTE_LC_SYSTEM_MODE_BIT_GNSS) :		     \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)           ?		     \
+	 (LTE_LC_SYSTEM_MODE_BIT_NBIOT | LTE_LC_SYSTEM_MODE_BIT_GNSS) :		     \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT)         ?		     \
+	 (LTE_LC_SYSTEM_MODE_BIT_LTEM | LTE_LC_SYSTEM_MODE_BIT_NBIOT) :		     \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS)     ?		     \
+	 (LTE_LC_SYSTEM_MODE_BIT_LTEM | LTE_LC_SYSTEM_MODE_BIT_NBIOT |		     \
+	  LTE_LC_SYSTEM_MODE_BIT_GNSS) :					     \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NTN_NBIOT)           ?		     \
+	 LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD :					     \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NTN_NBIOT_GNSS)      ?		     \
+	 (LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD | LTE_LC_SYSTEM_MODE_BIT_GNSS) :	     \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NTN_NBIOT_TDD)       ?		     \
+	 LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD :					     \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NTN_NBIOT_TDD_GNSS)  ?		     \
+	 (LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD | LTE_LC_SYSTEM_MODE_BIT_GNSS) :	     \
 	 LINK_SYSMODE_NONE)
 
-static int link_shell_sysmode_set(int sysmode, int lte_pref)
+static int link_shell_sysmode_set(uint32_t sysmode, enum lte_lc_system_mode_preference lte_pref)
 {
 	enum lte_lc_func_mode functional_mode;
 	char snum[64];
-	int ret = lte_lc_system_mode_set(sysmode, lte_pref);
+	int ret = lte_lc_system_mode_mask_set(sysmode, lte_pref);
 
 	if (ret < 0) {
 		mosh_error("Cannot set system mode to modem: %d", ret);
@@ -719,7 +735,7 @@ static enum lte_lc_env_eval_type link_shell_string_to_env_eval_type(const char *
 #endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 
 int link_shell_get_and_print_current_system_modes(
-	enum lte_lc_system_mode *sys_mode_current,
+	uint32_t *sys_mode_current,
 	enum lte_lc_system_mode_preference *sys_mode_preferred,
 	enum lte_lc_lte_mode *currently_active_mode)
 {
@@ -727,7 +743,7 @@ int link_shell_get_and_print_current_system_modes(
 
 	char snum[64];
 
-	ret = lte_lc_system_mode_get(sys_mode_current, sys_mode_preferred);
+	ret = lte_lc_system_mode_mask_get(sys_mode_current, sys_mode_preferred);
 	if (ret >= 0) {
 		mosh_print(
 			"Modem config for system mode: %s",
@@ -2775,7 +2791,7 @@ static int link_shell_status(const struct shell *shell, size_t argc, char **argv
 static int link_shell_sysmode(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
-	enum lte_lc_system_mode sysmode_option = LINK_SYSMODE_NONE;
+	uint32_t sysmode_option = LINK_SYSMODE_NONE;
 	enum lte_lc_system_mode_preference sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 
@@ -2795,28 +2811,41 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 			break;
 
 		case 'm':
-			sysmode_option = LTE_LC_SYSTEM_MODE_LTEM;
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_LTEM;
 			break;
 		case 'n':
-			sysmode_option = LTE_LC_SYSTEM_MODE_NBIOT;
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_NBIOT;
 			break;
 		case 'g':
-			sysmode_option = LTE_LC_SYSTEM_MODE_GPS;
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_GNSS;
 			break;
 		case 'M':
-			sysmode_option = LTE_LC_SYSTEM_MODE_LTEM_GPS;
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_LTEM | LTE_LC_SYSTEM_MODE_BIT_GNSS;
 			break;
 		case 'N':
-			sysmode_option = LTE_LC_SYSTEM_MODE_NBIOT_GPS;
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_NBIOT | LTE_LC_SYSTEM_MODE_BIT_GNSS;
 			break;
 		case LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT:
-			sysmode_option = LTE_LC_SYSTEM_MODE_LTEM_NBIOT;
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_LTEM | LTE_LC_SYSTEM_MODE_BIT_NBIOT;
 			break;
 		case LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS:
-			sysmode_option = LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS;
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_LTEM |
+					 LTE_LC_SYSTEM_MODE_BIT_NBIOT |
+					 LTE_LC_SYSTEM_MODE_BIT_GNSS;
 			break;
-		case LINK_SHELL_OPT_SYSMODE_NTN:
-			sysmode_option = LTE_LC_SYSTEM_MODE_NTN_NBIOT;
+		case LINK_SHELL_OPT_SYSMODE_NTN_FDD:
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD;
+			break;
+		case LINK_SHELL_OPT_SYSMODE_NTN_FDD_GNSS:
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD |
+					 LTE_LC_SYSTEM_MODE_BIT_GNSS;
+			break;
+		case LINK_SHELL_OPT_SYSMODE_NTN_TDD:
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD;
+			break;
+		case LINK_SHELL_OPT_SYSMODE_NTN_TDD_GNSS:
+			sysmode_option = LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD |
+					 LTE_LC_SYSTEM_MODE_BIT_GNSS;
 			break;
 		case LINK_SHELL_OPT_SYSMODE_PREF_AUTO:
 			sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
@@ -2849,7 +2878,7 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 	}
 
 	if (operation == LINK_OPERATION_READ) {
-		enum lte_lc_system_mode sys_mode_current;
+		uint32_t sys_mode_current;
 		enum lte_lc_system_mode_preference sys_mode_pref_current;
 		enum lte_lc_lte_mode currently_active_mode;
 
@@ -2858,7 +2887,7 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 		if (ret < 0) {
 			mosh_error("Cannot read system mode of the modem: %d", ret);
 		} else {
-			enum lte_lc_system_mode sett_sys_mode;
+			uint32_t sett_sys_mode;
 			enum lte_lc_system_mode_preference sett_lte_pref;
 
 			/* Print also settings stored in mosh side */

@@ -17,7 +17,7 @@ enum link_ncellmeas_modes {
 #define LINK_APN_STR_MAX_LENGTH 100
 
 #define LINK_FUNMODE_NONE 99
-#define LINK_SYSMODE_NONE 99
+#define LINK_SYSMODE_NONE 0
 
 /** Type of factory reset to perform. */
 enum link_factory_reset_type {

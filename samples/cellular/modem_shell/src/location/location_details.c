@@ -221,7 +221,7 @@ static int location_details_modem_details_encode(cJSON *root_obj)
 {
 	cJSON *modem_details_obj = NULL;
 	struct lte_xmonitor_resp_t xmonitor_resp;
-	enum lte_lc_system_mode sysmode;
+	uint32_t sysmode;
 	int err;
 	char tmp_str[OP_FULL_NAME_STR_MAX_LEN + 1];
 	int len;
@@ -268,9 +268,9 @@ static int location_details_modem_details_encode(cJSON *root_obj)
 		goto cleanup;
 	}
 
-	err = lte_lc_system_mode_get(&sysmode, NULL);
+	err = lte_lc_system_mode_mask_get(&sysmode, NULL);
 	if (err) {
-		mosh_warn("lte_lc_system_mode_get failed with err %d", err);
+		mosh_warn("lte_lc_system_mode_mask_get failed with err %d", err);
 	} else {
 		if (!cJSON_AddStringToObjectCS(modem_details_obj, "sysmode",
 					       link_shell_sysmode_to_string(sysmode, tmp_str))) {

@@ -164,17 +164,23 @@ const char *link_shell_redmob_mode_to_string(int funmode, char *out_str_buff)
 	return link_shell_map_to_string(mapping_table, funmode, out_str_buff);
 }
 
-const char *link_shell_sysmode_to_string(int sysmode, char *out_str_buff)
+const char *link_shell_sysmode_to_string(uint32_t sysmode, char *out_str_buff)
 {
 	struct mapping_tbl_item const mapping_table[] = {
-		{ LTE_LC_SYSTEM_MODE_LTEM, "LTE-M" },
-		{ LTE_LC_SYSTEM_MODE_NBIOT, "NB-IoT" },
-		{ LTE_LC_SYSTEM_MODE_GPS, "GNSS" },
-		{ LTE_LC_SYSTEM_MODE_LTEM_GPS, "LTE-M - GNSS" },
-		{ LTE_LC_SYSTEM_MODE_NBIOT_GPS, "NB-IoT - GNSS" },
-		{ LTE_LC_SYSTEM_MODE_LTEM_NBIOT, "LTE-M - NB-IoT" },
-		{ LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS, "LTE-M - NB-IoT - GNSS" },
-		{ LTE_LC_SYSTEM_MODE_NTN_NBIOT, "NTN NB-IoT" },
+		{ LTE_LC_SYSTEM_MODE_BIT_LTEM, "LTE-M" },
+		{ LTE_LC_SYSTEM_MODE_BIT_NBIOT, "NB-IoT" },
+		{ LTE_LC_SYSTEM_MODE_BIT_GNSS, "GNSS" },
+		{ LTE_LC_SYSTEM_MODE_BIT_LTEM | LTE_LC_SYSTEM_MODE_BIT_GNSS, "LTE-M - GNSS" },
+		{ LTE_LC_SYSTEM_MODE_BIT_NBIOT | LTE_LC_SYSTEM_MODE_BIT_GNSS, "NB-IoT - GNSS" },
+		{ LTE_LC_SYSTEM_MODE_BIT_LTEM | LTE_LC_SYSTEM_MODE_BIT_NBIOT, "LTE-M - NB-IoT" },
+		{ LTE_LC_SYSTEM_MODE_BIT_LTEM | LTE_LC_SYSTEM_MODE_BIT_NBIOT |
+		  LTE_LC_SYSTEM_MODE_BIT_GNSS, "LTE-M - NB-IoT - GNSS" },
+		{ LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD, "NTN NB-IoT FDD" },
+		{ LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD | LTE_LC_SYSTEM_MODE_BIT_GNSS,
+		  "NTN NB-IoT FDD - GNSS" },
+		{ LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD, "NTN NB-IoT TDD" },
+		{ LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD | LTE_LC_SYSTEM_MODE_BIT_GNSS,
+		  "NTN NB-IoT TDD - GNSS" },
 		{ LINK_SYSMODE_NONE, "None" },
 		{ -1, NULL }
 	};
