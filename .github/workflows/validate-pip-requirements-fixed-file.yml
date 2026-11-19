@@ -10,6 +10,7 @@ on:
       - 'scripts/requirements*.txt'
       - 'scripts/requirements-fixed.sh'
       - '.github/workflows/validate-pip-requirements-fixed-file.yml'
+      - 'west.yml'
 
 permissions:
   contents: read
