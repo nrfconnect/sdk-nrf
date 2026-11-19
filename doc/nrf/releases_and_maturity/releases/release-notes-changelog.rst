@@ -463,10 +463,6 @@ nRF Desktop
   * Optional support for dongles with HID SCI, configurable through the :option:`CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE` Kconfig option.
     The :ref:`nrf_desktop_hid_forward` module now uses :c:macro:`APP_EVENT_SUBSCRIBE_FIRST` to subscribe to the :c:struct:`ble_discovery_complete_event` event.
     The module updates event data to ensure all other modules are notified about the SCI support.
-  * HID Shorter Connection Intervals (SCI) support on the peripheral side.
-    The :ref:`nrf_desktop_hids` module enables support for the feature in the underlying HID GATT Service.
-    The :ref:`nrf_desktop_ble_latency` module handles HID SCI mode change requests and the related connection parameter updates.
-    Enable the feature with the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option.
   * LLPM dongle application configurations for the nRF54LM20 DK (``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20b/cpuapp`` board targets).
   * The :kconfig:option:`CONFIG_NCS_MCUBOOT_DISCARDS_HEADER_IN_SECONDARY_MCUBOOT` Kconfig option that allows you to drop the MCUboot image header in secondary MCUboot image update, when the update is installed to a designated slot by MCUboot.
     If the option is off for compatibility, MCUboot cannot update itself with MCUboot that was built with the option enabled.
