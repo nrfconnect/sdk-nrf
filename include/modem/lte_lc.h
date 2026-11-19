@@ -148,7 +148,7 @@ enum lte_lc_system_mode {
 	LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS,
 
 	/**
-	 * NTN NB-IoT only.
+	 * NTN NB-IoT FDD only.
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
@@ -156,6 +156,33 @@ enum lte_lc_system_mode {
 	 */
 	LTE_LC_SYSTEM_MODE_NTN_NBIOT
 };
+
+/**
+ * @defgroup lte_lc_system_mode_bits System mode bits
+ * @brief Bits used with @ref lte_lc_system_mode_mask_set and @ref lte_lc_system_mode_mask_get.
+ *
+ * NTN NB-IoT FDD and NTN NB-IoT TDD can not be enabled at the same time, and NTN NB-IoT can
+ * not be enabled together with LTE-M or NB-IoT. NTN NB-IoT together with GNSS is only supported
+ * on nRF92 Series devices. The supported combinations depend on the modem firmware.
+ * @{
+ */
+
+/** LTE-M. */
+#define LTE_LC_SYSTEM_MODE_BIT_LTEM		BIT(0)
+
+/** NB-IoT. */
+#define LTE_LC_SYSTEM_MODE_BIT_NBIOT		BIT(1)
+
+/** GNSS. */
+#define LTE_LC_SYSTEM_MODE_BIT_GNSS		BIT(2)
+
+/** NTN NB-IoT FDD. */
+#define LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD	BIT(3)
+
+/** NTN NB-IoT TDD. */
+#define LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD	BIT(4)
+
+/** @} */
 
 /**
  * @brief LTE mode.
@@ -173,7 +200,7 @@ enum lte_lc_lte_mode {
 	/** NB-IoT. */
 	LTE_LC_LTE_MODE_NBIOT		= 9,
 	/**
-	 * NTN NB-IoT.
+	 * NTN NB-IoT, either FDD or TDD.
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
@@ -2365,6 +2392,36 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
  */
 int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 			   enum lte_lc_system_mode_preference *preference);
+
+/**
+ * @brief Set the modem's system mode and LTE preference using a bitmask.
+ *
+ * @param[in] mask System mode bitmask, see @ref lte_lc_system_mode_bits.
+ * @param[in] preference System mode preference. Must be @ref LTE_LC_SYSTEM_MODE_PREFER_AUTO
+ *                       if NTN NB-IoT is enabled.
+ *
+ * @note Requires `CONFIG_LTE_LC_SYSTEM_MODE_MODULE` to be enabled.
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the system mode could not be set, for example, because the combination
+ *         is not supported by the modem firmware.
+ */
+int lte_lc_system_mode_mask_set(uint32_t mask, enum lte_lc_system_mode_preference preference);
+
+/**
+ * @brief Get the modem's system mode and LTE preference as a bitmask.
+ *
+ * @param[out] mask System mode bitmask, see @ref lte_lc_system_mode_bits.
+ * @param[out] preference System mode preference. Can be @c NULL.
+ *
+ * @note Requires `CONFIG_LTE_LC_SYSTEM_MODE_MODULE` to be enabled.
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the system mode could not be retrieved from the modem.
+ */
+int lte_lc_system_mode_mask_get(uint32_t *mask, enum lte_lc_system_mode_preference *preference);
 
 /**
  * @brief Set the modem's functional mode.

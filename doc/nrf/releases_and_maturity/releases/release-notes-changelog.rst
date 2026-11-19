@@ -1414,6 +1414,10 @@ Modem libraries
       * :kconfig:option:`CONFIG_LTE_UICC_DEACTIVATION_NO_CELLS` - Deactivates the UICC when no cells are available.
         Enabled by default.
 
+    * The :c:func:`lte_lc_system_mode_mask_set` and :c:func:`lte_lc_system_mode_mask_get` functions to set and get the system mode as a bitmask of ``LTE_LC_SYSTEM_MODE_BIT_*`` values.
+    * Support for the NTN NB-IoT TDD system mode, and for NTN NB-IoT FDD or TDD together with GNSS on nRF92 Series devices.
+      You can set these system modes using the :c:func:`lte_lc_system_mode_mask_set` function or the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NTN_NBIOT_GNSS`, :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NTN_NBIOT_TDD`, and :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NTN_NBIOT_TDD_GNSS` Kconfig options.
+
   * Updated:
 
     * The :kconfig:option:`CONFIG_LTE_LOCK_BANDS` Kconfig option to select the :kconfig:option:`CONFIG_LTE_LC_BAND_LOCK_MODULE` Kconfig option.

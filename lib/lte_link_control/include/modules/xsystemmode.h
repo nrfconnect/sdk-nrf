@@ -21,6 +21,12 @@ int xsystemmode_mode_set(enum lte_lc_system_mode mode,
 int xsystemmode_mode_get(enum lte_lc_system_mode *mode,
 			 enum lte_lc_system_mode_preference *preference);
 
+/* Set the modem's system mode bitmask and LTE preference. */
+int xsystemmode_mask_set(uint32_t mask, enum lte_lc_system_mode_preference preference);
+
+/* Get the modem's system mode bitmask and LTE preference. */
+int xsystemmode_mask_get(uint32_t *mask, enum lte_lc_system_mode_preference *preference);
+
 #ifdef __cplusplus
 }
 #endif
