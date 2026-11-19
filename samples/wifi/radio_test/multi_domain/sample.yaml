@@ -68,8 +68,9 @@ tests:
     build_only: true
     extra_args: SHIELD=nrf7002ek_nrf7000
     integration_platforms:
-      - nrf9160dk/nrf9160/ns
-    platform_allow: nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
     tags:
       - ci_build
       - sysbuild

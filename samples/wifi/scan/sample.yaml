@@ -20,13 +20,11 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
     tags:
       - ci_build
       - sysbuild
@@ -38,11 +36,8 @@ tests:
       - SHIELD=nrf7002ek_nrf7000
       - CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y
     integration_platforms:
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
     platform_allow:
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
     tags:
       - ci_build

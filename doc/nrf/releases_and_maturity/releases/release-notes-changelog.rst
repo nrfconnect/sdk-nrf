@@ -1203,6 +1203,13 @@ Wi-Fi samples
     * :zephyr:code-sample:`mqtt-sn-publisher`
     * :zephyr:code-sample:`coap-server`
 
+  * Support for the nRF9160 DK and the nRF9161DK with the nRF7002 EK shield from the following samples:
+
+    * :ref:`wifi_radio_test`
+    * :ref:`wifi_scan_sample`
+    * :ref:`wifi_shell_sample`
+    * :ref:`wifi_shutdown_sample`
+
 Other samples
 -------------
 
