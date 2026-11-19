@@ -40,14 +40,16 @@
 #define SAADCT_CHAN_CONFIG_SE(_pin, _idx)                                      \
 {                                                                              \
 	.channel_config = {                                                    \
-		.gain = NRF_SAADC_GAIN1,                                       \
+		NRFX_COND_CODE_1(NRF_SAADC_HAS_CH_GAIN,                        \
+				 (.gain = NRF_SAADC_GAIN1,),                   \
+				 ())                                           \
 		NRFX_COND_CODE_1(NRF_SAADC_HAS_CH_CONFIG_RES,                  \
 				 (.resistor_p = NRF_SAADC_RESISTOR_DISABLED,   \
 				  .resistor_n = NRF_SAADC_RESISTOR_DISABLED,), \
 				 ())                                           \
 		.reference = NRF_SAADC_REFERENCE_INTERNAL,                     \
 		.conv_time = NRFX_SAADC_DEFAULT_CONV_TIME,                     \
-		.acq_time = 23,                                                \
+		.acq_time = 23,  /* (TACQ + 1) x 125 ns */                    \
 		.mode = NRF_SAADC_MODE_SINGLE_ENDED,                           \
 	},                                                                     \
 	.pin_p = (nrfx_analog_input_t)_pin,                                    \
