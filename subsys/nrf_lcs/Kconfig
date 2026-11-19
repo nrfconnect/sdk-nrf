@@ -5,7 +5,7 @@
 #
 
 menuconfig NRF_LCS
-	bool "Life Cycle State handling"
+	bool "Life Cycle State handling [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
 	  Enable device Life Cycle State subsystem.
