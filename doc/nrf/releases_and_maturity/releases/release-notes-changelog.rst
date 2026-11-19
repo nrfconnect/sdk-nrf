@@ -1531,8 +1531,12 @@ Libraries for networking
 
 * :ref:`lib_azure_iot_hub` library:
 
-  * Fixed an issue where the device did not load the stored DPS assignment after a reboot when the NVS settings backend was used.
-    The device then ran the DPS registration again.
+  * Fixed:
+
+    * An issue where the device did not load the stored DPS assignment after a reboot when the NVS settings backend was used.
+      The device then ran the DPS registration again.
+    * An issue where the :c:func:`azure_iot_hub_connect` and :c:func:`azure_iot_hub_dps_start` functions returned a positive error code when the host name could not be resolved.
+      The functions now return ``-EHOSTUNREACH``.
 
 Libraries for NFC
 -----------------
