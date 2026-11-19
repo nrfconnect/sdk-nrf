@@ -9,6 +9,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/init.h>
+#include <zephyr/net/dns_resolve.h>
 
 #include <azure/az_core.h>
 
@@ -378,6 +379,28 @@ void test_azure_iot_hub_dps_start_kconfig_defaults(void)
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(DPS_STATE_CONNECTING, dps_state);
 	TEST_ASSERT_EQUAL(AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED, dps_reg_ctx.status);
+}
+
+void test_azure_iot_hub_dps_start_dns_error(void)
+{
+	int err;
+	struct azure_iot_hub_dps_config config = {
+		.handler = dps_handler,
+	};
+
+	__cmock_mqtt_helper_init_ExpectAnyArgsAndReturn(0);
+	/* mqtt_helper_connect() returns a positive value for a getaddrinfo() error. */
+	__cmock_mqtt_helper_connect_ExpectAnyArgsAndReturn(-DNS_EAI_SYSTEM);
+
+	err = azure_iot_hub_dps_init(&config);
+	TEST_ASSERT_EQUAL(0, err);
+
+	/* Give the semaphore to simulate that settings have been loaded from flash. */
+	k_sem_give(&dps_reg_ctx.settings_loaded);
+
+	err = azure_iot_hub_dps_start();
+	TEST_ASSERT_EQUAL(-EHOSTUNREACH, err);
+	TEST_ASSERT_EQUAL(DPS_STATE_DISCONNECTED, dps_state);
 }
 
 void test_on_reg_completed_no_msg(void)

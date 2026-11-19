@@ -908,6 +908,8 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 	err = mqtt_helper_connect(&conn_params);
 	if (err) {
 		LOG_ERR("mqtt_helper_connect failed, error: %d", err);
+		/* A positive value is a getaddrinfo() error. */
+		err = (err > 0) ? -EHOSTUNREACH : err;
 		goto exit;
 	}
 

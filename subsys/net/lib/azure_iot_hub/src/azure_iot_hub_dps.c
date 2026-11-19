@@ -887,7 +887,8 @@ int azure_iot_hub_dps_start(void)
 	err = mqtt_helper_connect(&conn_params);
 	if (err) {
 		LOG_ERR("mqtt_helper_connect failed, error: %d", err);
-		return err;
+		/* A positive value is a getaddrinfo() error. */
+		return (err > 0) ? -EHOSTUNREACH : err;
 	}
 
 	dps_state_set(DPS_STATE_CONNECTING);

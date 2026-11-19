@@ -76,6 +76,7 @@ int azure_iot_hub_dps_init(struct azure_iot_hub_dps_config *cfg);
  * @retval 0 if successful.
  * @retval -EACCESS if the library is in the wrong state to start DPS.
  * @retval -EALREADY if DPS has already started and is ongoing.
+ * @retval -EHOSTUNREACH if the DPS host name could not be resolved.
  */
 int azure_iot_hub_dps_start(void);
 
