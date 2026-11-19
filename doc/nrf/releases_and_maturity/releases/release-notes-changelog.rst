@@ -1118,10 +1118,6 @@ Wi-Fi samples
   * :zephyr:code-sample:`mqtt-sn-publisher`
   * :zephyr:code-sample:`coap-server`
 
-* :ref:`wifi_shutdown_sample` sample:
-
-  * Added the ``nrf71-idle-power``, ``nrf71-idle-power-quiet``, and ``nrf71-idle-power-diag`` snippets, which use the new :ref:`lib_nrf71_idle_power` library to measure the host idle current of the nRF71 Series device in One-shot mode.
-
 * :ref:`wifi_station_sample`, :ref:`wifi_scan_sample`, and :ref:`wifi_shell_sample` samples:
 
   * Added the :ref:`lib_nrf71_idle_power` library to the ``nrf7120dk/nrf7120/cpuapp`` board configuration, reducing the System ON idle current.
