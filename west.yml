@@ -26,7 +26,7 @@ manifest:
     - name: throwtheswitch
       url-base: https://github.com/ThrowTheSwitch
     - name: dragoon
-      url-base: https://projecttools.nordicsemi.no/bitbucket/scm/drgn
+      url-base: https://bitbucket.org/nordicsemi
     - name: memfault
       url-base: https://github.com/memfault
     - name: babblesim
