@@ -1798,3 +1798,5 @@ Documentation
   * The :ref:`abi_compatibility` page by adding a section about |ISE| known issues.
   * The :ref:`ug_nrf70_features` page by moving the :ref:`ug_nrf70_features_hostap` section to the :ref:`ug_wifi_overview` page.
   * The :ref:`software_maturity_security_features_psa` section on the :ref:`software_maturity` page by changing the support level of the :ref:`nrf_oberon <crypto_drivers_oberon>` driver on the nRF54LS05A SoC from experimental to supported.
+
+* Removed the Developing with nRF52 Series guide and nRF52 Series references from the documentation.

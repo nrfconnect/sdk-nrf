@@ -860,7 +860,7 @@ In addition to documentation related to the changes listed above, the following 
 
 * Updated:
 
-  * :ref:`ug_nrf52` guide by adding nRF Connect Device Manager as a tool for FOTA.
+  * Developing with nRF52 Series guide by adding nRF Connect Device Manager as a tool for FOTA.
   * :ref:`ug_thingy53` guide by updating the section Samples and applications compatible with Thingy:53.
 
 * Reorganized:
