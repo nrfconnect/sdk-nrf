@@ -1527,6 +1527,11 @@ Libraries for networking
   * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
     Previously, the event carried no payload.
 
+* :ref:`lib_azure_iot_hub` library:
+
+  * Fixed an issue where the device did not load the stored DPS assignment after a reboot when the NVS settings backend was used.
+    The device then ran the DPS registration again.
+
 Libraries for NFC
 -----------------
 
