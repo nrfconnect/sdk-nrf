@@ -66,12 +66,6 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - | `Product Specification <nRF9160 Product Specification_>`_
        | :ref:`Getting started <gsg_guides>`
        | `User Guide <nRF9160 DK Hardware_>`_
-   * - :zephyr:board:`thingy53`
-     - nRF7002 EB
-     - PCA20053
-     - ``thingy53/nrf5340/cpuapp``
-     - | :ref:`Getting started <gsg_guides>`
-       | `User Guide <Nordic Thingy:53 Hardware_>`_
    * - :zephyr:board:`nrf54h20dk`
      - nRF7002 EB
      - PCA20053

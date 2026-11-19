@@ -52,10 +52,6 @@ FOTA in Bluetooth Mesh
 
 .. include:: /includes/fota_upgrades_bt_mesh.txt
 
-.. note::
-   Point-to-point DFU over Bluetooth Low Energy is supported by default, out-of-the-box, for all samples and applications compatible with :zephyr:board:`thingy53`.
-   See :ref:`thingy53_app_update` for more information about updating firmware image on :zephyr:board:`thingy53`.
-
 FOTA in Matter
 **************
 

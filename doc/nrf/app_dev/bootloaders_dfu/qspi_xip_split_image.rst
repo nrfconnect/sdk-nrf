@@ -217,7 +217,7 @@ Programming using a different SPI mode
 ======================================
 
 If you are using a different SPI mode on the QSPI interface, such as DSPI, you must use a custom :file:`qspi_nrfutil.json` file.
-The following is an example for the Thingy:53, which supports DSPI and PP:
+The following is an example for a board that supports DSPI and PP:
 
 .. code-block:: json
 

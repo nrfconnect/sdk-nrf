@@ -957,7 +957,7 @@ Documentation
   * The :ref:`nrf_modem_lib_readme` library documentation with a section about :ref:`modem trace flash backend <modem_trace_flash_backend>`.
   * The :ref:`mod_memfault` library documentation has been moved from :ref:`lib_others` to :ref:`lib_debug`.
   * The :ref:`mqtt_sample` sample documentation has been moved from nRF9160 samples to :ref:`networking_samples`.
-  * The :ref:`ug_thingy53` guide by adding a section on :ref:`building Wi-Fi applications <thingy53_build_pgm_targets_wifi>`.
+  * The Developing with Thingy:53 guide by adding a section on building Wi-Fi applications.
   * The :ref:`ug_bt_mesh_configuring` page with additional configuration options used to configure the behavior and performance of a Bluetooth mesh network.
 
 * Removed the section "Pointing the repositories to the right remotes after they were moved" from the :ref:`updating` page.
