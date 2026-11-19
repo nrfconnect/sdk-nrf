@@ -4130,6 +4130,18 @@ NCSIDB-925: Event subscribers in the :ref:`app_event_manager` might overlap when
 Modem libraries
 ===============
 
+.. rst-class:: v3-4-2 v3-4-1 v3-4-0 v3-3-5 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-6 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+NCSDK-42533: Name resolution can return IPv6 addresses in IPv4-only builds
+  When the :kconfig:option:`CONFIG_NET_IPV6` Kconfig option is disabled, the :c:func:`getaddrinfo` function can still return IPv6 addresses.
+  This happens when the caller asks for IPv6 (``AF_INET6``) or for any family (``AF_UNSPEC`` or ``NULL`` hints).
+  An IPv6 address does not fit in ``struct sockaddr`` in such builds, and copying the address into this structure using the ``ai_addrlen`` field leads to a buffer overflow.
+  The Zephyr :ref:`FTP client <ftp_client_interface>` and the download client library, which was removed in |NCS| v3.2.0, are affected.
+
+  **Affected platforms:** nRF9160, nRF9161, nRF9151, nRF9131
+
+  **Workaround:** Set the ``ai_family`` field of the hints to ``AF_INET``, or check that the ``ai_addrlen`` field is not larger than the destination before copying the address.
+
 .. rst-class:: v2-2-0
 
 CIA-857: LTE Link Controller spurious events
