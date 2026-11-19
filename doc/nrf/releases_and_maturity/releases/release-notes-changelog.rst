@@ -710,11 +710,19 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
-  * Added Wi-Fi scan parameter options to the ``location get`` command.
+  * Added:
+
+    * Wi-Fi scan parameter options to the ``location get`` command.
+    * The ``--ntn_fdd``, ``--ntn_fdd_gnss``, ``--ntn_tdd``, and ``--ntn_tdd_gnss`` options to the ``link sysmode`` command.
+
+  * Updated the ``link sysmode`` command to store the system mode in settings using a new key.
+    A system mode stored by a previous version of the sample is not used, and must be set again.
 
   * Removed:
 
     * Support for Bluetooth shell.
+    * The ``--ntn`` option from the ``link sysmode`` command.
+      Use the ``--ntn_fdd`` option instead.
     * Support for the ``--normal_no_rel14`` option from the ``link funmode`` command and the ``--enable_no_rel14`` option from the ``link nmodeauto`` command.
       The ``AT%REL14FEAT`` AT command used for the feature is only supported by the nRF9160 SiP.
 

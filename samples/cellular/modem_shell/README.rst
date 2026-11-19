@@ -698,10 +698,12 @@ MoSh command: ``ntn``
 You can use the command for NTN helper functionality provided by the :ref:`lib_ntn` library.
 The command provides support for setting and invalidating the location to the modem, and enabling and disabling modem location updates from an external GNSS.
 
-Internal GNSS is not supported when NTN NB-IoT is enabled in the system mode.
+On nRF91 Series devices, internal GNSS is not supported when NTN NB-IoT is enabled in the system mode.
 To use internal GNSS to get the location, GNSS must be enabled and NTN NB-IoT disabled in the system mode.
 You can use the ``location`` or ``gnss`` commands to get the location using internal GNSS.
 After GNSS has been stopped, you can enable NTN NB-IoT in the system mode.
+
+On nRF92 Series devices, you can enable NTN NB-IoT and GNSS at the same time using the ``--ntn_fdd_gnss`` or ``--ntn_tdd_gnss`` option of the ``link sysmode`` command.
 
 To enable location updates from an external GNSS, you need to build the sample with external GNSS support and connect UART pins to the development kit.
 With external GNSS support, location is automatically updated to the modem periodically.

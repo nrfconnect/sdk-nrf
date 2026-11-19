@@ -11,7 +11,7 @@
 #include <modem/lte_lc.h>
 
 int link_shell_get_and_print_current_system_modes(
-	enum lte_lc_system_mode *sys_mode_current,
+	uint32_t *sys_mode_current,
 	enum lte_lc_system_mode_preference *sys_mode_preferred,
 	enum lte_lc_lte_mode *currently_active_mode);
 

@@ -19,7 +19,7 @@ void link_shell_print_reg_status(enum lte_lc_nw_reg_status reg_status);
 void link_shell_print_modem_sleep_notif(const struct lte_lc_evt *const evt);
 void link_shell_print_modem_domain_event(struct lte_lc_modem_evt modem_evt);
 const char *link_shell_funmode_to_string(int funmode, char *out_str_buff);
-const char *link_shell_sysmode_to_string(int sysmode, char *out_str_buff);
+const char *link_shell_sysmode_to_string(uint32_t sysmode, char *out_str_buff);
 const char *link_shell_sysmode_preferred_to_string(int sysmode_preference, char *out_str_buff);
 const char *link_shell_sysmode_currently_active_to_string(int actmode, char *out_str_buff);
 const char *link_shell_map_to_string(struct mapping_tbl_item const *mapping_table,
