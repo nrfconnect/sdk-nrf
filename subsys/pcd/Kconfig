@@ -8,6 +8,7 @@ menu "Peripheral CPU DFU (PCD)"
 
 config PCD
 	bool "Peripheral CPU DFU Support [DEPRECATED]"
+	select DEPRECATED
 	select PCD_APP
 	select PCD_NET
 
