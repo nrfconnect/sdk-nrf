@@ -47,7 +47,7 @@ For example, if the requested accuracy is 200 meters and the device can move at 
 
 Stationary or semi-stationary devices may also use the internal GNSS receiver to acquire the location.
 When the device is stationary, the location can be updated less frequently.
-Internal GNSS is not supported when NTN NB-IoT is enabled in the system mode.
+On nRF91 Series devices, internal GNSS is not supported when NTN NB-IoT is enabled in the system mode.
 To use internal GNSS to get the location, GNSS must be enabled and NTN NB-IoT disabled in the system mode.
 After GNSS has been stopped, you can enable NTN NB-IoT in the system mode.
 

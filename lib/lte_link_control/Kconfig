@@ -383,7 +383,16 @@ config LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 	bool "LTE-M, NB-IoT and GPS"
 
 config LTE_NETWORK_MODE_NTN_NBIOT
-	bool "NTN NB-IoT"
+	bool "NTN NB-IoT FDD"
+
+config LTE_NETWORK_MODE_NTN_NBIOT_GNSS
+	bool "NTN NB-IoT FDD and GNSS"
+
+config LTE_NETWORK_MODE_NTN_NBIOT_TDD
+	bool "NTN NB-IoT TDD"
+
+config LTE_NETWORK_MODE_NTN_NBIOT_TDD_GNSS
+	bool "NTN NB-IoT TDD and GNSS"
 
 endchoice
 
