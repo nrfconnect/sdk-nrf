@@ -89,7 +89,7 @@ For example:
 See :ref:`cmake_options` for more instructions on how to add these options.
 
 .. note::
-   The Thingy:91 X build supports Wi-Fi by default.
+   The Thingy:91 X and nRF9251 DK builds support Wi-Fi by default.
    You need not add any overlays.
 
 P-GPS support
