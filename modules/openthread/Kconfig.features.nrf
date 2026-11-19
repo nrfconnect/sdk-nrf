@@ -16,7 +16,7 @@ config OPENTHREAD_PSA_NVM_BACKEND_ITS
 	  The PSA ITS location depends on the ITS configuration.
 
 config OPENTHREAD_PSA_NVM_BACKEND_KMU
-	bool "Use CRACEN KMU driver for storing crypto materials [EXPERIMENTAL]."
+	bool "Use CRACEN KMU driver for storing crypto materials [EXPERIMENTAL]"
 	depends on PSA_NEED_CRACEN_KMU_DRIVER
 	select EXPERIMENTAL
 	help
