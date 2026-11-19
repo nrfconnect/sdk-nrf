@@ -58,6 +58,8 @@ extern struct dps_reg_ctx dps_reg_ctx;
 extern char assigned_hub_buf[];
 extern int dps_save_hostname(char *hostname_ptr, size_t hostname_len);
 extern int dps_save_device_id(char *device_id_ptr, size_t device_id_len);
+extern int dps_settings_handler(const char *key, size_t len,
+				settings_read_cb read_cb, void *cb_arg);
 extern void on_reg_completed(az_iot_provisioning_client_register_response *msg);
 extern void on_publish(struct azure_iot_hub_buf topic, struct azure_iot_hub_buf payload);
 extern int provisioning_client_init(struct mqtt_helper_conn_params *conn_params);
@@ -239,6 +241,40 @@ void test_azure_iot_hub_dps_device_id_get_registered(void)
 
 	TEST_ASSERT_EQUAL_MEMORY(device_id.ptr, TEST_EXPECTED_DEVICE_ID, device_id.size);
 	TEST_ASSERT_EQUAL(TEST_EXPECTED_DEVICE_ID_LEN, device_id.size);
+}
+
+static ssize_t settings_read_cb_stub(void *cb_arg, void *data, size_t len)
+{
+	const char *value = cb_arg;
+	size_t value_len = MIN(strlen(value), len);
+
+	memcpy(data, value, value_len);
+
+	return value_len;
+}
+
+void test_dps_settings_handler_values_before_lengths(void)
+{
+	int err;
+
+	/* The NVS backend loads the newest key first, so the values come before the lengths. */
+	err = dps_settings_handler(DPS_SETTINGS_DEVICE_ID_KEY, TEST_EXPECTED_DEVICE_ID_LEN,
+				   settings_read_cb_stub, TEST_EXPECTED_DEVICE_ID);
+	TEST_ASSERT_EQUAL(0, err);
+
+	err = dps_settings_handler(DPS_SETTINGS_HOSTNAME_KEY, TEST_IOT_HUB_HOSTNAME_LEN,
+				   settings_read_cb_stub, TEST_IOT_HUB_HOSTNAME);
+	TEST_ASSERT_EQUAL(0, err);
+
+	TEST_ASSERT_EQUAL(AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED, dps_reg_ctx.status);
+	TEST_ASSERT_EQUAL(TEST_EXPECTED_DEVICE_ID_LEN,
+			  az_span_size(dps_reg_ctx.assigned_device_id));
+	TEST_ASSERT_EQUAL_MEMORY(TEST_EXPECTED_DEVICE_ID,
+				 az_span_ptr(dps_reg_ctx.assigned_device_id),
+				 TEST_EXPECTED_DEVICE_ID_LEN);
+	TEST_ASSERT_EQUAL(TEST_IOT_HUB_HOSTNAME_LEN, az_span_size(dps_reg_ctx.assigned_hub));
+	TEST_ASSERT_EQUAL_MEMORY(TEST_IOT_HUB_HOSTNAME, az_span_ptr(dps_reg_ctx.assigned_hub),
+				 TEST_IOT_HUB_HOSTNAME_LEN);
 }
 
 void test_azure_iot_hub_dps_device_id_delete(void)
