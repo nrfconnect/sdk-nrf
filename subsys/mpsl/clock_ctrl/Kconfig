@@ -5,11 +5,10 @@
 #
 
 config MPSL_USE_EXTERNAL_CLOCK_CONTROL
-	bool "Use external clock control [EXPERIMENTAL]"
+	bool "Use external clock control"
 	depends on MPSL
 	select CLOCK_CONTROL
 	default y if SOC_SERIES_NRF54H
-	select EXPERIMENTAL if SOC_SERIES_NRF52 || SOC_SERIES_NRF53
 	help
 	  This option configures MPSL to use an external clock driver, and
 	  not the clock driver provided as part of the MPSL library.
