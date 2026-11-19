@@ -962,6 +962,8 @@ Networking samples
 
     * Support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
     * Steps for testing a FOTA update in the :ref:`aws_iot_sample_testing_fota` section of the sample documentation.
+    * Support for TLS 1.3 in Wi-Fi builds (:file:`wifi.conf`), with TLS 1.2 kept as a fallback.
+      The TLS version used depends on the security policy configured for the AWS IoT Core endpoint.
 
   * Updated the Wi-Fi configuration to generate the private key on the device with the experimental :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option.
     In Wi-Fi builds, the sample no longer reads the credentials from the :file:`certs/` folder.
