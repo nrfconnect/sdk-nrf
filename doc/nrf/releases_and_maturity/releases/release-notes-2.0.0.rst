@@ -1065,7 +1065,7 @@ Documentation
   * Added a note to several nRF Cloud samples using the `nRF Cloud REST API`_ indicating the need for valid and registered request signing credentials.
   * :ref:`thread_ot_memory` page with definitions of variants listed on the tables.
   * :ref:`ug_nrf_cloud` page with more information about security.
-  * Working with Thingy:53 user guide with new information, and renamed it to :ref:`ug_thingy53`.
+  * Working with Thingy:53 user guide with new information, and renamed it to Developing with Thingy:53.
   * nRF Desktop documentation with the following additions:
 
     * Information about nRF21540 EK shield support.

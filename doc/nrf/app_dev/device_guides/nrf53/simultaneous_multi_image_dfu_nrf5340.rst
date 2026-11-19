@@ -40,6 +40,3 @@ The secondary network-core slot may be placed in internal or external flash depe
    To enable providing such a region on the device, see :kconfig:option:`CONFIG_FLASH_SIMULATOR`.
 
 For QSPI XIP split images on nRF5340, see :ref:`qspi_xip_split_image` and :ref:`smp_svr_ext_xip`.
-
-Samples and applications built for Thingy:53 enable simultaneous update of multiple images by default.
-To learn more about Thingy:53, see :ref:`ug_thingy53`.
