@@ -186,11 +186,8 @@ tests:
       - CONFIG_TFM_PROFILE_TYPE_MINIMAL=y
       - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
     integration_platforms:
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
     platform_allow:
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
     tags:
       - ci_build
