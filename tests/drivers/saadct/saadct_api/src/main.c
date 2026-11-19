@@ -38,7 +38,9 @@
 #define SAADCT_CHAN_CONFIG_SE(_pin, _idx)                                      \
 {                                                                              \
 	.channel_config = {                                                    \
-		.gain = NRF_SAADC_GAIN1,                                       \
+		NRFX_COND_CODE_1(NRF_SAADC_HAS_CH_GAIN,                        \
+				 (.gain = NRF_SAADC_GAIN1,),                   \
+				 ())                                           \
 		NRFX_COND_CODE_1(NRF_SAADC_HAS_CH_CONFIG_RES,                  \
 				 (.resistor_p = NRF_SAADC_RESISTOR_DISABLED,   \
 				  .resistor_n = NRF_SAADC_RESISTOR_DISABLED,), \
@@ -53,9 +55,13 @@
 	.channel_index = _idx,                                                 \
 }
 
+/* Read SAADC inputs from DTS. */
+#define TEST_SAADC_INPUT0 DT_PROP(DT_PATH(zephyr_user), test_saadc_input0)
+#define TEST_SAADC_INPUT1 DT_PROP(DT_PATH(zephyr_user), test_saadc_input1)
+
 static const nrfx_saadc_channel_t test_channels[] = {
-	SAADCT_CHAN_CONFIG_SE(NRFX_ANALOG_EXTERNAL_AIN6, 0),
-	SAADCT_CHAN_CONFIG_SE(NRFX_ANALOG_EXTERNAL_AIN5, 1),
+	SAADCT_CHAN_CONFIG_SE(TEST_SAADC_INPUT0, 0),
+	SAADCT_CHAN_CONFIG_SE(TEST_SAADC_INPUT1, 1),
 };
 
 #define NUM_OF_CHANNELS    ARRAY_SIZE(test_channels)
