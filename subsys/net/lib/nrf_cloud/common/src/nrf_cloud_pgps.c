@@ -122,23 +122,9 @@ static int get_prediction_block(int pnum)
 	return npgps_pointer_to_block((uint8_t *)index.predictions[pnum]);
 }
 
-/**
- * @brief The parameter off is really the address in built-in flash for the prediction.
- *
- * @param off Offset from the start of application processor memory space.
- *
- * @return struct nrf_cloud_pgps_prediction* Direct pointer to the prediction.
- */
-static struct nrf_cloud_pgps_prediction *get_cached_prediction(off_t off)
-{
-	return (struct nrf_cloud_pgps_prediction *)off;
-}
-
 static struct nrf_cloud_pgps_prediction *get_prediction(int pnum)
 {
-	off_t off = (off_t)index.predictions[pnum];
-
-	return get_cached_prediction(off);
+	return index.predictions[pnum];
 }
 
 static struct nrf_cloud_pgps_prediction *get_prediction_slot(int slot, off_t *flash_off)
@@ -149,7 +135,7 @@ static struct nrf_cloud_pgps_prediction *get_prediction_slot(int slot, off_t *fl
 		*flash_off = off;
 	}
 
-	return get_cached_prediction(off);
+	return (struct nrf_cloud_pgps_prediction *)off;
 }
 
 static int determine_prediction_num(struct nrf_cloud_pgps_header *header,

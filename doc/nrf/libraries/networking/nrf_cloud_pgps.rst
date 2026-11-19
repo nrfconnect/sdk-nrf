@@ -72,36 +72,10 @@ There are three ways to define this storage location:
 
 * To use a dedicated partition, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
 
-  By default, this partition is stored in the main SoC flash.
-  This partition can optionally be located in external flash for the nRF9160 development kit version 0.14.0 and later.
-  This conserves space in the main flash for storing code or other data.
-
-  To use an external flash partition, enable the following options in your project's configuration file or place them in a configuration overlay file (for example :file:`samples/cellular/nrf_cloud_mqtt_multi_service/overlay_pgps_ext_flash.conf`):
-
-  * :kconfig:option:`CONFIG_SPI`
-  * :kconfig:option:`CONFIG_SPI_NOR`
-  * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION`
-  * :kconfig:option:`CONFIG_SPI_NOR_FLASH_LAYOUT_PAGE_SIZE` set to 4096
-
-  Finally, add the following to a device tree overlay for your board.
-
-  .. code-block:: console
-
-     / {
-       chosen {
-         nordic,pm-ext-flash = &mx25r64;
-       };
-     };
-
-     /* Enable high drive mode for the SPI3 pins to get a square signal at 8 MHz */
-     &spi3_default {
-       group1 {
-         nordic,drive-mode = <NRF_DRIVE_H0H1>;
-       };
-     };
-
-  This is typically placed in a file within your application's source folder in a :file:`boards` subfolder.
-  See an example provided in the file :file:`samples/cellular/nrf_cloud_mqtt_multi_service/boards/nrf9160dk_nrf9160_ns_0_14_0.overlay`.
+  Define the partition in the devicetree and select it using the ``nordic,pgps-partition`` chosen node.
+  The partition must be located in memory-mapped internal non-volatile memory, such as the SoC flash or MRAM.
+  Its size must be equal to or greater than 2048 bytes times the value of the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` option.
+  See :ncs-file:`/samples/cellular/gnss/pgps.overlay` for an example.
 
 * To use the MCUboot secondary partition as storage, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY` option.
 
