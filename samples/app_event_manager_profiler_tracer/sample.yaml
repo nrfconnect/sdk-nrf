@@ -9,12 +9,12 @@ tests:
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
-      - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
       - nrf21540dk/nrf52840
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
-      - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
       - nrf21540dk/nrf52840
     tags:
       - ci_build
