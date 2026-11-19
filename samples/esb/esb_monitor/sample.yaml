@@ -15,8 +15,6 @@ tests:
     sysbuild: true
     filter: CONFIG_UART_CONSOLE and CONFIG_SERIAL_SUPPORT_INTERRUPT
     integration_platforms:
-      - nrf52dk/nrf52832
-      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpunet
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
@@ -25,8 +23,6 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
     platform_allow:
-      - nrf52dk/nrf52832
-      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpunet
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
@@ -52,7 +48,6 @@ tests:
       - CONFIG_MPSL_DYNAMIC_INTERRUPTS=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -61,7 +56,6 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpunet
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
