@@ -6,21 +6,51 @@
 
 config APP_DFU
 	bool "Enable MCUmgr OTA DFU over Bluetooth"
-	select NCS_SAMPLE_MCUMGR_BT_OTA_DFU
+	depends on BT_PERIPHERAL
 	depends on BOOTLOADER_MCUBOOT
+	select CRC
+	select FLASH
+	select FLASH_MAP
+	select IMG_MANAGER
+	select MCUMGR
+	select MCUMGR_GRP_IMG
+	select MCUMGR_TRANSPORT_BT
+	select NET_BUF
+	select STREAM_FLASH
+	select ZCBOR
+	imply IMG_ERASE_PROGRESSIVELY
+	imply MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT if \
+		MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP || MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	imply MCUMGR_GRP_OS
+	imply MCUMGR_GRP_OS_BOOTLOADER_INFO
+	imply MCUMGR_GRP_OS_MCUMGR_PARAMS
+	imply MCUMGR_TRANSPORT_BT_CONN_PARAM_CONTROL
+	imply MCUMGR_TRANSPORT_BT_REASSEMBLY
 	help
 	  Enable support for Device Firmware Update (DFU) over MCUmgr & SMP BT.
 
 if APP_DFU
 
-config MCUMGR_TRANSPORT_BT_DYNAMIC_SVC_REGISTRATION
+configdefault MCUMGR_TRANSPORT_BT_DYNAMIC_SVC_REGISTRATION
 	default n
 
-# Do not allow for settings erase through MCUmgr. */
-config MCUMGR_GRP_ZBASIC
-	default n
+# Access to the SMP characteristic is controlled by the application
+# using the custom GATT authorization callback.
+choice MCUMGR_TRANSPORT_BT_PERM
+	default MCUMGR_TRANSPORT_BT_PERM_RW
+endchoice
 
-config MCUMGR_GRP_ZBASIC_STORAGE_ERASE
-	default n
+# Extend the Bluetooth buffers and the L2CAP MTU to speed up the DFU transfer.
+configdefault BT_L2CAP_TX_MTU
+	default 247
+
+configdefault BT_BUF_ACL_TX_SIZE
+	default 251
+
+configdefault BT_BUF_ACL_RX_SIZE
+	default 251
+
+configdefault BT_CTLR_DATA_LENGTH_MAX
+	default 251
 
 endif # APP_DFU
