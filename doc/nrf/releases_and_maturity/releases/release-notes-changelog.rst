@@ -1220,6 +1220,16 @@ Other samples
   * The :ref:`pulse_meas` sample that checks the pulse width of an externally provided signal.
   * The :ref:`rtfw_timer_gpio_sample` and :ref:`rtfw_hid_sample` samples demonstrating the RTFW control, fast-path, and event-delivery mechanisms.
   * The :ref:`saadct_sample` sample that demonstrates timer-triggered SAADC sampling using the :ref:`saadct` driver.
+  * Support for the nRF9151 DK to the following samples:
+
+    * :ref:`app_event_manager_sample`
+    * :ref:`app_event_manager_profiling_tracer_sample`
+
+* Removed support for the nRF9160 DK and the nRF9161 DK from the following samples:
+
+  * :ref:`app_event_manager_sample`
+  * :ref:`app_event_manager_profiling_tracer_sample`
+
 
 Drivers
 =======
