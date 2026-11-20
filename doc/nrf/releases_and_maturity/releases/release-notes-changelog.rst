@@ -1519,6 +1519,7 @@ Libraries for networking
 
   * Added a configurable heap allocator for the library's dynamic allocations, selected with the :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_KERNEL` (default) and :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_SYSTEM` Kconfig options.
   * Updated the CoAP client to resolve the host only for the address families that the Connection Manager reports as ready, in dual-stack builds.
+  * Updated the CoAP client to try the next resolved address of the host if the connection fails.
   * Updated the library to send the :c:enumerator:`NRF_PROVISIONING_EVENT_FATAL_ERROR` event when the modem fails to generate the attestation token for an unclaimed device.
     Previously, the :c:enumerator:`NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED` event was sent without a token.
 
