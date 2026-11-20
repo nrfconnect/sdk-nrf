@@ -93,6 +93,7 @@ void setUp(void)
 	/* Temporarily ignore and provide default values to mocked functions */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
+	__cmock_lte_lc_power_off_IgnoreAndReturn(0);
 	__cmock_nrf_modem_lib_shutdown_IgnoreAndReturn(0);
 
 	lte_lc_event_handler_callback(&cereg_evt);
@@ -116,6 +117,7 @@ void setUp(void)
 	/* Stop ignoring mocked functions*/
 	__cmock_nrf_modem_is_initialized_StopIgnore();
 	__cmock_lte_lc_func_mode_set_StopIgnore();
+	__cmock_lte_lc_power_off_StopIgnore();
 	__cmock_nrf_modem_lib_shutdown_StopIgnore();
 
 	/* Prepare to track/mock modem_at_scanf calls for the upcoming test */
@@ -221,9 +223,10 @@ void test_disable_should_shutdown_modem(void)
 	/* Bring the interface up */
 	bring_network_interface_up();
 
-	/* Expect that the modem will be shut down when interface is taken down.
+	/* Expect that the modem will be powered off and shut down when interface is taken down.
 	 * Schedule the shutdown to succeed.
 	 */
+	__cmock_lte_lc_power_off_ExpectAndReturn(0);
 	__cmock_nrf_modem_lib_shutdown_ExpectAndReturn(0);
 
 	/* Take the interface down and verify that it succeeds */
@@ -238,13 +241,28 @@ void test_disable_should_return_error_if_shutdown_of_modem_fails(void)
 	/* Bring the interface up */
 	bring_network_interface_up();
 
-	/* Expect that the modem will be shut down when interface is taken down.
+	/* Expect that the modem will be powered off and shut down when interface is taken down.
 	 * Schedule the shutdown to fail.
 	 */
+	__cmock_lte_lc_power_off_ExpectAndReturn(0);
 	__cmock_nrf_modem_lib_shutdown_ExpectAndReturn(-1);
 
 	/* Take the interface down and verify that it fails */
 	TEST_ASSERT_EQUAL(-1, net_if_down(net_if_get_default()));
+}
+
+/* Verify taking the iface down still shuts down the modem if powering off the modem fails */
+void test_disable_should_shutdown_modem_if_power_off_fails(void)
+{
+	/* Bring the interface up */
+	bring_network_interface_up();
+
+	/* Expect that the modem will be shut down even though powering off fails */
+	__cmock_lte_lc_power_off_ExpectAndReturn(-1);
+	__cmock_nrf_modem_lib_shutdown_ExpectAndReturn(0);
+
+	/* Take the interface down and verify that it succeeds */
+	TEST_ASSERT_EQUAL(0, net_if_down(net_if_get_default()));
 }
 
 /* Verify nrf_modem_lib_netif_connect() */
