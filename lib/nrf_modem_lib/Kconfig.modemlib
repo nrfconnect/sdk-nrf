@@ -42,6 +42,16 @@ config NRF_MODEM_LIB_TRANSPORT_MBOX
 	select IPC_SERVICE_ICMSG
 	select IPC_SERVICE_ICMSG_SHMEM_ACCESS_SYNC
 
+config NRF_MODEM_LIB_CELL_EVENT_FORWARD
+	bool "Application forwards IronSide SE CELL events"
+	depends on CONFIG_NRF_MODEM_SOC_SERIES_NRF92X
+	help
+	  The application owns the application bellboard channel of the IronSide SE CELL
+	  event report, and forwards the notifications to the Modem library by calling
+	  nrf_modem_lib_cell_event_notify(). Otherwise, the Modem library registers the channel
+	  itself while initialized. The Modem library uses the CELL event to know when the
+	  cellcore has been reset by nrf_modem_lib_shutdown().
+
 endif # SOC_SERIES_NRF92
 
 config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
