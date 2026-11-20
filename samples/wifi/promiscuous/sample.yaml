@@ -70,6 +70,9 @@ tests:
   sample.nrf7120.promiscuous:
     sysbuild: true
     build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE="usb-next.conf;overlay-net-capture.conf"
+      - EXTRA_DTC_OVERLAY_FILE=usbd_next_ecm.overlay
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
