@@ -9,8 +9,6 @@ tests:
       - ci_samples_net
     extra_args:
       - SNIPPET=wifi-ipv4
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf7120dk/nrf7120/cpuapp
