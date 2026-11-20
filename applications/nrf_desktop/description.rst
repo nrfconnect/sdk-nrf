@@ -411,22 +411,6 @@ The application supports the following build types:
      - ``keyboard``
      - ``nrf54l15dk/nrf54l15/cpuapp``
      - Debug version of the application that lets you generate the application with the keyboard role.
-   * - HID SCI mouse
-     - ``hid_sci``
-     - ``nrf54l15dk/nrf54l15/cpuapp``
-     - Debug version of the application that acts as a mouse with HID Shorter Connection Intervals (SCI) support.
-   * - Release HID SCI mouse
-     - ``release_hid_sci``
-     - ``nrf54l15dk/nrf54l15/cpuapp``
-     - Release version of the application that acts as a mouse with HID Shorter Connection Intervals (SCI) support.
-   * - HID SCI keyboard
-     - ``hid_sci_keyboard``
-     - ``nrf54l15dk/nrf54l15/cpuapp``
-     - Debug version of the application that acts as a keyboard with HID Shorter Connection Intervals (SCI) support.
-   * - Release HID SCI keyboard
-     - ``release_hid_sci_keyboard``
-     - ``nrf54l15dk/nrf54l15/cpuapp``
-     - Release version of the application that acts as a keyboard with HID Shorter Connection Intervals (SCI) support.
    * - Dongle quadruple LLPM connection
      - ``dongle_4llpmconn``
      - ``nrf54lm20dk/nrf54lm20b/cpuapp``
@@ -435,14 +419,6 @@ The application supports the following build types:
      - ``release_dongle_4llpmconn``
      - ``nrf54lm20dk/nrf54lm20b/cpuapp``
      - Release version of the application with support for up to four simultaneous Bluetooth LE connections in Low Latency Packet Mode.
-   * - HID SCI dongle
-     - ``hid_sci_dongle``
-     - ``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``
-     - Debug version of the application that acts as a BLE HID SCI dongle bridging radio connected HID peripherals.
-   * - Release HID SCI dongle
-     - ``release_hid_sci_dongle``
-     - ``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``
-     - Release version of the application that acts as a BLE HID SCI dongle.
    * - LLVM
      - ``llvm``
      - ``nrf54lm20dk/nrf54lm20a/cpuapp``
@@ -501,7 +477,7 @@ If the device is disconnected from USB, it automatically switches to sending the
 Dongle USB
 ~~~~~~~~~~
 
-The nRF Desktop dongle works as a bridge between the devices connected through standard Bluetooth LE, Low Latency Packet Mode (LLPM), or Bluetooth with Shorter Connection Intervals (SCI) support, and the host connected through USB.
+The nRF Desktop dongle works as a bridge between the devices connected through standard Bluetooth LE or Low Latency Packet Mode and the host connected through USB.
 It receives data wirelessly from the connected peripherals and forwards the data to the host.
 
 The nRF Desktop dongle is powered directly through USB.

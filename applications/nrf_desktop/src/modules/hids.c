@@ -47,10 +47,6 @@ BUILD_ASSERT(HIDS_SUBSCRIBER_REPORT_MAX >= HIDS_SUBSCRIBER_PIPELINE_SIZE,
 BUILD_ASSERT(CONFIG_BT_ATT_TX_COUNT > HIDS_SUBSCRIBER_REPORT_MAX,
 	     "Too small number of ATT buffers");
 
-BUILD_ASSERT(IS_ENABLED(CONFIG_DESKTOP_HIDS_SCI_ENABLE) == IS_ENABLED(CONFIG_BT_HIDS_SCI),
-	     "CONFIG_BT_HIDS_SCI must be enabled through CONFIG_DESKTOP_HIDS_SCI_ENABLE"
-	     " in the nRF Desktop application");
-
 BT_HIDS_DEF(hids_obj,
 	IF_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT,
 		   (REPORT_SIZE_MOUSE,))
@@ -134,78 +130,6 @@ static void broadcast_all_subscription_changes(void)
 	 */
 	broadcast_all_subscription_changes_internal(false);
 	broadcast_all_subscription_changes_internal(true);
-}
-
-static enum bt_hids_sci_mode_value cp_evt_to_sci_mode(enum bt_hids_cp_evt evt)
-{
-	switch (evt) {
-	case BT_HIDS_CP_EVT_HOST_SCI_DEFAULT_REQ:
-		return BT_HIDS_SCI_MODE_DEFAULT;
-	case BT_HIDS_CP_EVT_HOST_SCI_FAST_REQ:
-		return BT_HIDS_SCI_MODE_FAST;
-	case BT_HIDS_CP_EVT_HOST_SCI_LOW_POWER_REQ:
-		return BT_HIDS_SCI_MODE_LOW_POWER;
-	case BT_HIDS_CP_EVT_HOST_SCI_FULL_RANGE_REQ:
-		return BT_HIDS_SCI_MODE_FULL_RANGE;
-	default:
-		/* Should not happen. */
-		__ASSERT_NO_MSG(false);
-		return BT_HIDS_SCI_MODE_NONE;
-	}
-}
-
-static void submit_host_suspend_event(const struct bt_conn *conn, bool suspended)
-{
-	struct hid_host_suspend_event *event = new_hid_host_suspend_event();
-
-	event->subscriber = conn;
-	event->suspended = suspended;
-
-	APP_EVENT_SUBMIT(event);
-}
-
-static void submit_sci_mode_request_event(const struct bt_conn *conn,
-					  enum bt_hids_sci_mode_value mode)
-{
-	struct hid_sci_mode_request_event *event = new_hid_sci_mode_request_event();
-
-	event->subscriber = conn;
-	event->mode = mode;
-
-	APP_EVENT_SUBMIT(event);
-}
-
-static void conn_cp_evt_handler(enum bt_hids_cp_evt evt, struct bt_conn *conn)
-{
-	if (!cur_conn) {
-		LOG_WRN("HID control point event before connection");
-		return;
-	}
-
-	if (conn != cur_conn) {
-		LOG_WRN("HID control point event from unexpected connection");
-		return;
-	}
-
-	switch (evt) {
-	case BT_HIDS_CP_EVT_HOST_SUSP:
-	case BT_HIDS_CP_EVT_HOST_EXIT_SUSP:
-		submit_host_suspend_event(conn, (evt == BT_HIDS_CP_EVT_HOST_SUSP));
-		break;
-
-	case BT_HIDS_CP_EVT_HOST_SCI_DEFAULT_REQ:
-	case BT_HIDS_CP_EVT_HOST_SCI_FAST_REQ:
-	case BT_HIDS_CP_EVT_HOST_SCI_LOW_POWER_REQ:
-	case BT_HIDS_CP_EVT_HOST_SCI_FULL_RANGE_REQ:
-		if (IS_ENABLED(CONFIG_DESKTOP_HIDS_SCI_ENABLE)) {
-			submit_sci_mode_request_event(conn, cp_evt_to_sci_mode(evt));
-			break;
-		}
-		/* Fall-through */
-	default:
-		LOG_WRN("Unsupported HID control point event value: 0x%02x", evt);
-		break;
-	}
 }
 
 static void pm_evt_handler(enum bt_hids_pm_evt evt, struct bt_conn *conn)
@@ -523,7 +447,6 @@ static int module_init(void)
 	}
 
 	hids_init_param.pm_evt_handler = pm_evt_handler;
-	hids_init_param.conn_cp_evt_handler = conn_cp_evt_handler;
 
 	return bt_hids_init(&hids_obj, &hids_init_param);
 }
