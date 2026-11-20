@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuflpr_vevif_rx {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&cpuflpr_vevif_rx {
+	/* Only 1 interrupt is used. Remove 15 not used isr handlers (1.4k savings) */
+	interrupts = <16 NRF_DEFAULT_IRQ_PRIORITY>;
+	nordic,tasks = <1>;
+};
+
+/* The IPC instance, its shared memory and mailboxes are defined by the board. */
+&cpuapp_cpuflpr_ipc {
+	status = "okay";
+	compatible = "zephyr,ipc-icbmsg";
+	tx-blocks = <16>;
+	rx-blocks = <16>;
+};
+
+/* uart120 and spi120 are one peripheral (0x8e6000). The FLPR devicetree enables both.
+ * It builds because CONFIG_SERIAL=n, but turning on FLPR logging later would conflict.
+ */
+&uart120 {
+	/delete-property/ hw-flow-control;
+};
+
+/ {
+	aliases {
+		remote-temp-monitor-ipc = &cpuapp_cpuflpr_ipc;
+		remote-led-control-ipc = &cpuapp_cpuflpr_ipc;
+		led0 = &led0;
+	};
+};
+
+/* GPIO ports are used without GPIOTE interrupts on the VPR. */
+&gpio1 {
+	status = "okay";
+	/delete-property/ gpiote-instance;
+};
+
+&gpio2 {
+	status = "okay";
+	/delete-property/ gpiote-instance;
+};
+
+app_spi: &spi120 {
+	status = "okay";
+	pinctrl-0 = <&spi120_default>;
+	pinctrl-1 = <&spi120_sleep>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
+};
