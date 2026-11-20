@@ -837,6 +837,43 @@ config BT_CTLR_SCAN_DECISION_INSTRUCTION_COUNT
 	help
 	  The number of scan decision instructions the controller will support.
 
+config BT_CTLR_SDC_UTP_HCI
+	bool "Unified Test Protocol (UTP) over HCI (HCI_LE_UTP_Send) [EXPERIMENTAL]"
+	select BT_CTLR_DTM_HCI
+	select EXPERIMENTAL
+
+config BT_CTLR_SDC_UTP_HCI_BUFFER_SIZE
+	int "UTP over HCI buffer size (octets)"
+	depends on BT_CTLR_SDC_UTP_HCI
+	default 256
+	range 26 1024
+	help
+	  Size, in octets, of each of the two (rx and tx) buffers of the UTP over HCI session.
+
+config BT_CTLR_SDC_UTP_OTA
+	bool "Unified Test Protocol (UTP) over the air (LL_OTA_UTP_IND) [EXPERIMENTAL]"
+	depends on BT_CONN
+	select BT_CTLR_DTM_HCI
+	select EXPERIMENTAL
+
+config BT_CTLR_SDC_UTP_OTA_BUFFER_SIZE
+	int "UTP OTA buffer size (octets)"
+	depends on BT_CTLR_SDC_UTP_OTA
+	default 64
+	range 26 1024
+	help
+	  Size, in octets, of each of the two (rx and tx) buffers.
+
+config BT_CTLR_SDC_UTP_VS_NORDIC
+	bool "Nordic vendor-specific UTP additions [EXPERIMENTAL]"
+	depends on BT_CTLR_SDC_UTP_HCI || BT_CTLR_SDC_UTP_OTA
+	select EXPERIMENTAL
+	help
+	  Adds support for UTP_Set_Vendor_Specific_Data, UTP_Vendor_Specific_Control and
+	  UTP_Report_Vendor_Specific_Data with the Nordic company ID. Without this option, the
+	  controller rejects UTP_Set_Vendor_Specific_Data and UTP_Vendor_Specific_Control, and the
+	  vendor-specific code is not linked in.
+
 config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	int
 	default 53 if MPSL_USE_EXTERNAL_CLOCK_CONTROL
