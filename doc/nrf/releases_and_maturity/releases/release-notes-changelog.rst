@@ -347,7 +347,7 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Fixed an issue where an ACK packet requested an ACK, so that a PRX receiving it sent an ACK in response.
 
 Gazell
 ------

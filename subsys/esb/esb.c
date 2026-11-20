@@ -2046,7 +2046,8 @@ static void prepare_ack_pdu_dpl(bool retransmit_payload, struct pipe_info *pipe_
 	}
 
 	tx_pdu->type.dpl_pdu.pid = rx_pdu->type.dpl_pdu.pid;
-	tx_pdu->type.dpl_pdu.ack = rx_pdu->type.dpl_pdu.ack;
+	/* An ACK never requests an ACK, so another PRX on the address ignores it. */
+	tx_pdu->type.dpl_pdu.ack = 0;
 }
 
 static void on_radio_disabled_rx(void)
