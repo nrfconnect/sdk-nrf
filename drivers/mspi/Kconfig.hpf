@@ -12,7 +12,7 @@ menuconfig MSPI_HPF
 	select MBOX
 	select PINCTRL
 	select IPC_SERVICE
-	select IPC_SERVICE_BACKEND_ICMSG
+	select IPC_SERVICE_BACKEND_ICBMSG
 	help
 	  Enable HPF MSPI driver.
 

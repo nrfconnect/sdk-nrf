@@ -4,29 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	ipc {
-		ipc0: ipc0 {
-			compatible = "zephyr,ipc-icmsg";
-			dcache-alignment = <32>;
-			/delete-property/ tx-blocks;
-			/delete-property/ rx-blocks;
-			mboxes = <&cpuflpr_vevif_rx 21>, <&cpuflpr_vevif_tx 20>;
-			mbox-names = "rx", "tx";
-			unbound = "enable";
-			status = "okay";
-		};
-	};
-};
-
-&cpuflpr_vevif_rx {
-	status = "okay";
-};
-
-&cpuflpr_vevif_tx {
-	status = "okay";
-};
-
-&uart20 {
-	/delete-property/ hw-flow-control;
+&ipc0 {
+	compatible = "zephyr,ipc-icmsg";
+	unbound = "enable";
+	/delete-property/ tx-blocks;
+	/delete-property/ rx-blocks;
+	dcache-alignment = <32>;
 };
