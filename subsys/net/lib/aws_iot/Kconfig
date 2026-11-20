@@ -13,6 +13,7 @@ menuconfig $(module)
 	prompt "AWS IoT library" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
 	select MQTT_HELPER
 	select MQTT_LIB_TLS
+	imply MBEDTLS_SSL_SERVER_NAME_INDICATION if MBEDTLS
 
 if AWS_IOT
 
