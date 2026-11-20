@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	zephyr,user {
+		test-saadc-input0 = <NRF_SAADC_AIN4>; /* P1.04 */
+		test-saadc-input1 = <NRF_SAADC_AIN3>; /* P1.03 */
+	};
+};
+
+&timer131 {
+	status = "reserved";
+};
+
+&adc {
+	compatible = "nordic,nrf-saadct";
+	status = "okay";
+	timer-instance = <&timer131>;
+	/* Reserve SAADC to ensure that it is assigned to cpuapp and can be used by nrfx_saadc. */
+	#address-cells = <1>;
+	#size-cells = <0>;
+};

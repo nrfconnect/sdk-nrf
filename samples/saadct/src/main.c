@@ -25,7 +25,9 @@ LOG_MODULE_REGISTER(saadct_sample, LOG_LEVEL_INF);
 #define SAADCT_CHAN_DEFAULT_CONFIG_SE(_pin, _tacq, _gain, _ref)                                    \
 	{                                                                                          \
 		.channel_config = {                                                                \
-			.gain = _gain,                                                             \
+			NRFX_COND_CODE_1(NRF_SAADC_HAS_CH_GAIN,                                    \
+					(.gain = _gain,),                                          \
+					())                                                        \
 			SAADCT_RESISTOR_CFG                                                        \
 			.reference = _ref,                                                         \
 			.conv_time = NRFX_SAADC_DEFAULT_CONV_TIME,                                 \
@@ -42,10 +44,14 @@ enum {
 	SAADCT_CHAN_IDX_BASE = __COUNTER__,
 };
 
+/* Read SAADC inputs from DTS. */
+#define TEST_SAADC_INPUT0 DT_PROP(DT_PATH(zephyr_user), test_saadc_input0)
+#define TEST_SAADC_INPUT1 DT_PROP(DT_PATH(zephyr_user), test_saadc_input1)
+
 static const nrfx_saadc_channel_t saadct_chan_cfg[] = {
-	SAADCT_CHAN_DEFAULT_CONFIG_SE(NRFX_ANALOG_EXTERNAL_AIN6, ACQ_TIME, NRF_SAADC_GAIN1,
+	SAADCT_CHAN_DEFAULT_CONFIG_SE(TEST_SAADC_INPUT0, ACQ_TIME, NRF_SAADC_GAIN1,
 				      NRF_SAADC_REFERENCE_INTERNAL),
-	SAADCT_CHAN_DEFAULT_CONFIG_SE(NRFX_ANALOG_EXTERNAL_AIN5, ACQ_TIME, NRF_SAADC_GAIN1,
+	SAADCT_CHAN_DEFAULT_CONFIG_SE(TEST_SAADC_INPUT1, ACQ_TIME, NRF_SAADC_GAIN1,
 				      NRF_SAADC_REFERENCE_INTERNAL),
 };
 
