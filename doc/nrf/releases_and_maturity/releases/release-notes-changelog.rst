@@ -255,6 +255,12 @@ Security libraries
 
 |no_changes_yet_note|
 
+* :ref:`lib_identity_key` library:
+
+  * Updated the :kconfig:option:`CONFIG_IDENTITY_KEY_RANDOM` Kconfig option to depend on the :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE` Kconfig option instead of selecting it.
+    This avoids a Kconfig dependency loop through the default value of the :kconfig:option:`CONFIG_MAIN_STACK_SIZE` Kconfig option.
+    See the :ref:`migration guide <migration_3.5>` for the required changes.
+
 * :ref:`trusted_storage_readme` library:
 
   * Added the deprecation note in the library documentation.

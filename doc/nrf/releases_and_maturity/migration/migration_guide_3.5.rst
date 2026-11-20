@@ -329,6 +329,11 @@ This section describes the changes related to libraries.
        Use the :ref:`Secure Storage subsystem <secure_storage>` instead (:kconfig:option:`CONFIG_SECURE_STORAGE`).
        If you have an existing installation that uses the Trusted Storage library with entries stored in non-volatile memory, you can switch to using Secure Storage without losing any data by enabling the :kconfig:option:`CONFIG_SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY` Kconfig option.
 
+   * :ref:`lib_identity_key` library:
+
+     * The :kconfig:option:`CONFIG_IDENTITY_KEY_RANDOM` Kconfig option no longer selects the :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE` Kconfig option, and now depends on it instead.
+       If your application uses the :kconfig:option:`CONFIG_IDENTITY_KEY_RANDOM` Kconfig option, also set the :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE` Kconfig option to ``y``.
+
    * Bluetooth Mesh Distance Measurement vendor models:
 
      * The experimental Distance Measurement Server and Distance Measurement Client vendor models have been removed.
