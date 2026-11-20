@@ -152,6 +152,17 @@ source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 endmenu # Application sample
 
 
+if BUILD_WITH_TFM
+
+choice TFM_PROFILE_TYPE
+	default TFM_PROFILE_TYPE_MINIMAL
+endchoice
+
+configdefault TFM_LOG_LEVEL_SILENCE
+	default y
+
+endif # BUILD_WITH_TFM
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu # Zephyr Kernel

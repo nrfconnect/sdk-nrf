@@ -41,6 +41,13 @@ config DOWNLOAD_MODEM_1_FILE
 
 endmenu
 
+if BUILD_WITH_TFM
+
+configdefault TFM_LOG_LEVEL_SILENCE
+	default y
+
+endif # BUILD_WITH_TFM
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
