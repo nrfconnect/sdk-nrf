@@ -423,6 +423,7 @@ int nrf_wifi_if_send(const struct device *dev,
 	unsigned char *ra = NULL;
 	int peer_id = -1;
 	bool authorized;
+	bool tkip;
 
 	if (!dev || !pkt) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
@@ -437,7 +438,8 @@ int nrf_wifi_if_send(const struct device *dev,
 	}
 
 	/* Allocate packet before locking mutex (blocks until allocation success) */
-	nbuf = nrf_wifi_net_pkt_to_nbuf(pkt);
+	tkip = nrf_wifi_fmac_tkip_in_use(nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep));
+	nbuf = nrf_wifi_net_pkt_to_nbuf(pkt, tkip);
 
 	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
 	if (ret != 0) {
@@ -578,6 +580,7 @@ int nrf_wifi_wpa_tx_control_port(void *if_priv, const unsigned char *dest, unsig
 	struct net_pkt *pkt = NULL;
 	void *nbuf = NULL;
 	bool locked = false;
+	bool tkip;
 
 	ARG_UNUSED(no_encrypt);
 
@@ -620,7 +623,8 @@ int nrf_wifi_wpa_tx_control_port(void *if_priv, const unsigned char *dest, unsig
 
 	net_pkt_cursor_init(pkt);
 
-	nbuf = nrf_wifi_net_pkt_to_nbuf(pkt);
+	tkip = nrf_wifi_fmac_tkip_in_use(nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep));
+	nbuf = nrf_wifi_net_pkt_to_nbuf(pkt, tkip);
 	net_pkt_unref(pkt);
 	if (!nbuf) {
 		LOG_ERR("%s: nbuf allocation failed", __func__);
