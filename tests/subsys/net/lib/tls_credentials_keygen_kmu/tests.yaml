@@ -1,0 +1,16 @@
+common:
+  sysbuild: true
+  platform_allow:
+    - nrf7120dk/nrf7120/cpuapp/ns
+    - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+  integration_platforms:
+    - nrf7120dk/nrf7120/cpuapp/ns
+  tags:
+    - sysbuild
+    - ci_tests_subsys_net
+tests:
+  net.lib.tls_credentials_keygen_kmu: {}
+  net.lib.tls_credentials_keygen_kmu.raw_p256:
+    extra_configs:
+      - CONFIG_TLS_CREDENTIALS_KEYGEN_KMU_SCHEME_RAW=y
+      - CONFIG_TLS_CREDENTIALS_KEYGEN_SECP384R1=n
