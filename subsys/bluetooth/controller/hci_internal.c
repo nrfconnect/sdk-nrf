@@ -34,10 +34,6 @@ static struct
 	uint8_t raw_event[BT_BUF_EVT_RX_SIZE];
 } cmd_complete_or_status;
 
-#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC) && !defined(SDC_HCI_PAWR_SYNC_RETURN_IMMEDIATELY)
-static bool padv_response_data_cmd_pending;
-#endif
-
 static hci_internal_user_cmd_handler_t user_cmd_handler;
 
 static bool command_generates_command_complete_event(uint16_t hci_opcode)
@@ -1909,11 +1905,7 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 {
 	uint16_t opcode = sys_get_le16(cmd_in);
 
-	if (cmd_complete_or_status.occurred
-#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC) && !defined(SDC_HCI_PAWR_SYNC_RETURN_IMMEDIATELY)
-		|| padv_response_data_cmd_pending
-#endif
-		) {
+	if (cmd_complete_or_status.occurred) {
 		return -NRF_EPERM;
 	}
 
@@ -1942,19 +1934,6 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 	}
 #endif
 
-#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC) && !defined(SDC_HCI_PAWR_SYNC_RETURN_IMMEDIATELY)
-	if (opcode == SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_RESPONSE_DATA
-		&&
-		cmd_complete_or_status.raw_event[0] == BT_HCI_EVT_CMD_COMPLETE) {
-		/* SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_RESPONSE_DATA
-		 * will generate command complete at a later time (unless unsupported)
-		 */
-
-		cmd_complete_or_status.occurred = false;
-		padv_response_data_cmd_pending = true;
-	}
-#endif
-
 	return 0;
 }
 
@@ -1974,13 +1953,6 @@ int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out)
 	}
 
 	const int retval = sdc_hci_get(msg_out, (uint8_t *)msg_type_out);
-
-#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC) && !defined(SDC_HCI_PAWR_SYNC_RETURN_IMMEDIATELY)
-	if (retval == 0 && *msg_type_out == SDC_HCI_MSG_TYPE_EVT
-		&& msg_out[0] == BT_HCI_EVT_CMD_COMPLETE) {
-		padv_response_data_cmd_pending = false;
-	}
-#endif
 
 	return retval;
 }
