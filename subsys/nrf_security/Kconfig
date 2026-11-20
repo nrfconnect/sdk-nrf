@@ -35,6 +35,9 @@ rsource "Kconfig.psa.nordic"
 # Include platform capability configurations
 rsource "Kconfig.platform"
 
+# Include the CRACEN KMU slot layout
+rsource "src/drivers/cracen/Kconfig.kmu"
+
 if NRF_SECURITY
 
 # Include TLS/DTLS and x509 configurations
