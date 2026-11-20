@@ -20,7 +20,7 @@ target_sources(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf_audio/fakes/application/application.c
 )
 
-target_compile_definitions(app PRIVATE CONFIG_MODULE_SD_CARD_LC3_FILE_LOG_LEVEL=3)
+target_compile_definitions(app PRIVATE CONFIG_NRF_AUDIO_MODULE_SD_CARD_LC3_FILE_LOG_LEVEL=3)
 target_include_directories(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src
   ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf_audio/fakes

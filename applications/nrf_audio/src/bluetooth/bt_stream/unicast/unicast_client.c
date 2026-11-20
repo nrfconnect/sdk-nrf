@@ -32,7 +32,7 @@
 #include "server_store.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
+LOG_MODULE_REGISTER(unicast_client, CONFIG_NRF_AUDIO_UNICAST_CLIENT_LOG_LEVEL);
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
@@ -436,7 +436,7 @@ static void unicast_group_create(void)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_PACKING_INTERLEAVED)) {
 		group_param.packing = BT_ISO_PACKING_INTERLEAVED;
 	} else {
 		group_param.packing = BT_ISO_PACKING_SEQUENTIAL;

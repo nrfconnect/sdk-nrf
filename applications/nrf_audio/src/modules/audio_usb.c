@@ -19,7 +19,7 @@
 #include <pcm_stream_channel_modifier.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(audio_usb, CONFIG_MODULE_AUDIO_USB_LOG_LEVEL);
+LOG_MODULE_REGISTER(audio_usb, CONFIG_NRF_AUDIO_MODULE_USB_LOG_LEVEL);
 
 #define TERMINAL_ID_HEADSET_OUT	  UAC2_ENTITY_ID(DT_NODELABEL(out_terminal))
 #define TERMINAL_ID_HEADPHONES_OUT UAC2_ENTITY_ID(DT_NODELABEL(hp_out_terminal))
@@ -43,7 +43,8 @@ static struct k_msgq *audio_q_out;
  * hence the dividing by two
  */
 NET_BUF_POOL_FIXED_DEFINE(pool_in, USB_BLOCKS,
-			  (USB_BLOCK_MULTI_CHAN_1MS_SIZE * CONFIG_FIFO_FRAME_SPLIT_NUM / 2),
+			  (USB_BLOCK_MULTI_CHAN_1MS_SIZE * CONFIG_NRF_AUDIO_FIFO_FRAME_SPLIT_NUM /
+			   2),
 			  sizeof(struct audio_metadata), NULL);
 
 static uint32_t in_num_overruns;
@@ -60,9 +61,9 @@ static bool usb_sof_synchronized;
 /* The meta data for the USB and that required for the following audio system. */
 struct audio_metadata usb_in_meta = {.data_coding = PCM,
 				     .data_len_us = 1000,
-				     .sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ,
-				     .bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
-				     .carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
+				     .sample_rate_hz = CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ,
+				     .bits_per_sample = CONFIG_NRF_AUDIO_BIT_DEPTH_BITS,
+				     .carried_bits_per_sample = CONFIG_NRF_AUDIO_BIT_DEPTH_BITS,
 				     .bytes_per_location = USB_BLOCK_MULTI_CHAN_1MS_SIZE / 2,
 				     .interleaved = true,
 				     .locations = BT_AUDIO_LOCATION_FRONT_LEFT |
@@ -260,7 +261,7 @@ static void data_recv_cb(const struct device *dev, uint8_t terminal, void *buf, 
 	}
 
 	/* Check if we are about to spill over, if so: allocate spill_over frame */
-	if ((blocks_in_frame_current + 2) > CONFIG_FIFO_FRAME_SPLIT_NUM) {
+	if ((blocks_in_frame_current + 2) > CONFIG_NRF_AUDIO_FIFO_FRAME_SPLIT_NUM) {
 		const size_t half_size = size / 2;
 
 		/* Add half the buffer to current frame */
@@ -309,7 +310,7 @@ static void data_recv_cb(const struct device *dev, uint8_t terminal, void *buf, 
 	k_mem_slab_free(&usb_in_slab, buf);
 
 	/* Check if we have a complete frame */
-	if (blocks_in_frame_current >= CONFIG_FIFO_FRAME_SPLIT_NUM) {
+	if (blocks_in_frame_current >= CONFIG_NRF_AUDIO_FIFO_FRAME_SPLIT_NUM) {
 		/* Put complete frame into IN queue */
 		ret = k_msgq_put(audio_q_out, (void *)&frame_current, K_NO_WAIT);
 		if (ret) {

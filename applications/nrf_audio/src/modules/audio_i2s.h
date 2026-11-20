@@ -26,18 +26,19 @@
  * configured I2S sample rate, number of channels, and bit depth. The frame
  * duration can be either 10 ms or 7.5 ms.
  */
-#if ((CONFIG_AUDIO_FRAME_DURATION_US == 7500) && CONFIG_SW_CODEC_LC3)
+#if ((CONFIG_NRF_AUDIO_FRAME_DURATION_US == 7500) && CONFIG_NRF_AUDIO_SW_CODEC_LC3)
 
 #define FRAME_SIZE_BYTES                                                                           \
-	((CONFIG_I2S_LRCK_FREQ_HZ / 1000 * 15 / 2) * CONFIG_I2S_CH_NUM *                           \
-	 CONFIG_AUDIO_BIT_DEPTH_OCTETS)
+	((CONFIG_NRF_AUDIO_I2S_LRCK_FREQ_HZ / 1000 * 15 / 2) * CONFIG_NRF_AUDIO_I2S_CH_NUM *       \
+	 CONFIG_NRF_AUDIO_BIT_DEPTH_OCTETS)
 #else
 #define FRAME_SIZE_BYTES                                                                           \
-	((CONFIG_I2S_LRCK_FREQ_HZ / 1000 * 10) * CONFIG_I2S_CH_NUM * CONFIG_AUDIO_BIT_DEPTH_OCTETS)
-#endif /* ((CONFIG_AUDIO_FRAME_DURATION_US == 7500) && CONFIG_SW_CODEC_LC3) */
+	((CONFIG_NRF_AUDIO_I2S_LRCK_FREQ_HZ / 1000 * 10) * CONFIG_NRF_AUDIO_I2S_CH_NUM *           \
+	 CONFIG_NRF_AUDIO_BIT_DEPTH_OCTETS)
+#endif /* ((CONFIG_NRF_AUDIO_FRAME_DURATION_US == 7500) && CONFIG_NRF_AUDIO_SW_CODEC_LC3) */
 
-#define FRAME_SIZE_MONO_BYTES (FRAME_SIZE_BYTES / CONFIG_I2S_CH_NUM)
-#define BLOCK_SIZE_BYTES      (FRAME_SIZE_BYTES / CONFIG_FIFO_FRAME_SPLIT_NUM)
+#define FRAME_SIZE_MONO_BYTES (FRAME_SIZE_BYTES / CONFIG_NRF_AUDIO_I2S_CH_NUM)
+#define BLOCK_SIZE_BYTES      (FRAME_SIZE_BYTES / CONFIG_NRF_AUDIO_FIFO_FRAME_SPLIT_NUM)
 
 /**
  * @brief Calculate number of samples per I2S block.
@@ -48,7 +49,8 @@
  * configured audio bit depth.
  */
 #define I2S_SAMPLES_NUM                                                                            \
-	(BLOCK_SIZE_BYTES / (CONFIG_AUDIO_BIT_DEPTH_OCTETS) / (32 / CONFIG_AUDIO_BIT_DEPTH_BITS))
+	(BLOCK_SIZE_BYTES / (CONFIG_NRF_AUDIO_BIT_DEPTH_OCTETS) /                                  \
+	 (32 / CONFIG_NRF_AUDIO_BIT_DEPTH_BITS))
 
 /**
  * @brief I2S block complete event callback type

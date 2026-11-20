@@ -20,7 +20,7 @@
 #include "zbus_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(button_handler, CONFIG_MODULE_BUTTON_HANDLER_LOG_LEVEL);
+LOG_MODULE_REGISTER(button_handler, CONFIG_NRF_AUDIO_MODULE_BUTTON_HANDLER_LOG_LEVEL);
 
 ZBUS_CHAN_DEFINE(button_chan, struct button_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
@@ -142,8 +142,9 @@ static void button_publish_thread(void)
 	}
 }
 
-K_THREAD_DEFINE(Msg_pub_btn, CONFIG_BUTTON_PUBLISH_STACK_SIZE, button_publish_thread, NULL, NULL,
-		NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_PUBLISH_THREAD_PRIO), 0, 0);
+K_THREAD_DEFINE(Msg_pub_btn, CONFIG_NRF_AUDIO_BUTTON_PUBLISH_STACK_SIZE, button_publish_thread,
+		NULL, NULL, NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_BUTTON_PUBLISH_THREAD_PRIO), 0,
+		0);
 
 /*  ISR triggered by GPIO when assigned button(s) are pushed */
 static void button_isr(const struct device *port, struct gpio_callback *cb, uint32_t pin_msk)
@@ -177,7 +178,8 @@ static void button_isr(const struct device *port, struct gpio_callback *cb, uint
 	}
 
 	debounce_is_ongoing = true;
-	k_timer_start(&button_debounce_timer, K_MSEC(CONFIG_BUTTON_DEBOUNCE_MS), K_NO_WAIT);
+	k_timer_start(&button_debounce_timer, K_MSEC(CONFIG_NRF_AUDIO_BUTTON_DEBOUNCE_MS),
+		      K_NO_WAIT);
 }
 
 int button_pressed(gpio_pin_t button_pin, bool *button_pressed)

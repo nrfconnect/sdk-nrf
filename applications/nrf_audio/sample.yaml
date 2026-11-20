@@ -31,7 +31,7 @@ tests:
       - sysbuild
       - ci_applications_nrf_audio
     extra_args:
-      - CONFIG_STREAM_BIDIRECTIONAL=y
+      - CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL=y
       - EXTRA_CONF_FILE=unicast_client/overlay-unicast_client.conf
   applications.nrf_audio.headset_broadcast_sink_usb:
     integration_platforms:
@@ -62,7 +62,7 @@ tests:
       - sysbuild
       - ci_applications_nrf_audio
     extra_args:
-      - CONFIG_AUDIO_SOURCE_I2S=y
+      - CONFIG_NRF_AUDIO_SOURCE_I2S=y
       - EXTRA_CONF_FILE=broadcast_source/overlay-broadcast_source.conf
   applications.nrf_audio.headset_unicast_sd_card:
     integration_platforms:
@@ -76,7 +76,7 @@ tests:
       - sysbuild
       - ci_applications_nrf_audio
     extra_args:
-      - CONFIG_SD_CARD_PLAYBACK=y
+      - CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK=y
       - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
   applications.nrf_audio.headset_unicast_debug_bidir_usb:
     integration_platforms:
@@ -92,7 +92,7 @@ tests:
       - sysbuild
       - ci_applications_nrf_audio
     extra_args:
-      - CONFIG_STREAM_BIDIRECTIONAL=y
+      - CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL=y
       - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
   applications.nrf_audio.headset_broadcast_alternative_i2s:
     integration_platforms:
@@ -119,7 +119,7 @@ tests:
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
       - CONFIG_BOOT_BANNER=n
-      - CONFIG_AUDIO_SOURCE_I2S=y
+      - CONFIG_NRF_AUDIO_SOURCE_I2S=y
       - EXTRA_CONF_FILE=broadcast_sink/overlay-broadcast_sink.conf
   applications.nrf_audio.headset_unicast_alternative_bidir_i2s:
     integration_platforms:
@@ -146,8 +146,8 @@ tests:
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
       - CONFIG_BOOT_BANNER=n
-      - CONFIG_STREAM_BIDIRECTIONAL=y
-      - CONFIG_AUDIO_SOURCE_I2S=y
+      - CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL=y
+      - CONFIG_NRF_AUDIO_SOURCE_I2S=y
       - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
   applications.nrf_audio.gateway_broadcast_source_alternative_usb:
     integration_platforms:
@@ -200,6 +200,6 @@ tests:
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
       - CONFIG_BOOT_BANNER=n
-      - CONFIG_STREAM_BIDIRECTIONAL=y
-      - CONFIG_AUDIO_SOURCE_I2S=y
+      - CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL=y
+      - CONFIG_NRF_AUDIO_SOURCE_I2S=y
       - EXTRA_CONF_FILE=unicast_client/overlay-unicast_client.conf
