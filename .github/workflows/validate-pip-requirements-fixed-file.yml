@@ -9,7 +9,9 @@ on:
     paths:
       - 'scripts/requirements*.txt'
       - 'scripts/requirements-fixed.sh'
+      - 'scripts/pip-audit-whitelist.yml'
       - '.github/workflows/validate-pip-requirements-fixed-file.yml'
+      - 'scripts/tools-versions-*.yml'
 
 permissions:
   contents: read
@@ -30,3 +32,4 @@ jobs:
           script_call: |
             cd ncs
             ./nrf/scripts/requirements-fixed.sh
+

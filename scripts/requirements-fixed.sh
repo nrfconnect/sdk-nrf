@@ -7,7 +7,9 @@ usage() {
   cat <<'EOF'
 Usage: requirements-fixed.sh [-i|--interactive]
 
-  Default: upgrade pip, install pip-compile-cross-platform, run pip-compile.
+  Default: upgrade pip, install pip-compile-cross-platform, run pip-compile,
+           pip install -r requirements-fixed.txt, then pip-audit -r that file
+           with --no-deps (whitelist: nrf/scripts/pip-audit-whitelist.yml).
 
   -i, --interactive
       Same setup, then start an interactive bash shell in /ncs (does not run
@@ -107,4 +109,20 @@ EOF
     --output-file "$OUT_FILE" \
     --min-python-version 3.12 \
     --index-url "$INDEX_URL"
+
+  pip uninstall -y pip-compile-cross-platform
+
+  pip install pip-audit
+  # Verify the lockfile installs; Nordic-only wheels need the same index as pip-compile.
+  pip install -r "$OUT_FILE" --index-url "$INDEX_URL"
+  ignore=()
+  whitelist=nrf/scripts/pip-audit-whitelist.yml
+  if [[ -f "$whitelist" ]]; then
+    while IFS= read -r id; do
+      [[ -z "$id" ]] && continue
+      ignore+=(--ignore-vuln "$id")
+    done < <(grep -E "^[[:space:]]+-[[:space:]]+" "$whitelist" | sed -E "s/^[[:space:]]+-[[:space:]]+//")
+  fi
+  # Audit lockfile pins only (no Poetry/virtualenv from pip-compile); pip-audit has no per-package skip list.
+  pip-audit -r "$OUT_FILE" --no-deps "${ignore[@]}"
 '
