@@ -88,7 +88,7 @@ The nRF Desktop devices use one of the following Link Layers:
     This Link Layer does not support the Low Latency Packet Mode (LLPM) and has a lower memory usage, so it can be used by memory-limited devices.
 
 * :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`
-    This Link Layer does support the Low Latency Packet Mode (LLPM).
+    This Link Layer supports the Low Latency Packet Mode (LLPM).
     If you opt for this Link Layer and enable the :kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM`, the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` is also enabled by default and can be configured further:
 
     * When :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` is enabled, set the value for :kconfig:option:`CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``3000``.
