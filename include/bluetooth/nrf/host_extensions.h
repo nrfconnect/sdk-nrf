@@ -109,6 +109,78 @@ struct bt_conn_set_pcr_params {
  */
 int bt_conn_set_power_control_request_params(struct bt_conn_set_pcr_params *params);
 
+/** @brief Set Power Control request parameters for a single connection
+ *
+ *  The parameters are the same as for @ref bt_conn_set_power_control_request_params,
+ *  which keeps setting them for the other connections. They are discarded when the
+ *  connection is terminated.
+ *
+ *  Requires the @kconfig{CONFIG_BT_NRF_LE_POWER_CONTROL_EXT} Kconfig option.
+ *
+ *  @param conn          Connection object.
+ *  @param params        See @ref bt_conn_set_pcr_params for details.
+ *
+ *  @return Zero on success or (negative) error code on failure.
+ *  @retval -EINVAL Invalid parameters.
+ *  @retval -ENOBUFS HCI command buffer is not available.
+ */
+int bt_conn_set_conn_power_control_request_params(struct bt_conn *conn,
+						  struct bt_conn_set_pcr_params *params);
+
+/** @brief Set the bounds of the local transmit power of a connection
+ *
+ *  The bounds limit the changes of the local transmit power that the peer requests, and the
+ *  changes caused by the Acceptable Power Reduction (APR) received from the peer.
+ *  A requested transmit power that is not available is rounded towards the bound, not beyond it.
+ *  If the transmit power is already outside the bounds, a request to change it in the direction
+ *  of the bounds does not change it. It is not changed in the opposite direction either.
+ *  The bounds do not limit the transmit power that the application sets, and do not change the
+ *  transmit power when they are set.
+ *  The minimum and maximum power flags sent to the peer report the bounds. They are updated
+ *  when the bounds are set.
+ *  The bounds are discarded when the connection is terminated.
+ *
+ *  Requires the @kconfig{CONFIG_BT_NRF_LE_POWER_CONTROL_EXT} Kconfig option.
+ *
+ *  @param conn          Connection object.
+ *  @param min_tx_power  Lowest transmit power in dBm, in the same reference as the transmit power
+ *                       reported by the Bluetooth host, for example in @ref bt_conn_le_tx_power.
+ *                       Use -127 for no lower bound.
+ *  @param max_tx_power  Highest transmit power in dBm. Use 127 for no upper bound.
+ *
+ *  @return Zero on success or (negative) error code on failure.
+ *  @retval -EINVAL @p min_tx_power is greater than @p max_tx_power.
+ *  @retval -ENOBUFS HCI command buffer is not available.
+ */
+int bt_conn_set_tx_power_bounds(struct bt_conn *conn, int8_t min_tx_power, int8_t max_tx_power);
+
+/** @brief Enable or disable the power control response reports
+ *
+ *  When enabled, the controller reports the content of LL_POWER_CONTROL_RSP, including the
+ *  Acceptable Power Reduction (APR) and the minimum and maximum power flags of the peer, for every
+ *  LE Power Control Request procedure that the host initiated with
+ *  @ref bt_conn_set_remote_tx_power_level or @ref bt_conn_le_get_remote_tx_power_level.
+ *  A report is also generated when the peer rejected the request or does not support the procedure.
+ *
+ *  The reports are vendor-specific HCI events. To receive them, enable the
+ *  @kconfig{CONFIG_BT_HCI_VS_EVT_USER} Kconfig option and register a callback with
+ *  @c bt_hci_register_vnd_evt_cb(). The events have the
+ *  @c SDC_HCI_SUBEVENT_VS_POWER_CONTROL_RSP_REPORT subevent code and the parameters described by
+ *  @c sdc_hci_subevent_vs_power_control_rsp_report_t in @c sdc_hci_vs.h.
+ *  A report that is not pulled before the next procedure on the same connection completes is
+ *  overwritten.
+ *
+ *  The reports are disabled by default.
+ *
+ *  Requires the @kconfig{CONFIG_BT_NRF_LE_POWER_CONTROL_EXT} Kconfig option.
+ *
+ *  @param enable        True to enable the reports, false to disable them.
+ *
+ *  @return Zero on success or (negative) error code on failure.
+ *  @retval -ENOBUFS HCI command buffer is not available.
+ */
+int bt_nrf_power_control_rsp_report_enable(bool enable);
+
 /** @brief Reduce the priority of the initiator when following AUX packets.
  *
  *  @param reduce Set to true to reduce the priority. Set to false to restore the default priority.
