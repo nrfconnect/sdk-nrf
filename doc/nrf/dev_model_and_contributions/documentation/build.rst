@@ -195,7 +195,9 @@ The build checks the commands against a snapshot of the ``--json-args`` output o
 It generates the snapshot in the :file:`nrfutil-specs` folder of the documentation build folder, using the following versions:
 
 * The nRF Util version from the :file:`scripts/tools-versions-<os>.yml` file of the operating system you build on.
-* The versions of the nRF Util commands from the same file, the ``nrfutil_<command>_ver`` replacements in :file:`doc/nrf/shortcuts.txt`, and the :file:`doc/_extensions/nrfutil_command/pins.yml` file, in that order of precedence.
+* The ``nrfutil_<command>_ver`` replacements in :file:`doc/nrf/shortcuts.txt`, then :file:`doc/_extensions/nrfutil_command/pins.yml`, then the nRF Util command versions from :file:`scripts/tools-versions-<os>.yml`, in that order of precedence.
+
+  Commands such as ``device`` that are listed under ``nrfutil.subcommands`` in :file:`scripts/tools-versions-<os>.yml` are taken only from those files, not from :file:`pins.yml`.
 
 The build generates the snapshot again only when one of these versions changes.
 It installs nRF Util and its commands in a temporary folder, so your nRF Util installation does not change.

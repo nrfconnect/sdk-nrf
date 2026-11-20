@@ -29,7 +29,8 @@ def nrf_base(tmp_path, monkeypatch):
 
 
 def write_pins(root, tools_versions="", shortcuts="", pins=""):
-    (root / "scripts" / "tools-versions-linux.yml").write_text(tools_versions, encoding="utf-8")
+    for name in specs.TOOLS_VERSIONS_FILES.values():
+        (root / "scripts" / name).write_text(tools_versions, encoding="utf-8")
     (root / "doc" / "nrf" / "shortcuts.txt").write_text(shortcuts, encoding="utf-8")
     (root / "pins.yml").write_text(pins, encoding="utf-8")
 
@@ -45,7 +46,7 @@ def test_load_pinned_versions_precedence(nrf_base):
     )
     assert specs.load_pinned_versions() == {
         "device": "2.20.0",
-        "trace": "4.4.0",
+        "trace": "4.0.0",
         "mcu-manager": "0.12.2",
     }
     assert specs.load_core_version() == "8.1.1"
@@ -63,6 +64,26 @@ def test_numeric_command_names_are_strings(nrf_base):
         pins="91: 1.0.0\n",
     )
     assert specs.load_pinned_versions() == {"93-series": "1.0.0", "91": "1.1.0"}
+
+
+def test_tools_versions_subcommand_uses_highest_version(nrf_base):
+    write_pins(
+        nrf_base,
+        tools_versions="nrfutil:\n  subcommands:\n    device: 2.20.0\n",
+    )
+    (nrf_base / "scripts" / "tools-versions-darwin.yml").write_text(
+        "nrfutil:\n  subcommands:\n    device: 2.21.0\n", encoding="utf-8"
+    )
+    assert specs.load_tools_versions_subcommands() == {"device": "2.21.0"}
+
+
+def test_pins_yml_ignores_toolchain_subcommands(nrf_base):
+    write_pins(
+        nrf_base,
+        tools_versions="nrfutil:\n  subcommands:\n    device: 2.20.0\n",
+        pins="device: 1.0.0\ntrace: 6.2.0\n",
+    )
+    assert specs.load_pinned_versions() == {"device": "2.20.0", "trace": "6.2.0"}
 
 
 def test_missing_pin_file_is_an_error(nrf_base):

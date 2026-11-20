@@ -54,7 +54,6 @@ SHORTCUT_VERSION_RE = re.compile(
     re.MULTILINE,
 )
 
-
 def host_platform() -> str:
     """The operating system that the documentation is built on, named like TAB_PLATFORMS."""
     if sys.platform == "win32":
@@ -62,11 +61,45 @@ def host_platform() -> str:
     return "macos" if sys.platform == "darwin" else "linux"
 
 
-def _load_tools_versions_nrfutil() -> dict[str, Any]:
-    platform = host_platform()
+def _load_tools_versions_file(platform: str) -> dict[str, Any]:
     path = NRF_BASE / "scripts" / TOOLS_VERSIONS_FILES.get(platform, TOOLS_VERSIONS_FILES["linux"])
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     return data.get("nrfutil") or {}
+
+
+def _load_tools_versions_nrfutil() -> dict[str, Any]:
+    return _load_tools_versions_file(host_platform())
+
+
+def _version_sort_key(version: str) -> tuple[int | str, ...]:
+    parts: list[int | str] = []
+    for piece in version.split("."):
+        if piece.isdigit():
+            parts.append(int(piece))
+        else:
+            parts.append(piece)
+    return tuple(parts)
+
+
+def load_tools_versions_subcommands() -> dict[str, str]:
+    """Return nrfutil subcommand versions from scripts/tools-versions-<os>.yml.
+
+    When a subcommand version differs between platform files, the highest version wins.
+    """
+    candidates: dict[str, list[str]] = {}
+    for platform in TOOLS_VERSIONS_FILES:
+        subcommands = _load_tools_versions_file(platform).get("subcommands") or {}
+        for command, version in subcommands.items():
+            candidates.setdefault(str(command), []).append(str(version))
+    return {
+        command: max(versions, key=_version_sort_key) for command, versions in candidates.items()
+    }
+
+
+def load_pins_yml() -> dict[str, str]:
+    """Return command versions declared in pins.yml, without merging other sources."""
+    data = yaml.safe_load(PINS_FILE.read_text(encoding="utf-8")) or {}
+    return {str(command): str(version) for command, version in data.items()}
 
 
 def load_core_version() -> str | None:
@@ -78,22 +111,20 @@ def load_core_version() -> str | None:
 def load_pinned_versions() -> dict[str, str]:
     """Return the nrfutil command versions to install, keyed by command.
 
-    Versions in scripts/tools-versions-<os>.yml take precedence over the ``nrfutil_<command>_ver``
-    substitutions in doc/nrf/shortcuts.txt, which document the versions used by the guides. Both
-    take precedence over pins.yml, which pins the commands that neither of them pins.
+    ``nrfutil_<command>_ver`` substitutions in doc/nrf/shortcuts.txt document prose versions in the
+    guides. pins.yml overrides them for validation. scripts/tools-versions-<os>.yml overrides
+    pins.yml for toolchain subcommands such as ``device``.
     """
-    pins = {}
-
-    data = yaml.safe_load(PINS_FILE.read_text(encoding="utf-8")) or {}
-    pins.update({str(command): str(version) for command, version in data.items()})
-
     shortcuts = NRF_BASE / "doc" / "nrf" / "shortcuts.txt"
+    pins: dict[str, str] = {}
     for match in SHORTCUT_VERSION_RE.finditer(shortcuts.read_text(encoding="utf-8")):
         pins[match.group("command")] = match.group("version")
 
-    # A subcommands key without entries loads as None
-    subcommands = _load_tools_versions_nrfutil().get("subcommands") or {}
-    pins.update({str(command): str(version) for command, version in subcommands.items()})
+    tools = load_tools_versions_subcommands()
+    for command, version in load_pins_yml().items():
+        if command not in tools:
+            pins[command] = version
+    pins.update(tools)
 
     return pins
 
