@@ -122,6 +122,9 @@ static int server_addr_set(struct sockaddr_storage *server, struct addrinfo *res
 	}
 }
 
+/* Set when a request gets no response after all retransmissions */
+static atomic_t request_timed_out;
+
 static void response_cb(const struct coap_client_response_data *data, void *user_data)
 {
 	if (data->result_code >= 0) {
@@ -129,6 +132,9 @@ static void response_cb(const struct coap_client_response_data *data, void *user
 			data->result_code, data->payload);
 	} else {
 		LOG_INF("Response received with error code: %d", data->result_code);
+		if (data->result_code == -ETIMEDOUT) {
+			atomic_set(&request_timed_out, 1);
+		}
 	}
 }
 
@@ -272,27 +278,21 @@ static int server_connect(struct sockaddr_storage *server)
 	return sock;
 }
 
-/* Resolves the server and connects to the first address that accepts a connection */
-static int server_resolve_and_connect(struct sockaddr_storage *server)
+/* Connects to the first address, starting from *next, that accepts a connection.
+ * Advances *next past the tried addresses, so that a later call continues from there.
+ */
+static int server_connect_next(struct sockaddr_storage *server, struct addrinfo **next)
 {
-	struct addrinfo *result;
-	struct addrinfo *ai;
 	int sock = -ENOENT;
-	int err;
 
-	err = server_resolve(&result);
-	if (err) {
-		LOG_ERR("Failed to resolve server name");
-		return err;
-	}
+	while (*next != NULL && sock < 0) {
+		struct addrinfo *ai = *next;
 
-	for (ai = result; ai != NULL && sock < 0; ai = ai->ai_next) {
+		*next = ai->ai_next;
 		if (server_addr_set(server, ai) == 0) {
 			sock = server_connect(server);
 		}
 	}
-
-	freeaddrinfo(result);
 
 	return sock;
 }
@@ -312,6 +312,8 @@ static int periodic_coap_request_loop(void)
 	int consecutive_busy_retries = 0;
 	uint32_t last_seen = 0;
 	struct sockaddr_storage server = { 0 };
+	struct addrinfo *addrs = NULL;
+	struct addrinfo *next_addr = NULL;
 	struct coap_client coap_client = { 0 };
 	struct coap_client_request req = {
 		.method = COAP_METHOD_GET,
@@ -341,22 +343,55 @@ static int periodic_coap_request_loop(void)
 
 	while (true) {
 		if (sock < 0) {
-			/* At once the first time, then after the delay or a network change */
-			err = conn_mgr_wait_ready(READY_MASK, &last_seen,
-						  K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
-			if (err == -EAGAIN) {
-				/* The network is not ready. Keep waiting. */
-				continue;
-			} else if (err != 0) {
-				return err;
+			/* Resolve again only when all resolved addresses have been tried */
+			if (next_addr == NULL) {
+				/* At once the first time, then after the delay or a
+				 * network change
+				 */
+				err = conn_mgr_wait_ready(
+					READY_MASK, &last_seen,
+					K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
+				if (err == -EAGAIN) {
+					/* The network is not ready. Keep waiting. */
+					continue;
+				} else if (err != 0) {
+					break;
+				}
+
+				if (addrs != NULL) {
+					freeaddrinfo(addrs);
+					addrs = NULL;
+				}
+
+				err = server_resolve(&addrs);
+				if (err) {
+					LOG_WRN("Failed to resolve server name, "
+						"retrying in %d seconds",
+						CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS);
+					addrs = NULL;
+					continue;
+				}
+
+				next_addr = addrs;
 			}
 
-			sock = server_resolve_and_connect(&server);
+			sock = server_connect_next(&server, &next_addr);
 			if (sock < 0) {
 				LOG_WRN("Failed to connect to server: %d, retrying in %d seconds",
 					sock, CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS);
 				continue;
 			}
+
+			atomic_set(&request_timed_out, 0);
+		}
+
+		/* Over UDP without DTLS, connect() succeeds even if the server is not
+		 * reachable at this address. A request timeout is the only sign of that.
+		 */
+		if (atomic_get(&request_timed_out)) {
+			LOG_WRN("No response from server, reconnecting");
+			server_disconnect(&coap_client, &sock);
+			continue;
 		}
 
 		/* Send request */
@@ -371,6 +406,7 @@ static int periodic_coap_request_loop(void)
 		consecutive_busy_retries = 0;
 
 		if (err) {
+			/* Busy after all retries also means that requests got no response */
 			LOG_ERR("Failed to send request: %d, reconnecting", err);
 			server_disconnect(&coap_client, &sock);
 			continue;
@@ -383,6 +419,12 @@ static int periodic_coap_request_loop(void)
 
 		k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
 	}
+
+	if (addrs != NULL) {
+		freeaddrinfo(addrs);
+	}
+
+	return err;
 }
 
 static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
