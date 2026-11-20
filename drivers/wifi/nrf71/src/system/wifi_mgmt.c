@@ -425,13 +425,24 @@ void nrf_wifi_event_proc_get_power_save_info(void *vif_ctx,
 }
 
 static void nrf_wifi_twt_update_internal_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
-	bool setup, unsigned char flow_id)
+	enum nrf_wifi_twt_state_change change, unsigned char flow_id)
 {
-	if (setup) {
+	switch (change) {
+	case NRF_WIFI_TWT_SETUP_INITIATED:
+		/* Reject further setup requests for this flow until the response arrives */
+		vif_ctx_zep->twt_flow_in_progress_map |= BIT(flow_id);
+		break;
+	case NRF_WIFI_TWT_SETUP_ACCEPTED:
 		vif_ctx_zep->twt_flows_map |= BIT(flow_id);
 		vif_ctx_zep->twt_flow_in_progress_map &= ~BIT(flow_id);
-	} else {
+		break;
+	case NRF_WIFI_TWT_SETUP_FAILED:
+		/* Negotiation is over, allow a new setup request for this flow */
+		vif_ctx_zep->twt_flow_in_progress_map &= ~BIT(flow_id);
+		break;
+	case NRF_WIFI_TWT_TEARDOWN:
 		vif_ctx_zep->twt_flows_map &= ~BIT(flow_id);
+		break;
 	}
 }
 
@@ -477,7 +488,7 @@ int nrf_wifi_twt_teardown_flows(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 			continue;
 		}
 		/* UMAC doesn't send TWT teardown event for host initiated teardown */
-		nrf_wifi_twt_update_internal_state(vif_ctx_zep, false, flow_id);
+		nrf_wifi_twt_update_internal_state(vif_ctx_zep, NRF_WIFI_TWT_TEARDOWN, flow_id);
 		/* TODO: Remove this once UMAC sends the status */
 		twt_params.operation = WIFI_TWT_TEARDOWN;
 		twt_params.flow_id = flow_id;
@@ -568,9 +579,19 @@ int nrf_wifi_set_twt(const struct device *dev,
 
 		twt_info.dialog_token = twt_params->dialog_token;
 		twt_info.twt_wake_ahead_duration = twt_params->setup.twt_wake_ahead_duration;
+		/*
+		 * Mark the flow as in progress before sending so that a fast response event
+		 * cannot be missed; further setup requests are rejected until it arrives.
+		 */
+		nrf_wifi_twt_update_internal_state(vif_ctx_zep, NRF_WIFI_TWT_SETUP_INITIATED,
+						   twt_params->flow_id);
 		status = nrf_wifi_sys_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
 					   vif_ctx_zep->vif_idx,
 					   &twt_info);
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			nrf_wifi_twt_update_internal_state(vif_ctx_zep, NRF_WIFI_TWT_SETUP_FAILED,
+							   twt_params->flow_id);
+		}
 
 		break;
 	case WIFI_TWT_TEARDOWN:
@@ -646,7 +667,11 @@ void nrf_wifi_event_proc_twt_setup_zep(void *vif_ctx,
 
 	if ((twt_setup_info->info.twt_resp_status == 0) ||
 	    (twt_setup_info->info.neg_type == NRF_WIFI_ACCEPT_TWT)) {
-		nrf_wifi_twt_update_internal_state(vif_ctx_zep, true, twt_params.flow_id);
+		nrf_wifi_twt_update_internal_state(vif_ctx_zep, NRF_WIFI_TWT_SETUP_ACCEPTED,
+						   twt_params.flow_id);
+	} else {
+		nrf_wifi_twt_update_internal_state(vif_ctx_zep, NRF_WIFI_TWT_SETUP_FAILED,
+						   twt_params.flow_id);
 	}
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
@@ -669,7 +694,8 @@ void nrf_wifi_event_proc_twt_teardown_zep(void *vif_ctx,
 	twt_params.operation = WIFI_TWT_TEARDOWN;
 	twt_params.flow_id = twt_teardown_info->info.twt_flow_id;
 	/* TODO: ADD reason code in the twt_params structure */
-	nrf_wifi_twt_update_internal_state(vif_ctx_zep, false, twt_params.flow_id);
+	nrf_wifi_twt_update_internal_state(vif_ctx_zep, NRF_WIFI_TWT_TEARDOWN,
+					   twt_params.flow_id);
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }
