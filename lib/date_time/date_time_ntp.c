@@ -32,7 +32,8 @@ static struct sntp_time sntp_time;
 static int sntp_time_request(const char *server, uint32_t timeout, struct sntp_time *time)
 {
 	int err;
-	struct zsock_addrinfo *addrinfo;
+	struct zsock_addrinfo *result;
+	struct zsock_addrinfo *addr;
 	struct sntp_ctx sntp_ctx;
 
 	struct zsock_addrinfo hints = {
@@ -40,27 +41,31 @@ static int sntp_time_request(const char *server, uint32_t timeout, struct sntp_t
 		.ai_family = conn_mgr_get_ready_addr_family(),
 	};
 
-	err = zsock_getaddrinfo(server, STRINGIFY(NTP_PORT), &hints, &addrinfo);
+	err = zsock_getaddrinfo(server, STRINGIFY(NTP_PORT), &hints, &result);
 	if (err) {
 		LOG_WRN("getaddrinfo, error: %d", err);
 		return err;
 	}
 
-	err = sntp_init(&sntp_ctx, addrinfo->ai_addr, addrinfo->ai_addrlen);
-	if (err) {
-		LOG_WRN("sntp_init, error: %d", err);
-		goto socket_close;
-	}
+	/* Try each address in turn until one works */
+	err = -ENOENT;
+	for (addr = result; addr != NULL; addr = addr->ai_next) {
+		err = sntp_init(&sntp_ctx, addr->ai_addr, addr->ai_addrlen);
+		if (err) {
+			LOG_WRN("sntp_init, error: %d", err);
+			continue;
+		}
 
-	err = sntp_query(&sntp_ctx, timeout, time);
-	if (err) {
+		err = sntp_query(&sntp_ctx, timeout, time);
+		sntp_close(&sntp_ctx);
+		if (!err) {
+			break;
+		}
+
 		LOG_WRN("sntp_query, error: %d", err);
 	}
 
-socket_close:
-	zsock_freeaddrinfo(addrinfo);
-
-	sntp_close(&sntp_ctx);
+	zsock_freeaddrinfo(result);
 
 	return err;
 }
