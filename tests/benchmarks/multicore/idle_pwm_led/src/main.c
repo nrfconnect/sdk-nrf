@@ -12,7 +12,9 @@ LOG_MODULE_REGISTER(idle_pwm_led, LOG_LEVEL_INF);
 #include <zephyr/drivers/pwm.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/pm/device_runtime.h>
-
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+#include <modem/nrf_modem_lib.h>
+#endif
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 static const struct pwm_dt_spec pwm_led = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
@@ -36,6 +38,14 @@ int main(void)
 	int32_t pulse_step;
 	uint32_t current_pulse_width;
 	int test_repetitions = 3;
+
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+	ret = nrf_modem_lib_init();
+	if (ret < 0) {
+		LOG_ERR("Failed to initialize modem library (%d)", ret);
+		return 0;
+	}
+#endif
 
 	if (!gpio_is_ready_dt(&led)) {
 		LOG_ERR("GPIO Device not ready");

@@ -9,6 +9,9 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/counter.h>
 #include <zephyr/logging/log.h>
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+#include <modem/nrf_modem_lib.h>
+#endif
 
 LOG_MODULE_REGISTER(idle_counter);
 
@@ -91,6 +94,13 @@ int main(void)
 	uint32_t start_time;
 	int ret;
 
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+	ret = nrf_modem_lib_init();
+	if (ret < 0) {
+		LOG_ERR("Failed to initialize modem library (%d)", ret);
+		return 0;
+	}
+#endif
 	ret = gpio_is_ready_dt(&led);
 	__ASSERT(ret, "Error: GPIO Device not ready");
 
