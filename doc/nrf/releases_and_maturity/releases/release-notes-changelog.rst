@@ -1529,8 +1529,12 @@ Libraries for networking
 
 * :ref:`lib_aws_iot` library:
 
-  * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
-    Previously, the event carried no payload.
+  * Updated:
+
+    * The :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
+      Previously, the event carried no payload.
+    * The library to enable the TLS Server Name Indication (SNI) extension (:kconfig:option:`CONFIG_MBEDTLS_SSL_SERVER_NAME_INDICATION`) by default when Mbed TLS is used.
+      AWS IoT Core rejects TLS connections without SNI, so the TLS handshake failed for applications that did not enable the option.
 
 Libraries for NFC
 -----------------

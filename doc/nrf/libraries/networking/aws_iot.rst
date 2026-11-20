@@ -292,6 +292,9 @@ Complete the following steps to set the required library options:
 #. Set the :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` Kconfig option to the name of the *Thing* created earlier.
    For information on how to set this value at runtime, refer to :ref:`lib_set_client_id`.
 #. Set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` to the security tag for which the key and certificate were provisioned earlier.
+#. Enable the :kconfig:option:`CONFIG_MBEDTLS_SSL_SERVER_NAME_INDICATION` Kconfig option to use the TLS Server Name Indication (SNI) extension, as AWS recommends.
+   With SNI enabled, the device sends the broker hostname to AWS IoT Core.
+   See `Transport security in AWS IoT Core`_ for more information.
 
 Optional library options
 ------------------------

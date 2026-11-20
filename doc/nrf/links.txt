@@ -1581,6 +1581,7 @@
 .. _`AWS IoT Developer Guide: Security Best Practices`: https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html
 .. _`AWS IoT Core Server Authentication`: https://docs.aws.amazon.com/iot/latest/developerguide/server-authentication.html
 .. _`CA certificates for server authentication in AWS IoT Core`: https://docs.aws.amazon.com/iot/latest/developerguide/server-authentication.html#server-authentication-certs
+.. _`Transport security in AWS IoT Core`: https://docs.aws.amazon.com/iot/latest/developerguide/transport-security.html
 .. _`Authentication and access credentials`: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-authentication.html
 
 .. _`AWS IoT console`: https://console.aws.amazon.com/iot/home
