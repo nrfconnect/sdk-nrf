@@ -254,6 +254,31 @@ config UART_1_NRF_ASYNC_LOW_POWER
 
 endif # UART_1_ASYNC
 
+if BUILD_WITH_TFM
+
+choice TFM_PROFILE_TYPE
+	default TFM_PROFILE_TYPE_MINIMAL
+endchoice
+
+# Enable TF-M logging on UART0
+choice TFM_SECURE_UART_INSTANCE
+	default TFM_SECURE_UART0
+endchoice
+
+choice TFM_SPM_LOG_LEVEL
+	default TFM_SPM_LOG_LEVEL_DEBUG
+endchoice
+
+endif # BUILD_WITH_TFM
+
+if NVS
+
+choice NVS_LOG_LEVEL_CHOICE
+	default NVS_LOG_LEVEL_WRN
+endchoice
+
+endif # NVS
+
 endmenu # Modem Shell
 
 menu "Zephyr Kernel"

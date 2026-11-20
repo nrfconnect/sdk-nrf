@@ -14,6 +14,14 @@ config POFWARN_REFRESH_INTERVAL_SEC
 
 endmenu
 
+if BUILD_WITH_TFM
+
+choice TFM_PROFILE_TYPE
+	default TFM_PROFILE_TYPE_MINIMAL
+endchoice
+
+endif # BUILD_WITH_TFM
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 
