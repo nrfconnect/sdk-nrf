@@ -210,16 +210,14 @@ static psa_status_t sign_attempt(const ml_dsa_params_t *alg_params, const uint8_
 			 *  tmp = A_row * NTT(mask_or_signers_resp)
 			 */
 			cracen_ml_dsa_multiply_ntt(&tmp, &tmp, &tmp2);
-			cracen_ml_dsa_add_ntt(&commitment[row], &commitment[row], &tmp);
+			cracen_ml_dsa_add_ntt(&commitment[row], &tmp);
 		}
-	}
-
-	for (uint32_t row = 0; row < alg_params->rows_k; row++) {
-		cracen_ml_dsa_ntt_inversed(&commitment[row]);
 	}
 
 	/* Computing encoded signer's commitment (w1_encoded) */
 	for (uint32_t row = 0; row < alg_params->rows_k; row++) {
+		cracen_ml_dsa_ntt_inversed(&commitment[row]);
+
 		/* 1. w1 = HighBits(w), which is applied componentwise */
 		for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
 			tmp.coeffs[i] = cracen_ml_dsa_high_bits(commitment[row].coeffs[i], gamma2);
@@ -297,16 +295,19 @@ static psa_status_t sign_attempt(const ml_dsa_params_t *alg_params, const uint8_
 
 		for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
 			int32_t w_minus_cs2 = commitment[row].coeffs[i] - tmp.coeffs[i];
-			int32_t ct0 = tmp2.coeffs[i];
-			int32_t r0 = cracen_ml_dsa_low_bits(w_minus_cs2, gamma2);
+			int32_t ct0 = to_signed(tmp2.coeffs[i]);
+			int32_t r0; /* low order bits of w_minus_cs2 */
+			int32_t r1; /* high order bits of w_minus_cs2 */
 			int32_t hint_bit;
+
+			cracen_ml_dsa_decompose(w_minus_cs2, gamma2, &r0, &r1);
 
 			reject_mask |= cracen_ml_dsa_ge_bound_mask(
 					cracen_ml_dsa_abs_coeff(r0), r0_bound);
 			reject_mask |= cracen_ml_dsa_ge_bound_mask(
-					cracen_ml_dsa_abs_coeff(to_signed(ct0)), gamma2);
+					cracen_ml_dsa_abs_coeff(ct0), gamma2);
 
-			hint_bit = cracen_ml_dsa_make_hint(-ct0, w_minus_cs2 + ct0, gamma2);
+			hint_bit = cracen_ml_dsa_make_hint(r0 + ct0, r1, gamma2);
 			hint[row * ML_DSA_POLY_COEFFS_COUNT + i] = (uint8_t)hint_bit;
 			hint_weight += (uint32_t)hint_bit;
 		}
