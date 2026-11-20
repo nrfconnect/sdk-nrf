@@ -86,7 +86,8 @@ The application uses the following buttons on the supported development kit:
      |               | Pressed on a BIS headset during playback: Change the gateway, if more than one is available.              | :ref:`nrf_audio_broadcast_sink_app`       |
      +---------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **RESET**     | Resets the device to the originally programmed settings.                                                  | All                                       |
-     |               | This reverts any changes made during testing, for example the location switches with **VOL** buttons.     |                                           |
+     |               | This reverts any changes made during testing, for example the location switches with **VOL** buttons,     |                                           |
+     |               | if a location was programmed. See :ref:`nrf_audio_app_configuration_headset_location`.                    |                                           |
      +---------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
 
   .. group-tab:: nRF5340 DK
@@ -119,7 +120,8 @@ The application uses the following buttons on the supported development kit:
      |               | Pressed on a BIS headset during playback: Change the gateway, if more than one is available.              | :ref:`nrf_audio_broadcast_sink_app`       |
      +---------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **RESET**     | Resets the device to the originally programmed settings.                                                  | All                                       |
-     |               | This reverts any changes made during testing, for example the location switches with **VOL** buttons.     |                                           |
+     |               | This reverts any changes made during testing, for example the location switches with **Button 1** and     |                                           |
+     |               | **Button 2**, if a location was programmed. See :ref:`nrf_audio_app_configuration_headset_location`.      |                                           |
      +---------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
 
 .. _nrf_audio_app_ui_leds:
@@ -134,9 +136,9 @@ To indicate the tasks performed, the application uses the LED behavior described
   .. group-tab:: nRF5340 Audio DK
 
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | LED                      |Indication                                                                                                 | Applications                              |
+     | LED                      | Indication                                                                                                | Applications                              |
      +==========================+===========================================================================================================+===========================================+
-     | **LED1**                 | Off - No Bluetooth connection.                                                                            | All                                       |
+     | **LED 1**                | Off - No Bluetooth connection.                                                                            | All                                       |
      |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      |                          | Solid blue on the CIS gateway and headset: Kits have connected.                                           | * :ref:`nrf_audio_unicast_server_app`     |
      |                          |                                                                                                           | * :ref:`nrf_audio_unicast_client_app`     |
@@ -150,12 +152,12 @@ To indicate the tasks performed, the application uses the LED behavior described
      |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      |                          | Blinking blue on the BIS gateway: Kit has started broadcasting audio.                                     | :ref:`nrf_audio_broadcast_source_app`     |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | **LED2**                 | Off - Sync not achieved.                                                                                  | All                                       |
+     | **LED 2**                | Off - Sync not achieved.                                                                                  | All                                       |
      |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      |                          | Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).       | * :ref:`nrf_audio_broadcast_sink_app`     |
      |                          |                                                                                                           | * :ref:`nrf_audio_unicast_server_app`     |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | **LED3**                 | Blinking green - The nRF5340 Audio DK application core is running.                                        | All                                       |
+     | **LED 3**                | Blinking green - The application core is running.                                                         | All                                       |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **CODEC**                | Off - No configuration loaded to the onboard hardware codec.                                              | All                                       |
      |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
@@ -163,7 +165,7 @@ To indicate the tasks performed, the application uses the LED behavior described
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **RGB**                  | Solid green - The device is programmed as the gateway.                                                    | * :ref:`nrf_audio_broadcast_source_app`   |
      |                          |                                                                                                           | * :ref:`nrf_audio_unicast_client_app`     |
-     | (bottom side LEDs around +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
+     | (bottom side LEDs around |                                                                                                           |                                           |
      | the center opening)      | Solid blue - The device is programmed as the left headset.                                                | * :ref:`nrf_audio_broadcast_sink_app`     |
      |                          |                                                                                                           | * :ref:`nrf_audio_unicast_server_app`     |
      |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
@@ -210,9 +212,9 @@ To indicate the tasks performed, the application uses the LED behavior described
   .. group-tab:: nRF5340 DK
 
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | LED                      |Indication                                                                                                 | Applications                              |
+     | LED                      | Indication                                                                                                | Applications                              |
      +==========================+===========================================================================================================+===========================================+
-     | **LED1**                 | Off - No Bluetooth connection.                                                                            | All                                       |
+     | **LED 1**                | Off - No Bluetooth connection.                                                                            | All                                       |
      |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      |                          | Solid green on the CIS gateway and headset: Kits have connected.                                          | * :ref:`nrf_audio_unicast_server_app`     |
      |                          |                                                                                                           | * :ref:`nrf_audio_unicast_client_app`     |
@@ -226,17 +228,17 @@ To indicate the tasks performed, the application uses the LED behavior described
      |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      |                          | Blinking green on the BIS gateway: Kit has started broadcasting audio.                                    | :ref:`nrf_audio_broadcast_source_app`     |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | **LED2**                 | Off - Sync not achieved.                                                                                  | All                                       |
+     | **LED 2**                | Off - Sync not achieved.                                                                                  | All                                       |
      |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      |                          | Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).       | * :ref:`nrf_audio_broadcast_sink_app`     |
      |                          |                                                                                                           | * :ref:`nrf_audio_unicast_server_app`     |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | **LED3**                 | Blinking green - The nRF5340 Audio DK application core is running.                                        | All                                       |
+     | **LED 3**                | Blinking green - The application core is running.                                                         | All                                       |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | **LED1,2,3 and 4**       | All solid green - Fault in the application core has occurred.                                             | * :ref:`nrf_audio_broadcast_source_app`   |
+     | **LED 1, 2, 3, and 4**   | All solid green - Fault in the application core has occurred.                                             | * :ref:`nrf_audio_broadcast_source_app`   |
      |                          | See UART log for details and use the RESET button to reset the device.                                    | * :ref:`nrf_audio_unicast_client_app`     |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | **LED5**                 | Off - No PC connection available.                                                                         | All                                       |
+     | **LED 5**                | Off - No PC connection available.                                                                         | All                                       |
      |                          +-----------------------------------------------------------------------------------------------------------+                                           |
      |                          | Solid green - Connected to PC.                                                                            |                                           |
      |                          +-----------------------------------------------------------------------------------------------------------+                                           |

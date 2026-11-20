@@ -38,17 +38,17 @@ This application uses specific mapping for the following user interface elements
 
   * **VOL-** - Changes the headset location to left.
   * **VOL+** - Changes the headset location to right.
-  * **BTN5** - Clears the previously stored bonding information.
+  * **BTN 5** - Clears the previously stored bonding information.
 
 * Pressed on the unicast server device during playback:
 
   * **PLAY/PAUSE** - Starts or pauses the playback of the stream.
   * **VOL-** - Turns the playback volume down.
   * **VOL+** - Turns the playback volume up.
-  * **BTN5** - Mutes the playback volume (and unmutes).
+  * **BTN 5** - Mutes the playback volume (and unmutes).
 
-* **LED1** - Blinking blue - Kits have started streaming audio.
-* **LED2** - Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).
+* **LED 1** - Blinking blue - Kits have started streaming audio.
+* **LED 2** - Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).
 * **RGB**:
 
   * Solid blue - The device is programmed as the left headset.
@@ -59,7 +59,8 @@ This application uses specific mapping for the following user interface elements
 Configuration
 *************
 
-By default, if you have not made any changes to :file:`.conf` files at :file:`applications/nrf_audio/`, the nRF5340 build script tries to build the CIS applications in the CIS unidirectional mode.
+The unicast server application always supports bidirectional streams.
+The :ref:`unicast client <nrf_audio_unicast_client_app>` decides whether the stream is unidirectional or bidirectional, and it uses the CIS unidirectional mode by default.
 To switch to the bidirectional mode, see :ref:`nrf_audio_app_configuration_select_bidirectional`.
 
 For other configuration options, see :ref:`nrf_audio_app_configuration`.
@@ -111,13 +112,13 @@ Complete the following steps to test the unidirectional CIS mode for one gateway
    .. note::
       |usb_known_issues|
 
-   **LED3** starts blinking green on every device to indicate the ongoing CPU activity on the application core.
-#. Wait for the **LED1** on the gateway to start blinking blue.
+   **LED 3** starts blinking green on every device to indicate the ongoing CPU activity on the application core.
+#. Wait for the **LED 1** on the gateway to start blinking blue.
    This happens shortly after programming the development kit and indicates that the gateway device is connected to at least one headset and ready to send data.
 #. Search the list of audio devices listed in the sound settings of your operating system for *nRF5340 USB Audio* (gateway) and select it as the output device.
 #. Connect headphones to the **HEADPHONE** audio jack on both headset devices.
 #. Start audio playback on your PC from any source.
-#. Wait for **LED1** to blink blue on the headset.
+#. Wait for **LED 1** to blink blue on the headset.
    When they do, the audio stream has started on the headset.
 
    .. note::
@@ -125,7 +126,7 @@ Complete the following steps to test the unidirectional CIS mode for one gateway
       This is because of the mono hardware codec chip used on the development kits.
       If you want to play stereo sound using one development kit, you must connect an external hardware codec chip that supports stereo.
 
-#. Wait for **LED2** to light up solid green on the headsets to indicate that the audio synchronization is achieved.
+#. Wait for **LED 2** to light up solid green on the headsets to indicate that the audio synchronization is achieved.
 #. Press the **VOL+** button on one of the headsets.
    The playback volume increases for the headset.
 #. If you use more than one headset, hold down the **VOL+** button and press the **RESET** button on a headset.
