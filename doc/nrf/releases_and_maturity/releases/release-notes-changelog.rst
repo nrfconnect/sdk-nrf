@@ -122,8 +122,7 @@ Mbed TLS
 Trusted Firmware-M (TF-M)
 -------------------------
 
-* Removed the "TF-M: Platform security architecture test" documentation page from the sample documentation section.
-  The test is still available as a standalone test in the :file:`tests/tfm/tfm_psa_test` directory.
+|no_changes_yet_note|
 
 Protocols
 =========
@@ -416,9 +415,7 @@ Debug libraries
 DFU libraries
 -------------
 
-* :ref:`lib_dfu_target` library:
-
-  * Updated the library to clear the last page of the flash area when scheduling an update, in case the page contains leftover data from a previous operation.
+|no_changes_yet_note|
 
 Gazell libraries
 ----------------
@@ -470,20 +467,7 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* :ref:`west_sbom` script:
-
-* Added:
-
-  * ``--package-download-format`` option to control the SPDX PackageDownloadLocation format.
-  * ``--input-dir`` option to the :ref:`west ncs-sbom <west_sbom>` command.
-    It recursively adds all files in the given directory to the report, equivalent to ``--input-files DIR/**/*``.
-  * ``--spdx-version`` option to generate SPDX 3.0 (JSON-LD) reports.
-    The default remains SPDX 2.3.
-
-* Updated:
-
-  * The SPDX output format from ``SPDX-2.2`` to ``SPDX-2.3``.
-  * The ScanCode Toolkit detector to support macOS on ARM64 and Linux aarch64.
+|no_changes_yet_note|
 
 Integrations
 ============
@@ -503,8 +487,7 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-* Updated Memfault to version 1.47.0.
-  See the `Memfault firmware SDK changelog`_ for details.
+|no_changes_yet_note|
 
 AVSystem integration
 --------------------
@@ -557,10 +540,7 @@ For the list of |NCS| specific commits added since v3.4.0, including commits che
 Additions specific to |NCS|
 ---------------------------
 
-* Fixed an issue where the GRTC settings for nrfx were not applied according to Kconfig.
-  When one of the :kconfig:option:`CONFIG_NRF_GRTC_TIMER_AUTO_KEEP_ALIVE`, :kconfig:option:`CONFIG_NRF_GRTC_START_SYSCOUNTER`, :kconfig:option:`CONFIG_NRF_GRTC_TIMER_STOP_AT_UNINIT`, or :kconfig:option:`CONFIG_NRF_GRTC_TIMER_CLEAR_AT_UNINIT` Kconfig options was disabled, the default nrfx configuration was used instead.
-  As a result, the corresponding behavior could still be enabled.
-  For example, the GRTC counter could be cleared when the GRTC driver was uninitialized.
+|no_changes_yet_note|
 
 zcbor
 =====
