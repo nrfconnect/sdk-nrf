@@ -226,6 +226,7 @@
 .. _`nRF Cloud Utils Create CA Cert`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-ca-cert
 .. _`nRF Cloud Utils Create Device Credentials`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-device-credentials
 .. _`nRF Cloud Utils`: https://github.com/nRFCloud/utils/tree/main
+.. _`nRF Cloud Utils v4.0.0`: https://github.com/nRFCloud/utils/releases/tag/v4.0.0
 .. _`nRF Cloud Utils devices without a modem`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#devices-without-a-modem
 .. _`nRF Cloud Utils onboarding`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#nrf-cloud-device-onboarding
 .. _`nRF Cloud Utils documentation`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md

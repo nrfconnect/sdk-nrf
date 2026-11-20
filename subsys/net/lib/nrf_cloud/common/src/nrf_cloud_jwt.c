@@ -25,7 +25,9 @@ LOG_MODULE_REGISTER(nrf_cloud_jwt, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #include <zephyr/sys/base64.h>
 #include <psa/crypto.h>
 #include <app_jwt.h>
-#include "nrf_cloud_credentials_keygen_internal.h"
+#if defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
+#include <zephyr/net/tls_credentials_keygen.h>
+#endif
 
 /* Size of the ES256 private key material */
 #define PRV_KEY_SZ (32)
@@ -151,15 +153,12 @@ static int custom_jwt_generate(uint32_t exp_delta_s, char *const jwt_buf, size_t
 	}
 
 #if defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
-	/* The device key was generated on-device and resides in PSA. Use it
-	 * directly by its key id so the private key never leaves PSA.
-	 */
-	if (!nrf_cloud_credentials_keygen_key_exists(sec_tag)) {
-		LOG_ERR("No key found for sec_tag %d", sec_tag);
-		return -ENOENT;
+	/* The device key was generated on the device and stays in PSA. */
+	err = tls_credential_keygen_key_id_get(sec_tag, &kid);
+	if (err) {
+		LOG_ERR("No key found for sec_tag %d, error: %d", sec_tag, err);
+		return err;
 	}
-
-	kid = nrf_cloud_credentials_keygen_key_id(sec_tag);
 #else
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 	uint8_t priv_key[PRV_KEY_SZ];
