@@ -37,6 +37,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
@@ -79,6 +80,7 @@ tests:
       - FILE_SUFFIX=ext_flash
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
 
@@ -95,6 +97,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf7120dk/nrf7120/cpuapp
@@ -130,6 +133,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf7120dk/nrf7120/cpuapp
@@ -151,6 +155,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf7120dk/nrf7120/cpuapp
@@ -173,6 +178,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf7120dk/nrf7120/cpuapp
@@ -192,6 +198,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf7120dk/nrf7120/cpuapp
@@ -206,6 +213,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - signature
     extra_args:
@@ -218,6 +226,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     tags:
       - signature
     extra_args:
@@ -234,6 +243,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf7120dk/nrf7120/cpuapp
@@ -288,6 +298,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf7120dk/nrf7120/cpuapp
@@ -319,6 +330,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
