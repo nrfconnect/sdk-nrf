@@ -44,6 +44,7 @@ LOG_MODULE_REGISTER(twt, CONFIG_LOG_DEFAULT_LEVEL);
 #define STATUS_POLLING_MS   300
 #define TWT_RESP_TIMEOUT_S    20
 
+K_SEM_DEFINE(wait_for_dhcp, 0, 1);
 struct traffic_gen_config tg_config;
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
@@ -331,6 +332,7 @@ static void print_dhcp_ip(struct net_mgmt_event_callback *cb)
 	net_addr_ntop(AF_INET, addr, dhcp_info, sizeof(dhcp_info));
 
 	LOG_INF("DHCP IP address: %s", dhcp_info);
+	k_sem_give(&wait_for_dhcp);
 }
 
 static void net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
@@ -400,7 +402,12 @@ int main(void)
 		if (context.connected) {
 			int ret;
 
-			k_sleep(K_SECONDS(2));
+			ret = k_sem_take(&wait_for_dhcp, K_SECONDS(CONFIG_STA_CONN_TIMEOUT_SEC));
+			if (ret) {
+				LOG_ERR("DHCP address not obtained in %d seconds\n",
+					CONFIG_STA_CONN_TIMEOUT_SEC);
+				return -1;
+			}
 
 			if (!twt_supported) {
 				LOG_INF("AP is not TWT capable, exiting the sample\n");
