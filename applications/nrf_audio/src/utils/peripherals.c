@@ -14,8 +14,8 @@
 #include "device_location.h"
 #include "sd_card_playback.h"
 
-#include <zephyr/debug/cpu_load.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/cpu_load.h>
 LOG_MODULE_REGISTER(peripherals, CONFIG_PERIPHERALS_LOG_LEVEL);
 
 static struct board_version board_rev;

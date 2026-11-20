@@ -19,16 +19,16 @@
 
 		retainedmem {
 			compatible = "zephyr,retained-ram";
-			status = "okay";
 			#address-cells = <1>;
 			#size-cells = <1>;
+			status = "okay";
 
 			boot_request: boot_request@0 {
 				compatible = "zephyr,retention";
-				status = "okay";
 				reg = <0x0 0x10>;
 				prefix = [0b 01];
 				checksum = <4>;
+				status = "okay";
 			};
 		};
 	};

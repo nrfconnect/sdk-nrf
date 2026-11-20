@@ -14,7 +14,7 @@
 #endif
 #include <drivers/ppi_seq/ppi_seq_i2c_spi.h>
 #include <zephyr/kernel.h>
-#include <zephyr/debug/cpu_load.h>
+#include <zephyr/sys/cpu_load.h>
 #include <zephyr/drivers/pinctrl.h>
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(app);

@@ -16,11 +16,10 @@
 #include <bluetooth/fast_pair/fast_pair.h>
 #include <bluetooth/fast_pair/uuid.h>
 
-/* Those headers are included to make a workaround of Android issue with sending old RPA address
+/* This header is included to make a workaround of Android issue with sending old RPA address
  * during Key-based Pairing write.
  */
 #include "host/hci_core.h"
-#include "common/rpa.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
@@ -171,8 +170,8 @@ static int fp_gatt_rsp_notify(struct bt_conn *conn, const struct bt_gatt_attr *a
 	size_t salt_len;
 	int err = 0;
 
-	if (net_buf_simple_max_len(rsp) != FP_CRYPTO_AES128_BLOCK_LEN) {
-		LOG_ERR("Unsupported response size %zu", net_buf_simple_max_len(rsp));
+	if (fp_buf_simple_data_area_len(rsp) != FP_CRYPTO_AES128_BLOCK_LEN) {
+		LOG_ERR("Unsupported response size %zu", fp_buf_simple_data_area_len(rsp));
 		return -ENOTSUP;
 	}
 
@@ -317,8 +316,8 @@ static int parse_key_based_pairing_write(const struct bt_conn *conn,
 		 * Key-based Pairing write. Normally, error value should be returned at this point.
 		 */
 		BUILD_ASSERT(sizeof(bt_addr_t) == sizeof(parsed_req->provider_address));
-		if (!bt_rpa_irk_matches(bt_dev.irk[conn_info.id],
-					(const bt_addr_t *)parsed_req->provider_address)) {
+		if (!bt_addr_matches_irk((const bt_addr_t *)parsed_req->provider_address,
+					 bt_dev.irk[conn_info.id])) {
 			return -EINVAL;
 		}
 
@@ -547,7 +546,7 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 	net_buf_simple_init_with_data(&gatt_write, (void *)buf, len);
 
 	keygen_params.req_enc = net_buf_simple_pull_mem(&gatt_write, FP_CRYPTO_AES128_BLOCK_LEN);
-	if (net_buf_simple_max_len(&gatt_write) == FP_CRYPTO_ECDH_PUBLIC_KEY_LEN) {
+	if (fp_buf_simple_data_area_len(&gatt_write) == FP_CRYPTO_ECDH_PUBLIC_KEY_LEN) {
 		keygen_params.public_key = net_buf_simple_pull_mem(&gatt_write,
 								   FP_CRYPTO_ECDH_PUBLIC_KEY_LEN);
 	} else if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING)) {

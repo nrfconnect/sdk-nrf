@@ -1,0 +1,12 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* The sample runs as a Secure-only image, use the whole SRAM. */
+/ {
+	chosen {
+		zephyr,sram = &sram0;
+	};
+};

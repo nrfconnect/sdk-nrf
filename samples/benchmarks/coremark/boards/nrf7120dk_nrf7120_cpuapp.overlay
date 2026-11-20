@@ -11,9 +11,9 @@
 		cpuflpr_sram_code_data: memory@200e0000 {
 			compatible = "mmio-sram";
 			reg = <0x200e0000 DT_SIZE_K(116)>;
+			ranges = <0x0 0x200e0000 DT_SIZE_K(116)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x200e0000 DT_SIZE_K(116)>;
 		};
 	};
 };
@@ -42,9 +42,9 @@
 };
 
 &cpuflpr_vpr {
-	status = "okay";
 	execution-memory = <&cpuflpr_sram_code_data>;
 	source-memory = <&cpuflpr_mram>;
+	status = "okay";
 };
 
 &cpuapp_vevif_tx {

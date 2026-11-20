@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#include <zephyr/sys_clock.h>
+#include <zephyr/sys/clock.h>
 
 #include <stdint.h>
 

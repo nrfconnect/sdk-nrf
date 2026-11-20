@@ -8,7 +8,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/mspi.h>
 #include <zephyr/ztest.h>
-#include <zephyr/debug/cpu_load.h>
+#include <zephyr/sys/cpu_load.h>
 #include <zephyr/irq.h>
 #include <nrfx_timer.h>
 

@@ -29,9 +29,10 @@ function(configure_cache)
   # A dependency on the image's cache file cause unneccessary CMake re-runs for
   # all sysbuild images whenever a setting in the cache changes, even for not
   # sysbuild relevant changes.
-  zephyr_file_copy("${BINARY_DIR}/CMakeCache.txt" "${BINARY_DIR}/CMakeCache.tmp" ONLY_IF_DIFFERENT)
+  file(COPY_FILE "${BINARY_DIR}/CMakeCache.txt" "${BINARY_DIR}/CMakeCache.tmp" ONLY_IF_DIFFERENT)
   configure_file("${BINARY_DIR}/CMakeCache.tmp" "${BINARY_DIR}/CMakeCache.txt.tmp" @ONLY)
-  zephyr_file_copy("${BINARY_DIR}/CMakeCache.txt.tmp" "${BINARY_DIR}/CMakeCache.txt" ONLY_IF_DIFFERENT)
+  file(COPY_FILE "${BINARY_DIR}/CMakeCache.txt.tmp" "${BINARY_DIR}/CMakeCache.txt"
+       ONLY_IF_DIFFERENT)
 endfunction()
 
 function(store_ncs_vars)
@@ -485,7 +486,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_XIP y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_CODE_DATA_RELOCATION y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_HAVE_CUSTOM_LINKER_SCRIPT y)
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_BUILD_NO_GAP_FILL y)
 
         # Extended MCUmgr img mgmt for QSPI XIP split (slot selection, confirm policy)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_NRF y)

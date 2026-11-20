@@ -8,7 +8,7 @@ config MBEDTLS
 	bool
 	default n
 
-config MBEDTLS_TLS_VERSION_1_2
+config MBEDTLS_SSL_PROTO_TLS1_2
 	default n
 
 config MBEDTLS_PSA_CRYPTO_STORAGE_C

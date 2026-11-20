@@ -29,6 +29,19 @@ config SOC_NRF9220_CPUAPP
 	select HAS_NORDIC_MULTI_OPTION_CLOCKS
 	imply NRFX_GPPI_SD2PPI_GLOBAL
 
+if SOC_NRF9251_CPUAPP
+
+config SOC_EARLY_RESET_HOOK
+	bool "Run SoC-specific early reset hook"
+	help
+	  Enable calling soc_early_reset_hook() early in the CPU reset path.
+
+	  On nRF9251 Application core this is required for Suspend-to-RAM
+	  (S2RAM) when a bootloader mediates resume after wake. The bootloader's
+	  project must implement soc_early_reset_hook() when this option is enabled.
+
+endif # SOC_NRF9251_CPUAPP
+
 config SOC_NRF9220_CPUPPR
 	select RISCV_CORE_NORDIC_VPR
 	select HAS_NORDIC_DMM

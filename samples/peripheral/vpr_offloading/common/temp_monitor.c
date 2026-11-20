@@ -41,7 +41,7 @@ LOG_MODULE_REGISTER(rem_temp_monitor);
 #define SPI_NODE DT_NODELABEL(app_spi)
 #define SPI_MODE                                                                                   \
 	(SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB | SPI_MODE_CPHA | SPI_MODE_CPOL)
-#define SPIM_OP (SPI_OP_MODE_MASTER | SPI_MODE)
+#define SPIM_OP (SPI_OP_MODE_CONTROLLER | SPI_MODE)
 
 #define SPIM_CONFIG(node)                                                                          \
 	{                                                                                          \

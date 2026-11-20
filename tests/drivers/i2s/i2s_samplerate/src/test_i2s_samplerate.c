@@ -65,10 +65,10 @@ static void clock_init(void)
 	}
 #endif /* NRF54L_ERRATA_20_PRESENT */
 
-#if defined(NRF54LM20A_ENGA_XXAA)
+#if defined(NRF54LM20A_XXAA)
 	/* MLTPAN-39 */
 	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-#endif /* defined(NRF54LM20A_ENGA_XXAA) */
+#endif /* defined(NRF54LM20A_XXAA) */
 
 	printk("Clock has started\n");
 }

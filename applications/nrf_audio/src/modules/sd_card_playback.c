@@ -145,13 +145,9 @@ static int sd_card_playback_ringbuf_write(uint8_t *buffer, size_t numbytes)
 		return ret;
 	}
 
-	numbytes = ring_buf_put_claim(&m_ringbuf_audio_data_lc3, &buf_ptr, numbytes);
+	numbytes = MIN(ring_buf_put_ptr(&m_ringbuf_audio_data_lc3, &buf_ptr, 0), numbytes);
 	memcpy(buf_ptr, buffer, numbytes);
-	ret = ring_buf_put_finish(&m_ringbuf_audio_data_lc3, numbytes);
-	if (ret) {
-		LOG_ERR("Ring buf put finish err: %d", ret);
-		return ret;
-	}
+	ring_buf_commit(&m_ringbuf_audio_data_lc3, numbytes);
 
 	ret = k_mutex_unlock(&mtx_ringbuf);
 	if (ret) {

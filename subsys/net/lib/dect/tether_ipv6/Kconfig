@@ -7,7 +7,7 @@
 menuconfig DECT_TETHER_IPV6_LIB
 	bool "DECT IPv6 tethering (RA + optional DHCPv6 server + optional mDNS forward) [EXPERIMENTAL]"
 	depends on NET_IPV6 && NET_L2_DECT && NET_SOCKETS && NET_UDP
-	depends on NET_ROUTE && NET_ROUTING && NET_IPV6_NBR_CACHE
+	depends on NET_IPV6_ROUTE && NET_IPV6_FORWARDING && NET_IPV6_NBR_CACHE
 	select EXPERIMENTAL
 	help
 	  Experimental library that turns this device into an IPv6 tethering gateway for a

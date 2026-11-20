@@ -46,10 +46,11 @@ endchoice
 
 config CONNECT_TO_BT_ADDR_LE_STR
 	string "Bluetooth LE Address to connect to"
-	default "00:00:00:00:00:00"
+	default "P:00:00:00:00:00:00"
 	help
 	  The Bluetooth LE address to connect to. This is useful for testing with a
-	  specific device.
+	  specific device. The address must be in the format "P:XX:XX:XX:XX:XX:XX" for a
+	  public address or "R:XX:XX:XX:XX:XX:XX" for a random address.
 
 #----------------------------------------------------------------------------#
 menu "Connection"

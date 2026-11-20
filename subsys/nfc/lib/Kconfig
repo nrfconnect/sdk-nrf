@@ -25,7 +25,6 @@ config NFCT_IRQ_PRIORITY
 
 config NFC_THREAD_CALLBACK
 	bool "Thread context for NFC callbacks"
-	select RING_BUFFER
 	default y
 	help
 	  Use this option to decouple the user NFC callback
