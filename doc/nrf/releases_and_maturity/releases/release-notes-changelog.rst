@@ -963,6 +963,7 @@ Networking samples
 
     * An issue with the sample's IPv6 support, where the device crashes when trying to communicate over IPv6.
     * An issue where the DTLS handshake failed on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target due to an under-dimensioned TF-M crypto IOVEC buffer.
+    * An issue where the sample did not move to the next resolved address when CoAP requests over UDP got no response.
 
 
 * :ref:`azure_iot_hub` sample:
