@@ -196,7 +196,18 @@ static int custom_jwt_generate(uint32_t exp_delta_s, char *const jwt_buf, size_t
 		.subject = subject,
 	};
 
-	return app_jwt_generate(&_jwt_internal);
+	err = app_jwt_generate(&_jwt_internal);
+
+#if !defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
+	/* The volatile key was imported only for this signing operation. */
+	psa_status_t status = psa_destroy_key(kid);
+
+	if (status != PSA_SUCCESS) {
+		LOG_ERR("psa_destroy_key failed! (Error: %d)", status);
+	}
+#endif /* !CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN */
+
+	return err;
 }
 #endif /* CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM */
 
