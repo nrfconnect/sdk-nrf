@@ -1220,7 +1220,6 @@ static struct bt_mesh_elem elements[] = {
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_BATTERY_SRV(&bat_ctx.srv),
 			     BT_MESH_MODEL_LOC_SRV(&loc_ctx.srv),
-			     BT_MESH_MODEL_BATTERY_SRV(&bat_ctx.srv),
 			     BT_MESH_MODEL_PROP_SRV_USER(&prop_ctx.usr_srv),
 			     BT_MESH_MODEL_PROP_SRV_ADMIN(&prop_ctx.admin_srv),
 			     BT_MESH_MODEL_PROP_SRV_CLIENT(&prop_ctx.cli_srv),
