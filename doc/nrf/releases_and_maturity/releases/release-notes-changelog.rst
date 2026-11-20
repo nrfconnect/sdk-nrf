@@ -352,7 +352,7 @@ Enhanced ShockBurst (ESB)
 Gazell
 ------
 
-|no_changes_yet_note|
+* Gazell support has been removed.
 
 Matter
 ------
