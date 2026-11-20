@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/ztest.h>
 #include <zephyr/drivers/spi.h>
+#include "spi_rtio.h"
 #include <nrfx_spim.h>
 #include <zephyr/drivers/counter.h>
 #include <dmm.h>
@@ -19,25 +20,39 @@
 	(SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB |              \
 	 SPI_MODE_CPHA | SPI_MODE_CPOL)
 
+#define SPI_NODE DT_NODELABEL(dut_spi)
+
 #define MAX_TEST_BUFFER_SIZE CONFIG_TEST_MAX_BUFFER_SIZE
 
-static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi), SPI_MODE);
+/* One SQE/CQE per blocking transceive (spi_rtio_copy single TXRX) */
+SPI_RTIO_DEFINE(spim_rtio_ctx, 1, 1);
+
+static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(SPI_NODE, SPI_MODE);
 const struct device *const tst_timer_dev = DEVICE_DT_GET(DT_ALIAS(tst_timer));
 
-static uint8_t tx_buffer[MAX_TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi)));
-static uint8_t rx_buffer[MAX_TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi)));
+static uint8_t tx_buffer[MAX_TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(SPI_NODE));
+static uint8_t rx_buffer[MAX_TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(SPI_NODE));
 
 static void *test_setup(void)
 {
 	zassert_true(spi_is_ready_dt(&spim_spec), "SPIM device is not ready");
+	spi_rtio_init(&spim_rtio_ctx, spim_spec.bus);
 
 	return NULL;
 }
 
 static void cleanup_buffers(void *nullp)
 {
+	struct rtio_cqe cqe;
+
+	ARG_UNUSED(nullp);
+
 	memset(tx_buffer, 0xFF, MAX_TEST_BUFFER_SIZE);
 	memset(rx_buffer, 0xFF, MAX_TEST_BUFFER_SIZE);
+
+	rtio_sqe_drop_all(spim_rtio_ctx.r);
+	while (rtio_cqe_copy_out(spim_rtio_ctx.r, &cqe, 1, K_MSEC(10)) > 0) {
+	}
 }
 
 static void prepare_test_data(uint8_t *buffer, size_t buffer_size)
@@ -66,25 +81,25 @@ static uint32_t calculate_theoretical_transsmison_time_us(size_t buffer_size,
 
 static uint64_t calculate_maximal_overhead_us(size_t buffer_size)
 {
-	return  CONFIG_TEST_SPI_LATENCY_BASE_OVERHEAD_US +
-		CONFIG_TEST_SPI_LATENCY_PER_BYTE_OVERHEAD_US * buffer_size +
-		(buffer_size == 1 ? CONFIG_TEST_SPI_LATENCY_SHORT_XFER_OVERHEAD_US :
-			CONFIG_TEST_SPI_LATENCY_LONG_XFER_OVERHEAD_US);
+	return CONFIG_TEST_SPI_LATENCY_BASE_OVERHEAD_US +
+	       CONFIG_TEST_SPI_LATENCY_PER_BYTE_OVERHEAD_US * buffer_size +
+	       (buffer_size == 1 ? CONFIG_TEST_SPI_LATENCY_SHORT_XFER_OVERHEAD_US
+				 : CONFIG_TEST_SPI_LATENCY_LONG_XFER_OVERHEAD_US);
 }
 static void assess_measurement_result(uint64_t timer_value_us,
 				      uint32_t theoretical_transmission_time_us, size_t buffer_size)
 {
 	uint64_t maximal_allowed_transmission_time_us;
 
-	maximal_allowed_transmission_time_us = theoretical_transmission_time_us +
-		calculate_maximal_overhead_us(buffer_size);
+	maximal_allowed_transmission_time_us =
+		theoretical_transmission_time_us + calculate_maximal_overhead_us(buffer_size);
 
-	zassert_true(timer_value_us < maximal_allowed_transmission_time_us,
+	zexpect_true(timer_value_us < maximal_allowed_transmission_time_us,
 		     "Measured transmission call latency is over the specified limit %llu > %llu",
 		     timer_value_us, maximal_allowed_transmission_time_us);
 }
 
-static void test_spim_transmission_latency(size_t buffer_size)
+static void test_spim_transmission_latency(size_t buffer_size, bool use_rtio_driver)
 {
 	int err;
 	uint32_t tst_timer_value;
@@ -94,7 +109,6 @@ static void test_spim_transmission_latency(size_t buffer_size)
 
 	struct spi_buf tx_spi_buf = {.buf = tx_buffer, .len = buffer_size};
 	struct spi_buf_set tx_spi_buf_set = {.buffers = &tx_spi_buf, .count = 1};
-
 	struct spi_buf rx_spi_buf = {.buf = rx_buffer, .len = buffer_size};
 	struct spi_buf_set rx_spi_buf_set = {.buffers = &rx_spi_buf, .count = 1};
 
@@ -112,7 +126,12 @@ static void test_spim_transmission_latency(size_t buffer_size)
 		memset(rx_buffer, 0xFF, buffer_size);
 		counter_reset(tst_timer_dev);
 		counter_start(tst_timer_dev);
-		err = spi_transceive_dt(&spim_spec, &tx_spi_buf_set, &rx_spi_buf_set);
+		if (use_rtio_driver) {
+			err = spi_rtio_transceive(&spim_rtio_ctx, &spim_spec.config,
+						  &tx_spi_buf_set, &rx_spi_buf_set);
+		} else {
+			err = spi_transceive_dt(&spim_spec, &tx_spi_buf_set, &rx_spi_buf_set);
+		}
 		counter_get_value(tst_timer_dev, &tst_timer_value);
 		counter_stop(tst_timer_dev);
 		timer_value_us[repeat_counter] =
@@ -120,20 +139,20 @@ static void test_spim_transmission_latency(size_t buffer_size)
 		average_timer_value_us += timer_value_us[repeat_counter];
 
 		zassert_ok(err, "SPI transceive failed");
-		zassert_mem_equal(tx_buffer, rx_buffer, buffer_size,
-			"0: TX = %u, RX = %u\n", tx_buffer[0], rx_buffer[0]);
+		zassert_mem_equal(tx_buffer, rx_buffer, buffer_size, "0: TX = %u, RX = %u\n",
+				  tx_buffer[0], rx_buffer[0]);
 	}
 
 	average_timer_value_us /= MEASUREMENT_REPEATS;
 
 	TC_PRINT("Calculated transmission time (for %u bytes) [us]: %u\n", buffer_size,
 		 theoretical_transmission_time_us);
-	TC_PRINT("spi_transceive_dt: measured transmission time (for %u bytes) [us]: %llu\n",
+	TC_PRINT("spi_transceive: measured transmission time (for %u bytes) [us]: %llu\n",
 		 buffer_size, average_timer_value_us);
-	TC_PRINT("spi_transceive_dt: measured - calculated time delta (for %d bytes) [us]: %lld\n",
+	TC_PRINT("spi_transceive: measured - calculated time delta (for %d bytes) [us]: %lld\n",
 		 buffer_size, average_timer_value_us - theoretical_transmission_time_us);
-	TC_PRINT("Maximal allowed time delta (for %d bytes) [us]: %lld\n",
-		 buffer_size, calculate_maximal_overhead_us(buffer_size));
+	TC_PRINT("Maximal allowed time delta (for %d bytes) [us]: %lld\n", buffer_size,
+		 calculate_maximal_overhead_us(buffer_size));
 	TC_PRINT("Theoretical maximal data rate (for buffer size %u bytes) [B/s]: %llu\n",
 		 buffer_size, (uint64_t)(1e6 * buffer_size / theoretical_transmission_time_us));
 	TC_PRINT("Calculated data rate (for buffer size %u bytes) [B/s]: %llu\n", buffer_size,
@@ -141,14 +160,26 @@ static void test_spim_transmission_latency(size_t buffer_size)
 
 	assess_measurement_result(average_timer_value_us, theoretical_transmission_time_us,
 				  buffer_size);
+
+	cleanup_buffers(NULL);
 }
 
-ZTEST(spim_transmission_latency, test_spim_transceive_call_latencty)
+ZTEST(spim_transmission_latency, test_spim_transceive_call_latency_standard_driver)
 {
-	test_spim_transmission_latency(1);
-	test_spim_transmission_latency(128);
-	test_spim_transmission_latency(512);
-	test_spim_transmission_latency(MAX_TEST_BUFFER_SIZE);
+	TC_PRINT(" *** Standard SPIM driver *** \n");
+	test_spim_transmission_latency(1, false);
+	test_spim_transmission_latency(128, false);
+	test_spim_transmission_latency(512, false);
+	test_spim_transmission_latency(MAX_TEST_BUFFER_SIZE, false);
+}
+
+ZTEST(spim_transmission_latency, test_spim_transceive_call_latency_rtio_driver)
+{
+	TC_PRINT(" *** RTIO SPIM driver *** \n");
+	test_spim_transmission_latency(1, true);
+	test_spim_transmission_latency(128, true);
+	test_spim_transmission_latency(512, true);
+	test_spim_transmission_latency(MAX_TEST_BUFFER_SIZE, true);
 }
 
 ZTEST_SUITE(spim_transmission_latency, NULL, test_setup, NULL, cleanup_buffers, NULL);

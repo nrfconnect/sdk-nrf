@@ -10,4 +10,6 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(spim_latency)
 
+zephyr_include_directories(${ZEPHYR_BASE}/drivers/spi)
+
 target_sources(app PRIVATE src/main.c)
