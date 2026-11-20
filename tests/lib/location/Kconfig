@@ -39,19 +39,16 @@ config LOCATION_METHOD_WIFI
 
 config LOCATION_METHOD_WIFI_NET_MGMT
 	bool
-	default n
 	help
 	  Used in tests to enable mocking of Wi-Fi.
 
 config LOCATION_REST_CLIENT
 	bool
-	default n
 	help
 	  Used in tests to enable mocking of REST client library.
 
 config LOCATION_MODEM_KEY_MGMT
 	bool
-	default n
 	help
 	  Used in tests to enable mocking of Modem key management library.
 

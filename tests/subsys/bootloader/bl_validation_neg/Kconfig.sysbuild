@@ -21,16 +21,15 @@ endchoice
 # nrfutil. Use a single signing key at index 0. Multi-key debug provisioning
 # causes b0 to hang when invalidating older keys in UICR after a successful
 # signature check on nRF54LS05.
-config SECURE_BOOT_PUBLIC_KEY_FILES
+configdefault SECURE_BOOT_PUBLIC_KEY_FILES
 	default "" if SOC_NRF54LS05A_CPUAPP || SOC_NRF54LS05B_CPUAPP || SOC_NRF54LM20A_CPUAPP
 	default "debug"
 
-config SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
+configdefault SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
 	default n if SOC_NRF54LS05A_CPUAPP || SOC_NRF54LS05B_CPUAPP || SOC_NRF54LM20A_CPUAPP
 	default y
 
-config SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
-	bool
+configdefault SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
 	default n
 
 source "share/sysbuild/Kconfig"

@@ -14,7 +14,6 @@ if BT_LBS
 
 config BT_LBS_POLL_BUTTON
 	bool
-	default n
 	prompt "Support button state polling"
 	help
 	  Enable support for button state polling

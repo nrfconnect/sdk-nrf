@@ -30,7 +30,6 @@ config DESKTOP_LOG_RTT
 	  is used to emit logs in that case.
 
 configdefault LOG_BACKEND_RTT
-	default n
 	help
 	  If nRF Desktop logging is enabled, an application-specific Kconfig
 	  option is used to control enabling of the RTT logging backend
@@ -46,7 +45,6 @@ config DESKTOP_LOG_UART
 	  Emit debug logs over UART.
 
 configdefault LOG_BACKEND_UART
-	default n
 	help
 	  If nRF Desktop logging is enabled, an application-specific Kconfig
 	  option is used to control enabling of the UART logging backend
@@ -80,13 +78,11 @@ configdefault LOG_PROCESS_THREAD_STACK_SIZE
 
 configdefault LOG_BACKEND_SHOW_COLOR
 	default y if SHELL_LOG_BACKEND
-	default n
 	help
 	  nRF Desktop logging configuration disables colors in the logging
 	  subsystem backends unless shell is used to emit logs.
 
 configdefault LOG_BACKEND_FORMAT_TIMESTAMP
-	default n
 	help
 	  nRF Desktop logging configuration disables formatting of timestamps
 	  in the logging subsystem backends.

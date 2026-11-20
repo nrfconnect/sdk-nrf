@@ -87,7 +87,6 @@ config RAW_TX_PKT_SAMPLE_QUEUE_NUM
 
 config RAW_TX_PKT_SAMPLE_AGGREGATION_ENABLE
 	bool "Raw packets TX aggregation"
-	default n
 	depends on NRF70_RAW_DATA_TX
 	help
 	  When enabled, sets the raw TX header aggregation field so the nRF70

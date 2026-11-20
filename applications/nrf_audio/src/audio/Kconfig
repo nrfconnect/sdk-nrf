@@ -235,7 +235,6 @@ endchoice
 
 config SW_CODEC_PLC_DISABLED
 	bool "Skip PLC on a bad frame and fill the output buffer(s) with zeros instead"
-	default n
 	select LC3_PLC_DISABLED
 
 #----------------------------------------------------------------------------#
@@ -278,7 +277,6 @@ config BUF_BLE_RX_PACKET_NUM
 config STREAM_BIDIRECTIONAL
 	depends on TRANSPORT_CIS
 	bool "Bidirectional stream"
-	default n
 	help
 	  Bidirectional stream enables encoder and decoder on both sides,
 	  and one device can both send and receive audio.
@@ -286,7 +284,6 @@ config STREAM_BIDIRECTIONAL
 config WALKIE_TALKIE_DEMO
 	select STREAM_BIDIRECTIONAL
 	bool "Walkie talkie demo"
-	default n
 	help
 	  The walkie talkie demo will set up a bidirectional stream using PDM
 	  microphones on each side.
@@ -295,7 +292,6 @@ config MONO_TO_ALL_RECEIVERS
 	bool "Send mono (first/left channel) to all receivers"
 	default y if BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT = 1
 	default y if BT_BAP_BROADCAST_SRC_STREAM_COUNT = 1
-	default n
 	help
 	  With this flag set, the gateway will encode and send the same (first/left)
 	  channel on all ISO channels.
