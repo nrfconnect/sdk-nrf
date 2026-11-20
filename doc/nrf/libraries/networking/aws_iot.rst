@@ -292,6 +292,24 @@ Complete the following steps to set the required library options:
 #. Set the :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` Kconfig option to the name of the *Thing* created earlier.
    For information on how to set this value at runtime, refer to :ref:`lib_set_client_id`.
 #. Set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` to the security tag for which the key and certificate were provisioned earlier.
+#. If your application uses the native TLS stack (Mbed TLS), make sure that TLS Server Name Indication (SNI) is enabled, as described in :ref:`aws_iot_sni`.
+
+.. _aws_iot_sni:
+
+TLS Server Name Indication
+--------------------------
+
+AWS IoT Core requires the client to send the TLS Server Name Indication (SNI) extension in the TLS handshake.
+AWS IoT Core uses the SNI hostname to identify the endpoint that the device connects to and rejects the connection if SNI is not present.
+
+The library uses the broker hostname as the SNI hostname.
+This is the hostname passed to the :c:func:`aws_iot_connect` function or, if none is passed, the value of the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` Kconfig option.
+How SNI is sent depends on the TLS stack in use:
+
+* When TLS is offloaded to the modem, for example, on nRF91 Series devices, the modem sends SNI and no additional configuration is needed.
+* When the native TLS stack (Mbed TLS) is used, SNI is only sent if the :kconfig:option:`CONFIG_MBEDTLS_SSL_SERVER_NAME_INDICATION` Kconfig option is enabled.
+  The library enables this option by default when the :kconfig:option:`CONFIG_MBEDTLS` Kconfig option is enabled, and the :ref:`aws_iot` sample also sets it in its :ncs-file:`/samples/net/aws_iot/wifi.conf` file.
+  If the option is disabled, SNI is not sent and the TLS handshake with AWS IoT Core fails.
 
 Optional library options
 ------------------------
