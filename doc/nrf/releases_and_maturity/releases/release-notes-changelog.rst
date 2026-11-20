@@ -966,8 +966,14 @@ Networking samples
     You install the certificates with the TLS credentials shell.
     To keep the previous behavior, enable the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option instead.
 
-  * Fixed an issue where the sample could try to connect to AWS IoT before DNS was available and stop with a fatal error.
-    The sample now connects once the Connection Manager reports both IP connectivity and DNS as ready.
+  * Fixed:
+
+    * An issue where the sample could try to connect to AWS IoT before DNS was available and stop with a fatal error.
+      The sample now connects once the Connection Manager reports both IP connectivity and DNS as ready.
+    * An issue where the sample could try to connect to AWS IoT before DNS was available and stop with a fatal error.
+      The sample now connects once the Connection Manager reports both IP connectivity and DNS as ready.
+    * An issue where a FOTA download in Wi-Fi builds failed after a stall, because the reconnect found no free network connection.
+      The :file:`wifi.conf` file now sets the :kconfig:option:`CONFIG_NET_MAX_CONN` Kconfig option to ``8``.
 
 * :ref:`download_sample` sample:
 
