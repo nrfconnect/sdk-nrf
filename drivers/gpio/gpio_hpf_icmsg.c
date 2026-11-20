@@ -112,12 +112,24 @@ int gpio_send(hpf_gpio_data_packet_t *msg)
 
 int gpio_hpf_init(const struct device *port)
 {
+	/* All GPIO ports share a single endpoint. */
+	static bool ep_registered;
 	const struct device *ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
-	int ret = ipc_service_open_instance(ipc0_instance);
+	int ret;
 
+	if (ep_registered) {
+		return 0;
+	}
+
+	ret = ipc_service_open_instance(ipc0_instance);
 	if ((ret < 0) && (ret != -EALREADY)) {
 		return ret;
 	}
 
-	return register_endpoint_with_retry(ipc0_instance);
+	ret = register_endpoint_with_retry(ipc0_instance);
+	if (ret == 0) {
+		ep_registered = true;
+	}
+
+	return ret;
 }
