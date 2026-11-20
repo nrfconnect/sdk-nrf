@@ -11,6 +11,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+#include <modem/nrf_modem_lib.h>
+#endif
 
 /* Note: logging is normally disabled for this test
  * Enable only for debugging purposes
@@ -123,6 +126,13 @@ int main(void)
 	uint32_t counter;
 	struct uart_config test_uart_config;
 
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+	err = nrf_modem_lib_init();
+	if (err < 0) {
+		LOG_ERR("Failed to initialize modem library (%d)", err);
+		return 0;
+	}
+#endif
 	err = gpio_is_ready_dt(&led);
 	__ASSERT(err, "Error: GPIO Device not ready");
 

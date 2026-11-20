@@ -7,6 +7,10 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/adc.h>
 #include <zephyr/drivers/gpio.h>
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+#include <modem/nrf_modem_lib.h>
+#endif
+
 #define ADC_NODE           DT_ALIAS(adc0)
 #define SAMPLES_COUNT      5
 
@@ -35,6 +39,14 @@ int main(void)
 	int err;
 	uint16_t channel_reading[SAMPLES_COUNT];
 	int test_repetitions = 3;
+
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+	err = nrf_modem_lib_init();
+	if (err < 0) {
+		printk("Failed to initialize modem library (%d)\n", err);
+		return 0;
+	}
+#endif
 
 	err = gpio_is_ready_dt(&led);
 	__ASSERT(err, "Error: GPIO Device not ready");
