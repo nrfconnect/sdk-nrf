@@ -38,8 +38,8 @@ static char assigned_device_id_buf[CONFIG_AZURE_IOT_HUB_DPS_DEVICE_ID_MAX_LEN];
 /* Forward declarations */
 static void timeout_work_stop(void);
 static int dps_on_settings_loaded(void);
-static int dps_settings_handler(const char *key, size_t len,
-				settings_read_cb read_cb, void *cb_arg);
+AZ_DPS_STATIC int dps_settings_handler(const char *key, size_t len,
+				       settings_read_cb read_cb, void *cb_arg);
 
 static const char *state_name_get(enum dps_state state)
 {
@@ -127,67 +127,43 @@ SETTINGS_STATIC_HANDLER_DEFINE(azure_iot_hub_dps, DPS_SETTINGS_KEY, NULL,
 			       dps_settings_handler, dps_on_settings_loaded,
 			       NULL);
 
-/**@brief Callback when settings_load() is called. */
-static int dps_settings_handler(const char *key, size_t len,
-				settings_read_cb read_cb, void *cb_arg)
+/**@brief Callback when settings_load() is called.
+ * The value length comes from len, because the backend can load the keys in any order.
+ */
+AZ_DPS_STATIC int dps_settings_handler(const char *key, size_t len,
+				       settings_read_cb read_cb, void *cb_arg)
 {
 	int err;
-	static uint32_t hostname_len;
-	static uint32_t device_id_len;
-
-	if (strcmp(key, DPS_SETTINGS_HOSTNAME_LEN_KEY) == 0) {
-		err = read_cb(cb_arg, &hostname_len, sizeof(hostname_len));
-		if (err <= 0) {
-			LOG_ERR("Failed to read hostname length, error: %d", err);
-			return err;
-		}
-
-		LOG_DBG("Azure IoT Hub hostname length found: %d", hostname_len);
-
-		return 0;
-	}
 
 	if (strcmp(key, DPS_SETTINGS_HOSTNAME_KEY) == 0) {
-		err = read_cb(cb_arg, assigned_hub_buf,
-			      MIN(sizeof(assigned_hub_buf), hostname_len));
+		err = read_cb(cb_arg, assigned_hub_buf, MIN(sizeof(assigned_hub_buf) - 1, len));
 		if (err <= 0) {
 			LOG_ERR("Failed to read hostname, error: %d", err);
 			return err;
 		}
 
+		assigned_hub_buf[err] = '\0';
+
 		dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED;
-		dps_reg_ctx.assigned_hub = az_span_create(assigned_hub_buf,
-						MIN(sizeof(assigned_hub_buf), hostname_len));
+		dps_reg_ctx.assigned_hub = az_span_create(assigned_hub_buf, err);
 
 		LOG_DBG("Azure IoT Hub hostname found: %.*s",
 			az_span_size(dps_reg_ctx.assigned_hub),
 			(char *)az_span_ptr(dps_reg_ctx.assigned_hub));
 	}
 
-	if (strcmp(key, DPS_SETTINGS_DEVICE_ID_LEN_KEY) == 0) {
-		err = read_cb(cb_arg, &device_id_len, sizeof(device_id_len));
-		if (err <= 0) {
-			LOG_ERR("Failed to read device ID length, error: %d", err);
-			return err;
-		}
-
-		LOG_DBG("Assigned device ID length found: %d", device_id_len);
-
-		return 0;
-	}
-
 	if (strcmp(key, DPS_SETTINGS_DEVICE_ID_KEY) == 0) {
 		err = read_cb(cb_arg, assigned_device_id_buf,
-			      MIN(sizeof(assigned_device_id_buf), device_id_len));
+			      MIN(sizeof(assigned_device_id_buf) - 1, len));
 		if (err <= 0) {
 			LOG_ERR("Failed to read device ID, error: %d", err);
 			return err;
 		}
 
+		assigned_device_id_buf[err] = '\0';
+
 		dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED;
-		dps_reg_ctx.assigned_device_id =
-			az_span_create(assigned_device_id_buf,
-				       MIN(sizeof(assigned_device_id_buf), device_id_len));
+		dps_reg_ctx.assigned_device_id = az_span_create(assigned_device_id_buf, err);
 
 		LOG_DBG("Assigned device ID found: %.*s",
 			az_span_size(dps_reg_ctx.assigned_device_id),
@@ -911,7 +887,8 @@ int azure_iot_hub_dps_start(void)
 	err = mqtt_helper_connect(&conn_params);
 	if (err) {
 		LOG_ERR("mqtt_helper_connect failed, error: %d", err);
-		return err;
+		/* A positive value is a getaddrinfo() error. */
+		return (err > 0) ? -EHOSTUNREACH : err;
 	}
 
 	dps_state_set(DPS_STATE_CONNECTING);

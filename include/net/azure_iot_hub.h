@@ -348,6 +348,7 @@ int azure_iot_hub_init(azure_iot_hub_evt_handler_t event_handler);
  *  @retval -ENOENT if the library is not in disconnected state.
  *  @retval -EINVAL if the provided configuration is invalid.
  *  @retval -EMSGSIZE if the provided device ID is larger than the internal buffer size.
+ *  @retval -EHOSTUNREACH if the IoT Hub host name could not be resolved.
  *  @retval -EFAULT if there was an internal error in the library.
  */
 int azure_iot_hub_connect(const struct azure_iot_hub_config *config);

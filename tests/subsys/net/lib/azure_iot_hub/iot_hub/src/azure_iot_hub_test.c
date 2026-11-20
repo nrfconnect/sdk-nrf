@@ -8,6 +8,7 @@
 #include <zephyr/kernel.h>
 #include <string.h>
 #include <zephyr/init.h>
+#include <zephyr/net/dns_resolve.h>
 
 #include <net/azure_iot_hub.h>
 
@@ -292,6 +293,18 @@ void test_azure_iot_hub_connect_kconfig_values(void)
 
 	TEST_ASSERT_EQUAL(0, azure_iot_hub_connect(NULL));
 	TEST_ASSERT_EQUAL(STATE_CONNECTING, iot_hub_state);
+}
+
+void test_azure_iot_hub_connect_dns_error(void)
+{
+	__cmock_mqtt_helper_init_ExpectAnyArgsAndReturn(0);
+	/* mqtt_helper_connect() returns a positive value for a getaddrinfo() error. */
+	__cmock_mqtt_helper_connect_ExpectAnyArgsAndReturn(-DNS_EAI_SYSTEM);
+
+	iot_hub_state = STATE_DISCONNECTED;
+
+	TEST_ASSERT_EQUAL(-EHOSTUNREACH, azure_iot_hub_connect(NULL));
+	TEST_ASSERT_EQUAL(STATE_DISCONNECTED, iot_hub_state);
 }
 
 void test_azure_iot_hub_connect_when_not_initialized(void)
