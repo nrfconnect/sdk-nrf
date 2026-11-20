@@ -16,3 +16,16 @@
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39378"
+
+- scenarios:
+    - sample.net.aws_iot.sample.net.aws_iot
+    - sample.net.azure_iot_hub.sample.net.azure_iot_hub
+    - sample.net.coap_client.sample.net.coap_client
+    - sample.net.downloader.sample.net.downloader
+    - sample.net.https_client.sample.net.https_client
+    - sample.net.mqtt.native_sim.tls.sample.net.mqtt.native_sim.tls
+    - sample.net.mqtt.sample.net.mqtt
+    - sample.net.udp.emulation.sample.net.udp.emulation
+  platforms:
+    - native_sim/native
+  comment: "Needs 008738ec18178c43ef2fef7c5044940cdc960aa8, waiting for upmerge"
