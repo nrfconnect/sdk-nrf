@@ -119,11 +119,12 @@ int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct zsock_add
 	/* Query IPv6 first, then IPv4. This is necessary because some socket backends do not
 	 * return all available IP addresses, so if we just use AF_UNSPEC, we might get only an
 	 * IPv6 address, even if both IPv4 and IPv6 are available.
+	 * Try a family if it is the only one ready, or if both or neither are.
 	 */
-	uint32_t ready = conn_mgr_get_readiness();
+	net_sa_family_t ready = conn_mgr_get_ready_addr_family();
 
 	if (IS_ENABLED(CONFIG_NET_IPV6)) {
-		if (!(ready & CONN_MGR_READY_IPV6)) {
+		if ((ready != NET_AF_INET6) && (ready != NET_AF_UNSPEC)) {
 			LOG_DBG("Skipping IPv6 for %s; no local IPv6 address", hostname);
 		} else {
 			LOG_DBG("Trying IPv6 addresses for %s", hostname);
@@ -141,7 +142,7 @@ int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct zsock_add
 	}
 
 	if (IS_ENABLED(CONFIG_NET_IPV4) && !IS_ENABLED(CONFIG_NRF_CLOUD_IPV6)) {
-		if (!(ready & CONN_MGR_READY_IPV4)) {
+		if ((ready != NET_AF_INET) && (ready != NET_AF_UNSPEC)) {
 			LOG_DBG("Skipping IPv4 for %s; no local IPv4 address", hostname);
 		} else {
 			LOG_DBG("Trying IPv4 addresses for %s", hostname);
