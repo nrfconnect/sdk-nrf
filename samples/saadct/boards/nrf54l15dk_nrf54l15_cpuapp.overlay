@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/ {
+	zephyr,user {
+		test-saadc-input0 = <NRF_SAADC_AIN6>; /* P1.13 */
+		test-saadc-input1 = <NRF_SAADC_AIN5>; /* P1.12 */
+	};
+};
+
 &timer20 {
 	status = "okay";
 };
