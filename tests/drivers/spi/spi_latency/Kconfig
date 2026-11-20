@@ -17,6 +17,7 @@ config TEST_MAX_BUFFER_SIZE
 config TEST_SPI_LATENCY_SHORT_XFER_OVERHEAD_US
 	int "Short transfer overhead time for SPI latency measurement"
 	default 40 if SOC_SERIES_NRF52
+	default 35 if SPI_RTIO
 	default 23
 	help
 	  SPI driver takes semaphore after starting the transfer. Timeout is set and context is

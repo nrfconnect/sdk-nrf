@@ -79,7 +79,7 @@ static void assess_measurement_result(uint64_t timer_value_us,
 	maximal_allowed_transmission_time_us = theoretical_transmission_time_us +
 		calculate_maximal_overhead_us(buffer_size);
 
-	zassert_true(timer_value_us < maximal_allowed_transmission_time_us,
+	zexpect_true(timer_value_us < maximal_allowed_transmission_time_us,
 		     "Measured transmission call latency is over the specified limit %llu > %llu",
 		     timer_value_us, maximal_allowed_transmission_time_us);
 }
@@ -143,7 +143,7 @@ static void test_spim_transmission_latency(size_t buffer_size)
 				  buffer_size);
 }
 
-ZTEST(spim_transmission_latency, test_spim_transceive_call_latencty)
+ZTEST(spim_transmission_latency, test_spim_transceive_call_latency)
 {
 	test_spim_transmission_latency(1);
 	test_spim_transmission_latency(128);

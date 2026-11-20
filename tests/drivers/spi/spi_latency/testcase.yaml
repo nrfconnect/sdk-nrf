@@ -11,10 +11,12 @@ common:
 
 tests:
   drivers.spim_latency_1Mbps:
-    platform_allow: &standard_spi_platforms
+    platform_allow: &one_mbps_spi_test_platfroms
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
@@ -23,16 +25,28 @@ tests:
       - nrf9251dk/nrf9251/cpuapp
       - nrf9251dk/nrf9251/cpuppr
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/spi_1MHz.overlay"
+
+  drivers.spim_latency_1Mbps.rtio:
+    platform_allow: *one_mbps_spi_test_platfroms
+    integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    extra_configs:
+      - CONFIG_RTIO=y
+      - CONFIG_SPI_RTIO=y
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/spi_1MHz.overlay"
 
   drivers.spim_latency_8Mbps:
-    platform_allow:
+    platform_allow: &eight_mbps_spi_test_paltforms
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuflpr/xip
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
@@ -41,7 +55,15 @@ tests:
       - nrf9251dk/nrf9251/cpuapp
       - nrf9251dk/nrf9251/cpuppr
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+
+  drivers.spim_latency_8Mbps.rtio:
+    platform_allow: *eight_mbps_spi_test_paltforms
+    integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    extra_configs:
+      - CONFIG_RTIO=y
+      - CONFIG_SPI_RTIO=y
 
   drivers.spim_latency_16Mbps:
     platform_allow:
