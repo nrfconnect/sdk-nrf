@@ -8,3 +8,14 @@ tests:
       - aws_iot
       - sysbuild
       - ci_tests_subsys_net
+  net.lib.aws_iot.resubscribe_on_session_present:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT=y
+    tags:
+      - aws_iot
+      - sysbuild
+      - ci_tests_subsys_net

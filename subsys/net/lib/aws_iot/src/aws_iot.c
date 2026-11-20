@@ -117,6 +117,11 @@ static struct suback_conf {
 
 } suback_conf;
 
+/* Session present flag from the last CONNACK, reported in AWS_IOT_EVT_CONNECTED once the
+ * subscriptions have been acknowledged.
+ */
+static bool session_resumed;
+
 /* Semaphore used to wait for acknowledgment of MQTT subscriptions. */
 static K_SEM_DEFINE(subs_acked_sem, 0, 1);
 
@@ -441,10 +446,12 @@ static void on_connack(enum mqtt_conn_return_code return_code, bool session_pres
 
 	LOG_DBG("MQTT client connected!");
 
-	if (session_present) {
+	if (session_present && !IS_ENABLED(CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT)) {
 		connected_notify(true);
 		return;
 	}
+
+	session_resumed = session_present;
 
 	if (app_topic_count > 0) {
 		suback_conf.app_subs_id = APP_SUBS_MESSAGE_ID;
@@ -475,7 +482,7 @@ static void on_connack(enum mqtt_conn_return_code return_code, bool session_pres
 	}
 
 	if (!suback_conf.app_subs_needs_ack && !suback_conf.aws_subs_needs_ack) {
-		connected_notify(false);
+		connected_notify(session_resumed);
 		return;
 	}
 
@@ -569,7 +576,7 @@ static void on_suback(uint16_t message_id, int result)
 
 	/* Notify that the library is connected when both subscription lists are acknowledged. */
 	if (!suback_conf.app_subs_needs_ack && !suback_conf.aws_subs_needs_ack) {
-		connected_notify(false);
+		connected_notify(session_resumed);
 		return;
 	}
 }
