@@ -43,6 +43,10 @@ For a system to establish a root of trust, the first image in the system verifie
 If the next image is another bootloader image, that one must verify the image following it to maintain the chain of trust.
 After all of the images in the bootloader chain have been verified successfully, the application starts.
 
+   .. caution::
+      You must generate and use your own signing keys while in development and before deploying when using either MCUboot or the |NSIB| as an immutable bootloader.
+      See :ref:`ug_fw_update_development_keys` for more information.
+
 .. _ug_bootloader_architecture:
 
 Architecture
@@ -111,10 +115,6 @@ More specifically, the immutable bootloader always performs the following steps 
      During this stage, the bootloader checks that the image is authentic (comes only from its original author) and integral (it was not changed by accident).
 
    * Metadata verification - Checks that the images are compatible.
-
-   .. caution::
-      You must generate and use your own signing keys while in development and before deploying when using either MCUboot or the |NSIB| as an immutable bootloader.
-      See :ref:`ug_fw_update_development_keys` for more information.
 
 #. Booting of the next stage in the boot chain.
 
