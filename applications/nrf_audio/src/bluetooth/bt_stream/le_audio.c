@@ -59,7 +59,8 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
 
 	if (!(info->flags & BT_ISO_FLAGS_VALID) ||
 	    audio_frame->len != bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg)) {
-		meta->bad_data = meta->locations;
+		/* Location zero means mono, but a zero bad-data mask would mean no loss. */
+		meta->bad_data = meta->locations ? meta->locations : 1;
 	}
 
 	return 0;
