@@ -19,6 +19,12 @@
 #define WORD_ALIGNED(size) ROUND_UP(size, WORD_SIZE)
 
 /**
+ * @brief Firmware GDRAM buffer size for connect-scan results (bytes).
+ * @ingroup nrf_wifi_api
+ */
+#define NRF71_CONNECT_SCAN_DB_SIZE 8192U
+
+/**
  * @brief The type of memory pool to allocate from.
  */
 enum nrf_wifi_mem_pool_type {

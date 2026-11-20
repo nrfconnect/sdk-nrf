@@ -22,7 +22,7 @@
 #endif
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 #include <common/util.h>
 #include <common/mac_addr.h>
@@ -226,7 +226,7 @@ static int xicr_block_mac_addr_get(bool uicr,
 	return 0;
 }
 
-#if defined(CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM)
+#if defined(CONFIG_NRF71_WIFI_XICR_MAC_ADDRESS_FALLBACK_RANDOM)
 /**
  * @brief Generate a locally administered MAC address.
  *
@@ -265,7 +265,7 @@ static int random_mac_addr_get(unsigned char vif_idx,
 
 	return 0;
 }
-#endif /* CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM */
+#endif /* CONFIG_NRF71_WIFI_XICR_MAC_ADDRESS_FALLBACK_RANDOM */
 
 int nrf_wifi_xicr_mac_addr_get(unsigned char vif_idx,
 			       uint8_t mac_addr[WIFI_MAC_ADDR_LEN],
@@ -288,7 +288,7 @@ int nrf_wifi_xicr_mac_addr_get(unsigned char vif_idx,
 		ret = xicr_block_mac_addr_get(false, vif_idx, mac_addr);
 	}
 
-#if defined(CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM)
+#if defined(CONFIG_NRF71_WIFI_XICR_MAC_ADDRESS_FALLBACK_RANDOM)
 	if (ret) {
 		mac_addr_src = NRF_WIFI_MAC_ADDR_SRC_RANDOM;
 		ret = random_mac_addr_get(vif_idx, mac_addr);

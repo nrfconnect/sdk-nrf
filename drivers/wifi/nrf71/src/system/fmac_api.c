@@ -25,7 +25,7 @@
 #include <system/fmac_tx.h>
 #include <system/fmac_vif.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 
 static unsigned char nrf_wifi_fmac_vif_idx_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
@@ -59,7 +59,7 @@ static struct nrf_wifi_fmac_vif_ctx *nrf_wifi_sys_fmac_vif_get(
 }
 
 
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 static enum nrf_wifi_status nrf_wifi_sys_fmac_init_tx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
 	struct nrf_wifi_fmac_priv *fpriv = NULL;
@@ -90,7 +90,7 @@ static void nrf_wifi_sys_fmac_deinit_tx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 	tx_deinit(fmac_dev_ctx);
 }
 
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 
 static enum nrf_wifi_status nrf_wifi_sys_fmac_init_rx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
@@ -127,11 +127,11 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_init_rx(struct nrf_wifi_fmac_dev_c
 			goto out;
 		}
 	}
-#ifdef CONFIG_NRF71_RX_WQ_ENABLED
+#ifdef CONFIG_NRF71_WIFI_RX_WQ_ENABLED
 	sys_dlist_init(&sys_dev_ctx->rx_event_q);
 
 	k_work_init(&sys_dev_ctx->rx_work, nrf_wifi_fmac_rx_work_handler);
-#endif /* CONFIG_NRF71_RX_WQ_ENABLED */
+#endif /* CONFIG_NRF71_WIFI_RX_WQ_ENABLED */
 out:
 	return status;
 }
@@ -149,11 +149,11 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_deinit_rx(struct nrf_wifi_fmac_dev
 	sys_fpriv = wifi_fmac_priv(fpriv);
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-#ifdef CONFIG_NRF71_RX_WQ_ENABLED
+#ifdef CONFIG_NRF71_WIFI_RX_WQ_ENABLED
 	struct k_work_sync sync;
 
 	k_work_cancel_sync(&sys_dev_ctx->rx_work, &sync);
-#endif /* CONFIG_NRF71_RX_WQ_ENABLED */
+#endif /* CONFIG_NRF71_WIFI_RX_WQ_ENABLED */
 
 	for (desc_id = 0; desc_id < sys_fpriv->num_rx_bufs; desc_id++) {
 		status = nrf_wifi_fmac_rx_cmd_send(fmac_dev_ctx,
@@ -178,9 +178,9 @@ out:
 static enum nrf_wifi_status
 nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned int *rf_params_addr,
 			  unsigned int vtf_buffer_start_address,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 			  int sleep_type,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 			  unsigned int phy_calib, unsigned char op_band, bool beamforming,
 			  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
 			  unsigned char *country_code)
@@ -194,7 +194,7 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 	status = nrf_wifi_sys_fmac_init_tx(fmac_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -202,14 +202,14 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 				      __func__);
 		goto out;
 	}
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 
 	status = nrf_wifi_sys_fmac_init_rx(fmac_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: Init RX failed",
 				      __func__);
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 		nrf_wifi_sys_fmac_deinit_tx(fmac_dev_ctx);
 #endif
 		goto out;
@@ -217,18 +217,18 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 
 	status = umac_cmd_sys_init(
 		fmac_dev_ctx, rf_params_addr, vtf_buffer_start_address, &sys_fpriv->data_config,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 		sleep_type,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 		phy_calib, op_band, beamforming, tx_pwr_ctrl, country_code);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: UMAC init failed",
 				      __func__);
 		nrf_wifi_sys_fmac_deinit_rx(fmac_dev_ctx);
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 		nrf_wifi_sys_fmac_deinit_tx(fmac_dev_ctx);
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 		goto out;
 	}
 	start_time_us = k_ticks_to_us_floor64(k_uptime_ticks());
@@ -245,9 +245,9 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 				      __func__);
 		nrf_wifi_drv_dbg_fmac_tmo(fmac_dev_ctx, NRF_WIFI_DRV_DBG_TMO_FW_INIT);
 		nrf_wifi_sys_fmac_deinit_rx(fmac_dev_ctx);
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 		nrf_wifi_sys_fmac_deinit_tx(fmac_dev_ctx);
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 		status = NRF_WIFI_STATUS_FAIL;
 		goto out;
 	}
@@ -258,9 +258,9 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 		LOG_ERR("%s: LMAC tuning params config failed",
 				      __func__);
 		nrf_wifi_sys_fmac_deinit_rx(fmac_dev_ctx);
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 		nrf_wifi_sys_fmac_deinit_tx(fmac_dev_ctx);
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 		goto out;
 	}
 
@@ -338,9 +338,9 @@ static void nrf_wifi_sys_fmac_fw_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 out:
 #endif /* NOTYET */
 	nrf_wifi_sys_fmac_deinit_rx(fmac_dev_ctx);
-#ifdef CONFIG_NRF71_DATA_TX
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
 	nrf_wifi_sys_fmac_deinit_tx(fmac_dev_ctx);
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 
 }
 
@@ -379,9 +379,9 @@ out:
 
 enum nrf_wifi_status
 nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 			   int sleep_type,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 			   unsigned int phy_calib, unsigned char op_band, bool beamforming,
 			   struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 			   struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
@@ -411,9 +411,9 @@ nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	}
 
 	status = nrf_wifi_sys_fmac_fw_init(fmac_dev_ctx, rf_params_addr, vtf_buffer_start_address,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 					   sleep_type,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 					   phy_calib, op_band, beamforming, tx_pwr_ctrl_params,
 					   country_code);
 
@@ -442,7 +442,7 @@ void nrf_wifi_sys_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx->tx_pwr_ceil_params);
 }
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY
 enum nrf_wifi_status nrf_wifi_sys_fmac_rpu_recovery_callback(void *mac_dev_ctx,
 							     void *event_data,
 							     unsigned int len)
@@ -488,7 +488,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_rpu_recovery_callback(void *mac_dev_ctx,
 out:
 	return status;
 }
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 
 struct nrf_wifi_fmac_priv *nrf_wifi_sys_fmac_init(struct nrf_wifi_data_config_params *data_config,
 						  struct rx_buf_pool_params *rx_buf_pools,
@@ -518,8 +518,8 @@ struct nrf_wifi_fmac_priv *nrf_wifi_sys_fmac_init(struct nrf_wifi_data_config_pa
 			      data_config,
 			      sizeof(sys_fpriv->data_config));
 
-#ifdef CONFIG_NRF71_DATA_TX
-	sys_fpriv->num_tx_tokens = CONFIG_NRF71_MAX_TX_TOKENS;
+#ifdef CONFIG_NRF71_WIFI_DATA_TX
+	sys_fpriv->num_tx_tokens = CONFIG_NRF71_WIFI_MAX_TX_TOKENS;
 	sys_fpriv->num_tx_tokens_per_ac = (sys_fpriv->num_tx_tokens / NRF_WIFI_FMAC_AC_MAX);
 	sys_fpriv->num_tx_tokens_spare = (sys_fpriv->num_tx_tokens % NRF_WIFI_FMAC_AC_MAX);
 	if (sys_fpriv->num_tx_tokens_per_ac == 0) {
@@ -528,7 +528,7 @@ struct nrf_wifi_fmac_priv *nrf_wifi_sys_fmac_init(struct nrf_wifi_data_config_pa
 		fpriv = NULL;
 		goto out;
 	}
-#endif /* CONFIG_NRF71_DATA_TX */
+#endif /* CONFIG_NRF71_WIFI_DATA_TX */
 	nrf_wifi_mem_cpy(sys_fpriv->rx_buf_pools,
 			      rx_buf_pools,
 			      sizeof(sys_fpriv->rx_buf_pools));
@@ -606,9 +606,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 	scan_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
 
 	/* 2.4 GHz scan coexistence: 0 leaves firmware defaults unchanged. */
-	scan_info->scan_params.bt_grant_time = CONFIG_NRF_WIFI_SCAN_BT_GRANT_TIME_MS;
+	scan_info->scan_params.bt_grant_time = CONFIG_NRF71_WIFI_SCAN_BT_GRANT_TIME_MS;
 	scan_info->scan_params.bt_grant_tolerance_time =
-		CONFIG_NRF_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS;
+		CONFIG_NRF71_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS;
 
 	nrf_wifi_mem_cpy(&scan_cmd->info,
 			      scan_info,
@@ -717,7 +717,7 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_auth(void *dev_ctx,
 					    unsigned char if_idx,
 					    struct nrf_wifi_umac_auth_info *auth_info)
@@ -1003,7 +1003,6 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF_WIFI_USE_KMU
 /**
  * @brief Whether UMAC needs IGTK/BIP key bytes (PMF mgmt MIC), not host crypto alone.
  */
@@ -1024,7 +1023,6 @@ static bool nrf_wifi_fmac_umac_needs_mgmt_key_material(unsigned int cipher_suite
 		return false;
 	}
 }
-#endif /* CONFIG_NRF_WIFI_USE_KMU */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 					       unsigned char if_idx,
@@ -1068,7 +1066,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 			      key_info,
 			      sizeof(key_cmd->key_info));
 
-#ifdef CONFIG_NRF_WIFI_USE_KMU
 	struct nrf_wifi_key *key = &key_cmd->key_info.key;
 
 	if (!nrf_wifi_fmac_umac_needs_mgmt_key_material(key_cmd->key_info.cipher_suite,
@@ -1088,7 +1085,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 				 16);
 		key->nrf_wifi_key_len = 32;
 	}
-#endif /* CONFIG_NRF_WIFI_USE_KMU */
 
 	if (mac_addr) {
 		nrf_wifi_mem_cpy(key_cmd->mac_addr,
@@ -1344,7 +1340,7 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF71_AP_MODE
+#ifdef CONFIG_NRF71_WIFI_AP_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_bss(void *dev_ctx,
 					       unsigned char if_idx,
 					       struct nrf_wifi_umac_bss_info *bss_info)
@@ -1812,9 +1808,9 @@ out:
 	return status;
 }
 
-#endif /* CONFIG_NRF71_AP_MODE */
+#endif /* CONFIG_NRF71_WIFI_AP_SUPPORT */
 
-#ifdef CONFIG_NRF71_P2P_MODE
+#ifdef CONFIG_NRF71_WIFI_P2P_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_p2p_dev_start(void *dev_ctx,
 						     unsigned char if_idx)
 {
@@ -1989,8 +1985,8 @@ out:
 	return status;
 }
 
-#endif /* CONFIG_NRF71_P2P_MODE */
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_WIFI_P2P_SUPPORT */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_mgmt_tx(void *dev_ctx,
 					       unsigned char if_idx,
@@ -2105,11 +2101,11 @@ unsigned char nrf_wifi_sys_fmac_add_vif(void *dev_ctx,
 	switch (vif_info->iftype) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT
 	case NRF_WIFI_STA_TX_INJECTOR:
 	case NRF_WIFI_STA_PROMISC:
 	case NRF_WIFI_STA_PROMISC_TX_INJECTOR:
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
+#endif /* CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT */
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
 		break;
@@ -2143,7 +2139,7 @@ unsigned char nrf_wifi_sys_fmac_add_vif(void *dev_ctx,
 	 * packet_filter settings to appropriate value as
 	 * desired by application.
 	 */
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 	vif_ctx->packet_filter = 1;
 #endif
 
@@ -2256,11 +2252,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_vif(void *dev_ctx,
 	switch (vif_ctx->if_type) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT
 	case NRF_WIFI_STA_TX_INJECTOR:
 	case NRF_WIFI_STA_PROMISC:
 	case NRF_WIFI_STA_PROMISC_TX_INJECTOR:
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
+#endif /* CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT */
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
 		break;
@@ -2293,12 +2289,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_vif(void *dev_ctx,
 			reset_status = nrf_wifi_sys_fmac_chg_vif(fmac_dev_ctx, if_idx,
 						  &sta_info);
 		}
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT
 		else {
 			reset_status = nrf_wifi_sys_fmac_set_mode(fmac_dev_ctx, if_idx,
 						   NRF_WIFI_STA_MODE);
 		}
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
+#endif /* CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT */
 	}
 
 	if (reset_status != NRF_WIFI_STATUS_SUCCESS) {
@@ -2385,11 +2381,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif(void *dev_ctx,
 	switch (vif_info->iftype) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT
 	case NRF_WIFI_STA_TX_INJECTOR:
 	case NRF_WIFI_STA_PROMISC:
 	case NRF_WIFI_STA_PROMISC_TX_INJECTOR:
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
+#endif /* CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT */
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
 		break;
@@ -2517,7 +2513,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 			__func__, vif_info->state, vif_ctx->ifflags_status);
 		goto out;
 	}
-#ifdef CONFIG_NRF71_AP_MODE
+#ifdef CONFIG_NRF71_WIFI_AP_SUPPORT
 	if (vif_ctx->if_type == NRF_WIFI_IFTYPE_AP) {
 		if (vif_info->state == 1) {
 			sys_dev_ctx->tx_config.peers[MAX_PEERS].peer_id = MAX_PEERS;
@@ -2527,7 +2523,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 			sys_dev_ctx->tx_config.peers[MAX_PEERS].if_idx = if_idx;
 		}
 	}
-#endif /* CONFIG_NRF71_AP_MODE */
+#endif /* CONFIG_NRF71_WIFI_AP_SUPPORT */
 out:
 	if (chg_vif_state_cmd) {
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, chg_vif_state_cmd);
@@ -2700,7 +2696,7 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_get_tx_power(void *dev_ctx,
 						    unsigned int if_idx)
 {
@@ -3468,7 +3464,7 @@ out:
 
 	return status;
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						 enum rpu_stats_type stats_type,
@@ -3519,7 +3515,7 @@ out:
 }
 
 
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_WIFI_RAW_DATA_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_mode(void *dev_ctx,
 						unsigned char if_idx,
 						unsigned char mode)
@@ -3567,7 +3563,7 @@ out:
 }
 #endif
 
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT)
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 						   unsigned char if_idx,
 						   unsigned int channel,
@@ -3615,9 +3611,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 out:
 	return status;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT || CONFIG_NRF71_WIFI_MONITOR_SUPPORT */
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_WIFI_MONITOR_SUPPORT) || defined(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx, unsigned char filter,
 							 unsigned char if_idx,
 							 unsigned short buffer_size)
@@ -3663,10 +3659,10 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx, unsigned
 out:
 	return status;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_WIFI_MONITOR_SUPPORT || CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT */
 
 
-#ifdef CONFIG_NRF71_UTIL
+#ifdef CONFIG_NRF71_WIFI_UTIL_SHELL
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   unsigned char rate_flag,
 						   int data_rate)
@@ -3727,9 +3723,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_conf_ltf_gi(struct nrf_wifi_fmac_dev_ctx 
 out:
 	return status;
 }
-#endif /* CONFIG_NRF71_UTIL */
+#endif /* CONFIG_NRF71_WIFI_UTIL_SHELL */
 
-#ifdef CONFIG_NRF71_DEBUG_SHELL
+#ifdef CONFIG_NRF71_WIFI_DEBUG_SHELL
 enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						       enum rpu_stats_type stats_type,
 						       unsigned int stats_ctrl,
@@ -3835,9 +3831,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 out:
 	return status;
 }
-#endif /* CONFIG_NRF71_DEBUG_SHELL */
+#endif /* CONFIG_NRF71_WIFI_DEBUG_SHELL */
 
-#ifdef CONFIG_NRF71_UTIL
+#ifdef CONFIG_NRF71_WIFI_UTIL_SHELL
 enum nrf_wifi_status nrf_wifi_fmac_req_extended_sleep(void *dev_ctx,
 						      unsigned char if_idx,
 						      unsigned int duration_sec)
@@ -3885,7 +3881,7 @@ out:
 
 	return status;
 }
-#endif /* CONFIG_NRF71_UTIL */
+#endif /* CONFIG_NRF71_WIFI_UTIL_SHELL */
 
 
 #define MAX_BUFS_PER_CMD 32

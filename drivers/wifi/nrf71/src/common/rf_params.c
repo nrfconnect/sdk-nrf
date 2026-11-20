@@ -19,7 +19,7 @@
 #include <common/rf_params.h>
 #include <common/util.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 
 /* The RF front-end description lives on the Wi-Fi node, the parent of the wlan

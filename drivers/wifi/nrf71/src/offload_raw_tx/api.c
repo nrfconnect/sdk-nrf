@@ -24,12 +24,12 @@
 #include <offload_raw_tx/api.h>
 #include <vtf_monitoring/vtf_monitoring.h>
 
-#ifdef CONFIG_WIFI_RANDOM_MAC_ADDRESS
+#ifdef CONFIG_NRF71_WIFI_RANDOM_MAC_ADDRESS
 #include <zephyr/random/random.h>
-#endif /* CONFIG_WIFI_RANDOM_MAC_ADDRESS */
+#endif /* CONFIG_NRF71_WIFI_RANDOM_MAC_ADDRESS */
 
 #define DT_DRV_COMPAT nordic_wlan
-LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 /* Offloaded raw TX transmits from a single interface. */
 #define OFF_RAW_TX_VIF_IDX 0
@@ -39,7 +39,7 @@ struct nrf_wifi_off_raw_tx_drv_priv off_raw_tx_drv_priv;
 static const int valid_data_rates[] = { 1, 2, 55, 11, 6, 9, 12, 18, 24, 36, 48, 54,
 				  0, 1, 2, 3, 4, 5, 6, 7, -1 };
 
-#ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
+#ifdef CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS_ENABLED
 static int bytes_from_str(uint8_t *buf, int buf_len, const char *src)
 {
 	size_t i;
@@ -62,7 +62,7 @@ static int bytes_from_str(uint8_t *buf, int buf_len, const char *src)
 
 	return 0;
 }
-#endif /* CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED */
+#endif /* CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS_ENABLED */
 
 
 int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
@@ -130,12 +130,12 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	configure_tx_pwr_settings(&tx_pwr_ctrl_params, &tx_pwr_ceil_params);
 
 	status = nrf_wifi_off_raw_tx_fmac_dev_init(drv_ctx->rpu_ctx,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 						   HW_SLEEP_ENABLE,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 						   NRF_WIFI_DEF_PHY_CALIB,
 						   op_band,
-						   IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
+						   IS_ENABLED(CONFIG_NRF71_WIFI_BEAMFORMING),
 						   &tx_pwr_ctrl_params,
 						   &tx_pwr_ceil_params,
 						   country_code,
@@ -149,23 +149,23 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	if (mac_addr) {
 		memcpy(drv_ctx->mac_addr, mac_addr, WIFI_MAC_ADDR_LEN);
 	} else {
-#ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
+#ifdef CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS_ENABLED
 		int ret = bytes_from_str(drv_ctx->mac_addr,
 					 WIFI_MAC_ADDR_LEN,
-					 CONFIG_WIFI_FIXED_MAC_ADDRESS);
+					 CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS);
 
 		if (ret < 0) {
 			LOG_ERR("%s: Failed to parse MAC address: %s",
 				__func__,
-				CONFIG_WIFI_FIXED_MAC_ADDRESS);
+				CONFIG_NRF71_WIFI_FIXED_MAC_ADDRESS);
 			goto err;
 		}
-#elif CONFIG_WIFI_RANDOM_MAC_ADDRESS
+#elif CONFIG_NRF71_WIFI_RANDOM_MAC_ADDRESS
 		sys_rand_get(drv_ctx->mac_addr, WIFI_MAC_ADDR_LEN);
 
 		drv_ctx->mac_addr[0] &= ~BIT(0);
 		drv_ctx->mac_addr[0] |= BIT(1);
-#elif CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS
+#elif CONFIG_NRF71_WIFI_XICR_MAC_ADDRESS
 		int ret = nrf_wifi_xicr_mac_addr_get(OFF_RAW_TX_VIF_IDX,
 						     drv_ctx->mac_addr,
 						     NULL);
@@ -177,7 +177,7 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 			goto err;
 		}
 #else
-#error "No Wi-Fi MAC address type selected, see choice WIFI_MAC_ADDRESS"
+#error "No Wi-Fi MAC address type selected, see choice NRF71_WIFI_MAC_ADDRESS"
 #endif
 
 		if (!nrf_wifi_utils_is_mac_addr_valid(drv_ctx->mac_addr)) {
