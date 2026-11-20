@@ -63,10 +63,16 @@ function(hpf_assembly_generate soc hrt_srcs)
     COMMENT ${hrt_msg}
   )
 
+  # List of HRT sources read by the west ncs-hpf-asm-update command.
+  set(hrt_srcs_list_file ${CMAKE_CURRENT_BINARY_DIR}/hpf_asm_sources.txt)
+  file(WRITE ${hrt_srcs_list_file} "")
+
   foreach(hrt_src ${hrt_srcs})
     if(IS_DIRECTORY ${hrt_src})
       message(FATAL_ERROR "hpf_assembly_generate() was called on a directory")
     endif()
+    get_filename_component(hrt_src_abs ${hrt_src} ABSOLUTE)
+    file(APPEND ${hrt_srcs_list_file} "${hrt_src_abs}\n")
     get_filename_component(src_filename ${hrt_src} NAME_WE)  # filename without extension
     add_custom_command(TARGET asm_gen
       PRE_BUILD
@@ -126,5 +132,7 @@ function(hpf_assembly_prepare_install soc hrt_srcs)
     COMMAND ${CMAKE_COMMAND} -D hrt_srcs="${hrt_srcs_semi}" -D soc="${soc}" -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/hpf_asm_install.cmake
     COMMENT ${asm_install_msg}
   )
+
+  add_dependencies(asm_install asm_gen)
 
 endfunction()

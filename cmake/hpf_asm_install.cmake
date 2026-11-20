@@ -18,9 +18,11 @@ function(asm_install)
     get_filename_component(asm_filename ${hrt_src} NAME_WE)  # filename without extension
     get_filename_component(src_dir ${hrt_src} DIRECTORY)
 
-    file(RENAME ${asm_filename}-${soc}-temp.s ${src_dir}/${asm_filename}-${soc}.s RESULT rename_result)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E copy
+                    ${asm_filename}-${soc}-temp.s ${src_dir}/${asm_filename}-${soc}.s
+                    RESULT_VARIABLE copy_result)
 
-    if(rename_result EQUAL 0)
+    if(copy_result EQUAL 0)
       message("Updated ${asm_filename}-${soc}.s ASM file.")
     else()
       message(WARNING "${asm_filename}-${soc}.s cannot be updated, new ASM does not exist. Please run ninja asm_gen to create one.")
