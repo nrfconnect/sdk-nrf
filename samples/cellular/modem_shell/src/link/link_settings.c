@@ -54,7 +54,7 @@
 
 /* ****************************************************************************/
 
-#define LINK_SETT_SYSMODE_KEY "sysmode"
+#define LINK_SETT_SYSMODE_KEY "sysmode_mask"
 #define LINK_SETT_SYSMODE_LTE_PREFERENCE_KEY "sysmode_lte_pref"
 
 /* ****************************************************************************/
@@ -79,7 +79,7 @@ struct link_sett_t {
 	char dnsaddr_ip_str[LINK_SETT_DNSADDR_MAX_IP_LEN + 1];
 	bool dnsaddr_enabled;
 
-	enum lte_lc_system_mode sysmode;
+	uint32_t sysmode;
 	enum lte_lc_system_mode_preference sysmode_lte_preference;
 	enum lte_lc_pdn_family pdn_family;
 	enum lte_lc_pdn_auth defcontauth_prot;
@@ -513,8 +513,7 @@ void link_sett_dnsaddr_conf_shell_print(void)
 
 /* ****************************************************************************/
 
-int link_sett_sysmode_save(enum lte_lc_system_mode mode,
-			   enum lte_lc_system_mode_preference lte_pref)
+int link_sett_sysmode_save(uint32_t mode, enum lte_lc_system_mode_preference lte_pref)
 {
 	const char *key = LINK_SETT_KEY "/" LINK_SETT_SYSMODE_KEY;
 	const char *lte_pref_key = LINK_SETT_KEY "/" LINK_SETT_SYSMODE_LTE_PREFERENCE_KEY;
@@ -526,7 +525,7 @@ int link_sett_sysmode_save(enum lte_lc_system_mode mode,
 		return err;
 	}
 	link_settings.sysmode = mode;
-	mosh_print("sysmode %d saved successfully to settings", mode);
+	mosh_print("sysmode 0x%x saved successfully to settings", mode);
 
 	err = settings_save_one(lte_pref_key, &lte_pref, sizeof(lte_pref));
 	if (err) {

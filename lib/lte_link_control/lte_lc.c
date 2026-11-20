@@ -156,6 +156,16 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 	return xsystemmode_mode_get(mode, preference);
 }
 
+int lte_lc_system_mode_mask_set(uint32_t mask, enum lte_lc_system_mode_preference preference)
+{
+	return xsystemmode_mask_set(mask, preference);
+}
+
+int lte_lc_system_mode_mask_get(uint32_t *mask, enum lte_lc_system_mode_preference *preference)
+{
+	return xsystemmode_mask_get(mask, preference);
+}
+
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode)
 {
 	return cfun_mode_get(mode);

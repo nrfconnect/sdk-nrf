@@ -40,7 +40,7 @@ NRF_MODEM_LIB_ON_INIT(lte_lc_init_hook, on_modem_init, NULL);
 static void on_modem_init(int err, void *ctx)
 #endif
 {
-	extern const enum lte_lc_system_mode lte_lc_sys_mode;
+	extern const uint32_t lte_lc_sys_mode_mask;
 	extern const enum lte_lc_system_mode_preference lte_lc_sys_mode_pref;
 
 	if (err) {
@@ -51,7 +51,7 @@ static void on_modem_init(int err, void *ctx)
 	mfw_type_init();
 
 	if (!IS_ENABLED(CONFIG_LTE_NETWORK_MODE_DEFAULT)) {
-		err = lte_lc_system_mode_set(lte_lc_sys_mode, lte_lc_sys_mode_pref);
+		err = lte_lc_system_mode_mask_set(lte_lc_sys_mode_mask, lte_lc_sys_mode_pref);
 		if (err) {
 			LOG_ERR("Failed to set system mode and mode preference, err %d", err);
 		}

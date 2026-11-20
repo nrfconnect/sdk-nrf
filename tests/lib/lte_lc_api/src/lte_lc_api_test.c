@@ -2093,7 +2093,7 @@ void test_lte_lc_system_mode_get_all_modes(void)
 
 	for (size_t i = 0; i < ARRAY_SIZE(system_modes); ++i) {
 		__mock_nrf_modem_at_scanf_ExpectAndReturn(
-			"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
+			"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 4);
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(system_modes[i][1]); /* ltem_mode */
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(system_modes[i][2]); /* nbiot_mode */
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(system_modes[i][3]); /* gps_mode */
@@ -2114,7 +2114,7 @@ void test_lte_lc_system_mode_get_all_preferences(void)
 
 	for (int i = 0; i < 5; ++i) {
 		__mock_nrf_modem_at_scanf_ExpectAndReturn(
-			"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
+			"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 4);
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* ltem_mode */
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* nbiot_mode */
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* gps_mode */
@@ -2133,7 +2133,7 @@ void test_lte_lc_system_mode_get_no_pref(void)
 	enum lte_lc_system_mode mode;
 
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* ltem_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* nbiot_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* gps_mode */
@@ -2151,7 +2151,7 @@ void test_lte_lc_system_mode_get_at_scanf_fail(void)
 	enum lte_lc_system_mode_preference preference;
 
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 3);
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 3);
 
 	ret = lte_lc_system_mode_get(&mode, &preference);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
@@ -2173,7 +2173,7 @@ void test_lte_lc_system_mode_get_invalid_mode_fail(void)
 	enum lte_lc_system_mode_preference preference;
 
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* ltem_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* nbiot_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* gps_mode */
@@ -2190,13 +2190,253 @@ void test_lte_lc_system_mode_get_invalid_pref_fail(void)
 	enum lte_lc_system_mode_preference preference;
 
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* ltem_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* nbiot_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* gps_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0x0000FFFF); /* mode_preference */
 
 	ret = lte_lc_system_mode_get(&mode, &preference);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_system_mode_set_ntn_nbiot(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=0,0,0,0,1", EXIT_SUCCESS);
+
+	ret = lte_lc_system_mode_set(LTE_LC_SYSTEM_MODE_NTN_NBIOT, LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_system_mode_set_ntn_nbiot_invalid_pref_fail(void)
+{
+	int ret;
+
+	ret = lte_lc_system_mode_set(LTE_LC_SYSTEM_MODE_NTN_NBIOT, LTE_LC_SYSTEM_MODE_PREFER_LTEM);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_system_mode_mask_set_all_tn_modes(void)
+{
+	int ret;
+	char at_cmd[32];
+	uint32_t mask;
+
+	for (size_t i = 0; i < ARRAY_SIZE(system_modes); ++i) {
+		mask = (system_modes[i][1] ? LTE_LC_SYSTEM_MODE_BIT_LTEM : 0) |
+		       (system_modes[i][2] ? LTE_LC_SYSTEM_MODE_BIT_NBIOT : 0) |
+		       (system_modes[i][3] ? LTE_LC_SYSTEM_MODE_BIT_GNSS : 0);
+
+		for (int preference = 0; preference < 5; ++preference) {
+			sprintf(at_cmd, "AT%%XSYSTEMMODE=%d,%d,%d,%d",
+				system_modes[i][1],
+				system_modes[i][2],
+				system_modes[i][3],
+				preference);
+			__mock_nrf_modem_at_printf_ExpectAndReturn(at_cmd, EXIT_SUCCESS);
+			ret = lte_lc_system_mode_mask_set(mask, preference);
+			TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+		}
+	}
+}
+
+void test_lte_lc_system_mode_mask_set_ntn_modes(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=0,0,0,0,1", EXIT_SUCCESS);
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD,
+					  LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=0,0,1,0,1", EXIT_SUCCESS);
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD |
+					  LTE_LC_SYSTEM_MODE_BIT_GNSS,
+					  LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=0,0,0,0,0,1", EXIT_SUCCESS);
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD,
+					  LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=0,0,1,0,0,1", EXIT_SUCCESS);
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD |
+					  LTE_LC_SYSTEM_MODE_BIT_GNSS,
+					  LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_system_mode_mask_set_invalid_mask_fail(void)
+{
+	int ret;
+
+	ret = lte_lc_system_mode_mask_set(0, LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_system_mode_mask_set(BIT(5), LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD |
+					  LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD,
+					  LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD |
+					  LTE_LC_SYSTEM_MODE_BIT_LTEM,
+					  LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD |
+					  LTE_LC_SYSTEM_MODE_BIT_NBIOT,
+					  LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_system_mode_mask_set_invalid_pref_fail(void)
+{
+	int ret;
+
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_LTEM, 0xFF);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD,
+					  LTE_LC_SYSTEM_MODE_PREFER_LTEM);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_system_mode_mask_set_at_printf_fail(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=0,0,0,0,0,1", 1);
+
+	ret = lte_lc_system_mode_mask_set(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD,
+					  LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_system_mode_mask_get_4_params(void)
+{
+	int ret;
+	uint32_t mask;
+	enum lte_lc_system_mode_preference preference;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(3);
+
+	ret = lte_lc_system_mode_mask_get(&mask, &preference);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	TEST_ASSERT_EQUAL(LTE_LC_SYSTEM_MODE_BIT_LTEM | LTE_LC_SYSTEM_MODE_BIT_NBIOT |
+			  LTE_LC_SYSTEM_MODE_BIT_GNSS, mask);
+	TEST_ASSERT_EQUAL(LTE_LC_SYSTEM_MODE_PREFER_LTEM_PLMN_PRIO, preference);
+}
+
+void test_lte_lc_system_mode_mask_get_5_params(void)
+{
+	int ret;
+	uint32_t mask;
+	enum lte_lc_system_mode_preference preference;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 5);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+
+	ret = lte_lc_system_mode_mask_get(&mask, &preference);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	TEST_ASSERT_EQUAL(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_FDD | LTE_LC_SYSTEM_MODE_BIT_GNSS,
+			  mask);
+	TEST_ASSERT_EQUAL(LTE_LC_SYSTEM_MODE_PREFER_AUTO, preference);
+}
+
+void test_lte_lc_system_mode_mask_get_6_params(void)
+{
+	int ret;
+	uint32_t mask;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 6);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+
+	ret = lte_lc_system_mode_mask_get(&mask, NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	TEST_ASSERT_EQUAL(LTE_LC_SYSTEM_MODE_BIT_NTN_NBIOT_TDD, mask);
+}
+
+void test_lte_lc_system_mode_mask_get_null_fail(void)
+{
+	int ret;
+
+	ret = lte_lc_system_mode_mask_get(NULL, NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_system_mode_get_ntn_nbiot(void)
+{
+	int ret;
+	enum lte_lc_system_mode mode;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 6);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+
+	ret = lte_lc_system_mode_get(&mode, NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	TEST_ASSERT_EQUAL(LTE_LC_SYSTEM_MODE_NTN_NBIOT, mode);
+}
+
+void test_lte_lc_system_mode_get_ntn_nbiot_tdd_unrepresentable(void)
+{
+	int ret;
+	enum lte_lc_system_mode mode;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 6);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+
+	ret = lte_lc_system_mode_get(&mode, NULL);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_system_mode_get_ntn_nbiot_gnss_unrepresentable(void)
+{
+	int ret;
+	enum lte_lc_system_mode mode;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d,%d", 5);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+
+	ret = lte_lc_system_mode_get(&mode, NULL);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 

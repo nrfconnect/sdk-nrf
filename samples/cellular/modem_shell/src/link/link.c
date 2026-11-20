@@ -672,7 +672,7 @@ int link_func_mode_set(enum lte_lc_func_mode fun)
 {
 	int ret = 0;
 	int sysmode;
-	enum lte_lc_system_mode curr_sysmode;
+	uint32_t curr_sysmode;
 	int lte_pref;
 	enum lte_lc_system_mode_preference curr_lte_pref;
 
@@ -701,13 +701,14 @@ int link_func_mode_set(enum lte_lc_func_mode fun)
 			/* System mode configuration is set, check if modem system mode needs to
 			 * be updated.
 			 */
-			if (lte_lc_system_mode_get(&curr_sysmode, &curr_lte_pref) != 0 ||
+			if (lte_lc_system_mode_mask_get(&curr_sysmode, &curr_lte_pref) != 0 ||
 			    curr_sysmode != sysmode ||
 			    curr_lte_pref != lte_pref) {
 				/* System mode needs to be updated. */
-				ret = lte_lc_system_mode_set(sysmode, lte_pref);
+				ret = lte_lc_system_mode_mask_set(sysmode, lte_pref);
 				if (ret < 0) {
-					mosh_warn("lte_lc_system_mode_set returned error %d", ret);
+					mosh_warn("lte_lc_system_mode_mask_set returned error %d",
+						  ret);
 				}
 			}
 		}

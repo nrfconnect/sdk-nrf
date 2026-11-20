@@ -709,11 +709,19 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
-  * Added Wi-Fi scan parameter options to the ``location get`` command.
+  * Added:
+
+    * Wi-Fi scan parameter options to the ``location get`` command.
+    * The ``--ntn_fdd``, ``--ntn_fdd_gnss``, ``--ntn_tdd``, and ``--ntn_tdd_gnss`` options to the ``link sysmode`` command.
+
+  * Updated the ``link sysmode`` command to store the system mode in settings using a new key.
+    A system mode stored by a previous version of the sample is not used, and must be set again.
 
   * Removed:
 
     * Support for Bluetooth shell.
+    * The ``--ntn`` option from the ``link sysmode`` command.
+      Use the ``--ntn_fdd`` option instead.
     * Support for the ``--normal_no_rel14`` option from the ``link funmode`` command and the ``--enable_no_rel14`` option from the ``link nmodeauto`` command.
       The ``AT%REL14FEAT`` AT command used for the feature is only supported by the nRF9160 SiP.
 
@@ -1412,6 +1420,10 @@ Modem libraries
         Disabled by default.
       * :kconfig:option:`CONFIG_LTE_UICC_DEACTIVATION_NO_CELLS` - Deactivates the UICC when no cells are available.
         Enabled by default.
+
+    * The :c:func:`lte_lc_system_mode_mask_set` and :c:func:`lte_lc_system_mode_mask_get` functions to set and get the system mode as a bitmask of ``LTE_LC_SYSTEM_MODE_BIT_*`` values.
+    * Support for the NTN NB-IoT TDD system mode, and for NTN NB-IoT FDD or TDD together with GNSS on nRF92 Series devices.
+      You can set these system modes using the :c:func:`lte_lc_system_mode_mask_set` function or the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NTN_NBIOT_GNSS`, :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NTN_NBIOT_TDD`, and :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NTN_NBIOT_TDD_GNSS` Kconfig options.
 
   * Updated:
 

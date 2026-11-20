@@ -541,7 +541,7 @@ clean_exit:
 void link_api_modem_info_get_for_shell(bool connected)
 {
 	struct pdp_context_info_array pdp_context_info_tbl;
-	enum lte_lc_system_mode sys_mode_current;
+	uint32_t sys_mode_current;
 	enum lte_lc_system_mode_preference sys_mode_preferred;
 	enum lte_lc_lte_mode currently_active_mode;
 	char info_str[MODEM_INFO_MAX_RESPONSE_SIZE + 1];
