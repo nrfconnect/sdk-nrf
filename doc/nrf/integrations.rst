@@ -23,7 +23,7 @@ The following user guides describe available integrations:
    :maxdepth: 1
    :caption: nRF Connect SDK add-on integrations:
 
-   external_comp/edgeai
+   external_comp/add_ons/index
 
 .. toctree::
    :maxdepth: 1
