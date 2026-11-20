@@ -274,6 +274,8 @@ You can list the images again to see the updated status:
 Verifying and testing the image
 ===============================
 
+For the recommended test-and-confirm workflow in application firmware, including self-confirmation with :c:func:`boot_write_img_confirmed`, see :ref:`ug_fw_update_test_confirm`.
+
 To test a new upgrade image, use the command:
 
 .. code-block:: console
