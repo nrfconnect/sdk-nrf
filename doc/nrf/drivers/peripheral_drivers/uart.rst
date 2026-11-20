@@ -186,7 +186,7 @@ It is disabled by default to reduce the code size.
 Limitations
 ***********
 
-Below are the list of known driver limitations.
+Below is the list of known driver limitations.
 
 nRF54H20
 ========
