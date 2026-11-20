@@ -11,9 +11,11 @@
  * @brief Power on the Wi-Fi subsystem and start the LMAC.
  *
  * Enables the WIFICORE resources, clears the Wi-Fi System Off token, and starts
- * the LMAC. Firmware readiness is reported asynchronously.
+ * the LMAC. An already-running LMAC is powered off first. Firmware readiness
+ * is reported asynchronously.
  *
  * @retval 0 on success.
+ * @retval -EIO if the running subsystem's reset status is not observed in time.
  */
 int nrf_wifi_power_on(void);
 
