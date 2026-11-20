@@ -81,6 +81,20 @@ static struct zsock_addrinfo res_data_uio_ntp = {
 
 static struct zsock_addrinfo *res_uio_ntp = &res_data_uio_ntp;
 
+/* IPv6 address that does not reach the server, followed by the IPv4 address */
+static struct net_sockaddr ai_addr_uio_ntp_ipv6 = {
+	.sa_family = NET_AF_INET6,
+	.data = "2001:db8::1"
+};
+
+static struct zsock_addrinfo res_data_uio_ntp_ipv6 = {
+	.ai_addr = &ai_addr_uio_ntp_ipv6,
+	.ai_addrlen = sizeof(struct net_sockaddr),
+	.ai_next = &res_data_uio_ntp,
+};
+
+static struct zsock_addrinfo *res_uio_ntp_ipv6 = &res_data_uio_ntp_ipv6;
+
 static struct net_sockaddr ai_addr_google_ntp = {
 	.sa_family = NET_AF_INET,
 	.data = "1.2.3.4"
@@ -474,9 +488,20 @@ void test_date_time_initial_auto_update_at_1s_from_boot(void)
 	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT+CEREG?", "+CEREG: %*u,%hu,%*[^,],\"%x\",", 1);
 	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_NW_REG_REGISTERED_HOME);
 
+	/* NTP query fails for the IPv6 address and succeeds for the IPv4 address */
 	__cmock_zsock_getaddrinfo_ExpectAndReturn("ntp.uio.no", "123", &hints, NULL, 0);
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
-	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&res_uio_ntp);
+	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&res_uio_ntp_ipv6);
+
+	__cmock_sntp_init_ExpectAndReturn(NULL, &ai_addr_uio_ntp_ipv6, sizeof(struct net_sockaddr),
+					  0);
+	__cmock_sntp_init_IgnoreArg_ctx();
+
+	__cmock_sntp_query_ExpectAndReturn(NULL, 5000, NULL, -ETIMEDOUT);
+	__cmock_sntp_query_IgnoreArg_ctx();
+	__cmock_sntp_query_IgnoreArg_ts();
+
+	__cmock_sntp_close_ExpectAnyArgs();
 
 	__cmock_sntp_init_ExpectAndReturn(NULL, &ai_addr_uio_ntp, sizeof(struct net_sockaddr), 0);
 	__cmock_sntp_init_IgnoreArg_ctx();
@@ -486,8 +511,8 @@ void test_date_time_initial_auto_update_at_1s_from_boot(void)
 	__cmock_sntp_query_IgnoreArg_ts();
 	__cmock_sntp_query_ReturnThruPtr_ts(&sntp_time_value);
 
-	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_sntp_close_ExpectAnyArgs();
+	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 #else /* CONFIG_DATE_TIME_MODEM */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT+CCLK?", "+CCLK: \"%u/%u/%u,%u:%u:%u%d", 7);
 	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(24);
@@ -940,7 +965,6 @@ void test_date_time_update_all_retry_ntp_fail(void)
 	__cmock_sntp_init_ExpectAnyArgsAndReturn(-1);
 
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
-	__cmock_sntp_close_ExpectAnyArgs();
 
 	/* NTP fails in NTP query for Google */
 	__cmock_zsock_getaddrinfo_ExpectAndReturn("time.google.com", "123", &hints, NULL, 0);

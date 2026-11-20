@@ -173,7 +173,8 @@ static int dtls_setup(int fd)
 static int socket_connect(int *const fd)
 {
 	struct zsock_addrinfo hints = {};
-	struct zsock_addrinfo *address = NULL;
+	struct zsock_addrinfo *result = NULL;
+	struct zsock_addrinfo *addr;
 	int st;
 	int ret = 0;
 	struct net_sockaddr *sa;
@@ -183,48 +184,51 @@ static int socket_connect(int *const fd)
 
 	LOG_DBG("CoAP host: %s", COAP_HOST);
 	hints.ai_socktype = NET_SOCK_DGRAM;
-	st = zsock_getaddrinfo(COAP_HOST, PEER_PORT, &hints, &address);
+	st = zsock_getaddrinfo(COAP_HOST, PEER_PORT, &hints, &result);
 	LOG_DBG("getaddrinfo status: %d", st);
 	LOG_DBG("fd: %d", *fd);
 
 	if (st != 0) {
 		LOG_ERR("Unable to resolve address");
-		ret = -EFAULT;
-		goto clean_up;
+		return -EFAULT;
 	}
 
-	sa = address->ai_addr;
-	zsock_inet_ntop(sa->sa_family,
-		  (void *)&((struct net_sockaddr_in *)sa)->sin_addr,
-		  peer_addr,
-		  NET_INET6_ADDRSTRLEN);
-	LOG_DBG("getaddrinfo() %s", peer_addr);
+	/* Try each address in turn until one works */
+	ret = -ENOENT;
+	for (addr = result; addr != NULL; addr = addr->ai_next) {
+		sa = addr->ai_addr;
+		zsock_inet_ntop(sa->sa_family,
+			  (void *)&((struct net_sockaddr_in *)sa)->sin_addr,
+			  peer_addr,
+			  NET_INET6_ADDRSTRLEN);
+		LOG_DBG("getaddrinfo() %s", peer_addr);
 
-	*fd = zsock_socket(address->ai_family, address->ai_socktype, NET_IPPROTO_DTLS_1_2);
-	if (*fd < 0) {
-		LOG_ERR("Failed to create UDP socket %d", errno);
-		ret = -errno;
-		goto clean_up;
-	}
+		*fd = zsock_socket(addr->ai_family, addr->ai_socktype, NET_IPPROTO_DTLS_1_2);
+		if (*fd < 0) {
+			LOG_ERR("Failed to create UDP socket %d", errno);
+			ret = -errno;
+			continue;
+		}
 
-	/* Setup DTLS socket options */
-	ret = dtls_setup(*fd);
-	if (ret) {
-		goto clean_up;
-	}
+		/* Setup DTLS socket options */
+		ret = dtls_setup(*fd);
+		if (ret) {
+			/* Not specific to the address, do not try the next one */
+			break;
+		}
 
-	if (zsock_connect(*fd, address->ai_addr, address->ai_addrlen) < 0) {
+		if (zsock_connect(*fd, addr->ai_addr, addr->ai_addrlen) == 0) {
+			LOG_INF("Connected");
+			break;
+		}
+
 		LOG_ERR("Failed to connect UDP socket %d", errno);
 		ret = -errno;
-		goto clean_up;
+		(void)zsock_close(*fd);
+		*fd = -1;
 	}
-	LOG_INF("Connected");
 
-clean_up:
-
-	if (address) {
-		zsock_freeaddrinfo(address);
-	}
+	zsock_freeaddrinfo(result);
 
 	if (ret) {
 		if (*fd > -1) {

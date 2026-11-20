@@ -141,6 +141,10 @@ int z_impl_zsock_close(int sock)
 static struct zsock_addrinfo addrinfo;
 static struct net_sockaddr ai_addr;
 
+/* Number of zsock_connect() calls to fail, and the last address connect was called with */
+static int connect_fail_count;
+static const struct net_sockaddr *connect_addr;
+
 int zsock_getaddrinfo(const char *host, const char *service, const struct zsock_addrinfo *hints,
 		      struct zsock_addrinfo **res)
 {
@@ -155,6 +159,14 @@ void zsock_freeaddrinfo(struct zsock_addrinfo *ai)
 
 int z_impl_zsock_connect(int sock, const struct net_sockaddr *addr, net_socklen_t addrlen)
 {
+	connect_addr = addr;
+
+	if (connect_fail_count > 0) {
+		connect_fail_count--;
+		errno = ENETUNREACH;
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -560,6 +572,44 @@ void test_coap_auth_valid(void)
 	__cmock_coap_client_option_initial_block2_CMockIgnoreAndReturn(0, block2_option);
 
 	nrf_provisioning_coap_req(&coap_ctx);
+}
+
+/*
+ * - Connecting to the first resolved address fails
+ * - The next address is used
+ */
+void test_coap_connect_next_address(void)
+{
+	struct nrf_provisioning_coap_context coap_ctx = {
+		.connect_socket = -1,
+	};
+	struct net_sockaddr ai_addr_next;
+	struct zsock_addrinfo addrinfo_next = {
+		.ai_addr = &ai_addr_next,
+	};
+	struct coap_client_option block2_option = {};
+
+	addrinfo.ai_next = &addrinfo_next;
+	connect_fail_count = 1;
+
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+
+	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
+
+	__cmock_coap_client_req_AddCallback(coap_client_auth_cb);
+	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
+	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
+	__cmock_coap_client_option_initial_block2_CMockIgnoreAndReturn(0, block2_option);
+
+	nrf_provisioning_coap_req(&coap_ctx);
+
+	addrinfo.ai_next = NULL;
+
+	TEST_ASSERT_EQUAL(0, connect_fail_count);
+	TEST_ASSERT_EQUAL_PTR(&ai_addr_next, connect_addr);
 }
 
 /*
