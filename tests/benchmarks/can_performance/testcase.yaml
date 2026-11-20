@@ -14,15 +14,10 @@ common:
     - nrf54lm20dk/nrf54lm20b/cpuapp
 
 tests:
-  benchmarks.can_performance.manual:
+  benchmarks.can_performance.cpu_load:
     build_only: true
     extra_configs:
       - CONFIG_CPU_LOAD=y
-
-  benchmarks.can_performance.cpu_load:
-    extra_configs:
-      - CONFIG_CPU_LOAD=y
-      - CONFIG_TEST_CAN_PERF_SHORT_RUN=y
     harness: console
     harness_config:
       type: multi_line
