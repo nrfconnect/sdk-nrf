@@ -3157,14 +3157,26 @@ bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const inp
 
 void nrf_cloud_obj_shadow_delta_free(struct nrf_cloud_obj_shadow_delta *const delta)
 {
-	if (delta && !delta->is_err) {
+	if (!delta) {
+		return;
+	}
+
+	if (delta->is_err) {
+		(void)nrf_cloud_obj_free(&delta->error.err_obj);
+	} else {
 		(void)nrf_cloud_obj_free(&delta->state);
 	}
 }
 
 void nrf_cloud_obj_shadow_transform_free(struct nrf_cloud_obj_shadow_transform *const tf)
 {
-	if (tf && !tf->is_err) {
+	if (!tf) {
+		return;
+	}
+
+	if (tf->is_err) {
+		(void)nrf_cloud_obj_free(&tf->error.err_obj);
+	} else {
 		(void)nrf_cloud_obj_free(&tf->result.obj);
 	}
 }
@@ -3215,10 +3227,9 @@ int nrf_cloud_obj_shadow_delta_decode(struct nrf_cloud_obj *const shadow_obj,
 		LOG_ERR("Shadow delta error %d : %s, ver %d, ts %lld",
 			delta->error.code, delta->error.msg, delta->ver, delta->ts);
 
-		/* Only store the JSON pointer without copying the entire structure.
-		 * This is just a reference to shadow_obj data, not owned by err_obj.
-		 */
-		delta->error.err_obj.json = shadow_obj->json;
+		/* err_obj takes ownership; error.msg points into it */
+		delta->error.err_obj = *shadow_obj;
+		nrf_cloud_obj_reset(shadow_obj);
 		/* Not returning a negative error so the application can be notified */
 		return 0;
 	}
@@ -3273,10 +3284,9 @@ int nrf_cloud_obj_shadow_transform_decode(struct nrf_cloud_obj *const shadow_obj
 
 		LOG_ERR("Transform error %d : %s", tf->error.code, tf->error.msg);
 
-		/* Only store the JSON pointer without copying the entire structure.
-		 * This is just a reference to shadow_obj data, not owned by err_obj.
-		 */
-		tf->error.err_obj.json = shadow_obj->json;
+		/* err_obj takes ownership; error.msg points into it */
+		tf->error.err_obj = *shadow_obj;
+		nrf_cloud_obj_reset(shadow_obj);
 	} else {
 		/* Attach the result object */
 		err = nrf_cloud_obj_object_detach(shadow_obj, NRF_CLOUD_TRANSFORM_RSP_TF_KEY,
@@ -3285,9 +3295,8 @@ int nrf_cloud_obj_shadow_transform_decode(struct nrf_cloud_obj *const shadow_obj
 			LOG_ERR("Failed to get transform response result object");
 			return -ENODATA;
 		}
+		(void)nrf_cloud_obj_free(shadow_obj);
 	}
-
-	nrf_cloud_obj_reset(shadow_obj);
 
 	return 0;
 }
