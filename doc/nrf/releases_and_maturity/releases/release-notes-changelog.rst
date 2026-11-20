@@ -1650,7 +1650,11 @@ Other libraries
 
 * :ref:`lib_date_time` library:
 
-  * Updated the library to resolve the NTP servers only for the address families that the Connection Manager reports as ready.
+  * Updated:
+
+    * The library to resolve the NTP servers only for the address families that the Connection Manager reports as ready.
+    * The library to query the next resolved address of an NTP server if the query fails.
+
   * Fixed an issue where periodic time updates stopped permanently if the time was obtained, for example, from an ``%XTIME`` notification shortly before a scheduled update.
 
 * :ref:`dult_readme` library:
