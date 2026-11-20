@@ -662,6 +662,7 @@ Bluetooth Fast Pair samples
       The options were moved from the sample-wide configuration files to the board configuration files in the :file:`configuration/boards` directory, as the TX power correction is hardware-specific.
       Every supported board target now declares its own calibration.
     * The sample configuration to use the DULT API variant v2 (:kconfig:option:`CONFIG_DULT_API_VARIANT_V2`).
+    * The testing steps and screenshots in the sample documentation to reflect the new FHN provisioning flow in the `Find Hub app`_.
 
 * :ref:`fast_pair_input_device` sample:
 
