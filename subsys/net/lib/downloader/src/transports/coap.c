@@ -439,6 +439,9 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 
 	memset(coap, 0, sizeof(struct transport_params_coap));
 
+	/* The zeroed fd is a valid descriptor, so mark the socket as not open. */
+	coap->sock.fd = -1;
+
 	if (cfg_set) {
 		coap->cfg = tmp_cfg;
 		coap->cfg_set = cfg_set;
@@ -551,7 +554,10 @@ cleanup:
 
 	/* Run auth callback if set */
 	if (coap->auth_cb != NULL) {
-		return coap->auth_cb(coap->sock.fd);
+		err = coap->auth_cb(coap->sock.fd);
+		if (err) {
+			dl_socket_close(&coap->sock.fd);
+		}
 	}
 
 	return err;
