@@ -1105,9 +1105,14 @@ Trusted Firmware-M (TF-M) samples
 
   * Added support for nRF54L Series devices.
 
+* :ref:`tfm_secure_peripheral_partition` sample:
+
+  * Added support for the ``nrf7120dk/nrf7120/cpuapp/ns`` board target to the Twister configuration.
+
 * :ref:`provisioning_image` sample:
 
   * Added support for nRF54L Series devices.
+  * Updated the sample to include :ref:`provisioning_image_net_core` as the default network-core sysbuild image for the ``nrf5340dk/nrf5340/cpuapp`` board target.
 
 Thread samples
 --------------

@@ -25,7 +25,7 @@ For more information on TF-M partitions, see :ref:`ug_tfm_partitioning`.
 The sample demonstrates how to configure peripherals as secure peripherals and use them in a TF-M partition.
 In this way, the peripheral is only accessible from the :ref:`Secure Processing Environment (SPE) <app_boards_spe_nspe>`, or from a TF-M partition with :ref:`isolation level 2 or higher<ug_tfm_architecture_isolation_lvls>`.
 
-The TF-M partition used in this sample is located in the :file:`secure_peripheral_partition` directory at the sample root.
+The TF-M partition used in this sample is located in the :ncs-file:`secure_peripheral_partition` directory at the sample root.
 It contains the partition sources, build files and build configuration files.
 The partition is built by the :ref:`TF-M build system <tfm_build_system>`, which is called by the |NCS| build system.
 
@@ -37,7 +37,7 @@ Configuration
 Configuration files
 ===================
 
-The partition configuration and source files are in the :file:`secure_peripheral_partition` directory.
+The partition configuration and source files are in the :ncs-file:`secure_peripheral_partition` directory.
 
 The following files are available:
 
@@ -62,7 +62,10 @@ Enabling secure peripheral
 
 To start using a peripheral as a secure peripheral, complete the following steps:
 
-1. In your application's :file:`prj.conf` file, enable the peripheral for use in the SPE by setting the relevant Kconfig options to ``y`` (the following example assigns the TIMER1 peripheral as secure):
+1. In your application's :ncs-file:`prj.conf` file, enable the peripheral for use in the SPE by setting the relevant Kconfig options to ``y`` (the following example assigns the TIMER1 peripheral as secure on nRF5340 or nRF91 Series):
+
+   .. note::
+      On nRF54L Series and nRF7120 DK targets, the secure peripheral Kconfig options are set in the board-specific :ncs-file:`boards/` fragments (for example ``CONFIG_NRF_TIMER10_SECURE`` instead of ``CONFIG_NRF_TIMER1_SECURE``).
 
    .. code-block:: none
 
@@ -77,7 +80,7 @@ To start using a peripheral as a secure peripheral, complete the following steps
       CONFIG_NRF_GPIO0_PIN_MASK_SECURE=0x00800000
 
    .. note::
-      If the secure peripheral uses GPIO pins, explicitly mark those pins as secure in the :file:`prj.conf` file.
+      If the secure peripheral uses GPIO pins, explicitly mark those pins as secure in the :ncs-file:`prj.conf` file.
       The GPIO controller is used to implement security by separation on Nordic devices: each pin is non-secure by default.
       Assigning a peripheral to the SPE (for example, with ``CONFIG_NRF_TIMER1_SECURE=y``) does not automatically secure its GPIO pins.
       TF-M only derives secure GPIO pins from devicetree for secure UART and SPIM instances.
@@ -171,19 +174,19 @@ Configuring access to other TF-M partitions
 You can configure the secure peripheral partition to access services from other TF-M partitions (such as Crypto or Protected Storage).
 
 For this, you must explicitly list these dependencies in the partition manifest YAML file :ncs-file:`secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
-For example, to allow access to the Protected Storage partition, add it to the ``dependencies`` section:
+For example, to allow access to the Crypto partition, add ``TFM_CRYPTO`` to the ``dependencies`` list (the sample manifest already includes this entry):
 
 .. code-block:: yaml
 
    dependencies:
-     - name: "TFM_SP_PS"
+     - "TFM_CRYPTO"
 
-Building and Running
+Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/tfm_secure_peripheral`
+.. |sample path| replace:: :ncs-file:`/samples/tfm/tfm_secure_peripheral`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -192,24 +195,26 @@ The sample displays the following output in the console from the firmware in the
 
 .. code-block:: console
 
-        SPP: send message: Success
-        SPP: process signals: Success
+        SPP: sending message: Success
+        SPP: processing signals: Success
 
-The sample displays the following output in the console from the firmware in the SPE where ``N`` is the instance of the hardware used:
+The sample is automatically tested in CI using a console harness that matches those two lines.
+
+The secure partition might also emit the following lines on the TF-M secure UART (if your board routes TF-M logs to the same terminal, you see them mixed with the NSPE output):
 
 .. code-block:: console
 
-        IRQ: GPIOTE_N count: 0x00000002
-        IRQ: TIMER_N count: 0x00000001
-        IRQ: GPIOTE_N count: 0x00000003
-        IRQ: TIMER_N count: 0x00000002
+        IRQ: GPIOTE0 count: 2
+        IRQ: TIMER count: 1
+        IRQ: GPIOTE0 count: 3
+        IRQ: TIMER count: 2
 
 In addition, the sample sends a hash as a text output using SPI on two GPIO pins.
 Connect a logic analyzer to the pins that are used for the SPI output.
 
 Dependencies
-*************
+************
 
 This sample uses the TF-M module that can be found in the following location in the |NCS| folder structure:
 
-* :file:`modules/tee/tfm/`
+* :ncs-file:`trusted-firmware-m:/`
