@@ -728,6 +728,14 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING) && defined(CONFIG_BT_OBSERVER)
 	cmds->hci_le_set_decision_instructions = 1;
 #endif
+
+#if defined(CONFIG_BT_CTLR_SDC_UTP_HCI)
+	cmds->hci_le_utp_send = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_UTP_OTA)
+	cmds->hci_le_enable_ota_utp_mode = 1;
+#endif
 }
 
 #if defined(CONFIG_BT_HCI_VS)
@@ -1709,6 +1717,16 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		*param_length_out += sizeof(sdc_hci_cmd_le_test_end_return_t);
 		return sdc_hci_cmd_le_test_end((void *)event_out_params);
 #endif /* CONFIG_BT_CTLR_DTM_HCI */
+
+#if defined(CONFIG_BT_CTLR_SDC_UTP_OTA)
+	case SDC_HCI_OPCODE_CMD_LE_ENABLE_UTP_OTA:
+		return sdc_hci_cmd_le_enable_utp_ota((void *)cmd_params);
+#endif /* CONFIG_BT_CTLR_SDC_UTP_OTA */
+
+#if defined(CONFIG_BT_CTLR_SDC_UTP_HCI)
+	case SDC_HCI_OPCODE_CMD_LE_UTP_SEND:
+		return sdc_hci_cmd_le_utp_send((void *)cmd_params);
+#endif /* CONFIG_BT_CTLR_SDC_UTP_HCI */
 
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;

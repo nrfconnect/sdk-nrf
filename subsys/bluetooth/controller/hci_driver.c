@@ -309,6 +309,18 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define SDC_MEM_SCAN_DECISION_INSTRUCTIONS_POOL 0
 #endif
 
+#if defined(CONFIG_BT_CTLR_SDC_UTP_HCI)
+#define SDC_MEM_UTP_HCI_POOL SDC_MEM_UTP_HCI(CONFIG_BT_CTLR_SDC_UTP_HCI_BUFFER_SIZE)
+#else
+#define SDC_MEM_UTP_HCI_POOL 0
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_UTP_OTA)
+#define SDC_MEM_UTP_OTA_POOL SDC_MEM_UTP_OTA(CONFIG_BT_CTLR_SDC_UTP_OTA_BUFFER_SIZE)
+#else
+#define SDC_MEM_UTP_OTA_POOL 0
+#endif
+
 #define MEMPOOL_SIZE ((PERIPHERAL_COUNT * PERIPHERAL_MEM_SIZE) + \
 		      (SDC_CENTRAL_COUNT * CENTRAL_MEM_SIZE) + \
 		      (SDC_ADV_SET_MEM_SIZE) + \
@@ -334,7 +346,9 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_MEM_ISO_RX_PDU_POOL) + \
 		      (SDC_MEM_ISO_TX_POOL) + \
 		      (SDC_MEM_CS_POOL) + \
-		      (SDC_MEM_SCAN_DECISION_INSTRUCTIONS_POOL))
+		      (SDC_MEM_SCAN_DECISION_INSTRUCTIONS_POOL) + \
+		      (SDC_MEM_UTP_HCI_POOL) + \
+		      (SDC_MEM_UTP_OTA_POOL))
 
 #if defined(CONFIG_BT_SDC_ADDITIONAL_MEMORY)
 __aligned(8) uint8_t sdc_mempool[MEMPOOL_SIZE + CONFIG_BT_SDC_ADDITIONAL_MEMORY];
@@ -1047,6 +1061,22 @@ static void configure_supported_features(void)
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_MPSL_COEX)) {
 		sdc_support_mpsl_coex();
 	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_UTP_HCI)) {
+		sdc_support_utp_hci();
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_UTP_OTA) && IS_ENABLED(CONFIG_BT_CENTRAL)) {
+		sdc_support_utp_ota_central();
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_UTP_OTA) && IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		sdc_support_utp_ota_peripheral();
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_UTP_VS_NORDIC)) {
+		sdc_support_utp_vs();
+	}
 }
 
 static int configure_memory_usage(void)
@@ -1346,6 +1376,20 @@ static int configure_memory_usage(void)
 	cfg.extended_feature_page_count = CONFIG_BT_CTLR_SDC_EXTENDED_FEAT_MAX_REMOTE_PAGE;
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 				      SDC_CFG_TYPE_EXTENDED_FEATURE_PAGE_COUNT, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_UTP_HCI) || defined(CONFIG_BT_CTLR_SDC_UTP_OTA)
+	memset(&cfg.utp_cfg, 0, sizeof(cfg.utp_cfg));
+#if defined(CONFIG_BT_CTLR_SDC_UTP_HCI)
+	cfg.utp_cfg.hci_buffer_size = CONFIG_BT_CTLR_SDC_UTP_HCI_BUFFER_SIZE;
+#endif
+#if defined(CONFIG_BT_CTLR_SDC_UTP_OTA)
+	cfg.utp_cfg.ota_buffer_size = CONFIG_BT_CTLR_SDC_UTP_OTA_BUFFER_SIZE;
+#endif
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG, SDC_CFG_TYPE_UTP_CFG, &cfg);
 	if (required_memory < 0) {
 		return required_memory;
 	}
