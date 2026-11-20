@@ -46,8 +46,6 @@ LOG_MODULE_REGISTER(coap_client_sample, CONFIG_COAP_CLIENT_SAMPLE_LOG_LEVEL);
 /* Macro used to subscribe to specific Zephyr NET management events. */
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
-#define MAX_CONSECUTIVE_BUSY_RETRIES 5
-
 /* Any IP family, and DNS to resolve the server host name */
 #define READY_MASK (CONN_MGR_READY_IP_ANY | CONN_MGR_READY_DNS)
 
@@ -122,14 +120,26 @@ static int server_addr_set(struct sockaddr_storage *server, struct addrinfo *res
 	}
 }
 
+/* Given when a request completes, with its result in request_err */
+static K_SEM_DEFINE(request_done, 0, 1);
+static int request_err;
+
 static void response_cb(const struct coap_client_response_data *data, void *user_data)
 {
 	if (data->result_code >= 0) {
 		LOG_INF("CoAP response: code: 0x%x, payload: %s",
 			data->result_code, data->payload);
+		/* Blockwise transfer: more blocks follow, the request is not done yet */
+		if (!data->last_block) {
+			return;
+		}
+		request_err = 0;
 	} else {
 		LOG_INF("Response received with error code: %d", data->result_code);
+		request_err = data->result_code;
 	}
+
+	k_sem_give(&request_done);
 }
 
 static int credentials_add(void)
@@ -272,27 +282,21 @@ static int server_connect(struct sockaddr_storage *server)
 	return sock;
 }
 
-/* Resolves the server and connects to the first address that accepts a connection */
-static int server_resolve_and_connect(struct sockaddr_storage *server)
+/* Connects to the first address, starting from *next, that accepts a connection.
+ * Advances *next past the tried addresses, so that a later call continues from there.
+ */
+static int server_connect_next(struct sockaddr_storage *server, struct addrinfo **next)
 {
-	struct addrinfo *result;
-	struct addrinfo *ai;
 	int sock = -ENOENT;
-	int err;
 
-	err = server_resolve(&result);
-	if (err) {
-		LOG_ERR("Failed to resolve server name");
-		return err;
-	}
+	while (*next != NULL && sock < 0) {
+		struct addrinfo *ai = *next;
 
-	for (ai = result; ai != NULL && sock < 0; ai = ai->ai_next) {
+		*next = ai->ai_next;
 		if (server_addr_set(server, ai) == 0) {
 			sock = server_connect(server);
 		}
 	}
-
-	freeaddrinfo(result);
 
 	return sock;
 }
@@ -309,9 +313,12 @@ static int periodic_coap_request_loop(void)
 {
 	int err;
 	int sock = -1;
-	int consecutive_busy_retries = 0;
+	bool server_responded = false;
 	uint32_t last_seen = 0;
+	struct coap_transmission_parameters first_try = coap_get_transmission_parameters();
 	struct sockaddr_storage server = { 0 };
+	struct addrinfo *addrs = NULL;
+	struct addrinfo *next_addr = NULL;
 	struct coap_client coap_client = { 0 };
 	struct coap_client_request req = {
 		.method = COAP_METHOD_GET,
@@ -328,6 +335,9 @@ static int periodic_coap_request_loop(void)
 		return err;
 	}
 
+	/* A single try for the first request to an address, to leave an unreachable one quickly */
+	first_try.max_retransmission = 0;
+
 	err = coap_client_init(&coap_client, NULL);
 	if (err) {
 		LOG_ERR("Failed to initialize CoAP client: %d", err);
@@ -341,36 +351,58 @@ static int periodic_coap_request_loop(void)
 
 	while (true) {
 		if (sock < 0) {
-			/* At once the first time, then after the delay or a network change */
-			err = conn_mgr_wait_ready(READY_MASK, &last_seen,
-						  K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
-			if (err == -EAGAIN) {
-				/* The network is not ready. Keep waiting. */
-				continue;
-			} else if (err != 0) {
-				return err;
+			/* Resolve again only when all resolved addresses have been tried */
+			if (next_addr == NULL) {
+				/* At once the first time, then after the delay or a
+				 * network change
+				 */
+				err = conn_mgr_wait_ready(
+					READY_MASK, &last_seen,
+					K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
+				if (err == -EAGAIN) {
+					/* The network is not ready. Keep waiting. */
+					continue;
+				} else if (err != 0) {
+					break;
+				}
+
+				if (addrs != NULL) {
+					freeaddrinfo(addrs);
+					addrs = NULL;
+				}
+
+				err = server_resolve(&addrs);
+				if (err) {
+					LOG_WRN("Failed to resolve server name, "
+						"retrying in %d seconds",
+						CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS);
+					addrs = NULL;
+					continue;
+				}
+
+				next_addr = addrs;
 			}
 
-			sock = server_resolve_and_connect(&server);
+			sock = server_connect_next(&server, &next_addr);
 			if (sock < 0) {
 				LOG_WRN("Failed to connect to server: %d, retrying in %d seconds",
 					sock, CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS);
 				continue;
 			}
+
+			server_responded = false;
 		}
 
-		/* Send request */
-		err = coap_client_req(&coap_client, sock, (struct sockaddr *)&server, &req, NULL);
-		if (err == -EAGAIN &&
-		    ++consecutive_busy_retries < MAX_CONSECUTIVE_BUSY_RETRIES) {
-			LOG_WRN("CoAP client busy, retrying later");
+		/* Send one request at a time and wait for it to complete */
+		k_sem_reset(&request_done);
+		err = coap_client_req(&coap_client, sock, (struct sockaddr *)&server, &req,
+				      server_responded ? NULL : &first_try);
+		if (err == -EAGAIN) {
+			LOG_WRN("No free request slot, retrying in %d seconds",
+				CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS);
 			k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
 			continue;
-		}
-
-		consecutive_busy_retries = 0;
-
-		if (err) {
+		} else if (err) {
 			LOG_ERR("Failed to send request: %d, reconnecting", err);
 			server_disconnect(&coap_client, &sock);
 			continue;
@@ -381,8 +413,25 @@ static int periodic_coap_request_loop(void)
 			CONFIG_COAP_SAMPLE_SERVER_PORT,
 			CONFIG_COAP_SAMPLE_RESOURCE);
 
+		k_sem_take(&request_done, K_FOREVER);
+		if (request_err) {
+			/* Over UDP without DTLS, connect() succeeds even if the server is not
+			 * reachable at this address. A failed request is the only sign of that.
+			 */
+			LOG_WRN("Request failed: %d, trying the next address", request_err);
+			server_disconnect(&coap_client, &sock);
+			continue;
+		}
+
+		server_responded = true;
 		k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
 	}
+
+	if (addrs != NULL) {
+		freeaddrinfo(addrs);
+	}
+
+	return err;
 }
 
 static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
