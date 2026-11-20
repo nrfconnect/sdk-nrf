@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 91e109a0b4e68cc460a0fffb8c700722b9768adc
+      revision: ncs-v3.4.3-rc1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -128,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: e70c187e0f23087cecb3f655b484f2d925868096
+      revision: ncs-v3.4.3-rc1
       path: bootloader/mcuboot
     - name: qcbor
       repo-path: sdk-qcbor
@@ -141,19 +141,19 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: fb89e478302ba0191e18cb966cede813e6d89cad
+      revision: ncs-v3.4.3-rc1
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: ncs-v3.4.2
+      revision: ncs-v3.4.3-rc1
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 4ca17b17feca1a06113f4a2422726dac588423ac
+      revision: v3.4.3-rc1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: ncs-v3.4.2
+      revision: ncs-v3.4.3-rc1
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -161,7 +161,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v3.4.2
+      revision: v3.4.3-rc1
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -180,7 +180,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v3.4.2
+      revision: v3.4.3-rc1
       groups:
         - nrf-802154
     - name: dragoon
@@ -201,7 +201,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 963ea61195f5a91ca60bb3e2e3a2a1ad482bf040
+      revision: v3.4.3-rc1
       groups:
         - find-my
     - name: azure-sdk-for-c
