@@ -1513,6 +1513,7 @@ Libraries for networking
 * :ref:`lib_rest_client` library:
 
   * Updated the library to resolve the host only for the address families that the Connection Manager reports as ready.
+  * Updated the library to try the next resolved address of the host if the connection fails.
 
 * :ref:`lib_nrf_provisioning` library:
 

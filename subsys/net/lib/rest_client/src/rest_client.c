@@ -171,6 +171,52 @@ static int rest_client_sckt_timeouts_set(int fd, int32_t timeout_ms)
 	return 0;
 }
 
+static int rest_client_sckt_addr_connect(int *const fd,
+					 const struct zsock_addrinfo *addr,
+					 const char *const hostname,
+					 const sec_tag_t sec_tag,
+					 int tls_peer_verify,
+					 int32_t timeout_ms)
+{
+	int ret;
+	int proto = (sec_tag == SEC_TAG_TLS_INVALID) ? IPPROTO_TCP : IPPROTO_TLS_1_2;
+
+	*fd = zsock_socket(addr->ai_family, SOCK_STREAM, proto);
+	if (*fd == -1) {
+		LOG_ERR("Failed to open socket, error: %d", errno);
+		return -ENOTCONN;
+	}
+
+	if (sec_tag != SEC_TAG_TLS_INVALID) {
+		ret = rest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify);
+		if (ret) {
+			ret = -EACCES;
+			goto clean_up;
+		}
+	}
+
+	ret = rest_client_sckt_timeouts_set(*fd, timeout_ms);
+	if (ret) {
+		LOG_ERR("Failed to set socket timeouts, error: %d", errno);
+		ret = -EINVAL;
+		goto clean_up;
+	}
+
+	ret = zsock_connect(*fd, addr->ai_addr, addr->ai_addrlen);
+	if (ret) {
+		LOG_ERR("Failed to connect socket, error: %d", errno);
+		ret = (errno == ETIMEDOUT) ? -ETIMEDOUT : -ECONNREFUSED;
+	}
+
+clean_up:
+	if (ret) {
+		(void)zsock_close(*fd);
+		*fd = -1;
+	}
+
+	return ret;
+}
+
 /* The time taken in this function is deducted from the given timeout value. */
 static int rest_client_sckt_connect(int *const fd,
 				    const char *const hostname,
@@ -181,6 +227,7 @@ static int rest_client_sckt_connect(int *const fd,
 {
 	int ret;
 	struct zsock_addrinfo *addr_info;
+	struct zsock_addrinfo *addr;
 	char peer_addr[INET6_ADDRSTRLEN];
 	char portstr[6] = { 0 };
 	struct zsock_addrinfo hints = {
@@ -190,7 +237,6 @@ static int rest_client_sckt_connect(int *const fd,
 		.ai_next = NULL,
 	};
 	struct sockaddr *sa;
-	int proto = 0;
 	int64_t sckt_connect_start_time;
 	int64_t time_used = 0;
 
@@ -209,62 +255,41 @@ static int rest_client_sckt_connect(int *const fd,
 		return -EFAULT;
 	}
 
-	sa = addr_info->ai_addr;
-	zsock_inet_ntop(sa->sa_family,
-			(void *)&((struct sockaddr_in *)sa)->sin_addr,
-			peer_addr,
-			INET6_ADDRSTRLEN);
-	LOG_DBG("getaddrinfo() %s", peer_addr);
+	/* Try each address in turn until one works */
+	ret = -ECONNREFUSED;
+	for (addr = addr_info; addr != NULL; addr = addr->ai_next) {
+		if (*timeout_ms != SYS_FOREVER_MS) {
+			/* Take time used for DNS query and previous addresses into account */
+			time_used = k_uptime_get() - sckt_connect_start_time;
 
-	if (*timeout_ms != SYS_FOREVER_MS) {
-		/* Take time used for DNS query into account */
-		time_used = k_uptime_get() - sckt_connect_start_time;
+			/* Check if timeout has already elapsed */
+			if (time_used >= *timeout_ms) {
+				LOG_WRN("Timeout occurred before connecting to %s", hostname);
+				ret = -ETIMEDOUT;
+				break;
+			}
+		}
 
-		/* Check if timeout has already elapsed */
-		if (time_used >= *timeout_ms) {
-			LOG_WRN("Timeout occurred during DNS query");
-			ret = -ETIMEDOUT;
-			goto clean_up;
+		sa = addr->ai_addr;
+		zsock_inet_ntop(sa->sa_family,
+				(void *)&((struct sockaddr_in *)sa)->sin_addr,
+				peer_addr,
+				INET6_ADDRSTRLEN);
+		LOG_DBG("Connecting to %s (%s) port %s", hostname, peer_addr, portstr);
+
+		ret = rest_client_sckt_addr_connect(fd, addr, hostname, sec_tag, tls_peer_verify,
+						    *timeout_ms - time_used);
+		if (!ret) {
+			break;
+		}
+
+		/* TLS and socket option errors do not depend on the address. Give up. */
+		if (ret == -EACCES || ret == -EINVAL) {
+			break;
 		}
 	}
 
-	proto = (sec_tag == SEC_TAG_TLS_INVALID) ? IPPROTO_TCP : IPPROTO_TLS_1_2;
-	*fd = zsock_socket(addr_info->ai_family, SOCK_STREAM, proto);
-	if (*fd == -1) {
-		LOG_ERR("Failed to open socket, error: %d", errno);
-		ret = -ENOTCONN;
-		goto clean_up;
-	}
-
-	if (sec_tag != SEC_TAG_TLS_INVALID) {
-		ret = rest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify);
-		if (ret) {
-			ret = -EACCES;
-			goto clean_up;
-		}
-	}
-
-	ret = rest_client_sckt_timeouts_set(*fd, *timeout_ms - time_used);
-	if (ret) {
-		LOG_ERR("Failed to set socket timeouts, error: %d", errno);
-		ret = -EINVAL;
-		goto clean_up;
-	}
-
-	LOG_DBG("Connecting to %s port %s", hostname, portstr);
-
-	ret = zsock_connect(*fd, addr_info->ai_addr, addr_info->ai_addrlen);
-	if (ret) {
-		LOG_ERR("Failed to connect socket, error: %d", errno);
-		if (errno == ETIMEDOUT) {
-			ret = -ETIMEDOUT;
-		} else {
-			ret = -ECONNREFUSED;
-		}
-		goto clean_up;
-	}
-
-	if (*timeout_ms != SYS_FOREVER_MS) {
+	if (!ret && *timeout_ms != SYS_FOREVER_MS) {
 		/* Take time used for socket connect into account */
 		time_used = k_uptime_get() - sckt_connect_start_time;
 
@@ -272,12 +297,10 @@ static int rest_client_sckt_connect(int *const fd,
 		if (time_used >= *timeout_ms) {
 			LOG_WRN("Timeout occurred during socket connect");
 			ret = -ETIMEDOUT;
-			goto clean_up;
+		} else {
+			*timeout_ms -= time_used;
 		}
-		*timeout_ms -= time_used;
 	}
-
-clean_up:
 
 	zsock_freeaddrinfo(addr_info);
 	if (ret) {
