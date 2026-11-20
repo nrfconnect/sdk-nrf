@@ -25,13 +25,13 @@ Over IPv6, the sample joins the site-local CoAP all-nodes multicast address.
 The server replies from the same local address a request arrived on, so a client sees a matching reply even when the device has more than one active address.
 
 The sample serves plain CoAP by default.
-Building with the :ncs-file:`zephyr:/samples/net/sockets/coap_server/overlay-dtls.conf` extra configuration file (see `Configuration files`_) switches it to secure CoAP (CoAPS) over DTLS, using the PSK identity and key defined in the :ncs-file:`zephyr:/samples/net/sockets/coap_server/src/dummy_psk.h` header file.
+Building with the :ncs-file:`/samples/zephyr/net/sockets/coap_server/overlay-dtls.conf` extra configuration file (see `Configuration files`_) switches it to secure CoAP (CoAPS) over DTLS, using the PSK identity and key defined in the :ncs-file:`zephyr:/samples/net/sockets/coap_server/src/dummy_psk.h` header file.
 
 The DTLS service can also authenticate itself with a server certificate and private key (see :ncs-file:`zephyr:/samples/net/sockets/coap_server/src/certificate.h`) instead of PSK, using a certificate-based cipher suite.
 By default, this is a self-signed demo certificate.
 Enabling the ``CONFIG_NET_SAMPLE_CERTS_WITH_SC`` Kconfig option switches the sample to a CA-signed certificate and its CA certificate instead, for testing proper certificate chain validation.
-It only builds in when an RSA or ECDSA ECDHE cipher suite is enabled, which the :ncs-file:`zephyr:/samples/net/sockets/coap_server/overlay-dtls.conf` file does not select by default.
-To use it, add an extra configuration file on top of the :ncs-file:`zephyr:/samples/net/sockets/coap_server/overlay-dtls.conf` file that selects a matching cipher suite, such as :kconfig:option:`CONFIG_MBEDTLS_CIPHERSUITE_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256` for the sample's RSA demo certificate.
+It only builds in when an RSA or ECDSA ECDHE cipher suite is enabled, which the :ncs-file:`/samples/zephyr/net/sockets/coap_server/overlay-dtls.conf` file does not select by default.
+To use it, add an extra configuration file on top of the :ncs-file:`/samples/zephyr/net/sockets/coap_server/overlay-dtls.conf` file that selects a matching cipher suite, such as :kconfig:option:`CONFIG_MBEDTLS_CIPHERSUITE_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256` for the sample's RSA demo certificate.
 
 The sample exports the following resources:
 
@@ -78,10 +78,10 @@ The following sample-specific Kconfig options are used in this sample (located i
 Configuration files
 ====================
 
-The sample provides predefined configuration files, located in :file:`zephyr/samples/net/sockets/coap_server`:
+The sample provides the following predefined configuration files:
 
-* :ncs-file:`zephyr:/samples/net/sockets/coap_server/prj.conf` - Default configuration file, used for plain (non-secure) CoAP.
-* :ncs-file:`zephyr:/samples/net/sockets/coap_server/overlay-dtls.conf` - Additional configuration for secure CoAP (CoAPS) over DTLS.
+* :ncs-file:`/samples/zephyr/net/sockets/coap_server/prj.conf` - Default configuration file, used for plain (non-secure) CoAP.
+* :ncs-file:`/samples/zephyr/net/sockets/coap_server/overlay-dtls.conf` - Additional configuration for secure CoAP (CoAPS) over DTLS.
 
 To add a specific extra configuration file to the build, add the ``-DEXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
 
@@ -117,7 +117,7 @@ Alternatively, build against the predefined test case in the :ncs-file:`sample.y
 
    west build -b nrf7120dk/nrf7120/cpuapp -T nrf.extended.sample.net.sockets.coap_server.wifi-ipv4
 
-To build the sample with secure CoAP resources instead, add the :ncs-file:`zephyr:/samples/net/sockets/coap_server/overlay-dtls.conf` extra configuration file on top of the base configuration.
+To build the sample with secure CoAP resources instead, add the :ncs-file:`/samples/zephyr/net/sockets/coap_server/overlay-dtls.conf` extra configuration file on top of the base configuration.
 
 Testing
 =======
@@ -145,7 +145,7 @@ Testing
 #. Observe the response printed by ``coap-client``, and the matching request logged by the sample on the terminal.
 #. Optionally, inspect the exchanged traffic with a tool such as Wireshark, or see the :ref:`wifi_monitor_sample` sample documentation to capture Wi-Fi traffic directly from the development kit.
 
-To test the secure CoAP (CoAPS) variant, build with the :ncs-file:`zephyr:/samples/net/sockets/coap_server/overlay-dtls.conf` extra configuration file (see `Configuration files`_), then connect with a DTLS-PSK capable build of the client, such as ``coap-client-gnutls`` or ``coap-client-openssl``, using the identity and key from the :ncs-file:`zephyr:/samples/net/sockets/coap_server/src/dummy_psk.h` header file:
+To test the secure CoAP (CoAPS) variant, build with the :ncs-file:`/samples/zephyr/net/sockets/coap_server/overlay-dtls.conf` extra configuration file (see `Configuration files`_), then connect with a DTLS-PSK capable build of the client, such as ``coap-client-gnutls`` or ``coap-client-openssl``, using the identity and key from the :ncs-file:`zephyr:/samples/net/sockets/coap_server/src/dummy_psk.h` header file:
 
 .. code-block:: console
 
