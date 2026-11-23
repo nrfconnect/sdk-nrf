@@ -21,7 +21,7 @@
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/fmac_structs_common.h>
 
-#define MAX_PEERS 5
+#define MAX_PEERS NRF_WIFI_MAX_SAP_CLIENTS
 #define MAX_SW_PEERS (MAX_PEERS + 1)
 #define NRF_WIFI_AC_TWT_PRIORITY_EMERGENCY 0xFF
 #define NRF_WIFI_MAGIC_NUM_RAWTX 0x12345678

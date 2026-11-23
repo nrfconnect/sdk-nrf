@@ -495,6 +495,16 @@ config SHELL_STACK_SIZE
 config WIFI_MGMT_SCAN_SSID_FILT_MAX
 	default 2
 
+# The nRF71 supports up to 8 SoftAP clients.
+configdefault WIFI_MGMT_AP_MAX_NUM_STA
+	default 8 if NRF71_AP_MODE
+
+configdefault WIFI_SHELL_MAX_AP_STA
+	default 8 if NRF71_AP_MODE
+
+configdefault NET_DHCPV4_SERVER_ADDR_COUNT
+	default 8 if NRF71_AP_MODE
+
 config NRF_WIFI_SCAN_MAX_BSS_CNT
 	int "Maximum number of scan results to return."
 	default 200
