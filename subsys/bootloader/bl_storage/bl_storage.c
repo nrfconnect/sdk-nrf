@@ -210,11 +210,27 @@ uint32_t num_public_keys_read(void)
 #define MAX_NUM_PUBLIC_KEYS 16
 #define TOKEN_IDX_OFFSET 24
 
+#if defined(BL_STORAGE_UICR_OTP_KEY_REVOCATION)
+static bool uicr_otp_key_revoked(uint32_t key_idx)
+{
+	const uint32_t revoked =
+		bl_storage_word_read((uint32_t)&BL_STORAGE->key_data[key_idx].revoked);
+
+	return revoked != BL_STORAGE_UICR_OTP_KEY_NOT_REVOKED;
+}
+#endif
+
 static bool key_is_valid(uint32_t key_idx)
 {
 	if (key_idx >= num_public_keys_read()) {
 		return false;
 	}
+
+#if defined(BL_STORAGE_UICR_OTP_KEY_REVOCATION)
+	if (uicr_otp_key_revoked(key_idx)) {
+		return false;
+	}
+#endif
 
 	const uint32_t token = bl_storage_word_read((uint32_t)&BL_STORAGE->key_data[key_idx].valid);
 	const uint32_t invalid_val = INVALID_VAL | key_idx << TOKEN_IDX_OFFSET;
@@ -323,6 +339,32 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf)
 
 void invalidate_public_key(uint32_t key_idx)
 {
+	if (key_idx >= num_public_keys_read()) {
+		return;
+	}
+
+#if defined(BL_STORAGE_UICR_OTP_KEY_REVOCATION)
+	if (uicr_otp_key_revoked(key_idx)) {
+		return;
+	}
+
+	const uint32_t valid_val = VALID_VAL | key_idx << TOKEN_IDX_OFFSET;
+	const uint32_t token = bl_storage_word_read((uint32_t)&BL_STORAGE->key_data[key_idx].valid);
+	const uint32_t revoked_addr = (uint32_t)&BL_STORAGE->key_data[key_idx].revoked;
+	const uint32_t revoked_val = INVALID_VAL | key_idx << TOKEN_IDX_OFFSET;
+
+	if (token != valid_val) {
+		return;
+	}
+
+#if defined(CONFIG_NRFX_RRAMC) && !defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+	if (!rramc_configure() || !nrfx_rramc_word_writable_check(revoked_addr)) {
+		return;
+	}
+#endif
+
+	bl_storage_word_write(revoked_addr, revoked_val);
+#else
 	const volatile uint32_t *invalidation_token =
 			&BL_STORAGE->key_data[key_idx].valid;
 
@@ -330,6 +372,7 @@ void invalidate_public_key(uint32_t key_idx)
 		/* Write if not already written. */
 		bl_storage_word_write((uint32_t)invalidation_token, INVALID_WRITE_VAL);
 	}
+#endif
 }
 
 static const struct collection *get_first_collection(void)

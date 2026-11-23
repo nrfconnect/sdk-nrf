@@ -152,6 +152,12 @@ function(provision application prefix_name)
 
   dt_reg_size(provision_size PATH "${bl_storage_path}" TARGET ${bl_storage_target})
 
+  # Match BL_STORAGE_UICR_OTP_KEY_REVOCATION (UICR OTP + word-sized provision on nRF54L).
+  set(uicr_otp_key_revocation_arg)
+  if(${bl_storage_path} MATCHES /uicr AND ${SB_CONFIG_SECURE_BOOT_OTP_WRITE_SIZE} EQUAL 4)
+    set(uicr_otp_key_revocation_arg --uicr-otp-key-revocation)
+  endif()
+
   if(CONFIG_SECURE_BOOT)
     add_custom_command(
       OUTPUT
@@ -169,6 +175,7 @@ function(provision application prefix_name)
       ${no_verify_hashes_arg}
       ${mcuboot_counters_slots}
       --otp-write-width ${SB_CONFIG_SECURE_BOOT_OTP_WRITE_SIZE}
+      ${uicr_otp_key_revocation_arg}
       ${psa_certificate_reference}
       DEPENDS
       ${PROVISION_KEY_DEPENDS}

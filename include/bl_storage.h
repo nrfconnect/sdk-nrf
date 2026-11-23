@@ -10,6 +10,7 @@
 #include <string.h>
 #include <zephyr/types.h>
 #include <zephyr/autoconf.h>
+#include <zephyr/devicetree.h>
 #include <nrfx.h>
 #if defined(CONFIG_NRFX_NVMC)
 #include <nrfx_nvmc.h>
@@ -22,6 +23,13 @@
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if (defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)) && \
+	DT_NODE_EXISTS(DT_NODELABEL(bl_storage)) && \
+	DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
+#define BL_STORAGE_UICR_OTP_KEY_REVOCATION 1
+#define BL_STORAGE_UICR_OTP_KEY_NOT_REVOKED 0xFFFFFFFFU
 #endif
 
 #if defined(CONFIG_NRFX_NVMC)
@@ -147,6 +155,9 @@ struct bl_storage_data {
 	struct {
 		uint32_t valid;
 		uint8_t hash[SB_PUBLIC_KEY_HASH_LEN];
+#if defined(BL_STORAGE_UICR_OTP_KEY_REVOCATION)
+		uint32_t revoked;
+#endif
 	} key_data[];
 
 	/* Monotonic counter collection:
