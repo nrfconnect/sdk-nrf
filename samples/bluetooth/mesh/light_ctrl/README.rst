@@ -137,6 +137,9 @@ User interface
         All buttons have the same functionality during this procedure.
         If the :ref:`emds_readme` feature is enabled and the provisioning and configuration are complete, **Button 4** can be used to trigger storing for data with emergency data storage and halt the system.
 
+        Hold **Button 4** for 10 seconds to reset the node (unprovision it).
+        If the :ref:`emds_readme` feature is enabled, hold **Button 3** instead, because the highest button is used to store the data.
+
       LEDs:
         Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
         **LED 1** outputs the current light level of the Light Lightness Server in the first element.
@@ -148,6 +151,9 @@ User interface
         Can be used to input the out-of-band (OOB) authentication value during provisioning.
         All buttons have the same functionality during this procedure.
         If the :ref:`emds_readme` feature is enabled and the provisioning and configuration are complete, **Button 3** can be used to trigger storing for data with emergency data storage and halt the system.
+
+        Hold **Button 3** for 10 seconds to reset the node (unprovision it).
+        If the :ref:`emds_readme` feature is enabled, hold **Button 2** instead, because the highest button is used to store the data.
 
       LEDs:
         Show the OOB authentication value during provisioning if the "Push button" OOB method is used.

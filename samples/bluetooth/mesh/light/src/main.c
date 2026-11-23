@@ -11,6 +11,7 @@
 #include <bluetooth/mesh/models.h>
 #include <bluetooth/mesh/dk_prov.h>
 #include <dk_buttons_and_leds.h>
+#include <bluetooth/mesh/node_reset_button.h>
 #include "model_handler.h"
 #include "smp_bt.h"
 
@@ -33,6 +34,10 @@ static void bt_ready(int err)
 	if (err) {
 		printk("Initializing buttons failed (err %d)\n", err);
 		return;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_MESH_NODE_RESET_BUTTON)) {
+		bt_mesh_node_reset_button_init();
 	}
 
 	err = bt_mesh_init(bt_mesh_dk_prov_init(), model_handler_init());
