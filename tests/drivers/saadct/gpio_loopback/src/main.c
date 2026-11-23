@@ -22,7 +22,7 @@
 #include <nrfx_saadc.h>
 
 #define NUM_OF_MEAS            16
-#define SAMPLE_RATE_HZ         KHZ(100)
+#define SAMPLE_RATE_HZ         KHZ(20)
 #define SAADCT_RESOLUTION      NRF_SAADC_RESOLUTION_10BIT
 #define RESOLUTION_BITS        10
 #define MAX_SAMPLE_VALUE       (1U << RESOLUTION_BITS)
@@ -49,7 +49,7 @@
 				 ())                                           \
 		.reference = NRF_SAADC_REFERENCE_INTERNAL,                     \
 		.conv_time = NRFX_SAADC_DEFAULT_CONV_TIME,                     \
-		.acq_time = 23,  /* (TACQ + 1) x 125 ns */                    \
+		.acq_time = 319,  /* (TACQ + 1) x 125 ns */                    \
 		.mode = NRF_SAADC_MODE_SINGLE_ENDED,                           \
 	},                                                                     \
 	.pin_p = (nrfx_analog_input_t)_pin,                                    \
