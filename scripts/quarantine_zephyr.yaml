@@ -400,6 +400,8 @@
     - sample.pytest.shell.vt100_colors_off
     - sample.sensor.shell
     - sample.sensor.shell.pytest
+    - sample.shell.devmem_load.polled
+    - sample.shell.devmem_load.uart.interrupt
     - sample.shell.shell_module
     - sample.shell.shell_module.getopt
     - sample.shell.shell_module.login
@@ -662,12 +664,6 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk@0.14.0/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40724"
-
-- scenarios:
-    - sample.shell.devmem_load.uart.interrupt
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
-  comment: "sample is native_sim only"
 
 - scenarios:
     - posix.threads_base.dynamic_stack
