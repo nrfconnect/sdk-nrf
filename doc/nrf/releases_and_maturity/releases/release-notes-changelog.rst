@@ -974,6 +974,8 @@ Networking samples
       The sample now connects once the Connection Manager reports both IP connectivity and DNS as ready.
     * An issue where a FOTA download in Wi-Fi builds failed after a stall, because the reconnect found no free network connection.
       The :file:`wifi.conf` file now sets the :kconfig:option:`CONFIG_NET_MAX_CONN` Kconfig option to ``8``.
+    * An issue where a FOTA job with a presigned Amazon S3 URL failed in Wi-Fi builds, because the URL was longer than the downloader allowed.
+      The board configuration files for the nRF7002 DK and nRF7120 DK now set the :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE` Kconfig option to ``2048``.
 
 * :ref:`download_sample` sample:
 
