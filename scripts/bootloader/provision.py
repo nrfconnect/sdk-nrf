@@ -104,7 +104,7 @@ def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size
 
 def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
                                 num_counter_slots_version, mcuboot_counters_slots, otp_write_width,
-                                variable_data):
+                                variable_data, uicr_otp_key_revocation):
 
     provision_data = struct.pack('<III', s0_address, s1_address,
                                  len(hashes))
@@ -113,6 +113,9 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
     for mhash in hashes:
         provision_data += struct.pack('<I', 0x50FAFFFF | (idx << 24))  # Invalidation token
         provision_data += mhash
+        if uicr_otp_key_revocation:
+            # Left at 0xFFFFFFFF so nRF54L UICR OTP can program revoked once at runtime.
+            provision_data += struct.pack('<I', 0xFFFFFFFF)
         idx += 1
 
     provision_data = add_hw_counters(
@@ -151,6 +154,8 @@ def parse_args():
                         help='Number of monotonic counter slots for every MCUBOOT counter.')
     parser.add_argument('--otp-write-width', required=False, type=lambda x: int(x, 0), default=2,
                         help='OTP-write width in bytes.')
+    parser.add_argument('--uicr-otp-key-revocation', required=False, action='store_true',
+                        help='Provision per-key revoked OTP words (nRF54L UICR).')
     parser.add_argument('--psa-certificate-reference', required=False, type=str, default=None,
                         help='(Optional) PSA certificate reference for the TF-M attestation token.')
     return parser.parse_args()
@@ -290,7 +295,8 @@ def main():
         num_counter_slots_version=args.num_counter_slots_version,
         mcuboot_counters_slots=args.mcuboot_counters_slots,
         otp_write_width=args.otp_write_width,
-        variable_data=variable_data
+        variable_data=variable_data,
+        uicr_otp_key_revocation=args.uicr_otp_key_revocation
     )
 
 
