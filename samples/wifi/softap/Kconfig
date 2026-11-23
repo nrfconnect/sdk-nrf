@@ -85,13 +85,16 @@ config SOFTAP_SAMPLE_PASSWORD
 	help
 	  Set the password for SoftAP.
 
-config SOFTAP_SAMPLE_MAX_STATIONS
+config SAMPLE_SOFTAP_MAX_STATIONS
 	int "Maximum number of stations"
-	# Experimental support for one, but in future support for up to 8 (nRF70 limitation)
+	range 1 8 if WIFI_NRF71
 	range 1 1
 	default 1
 	help
-	  Set the maximum number of stations allowed to connect to the SoftAP.
+	  Set the maximum number of connected stations that the sample tracks
+	  and displays. This does not limit the number of stations that can
+	  connect to the SoftAP, use WIFI_MGMT_AP_MAX_NUM_STA for that.
+	  The nRF71 Series supports up to 8 stations.
 
 config SOFTAP_SAMPLE_START_WIFI_THREAD_STACK_SIZE
 	int "Stack size for Wi-Fi start thread"

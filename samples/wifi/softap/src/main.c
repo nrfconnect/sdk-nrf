@@ -30,7 +30,7 @@ struct wifi_ap_sta_node {
 	bool valid;
 	struct wifi_ap_sta_info sta_info;
 };
-static struct wifi_ap_sta_node sta_list[CONFIG_SOFTAP_SAMPLE_MAX_STATIONS];
+static struct wifi_ap_sta_node sta_list[CONFIG_SAMPLE_SOFTAP_MAX_STATIONS];
 bool dhcp_server_configured;
 
 static void wifi_ap_stations_unlocked(void)
@@ -40,7 +40,7 @@ static void wifi_ap_stations_unlocked(void)
 	LOG_INF("AP stations:");
 	LOG_INF("============");
 
-	for (int i = 0; i < CONFIG_SOFTAP_SAMPLE_MAX_STATIONS; i++) {
+	for (int i = 0; i < CONFIG_SAMPLE_SOFTAP_MAX_STATIONS; i++) {
 		struct wifi_ap_sta_info *sta;
 		uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
 
@@ -90,7 +90,7 @@ static void handle_wifi_ap_sta_connected(struct net_mgmt_event_callback *cb)
 				       mac_string_buf, sizeof(mac_string_buf)));
 
 	k_mutex_lock(&wifi_ap_sta_list_lock, K_FOREVER);
-	for (i = 0; i < CONFIG_SOFTAP_SAMPLE_MAX_STATIONS; i++) {
+	for (i = 0; i < CONFIG_SAMPLE_SOFTAP_MAX_STATIONS; i++) {
 		if (!sta_list[i].valid) {
 			sta_list[i].sta_info = *sta_info;
 			sta_list[i].valid = true;
@@ -98,9 +98,9 @@ static void handle_wifi_ap_sta_connected(struct net_mgmt_event_callback *cb)
 		}
 	}
 
-	if (i == CONFIG_SOFTAP_SAMPLE_MAX_STATIONS) {
+	if (i == CONFIG_SAMPLE_SOFTAP_MAX_STATIONS) {
 		LOG_ERR("No space to store station info: "
-			"Increase CONFIG_SOFTAP_SAMPLE_MAX_STATIONS");
+			"Increase CONFIG_SAMPLE_SOFTAP_MAX_STATIONS");
 	}
 
 	wifi_ap_stations_unlocked();
@@ -119,7 +119,7 @@ static void handle_wifi_ap_sta_disconnected(struct net_mgmt_event_callback *cb)
 				       mac_string_buf, sizeof(mac_string_buf)));
 
 	k_mutex_lock(&wifi_ap_sta_list_lock, K_FOREVER);
-	for (i = 0; i < CONFIG_SOFTAP_SAMPLE_MAX_STATIONS; i++) {
+	for (i = 0; i < CONFIG_SAMPLE_SOFTAP_MAX_STATIONS; i++) {
 		if (!sta_list[i].valid) {
 			continue;
 		}
@@ -131,7 +131,7 @@ static void handle_wifi_ap_sta_disconnected(struct net_mgmt_event_callback *cb)
 		}
 	}
 
-	if (i == CONFIG_SOFTAP_SAMPLE_MAX_STATIONS) {
+	if (i == CONFIG_SAMPLE_SOFTAP_MAX_STATIONS) {
 		LOG_WRN("No matching MAC address found in the list");
 	}
 
