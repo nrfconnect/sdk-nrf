@@ -1,0 +1,13 @@
+/ {
+	soc {
+
+		/delete-node/ ficr@fffe000;
+
+		cpurad_read_allowed_write_forbidden_area: ficr: ficr@fffe000 {
+			compatible = "nordic,nrf-ficr";
+			reg = <0xfffe000 0x800>;
+			#nordic,ficr-cells = <0x1>;
+			phandle = <0x9>;
+		};
+	};
+};

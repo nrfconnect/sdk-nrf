@@ -1,0 +1,4 @@
+config TEST_WRITE_FROBIDDEN_MEMORY_AREA
+	bool "Test write access to the write forbidden memory area"
+
+source "Kconfig.zephyr"
