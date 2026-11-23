@@ -789,6 +789,11 @@ config NRF_WIFI_DISPLAY_SCAN_BSS_LIMIT
 	help
 	  Number of BSS entries in scan result.
 
+config NRF_WIFI_DISPLAY_SCAN_ABORT_ON_BSS_LIMIT
+	bool "Abort scan when display BSS limit is reached"
+	help
+	  Enable this configuration to abort display scan when the BSS limit is reached.
+
 config NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
 	bool "Read connect scan results from the scan results database"
 	depends on NRF71_STA_MODE
