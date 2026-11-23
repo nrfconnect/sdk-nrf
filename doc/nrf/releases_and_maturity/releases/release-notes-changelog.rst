@@ -1027,6 +1027,8 @@ Networking samples
     * The settings storage backend to ZMS on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20b/cpuapp/ns``, ``nrf7120dk/nrf7120/cpuapp/ns`` and ``nrf7120dk/nrf7120e/cpuapp/ns`` board targets, and to NVS on the ``nrf7002dk/nrf5340/cpuapp/ns`` board target.
       The :file:`dps.conf` file no longer selects NVS for all board targets.
     * Wi-Fi builds to use only IPv4, because Azure IoT Hub, DPS and Azure Blob Storage do not have IPv6 addresses.
+    * The :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE` Kconfig option in Wi-Fi builds from ``255`` to ``1024``, so that the FOTA image path can include a shared access signature (SAS).
+    * The FOTA testing steps in the sample documentation to refer to the :ref:`lib_azure_fota` library documentation for the ``firmware`` object.
 
   * Fixed:
 
@@ -1609,6 +1611,10 @@ Libraries for networking
     * The CoAP client to try the next resolved address of the host if the connection fails.
     * The library to send the :c:enumerator:`NRF_PROVISIONING_EVENT_FATAL_ERROR` event when the modem fails to generate the attestation token for an unclaimed device.
       Previously, the :c:enumerator:`NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED` event was sent without a token.
+
+* :ref:`lib_azure_fota` library:
+
+  * Updated the library documentation with a description of each field of the ``firmware`` object, including ``jobId`` and a path with a shared access signature (SAS) for Azure Blob Storage.
 
 * :ref:`lib_aws_fota` library:
 

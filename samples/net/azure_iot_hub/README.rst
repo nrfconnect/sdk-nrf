@@ -245,30 +245,10 @@ To test a FOTA update, complete the following steps:
    For example, add ``-d build_v2`` to your ``west build`` command.
    The update image is the :file:`build_v2/azure_iot_hub/zephyr/zephyr.signed.bin` file.
 #. Upload the update image to your file server, for example, `Azure Blob Storage`_.
-   The device downloads the image without authentication, so the file must allow anonymous read access.
+   The device downloads the image without authentication.
+   The file must allow anonymous read access, or its path must include a shared access signature (SAS), as described in :ref:`lib_azure_fota_firmware_object`.
 #. Navigate to the view where you can update the device twin using the `Azure IoT Explorer`_ or `Azure Portal`_.
-#. Create a ``firmware`` JSON object inside the *desired* object of the device twin document, containing information about the binary to download:
-
-   .. parsed-literal::
-      :class: highlight
-
-      {
-          "firmware": {
-              "fwVersion": "0.0.2-dev",
-              "jobId": "ca186d4b-4171-4209-a49d-700c35567d1d",
-              "fwLocation": {
-                  "host": "example.com",
-                  "path": "firmware/my-app-update.bin"
-              },
-              "fwFragmentSize": 1800
-          }
-      }
-
-   Set ``fwVersion`` to the value of :kconfig:option:`CONFIG_AZURE_FOTA_APP_VERSION` in the update image.
-   The device starts the download only if ``fwVersion`` is different from its current version.
-   Set ``jobId`` to a new UUID (RFC 4122) for each update, for example, ``ca186d4b-4171-4209-a49d-700c35567d1d``.
-   The device does not start a job with a job ID that it has already attempted.
-
+#. Create a ``firmware`` JSON object inside the *desired* object of the device twin document, as described in :ref:`lib_azure_fota_firmware_object`.
 #. Click :guilabel:`Save` to apply the changes to the device twin.
    Updating the device twin causes a message to be sent to the device, containing the updates to the *desired* object.
 #. In the terminal emulator, observe that the new firmware image is downloaded and installed as shown in :ref:`sampoutput_azure_iot`.
