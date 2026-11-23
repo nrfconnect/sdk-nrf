@@ -349,6 +349,8 @@ int azure_iot_hub_init(azure_iot_hub_evt_handler_t event_handler);
  *  @retval -EINVAL if the provided configuration is invalid.
  *  @retval -EMSGSIZE if the provided device ID is larger than the internal buffer size.
  *  @retval -EFAULT if there was an internal error in the library.
+ *  @return A positive error code in case of a DNS error. The value is the ``getaddrinfo()``
+ *	    error code with the opposite sign, for example, 2 for ``DNS_EAI_NONAME``.
  */
 int azure_iot_hub_connect(const struct azure_iot_hub_config *config);
 
