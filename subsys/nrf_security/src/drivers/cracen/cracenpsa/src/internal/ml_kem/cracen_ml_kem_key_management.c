@@ -40,13 +40,13 @@ static psa_status_t check_ml_kem_key_attributes(const psa_key_attributes_t *attr
 	}
 
 	if (key_type == PSA_KEY_TYPE_ML_KEM_KEY_PAIR) {
+		if (key_size_bytes != ML_KEM_SEED_SZ_BYTES) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
 		params = cracen_ml_kem_params_get(*key_bits);
 		if (params == NULL) {
 			return PSA_ERROR_NOT_SUPPORTED;
-		}
-
-		if (key_size_bytes != ML_KEM_SEED_SZ_BYTES) {
-			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 
 		return PSA_SUCCESS;
@@ -69,7 +69,10 @@ static psa_status_t check_ml_kem_key_attributes(const psa_key_attributes_t *attr
 
 		if (*key_bits == params->key_bits) {
 			if (params->pk_size != key_size_bytes) {
-				return PSA_ERROR_INVALID_ARGUMENT;
+				/* Returning as not supported so that the dispatcher
+				 * can fall back to another driver.
+				 */
+				return PSA_ERROR_NOT_SUPPORTED;
 			}
 			return PSA_SUCCESS;
 		}
