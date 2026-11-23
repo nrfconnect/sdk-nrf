@@ -317,6 +317,9 @@ int aws_iot_init(aws_iot_evt_handler_t event_handler);
  *
  *  @retval 0 If successful.
  *  @retval -EAGAIN If the client failed to connect within CONFIG_AWS_IOT_CONNECT_TIMEOUT_SECONDS.
+ *  @return A positive error code in case of a DNS error. The value is the ``getaddrinfo()``
+ *	    error code with the opposite sign, for example, 2 for ``DNS_EAI_NONAME``.
+ *  @return Otherwise a negative error code.
  */
 int aws_iot_connect(const struct aws_iot_config *const config);
 
