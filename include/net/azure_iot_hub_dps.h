@@ -70,12 +70,14 @@ struct azure_iot_hub_dps_config {
  */
 int azure_iot_hub_dps_init(struct azure_iot_hub_dps_config *cfg);
 
-/* @brief Start Device Provisioning Service (DPS) to obtain device ID and assigmnent
+/** @brief Start Device Provisioning Service (DPS) to obtain device ID and assigmnent
  *	  to an IoT hub. The information can later be used to connect to the assigned IoT hub.
  *
  * @retval 0 if successful.
  * @retval -EACCESS if the library is in the wrong state to start DPS.
  * @retval -EALREADY if DPS has already started and is ongoing.
+ * @return A positive error code in case of a DNS error. The value is the ``getaddrinfo()``
+ *	   error code with the opposite sign, for example, 2 for ``DNS_EAI_NONAME``.
  */
 int azure_iot_hub_dps_start(void);
 
