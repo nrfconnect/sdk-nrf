@@ -1,1 +1,25 @@
-#include "nrf54lc10dk_nrf54lc10a_cpuapp_retain_4k.overlay"
+/ {
+	cpuapp_sram@2002ec00 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2002ec00 DT_SIZE_K(4)>;
+		zephyr,memory-region = "RetainedMem";
+		status = "okay";
+
+		retainedmem0: retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+		};
+	};
+
+	aliases {
+		retainedmemdevice = &retainedmem0;
+	};
+};
+
+&sram0_ns {
+	/* Shrink the non-secure SRAM to end where the retained memory region
+	 * starts: 187 - 96 = 91 kB
+	 */
+	reg = <0x18000 DT_SIZE_K(91)>;
+	ranges = <0x0 0x18000 DT_SIZE_K(91)>;
+};
