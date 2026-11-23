@@ -1,0 +1,19 @@
+/ {
+	soc {
+		/delete-node/ ficr@fffe000;
+
+		cpuflpr_test_sram: memory@20000004 {
+			compatible = "mmio-sram";
+			reg = <0x20000004 0xfdffc>;
+			#address-cells = <0x1>;
+			#size-cells = <0x1>;
+			ranges = <0x0 0x20000004 0xfdffc>;
+		};
+
+		cpuflpr_read_allowed_write_forbidden_area: ficr@ffc004 {
+			compatible = "nordic,nrf-ficr";
+			reg = <0xffc004 0x0ffc>;
+			#nordic,ficr-cells = <0x1>;
+		};
+	};
+};

@@ -10,9 +10,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#if DT_NODE_EXISTS(DT_PATH(reserved_memory))
-#define CPU_MEMORY DT_PATH(reserved_memory)
-#elif DT_NODE_EXISTS(DT_PATH(soc))
+#if DT_NODE_EXISTS(DT_PATH(soc))
 #define CPU_MEMORY DT_PATH(soc)
 #else
 #error "Cpu memory not defined in DTS"
@@ -46,12 +44,92 @@ static bool region_has_tested_cpu_label(const struct reserved_mem_region *region
 	}
 }
 
+static bool region_is_peripherals(const struct reserved_mem_region *region)
+{
+	const char *label = region->labels[0];
+
+	if (strstr(label, "peripherals") != NULL) {
+		return true;
+	}
+
+	if (strstr(label, "bellboard") != NULL) {
+		return true;
+	}
+
+	if (strstr(label, "tcm") != NULL) {
+		return true;
+	}
+
+	return false;
+}
+
+static bool region_is_write_forbidden(const struct reserved_mem_region *region)
+{
+	const char *label = region->labels[0];
+
+	if (strstr(label, "write_forbidden") != NULL) {
+		return true;
+	}
+
+	return false;
+}
+
+static bool region_allows_write(const struct reserved_mem_region *region)
+{
+	if (IS_ENABLED(CONFIG_TEST_WRITE_FROBIDDEN_MEMORY_AREA)) {
+		return true;
+	}
+
+	return !region_is_write_forbidden(region);
+}
+
+static bool region_should_attempt_write(const struct reserved_mem_region *region,
+					uint32_t *test_variable_pointer)
+{
+	bool in_active_cpu_ram =
+		(test_variable_pointer > (uint32_t *)region->addr) &&
+		(test_variable_pointer < (uint32_t *)(region->addr + region->size));
+
+	return !in_active_cpu_ram && region_allows_write(region);
+}
+
+static bool read_test_region(const struct reserved_mem_region *region)
+{
+	uint32_t test_buffer = 0xAB;
+	bool region_ok = true;
+
+	printk("[R] Access given memory area\n");
+
+	for (uint32_t *mem_region = (uint32_t *)region->addr;
+	     mem_region < (uint32_t *)(region->addr + region->size); mem_region++) {
+
+		if (memcpy((void *)&test_buffer, (void *)mem_region, sizeof(test_buffer)) == NULL) {
+			printk("Given memory region cannot be read: %p\n", mem_region);
+			region_ok = false;
+		}
+	}
+
+	return region_ok;
+}
+
+static bool write_test_region(const struct reserved_mem_region *region)
+{
+	printk("[W] Access given memory area\n");
+
+	if (memset((void *)region->addr, 0xAB, region->size) == NULL) {
+		printk("Not able to set the given memory area\n");
+		return false;
+	}
+
+	printk("Given area written successfully\n");
+	return true;
+}
+
 int main(void)
 {
 	bool test_status = true;
 	uint32_t test_variable = 0x15;
 	uint32_t *test_variable_pointer = &test_variable;
-	uint32_t test_buffer;
 
 	printk("Hello %s\n", CONFIG_BOARD_TARGET);
 
@@ -61,41 +139,33 @@ int main(void)
 			continue;
 		}
 
+		if (region_is_peripherals(&reserved_regions[i])) {
+			continue;
+		}
+
 		printk("[%s] address=0x%08x, size=0x%x (%u bytes)\n", reserved_regions[i].labels[0],
 		       reserved_regions[i].addr, reserved_regions[i].size,
 		       reserved_regions[i].size);
 
-		if ((test_variable_pointer > (uint32_t *)reserved_regions[i].addr) &&
-		    (test_variable_pointer <
-		     (uint32_t *)(reserved_regions[i].addr + reserved_regions[i].size))) {
-			/* If current memory area is the active CPU data RAM - do not write it.
-			 * Such action will casue a crash.
-			 * Instead just test read access
+		bool attempt_write =
+			region_should_attempt_write(&reserved_regions[i], test_variable_pointer);
+
+		if (!attempt_write) {
+			/* Active CPU data RAM must not be written (would crash).
+			 * Write-forbidden regions are read-only unless
+			 * CONFIG_TEST_WRITE_FROBIDDEN_MEMORY_AREA is enabled.
 			 */
-			printk("[R] Access given memory area\n");
-
-			for (uint32_t *mem_region = (uint32_t *)reserved_regions[i].addr;
-			     mem_region <
-			     (uint32_t *)(reserved_regions[i].addr + reserved_regions[i].size);
-			     mem_region++) {
-
-				if (memcpy((void *)&test_buffer, (void *)mem_region,
-					   sizeof(uint32_t)) == NULL) {
-					printk("Given memory region cannot be read: %p\n",
-					       mem_region);
-					test_status = false;
-				}
+			if (!read_test_region(&reserved_regions[i])) {
+				test_status = false;
 			}
 
 		} else {
-			printk("[W] Access given memory area\n");
-
-			if (memset((void *)reserved_regions[i].addr, 0xAB,
-				   reserved_regions[i].size) == NULL) {
-				printk("Not able to set the given memory area\n");
+			if (!write_test_region(&reserved_regions[i])) {
 				test_status = false;
-			} else {
-				printk("Given area written successfully\n");
+			}
+
+			if (!read_test_region(&reserved_regions[i])) {
+				test_status = false;
 			}
 		}
 	}
