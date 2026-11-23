@@ -263,8 +263,13 @@ Security libraries
 Mbed TLS
 --------
 
-* Updated Mbed TLS to v4.1.1 (from v4.1.0) and TF-PSA-Crypto to v1.1.1 (from v1.1.0).
-  For more information, see the upstream `Mbed TLS 4.1.1 release notes`_ and `TF-PSA-Crypto 1.1.1 release notes`_.
+* Updated Mbed TLS to v4.1.2 (from v4.1.0) and TF-PSA-Crypto to v1.1.2 (from v1.1.0).
+  For more information, see the following pages in the upstream repositories:
+
+  * `Mbed TLS 4.1.1 release notes`_
+  * `Mbed TLS 4.1.2 release notes`_
+  * `TF-PSA-Crypto 1.1.1 release notes`_
+  * `TF-PSA-Crypto 1.1.2 release notes`_
 
 Trusted Firmware-M (TF-M)
 -------------------------
