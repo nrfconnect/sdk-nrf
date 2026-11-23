@@ -6,6 +6,7 @@
 #include <unity.h>
 #include <zephyr/kernel.h>
 #include <errno.h>
+#include <zephyr/net/dns_resolve.h>
 #include <net/aws_iot.h>
 
 #include "cmock_mqtt_helper.h"
@@ -200,6 +201,12 @@ void test_connect_should_return_error_if_mqtt_helper_connect_fails(void)
 {
 	__cmock_mqtt_helper_connect_ExpectAnyArgsAndReturn(-EINVAL);
 	TEST_ASSERT_EQUAL(-EINVAL, aws_iot_connect(NULL));
+}
+
+void test_connect_should_return_positive_error_if_host_name_is_not_resolved(void)
+{
+	__cmock_mqtt_helper_connect_ExpectAnyArgsAndReturn(-DNS_EAI_NONAME);
+	TEST_ASSERT_EQUAL(-DNS_EAI_NONAME, aws_iot_connect(NULL));
 }
 
 void test_connect_should_return_success(void)

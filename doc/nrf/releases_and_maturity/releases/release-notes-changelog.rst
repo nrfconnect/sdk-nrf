@@ -1663,7 +1663,10 @@ Libraries for networking
 
 * :ref:`lib_azure_iot_hub` library:
 
-  * Updated the API documentation of the :c:func:`azure_iot_hub_connect` and :c:func:`azure_iot_hub_dps_start` functions to describe the positive error code that they return when the host name cannot be resolved.
+  * Updated:
+
+    * The API documentation of the :c:func:`azure_iot_hub_connect` and :c:func:`azure_iot_hub_dps_start` functions to describe the positive error code that they return when the host name cannot be resolved.
+    * The documentation of the :c:func:`aws_iot_connect` function to list the positive error code that it returns when the broker host name cannot be resolved.
 
   * Fixed an issue where the device did not load the stored DPS assignment after a reboot when the NVS settings backend was used.
     The device then ran the DPS registration again.
