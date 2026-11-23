@@ -563,7 +563,7 @@ static int iot_hub_connect(struct azure_iot_hub_config *cfg)
 	LOG_INF("Azure IoT Hub library initialized");
 
 	err = azure_iot_hub_connect(cfg);
-	if (err < 0) {
+	if (err != 0) {
 		LOG_ERR("azure_iot_hub_connect failed: %d", err);
 		return err;
 	}
