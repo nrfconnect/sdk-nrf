@@ -5,7 +5,7 @@
 
    The Power consumption (System ON Idle) sample demonstrates how to evaluate the power consumption of the nRF7120 SoC during the System ON Idle state.
    The sample application is set to periodically sleep for a configurable duration, after which the device wakes up from sleep, printing the wake up count.
-   In addition to that, the sample demonstrates the different RAM retention levels available through the :ref:`lib_ram_pwrdn` library.
+   In addition to that, the sample demonstrates the different RAM retention levels available through the :ref:`lib_nrf71_idle_power` library.
 
 Requirements
 ************
@@ -33,25 +33,25 @@ RAM retention levels
 =====================
 
 By default, all application RAM is retained during System ON Idle.
-The sample's own Kconfig allows the user to configure the amount of RAM that is retained, exposing a choice of retention levels, each backed by the :ref:`lib_ram_pwrdn` library:
+The :ref:`lib_nrf71_idle_power` Kconfig options allow you to configure the amount of RAM that is retained, exposing a choice of retention levels, each backed by the :ref:`lib_ram_pwrdn` library:
 
 .. list-table::
    :header-rows: 1
 
    * - Kconfig option
      - Behavior
-   * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_FULL` (default)
+   * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_FULL` (default)
      - All RAM stays retained.
        No RAM is powered down.
-   * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_64K`
+   * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_64K`
      - Only the first 64 KiB of RAM stays retained, the rest is powered down.
-   * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_128K`
+   * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_128K`
      - Only the first 128 KiB of RAM stays retained, the rest is powered down.
-   * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_256K`
+   * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_256K`
      - Only the first 256 KiB of RAM stays retained, the rest is powered down.
-   * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_512K`
+   * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_512K`
      - Only the first 512 KiB of RAM stays retained, the rest is powered down.
-   * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_USED_ONLY`
+   * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_USED_ONLY`
      - Retains only the RAM used by the sample image, the rest is powered down using ``power_down_unused_ram()`` instead of a fixed KiB boundary.
 
 Building and running
@@ -71,7 +71,7 @@ To build the sample with any other of the supported RAM retention levels, pass t
 
 .. code-block:: console
 
-   west build -p always -b nrf7120dk/nrf7120/cpuapp nrf/samples/benchmarks/power_consumption -- -DCONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_64K=y
+   west build -p always -b nrf7120dk/nrf7120/cpuapp nrf/samples/benchmarks/power_consumption -- -DCONFIG_NRF71_IDLE_POWER_RAM_RETAIN_64K=y
 
 The same supported six configurations are also given in the :file:`tests.yaml` file (for example ``sample.benchmarks.power_consumption.ram_retain_64k``), for use with ``west build -T <name>`` or Twister.
 
