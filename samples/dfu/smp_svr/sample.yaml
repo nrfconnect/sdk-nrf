@@ -66,11 +66,14 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
 
   sample.dfu.smp_svr.serial.tfm_mcuboot:
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf7120dk/nrf7120e/cpuapp/ns
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp/ns
     sysbuild: true
     extra_args:
       - FILE_SUFFIX=tfm_mcuboot
@@ -353,8 +356,11 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     tags:
       - encryption
       - nrf_compress
