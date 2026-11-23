@@ -321,14 +321,14 @@ config BT_CTLR_SDC_RX_PRIO
 config BT_CTLR_DF
 	bool "CTE Transmitter support"
 	help
-	  Enable support for the Bluetooth v5.1 Connectionless CTE Transmitter
+	  Enable support for the Bluetooth Connectionless CTE Transmitter
 	  and the Connection CTE transmitter features in the controller.
 
 config BT_CTLR_DF_CONN_CTE_RSP
 	bool "Connection CTE Response feature"
 	depends on BT_CTLR_DF_CONN_CTE_TX
 	help
-	  Enable support for Bluetooth v5.1 Connection CTE Response feature
+	  Enable support for Bluetooth Connection CTE Response feature
 	  in controller.
 
 config BT_CTLR_SDC_MPSL_COEX_SUPPORT
@@ -806,11 +806,10 @@ config BT_CTLR_SDC_ISO_TEST
 	  Support for LE ISO test HCI commands
 
 config BT_CTLR_LE_FLUSHABLE_ACL_DATA
-	bool "LE Flushable ACL Data [EXPERIMENTAL]"
+	bool "LE Flushable ACL Data"
 	depends on BT_CTLR_EXTENDED_FEAT_SET
-	select EXPERIMENTAL
 	help
-	  Enable support for Bluetooth 6.2 LE Flushable ACL Data in the Controller.
+	  Enable support for Bluetooth LE Flushable ACL Data in the Controller.
 
 config BT_CTLR_CHANNEL_CLASSIFICATION
 	bool "Channel Classification [EXPERIMENTAL]"
