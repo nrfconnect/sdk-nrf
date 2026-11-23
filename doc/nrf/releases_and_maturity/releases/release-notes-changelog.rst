@@ -701,6 +701,7 @@ Cellular samples
   * :ref:`nrf_cloud_mqtt_cell_location`
   * :ref:`nrf_cloud_mqtt_device_message`
   * :ref:`nrf_cloud_mqtt_fota`
+  * :ref:`nrf_provisioning_sample`
   * :ref:`pdn_sample`
   * :ref:`sms_sample`
   * :ref:`ciphersuites`

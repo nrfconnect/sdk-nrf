@@ -16,9 +16,6 @@ The sample supports the following development kits:
 
 The sample requires that the device's private key is installed on the device and the associated device UUID is obtained from the Identity Service.
 
-.. note::
-   This sample requires modem firmware v2.0.0 or later.
-
 Overview
 ********
 
@@ -116,10 +113,6 @@ Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/cellular/nrf_device_provisioning`
-
-.. note::
-
-   This service is only compatible with nRF91x1 devices.
 
 To build the sample, you can use either HTTP or CoAP transfer protocols.
 
