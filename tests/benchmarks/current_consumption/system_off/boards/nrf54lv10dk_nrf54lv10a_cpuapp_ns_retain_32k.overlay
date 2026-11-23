@@ -16,10 +16,10 @@
 	};
 };
 
-&cpuapp_sram {
-	/* Shrink SRAM size to avoid overlap with retained memory region:
-	 * 191 - 32 = 159 = 0x27c00
+&sram0_ns {
+	/* Shrink the non-secure SRAM to end where the retained memory region
+	 * starts: 159 - 96 = 63 kB
 	 */
-	reg = <0x20000000 DT_SIZE_K(159)>;
-	ranges = <0x0 0x20000000 0x27c00>;
+	reg = <0x18000 DT_SIZE_K(63)>;
+	ranges = <0x0 0x18000 DT_SIZE_K(63)>;
 };
