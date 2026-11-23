@@ -20,7 +20,7 @@
 
 &cpuapp_sram_app {
 	/* Shrink SRAM size to avoid overlap with retained memory region */
-	reg = <0x60 (DT_SIZE_K(112) - 0x60)>;
+	reg = <0x5060 (DT_SIZE_K(112) - 0x5060)>;
 };
 
 &gpio4 {

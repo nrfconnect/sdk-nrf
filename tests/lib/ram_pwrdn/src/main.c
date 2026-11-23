@@ -41,6 +41,12 @@ static void exercise_ram(void)
 	printk("ram_pwrdn: RAM check sum=%u\n", sum);
 }
 
+#if DT_NODE_EXISTS(DT_NODELABEL(ram02_sram))
+#define RAM02_NODE DT_NODELABEL(ram02_sram)
+#else
+#define RAM02_NODE DT_NODELABEL(sram02_ns)
+#endif
+
 /* Word in RAM that the library powers down (the image never reaches this far).
  */
 static volatile uint32_t *unused_ram_word(void)
@@ -51,8 +57,7 @@ static volatile uint32_t *unused_ram_word(void)
 
 #if defined(CONFIG_SOC_NRF7120) || defined(CONFIG_SOC_NRF7120E)
 	/* RAM03 cannot be fully powered down, so probe the top of RAM02. */
-	probe = DT_REG_ADDR(DT_NODELABEL(ram02_sram)) +
-		DT_REG_SIZE(DT_NODELABEL(ram02_sram)) - sizeof(uint32_t);
+	probe = DT_REG_ADDR(RAM02_NODE) + DT_REG_SIZE(RAM02_NODE) - sizeof(uint32_t);
 #endif
 
 	return (volatile uint32_t *)probe;
