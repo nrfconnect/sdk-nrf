@@ -132,7 +132,7 @@ ZTEST(saadct_gpio_loopback, test_reading_follows_gpio_high)
 	nrf_saadc_value_t *data = capture_series_at_level(1);
 
 	for (size_t i = 0; i < SAMPLES_PER_SERIES; i++) {
-		zassert_within(data[i], SAMPLE_HIGH_EXPECTED, SAMPLE_HIGH_EXPECTED_TOLERANCE,
+		zexpect_within(data[i], SAMPLE_HIGH_EXPECTED, SAMPLE_HIGH_EXPECTED_TOLERANCE,
 			       "Sample %u = 0x%04x is not within range",
 			       (unsigned int)i, (uint16_t)data[i]);
 	}
@@ -145,7 +145,7 @@ ZTEST(saadct_gpio_loopback, test_reading_follows_gpio_low)
 	nrf_saadc_value_t *data = capture_series_at_level(0);
 
 	for (size_t i = 0; i < SAMPLES_PER_SERIES; i++) {
-		zassert_within(data[i], SAMPLE_LOW_EXPECTED, SAMPLE_LOW_EXPECTED_TOLERANCE,
+		zexpect_within(data[i], SAMPLE_LOW_EXPECTED, SAMPLE_LOW_EXPECTED_TOLERANCE,
 			       "Sample %u = 0x%04x is not within range",
 			       (unsigned int)i, (uint16_t)data[i]);
 	}
