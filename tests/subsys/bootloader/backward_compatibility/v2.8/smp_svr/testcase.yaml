@@ -1,0 +1,42 @@
+common:
+  sysbuild: true
+  build_only: true
+  tags:
+    - mcuboot
+    - ci_tests_subsys_bootloader
+
+tests:
+  # BC-aware update configuration for smp_svr over serial (RSA-2048,
+  # swap-using-move). boards/nrf54l15dk_nrf54l15_cpuapp_serial.overlay re-pins
+  # the released NCS v2.8 slot geometry so the v2.8 MCUboot on the device
+  # accepts and confirms the update image.
+  mcuboot.backward_compatibility.v2_8.smp_svr.serial.rsa_swap_move:
+    extra_args:
+      - FILE_SUFFIX=serial
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+      - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  mcuboot.backward_compatibility.v2_8.smp_svr.serial:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  mcuboot.backward_compatibility.v2_8.smp_svr.serial_recovery:
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_BOOT_SERIAL_ENTRANCE_GPIO=n
+      - mcuboot_CONFIG_BOOT_SERIAL_NO_APPLICATION=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  mcuboot.backward_compatibility.v2_8.smp_svr.serial_recovery.progressive_erase:
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_BOOT_SERIAL_ENTRANCE_GPIO=n
+      - mcuboot_CONFIG_BOOT_SERIAL_NO_APPLICATION=y
+      - mcuboot_CONFIG_BOOT_ERASE_PROGRESSIVELY=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
