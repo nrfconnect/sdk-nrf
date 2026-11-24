@@ -185,7 +185,7 @@ static int nrf_wifi_util_set_he_ltf_gi(const struct shell *sh,
 	return 0;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 static int nrf_wifi_util_set_uapsd_queue(const struct shell *sh,
 					 size_t argc,
 					 const char *argv[])
@@ -222,7 +222,7 @@ static int nrf_wifi_util_set_uapsd_queue(const struct shell *sh,
 
 	return 0;
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 
 static int nrf_wifi_util_show_cfg(const struct shell *sh,
@@ -273,7 +273,7 @@ static int nrf_wifi_util_show_cfg(const struct shell *sh,
 	return 0;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 static const char *ac_str(int ac)
 {
 	static const char * const names[NRF_WIFI_FMAC_AC_MAX] = {
@@ -306,7 +306,7 @@ static void tx_token_stats_summary(const struct shell *sh,
 	unsigned int limiter_cnt = 0;
 	unsigned int i;
 
-	for (i = 0; i < CONFIG_NRF71_MAX_TX_TOKENS; i++) {
+	for (i = 0; i < CONFIG_NRF71_WIFI_MAX_TX_TOKENS; i++) {
 		if (ts->token_cmds[i]) {
 			tokens_used++;
 		}
@@ -388,7 +388,7 @@ static void tx_token_stats_summary(const struct shell *sh,
 		unsigned int window_us = ts->window_start_cyc ?
 			k_cyc_to_us_floor32(k_cycle_get_32() - ts->window_start_cyc) : 0U;
 
-		for (i = 0; i < CONFIG_NRF71_MAX_TX_TOKENS; i++) {
+		for (i = 0; i < CONFIG_NRF71_WIFI_MAX_TX_TOKENS; i++) {
 			inflight_us += ts->token_inflight_us[i];
 		}
 
@@ -466,7 +466,7 @@ static void tx_token_stats_dump(const struct shell *sh,
 		      "fill", "max_pkts", "max_bytes", "us/cmd", "max_us", "KB/s",
 		      "type");
 
-	for (i = 0; i < num_tx_tokens && i < CONFIG_NRF71_MAX_TX_TOKENS; i++) {
+	for (i = 0; i < num_tx_tokens && i < CONFIG_NRF71_WIFI_MAX_TX_TOKENS; i++) {
 		unsigned int cmds = ts->token_cmds[i];
 		unsigned int pkts_x100 = cmds ? ((ts->token_pkts[i] * 100U) / cmds) : 0U;
 		unsigned int bytes_per_cmd = cmds ?
@@ -752,7 +752,7 @@ unlock:
 	k_mutex_unlock(&ctx->rpu_lock);
 	return ret;
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 
 
 static int nrf_wifi_util_tx_rate(const struct shell *sh,
@@ -853,7 +853,7 @@ static int nrf_wifi_util_show_vers(const struct shell *sh,
 	return status;
 }
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY
 static int nrf_wifi_util_trigger_rpu_recovery(const struct shell *sh,
 					      size_t argc,
 					      const char *argv[])
@@ -942,7 +942,7 @@ unlock:
 	k_mutex_unlock(&ctx->rpu_lock);
 	return ret;
 }
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 
 static int nrf_wifi_util_drv_stats(const struct shell *sh,
 				   size_t argc,
@@ -1116,21 +1116,21 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_set_he_ltf_gi,
 		      2,
 		      0),
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 	SHELL_CMD_ARG(uapsd_queue,
 		      NULL,
 		      "<val> - 0 to 15",
 		      nrf_wifi_util_set_uapsd_queue,
 		      2,
 		      0),
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 	SHELL_CMD_ARG(show_config,
 		      NULL,
 		      "Display the current configuration values",
 		      nrf_wifi_util_show_cfg,
 		      1,
 		      0),
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_WIFI_STA_SUPPORT
 	SHELL_CMD_ARG(tx_stats,
 		      NULL,
 		      "Displays a TX statistics summary: aggregation, token usage\n"
@@ -1142,7 +1142,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_tx_stats,
 		      2,
 		      2),
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
 	SHELL_CMD_ARG(tx_rate,
 		      NULL,
 		      "Sets TX data rate to either a fixed value or AUTO\n"
@@ -1167,7 +1167,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_show_vers,
 		      1,
 		      0),
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_WIFI_RPU_RECOVERY
 	SHELL_CMD_ARG(rpu_recovery_test,
 		      NULL,
 		      "Trigger RPU recovery",
@@ -1180,7 +1180,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_rpu_recovery_info,
 		      1,
 		      0),
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_WIFI_RPU_RECOVERY */
 	SHELL_CMD_ARG(drv_stats,
 		      NULL,
 		      "Display host driver error and RPU response timeout counters\n"

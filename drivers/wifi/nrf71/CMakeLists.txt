@@ -24,7 +24,7 @@ zephyr_library_sources(
   src/common/mac_addr.c
 )
 
-if(CONFIG_NRF71_RADIO_TEST)
+if(CONFIG_NRF71_WIFI_RADIO_TEST_MODE)
   zephyr_library_sources(
     src/radio_test/fmac_api.c
     src/radio_test/fmac_cmd.c
@@ -37,12 +37,12 @@ if(CONFIG_NRF71_RADIO_TEST)
     ${ZEPHYR_NRF_MODULE_DIR}/include/drivers/wifi/nrf71
   )
 
-  zephyr_library_sources_ifdef(CONFIG_NRF71_RADIO_TEST_SHELL
+  zephyr_library_sources_ifdef(CONFIG_NRF71_WIFI_RADIO_TEST_SHELL
     src/radio_test/shell.c
   )
 endif()
 
-if(CONFIG_NRF71_OFFLOADED_RAW_TX)
+if(CONFIG_NRF71_WIFI_OFFLOADED_RAW_TX_MODE)
   zephyr_library_sources(
     src/offload_raw_tx/fmac_api.c
     src/offload_raw_tx/fmac_cmd.c
@@ -51,7 +51,7 @@ if(CONFIG_NRF71_OFFLOADED_RAW_TX)
   )
 endif()
 
-if(CONFIG_NRF71_SYSTEM_MODE)
+if(CONFIG_NRF71_WIFI_SYSTEM_MODE)
   zephyr_library_sources(
     src/common/nbuf_mgmt.c
     src/system/rx.c
@@ -63,20 +63,20 @@ if(CONFIG_NRF71_SYSTEM_MODE)
     src/system/net_if.c
   )
 
-  if(CONFIG_NRF71_DATA_TX)
+  if(CONFIG_NRF71_WIFI_DATA_TX)
     zephyr_library_sources(
       src/system/tx.c
       src/system/fmac_peer.c
     )
-  elseif(CONFIG_NRF71_STA_MODE)
+  elseif(CONFIG_NRF71_WIFI_STA_SUPPORT)
     zephyr_library_sources(src/system/fmac_peer.c)
   endif()
 
-  if(CONFIG_NRF71_PROMISC_DATA_RX)
+  if(CONFIG_NRF71_WIFI_PROMISCUOUS_SUPPORT)
     zephyr_library_sources(src/system/fmac_promisc.c)
   endif()
 
-  if(CONFIG_NRF71_AP_MODE)
+  if(CONFIG_NRF71_WIFI_AP_SUPPORT)
     zephyr_library_sources(src/system/fmac_ap.c)
   endif()
 endif()
@@ -91,25 +91,25 @@ zephyr_library_sources_ifdef(CONFIG_NET_L2_WIFI_MGMT
   src/system/wifi_mgmt_scan.c
 )
 
-if(CONFIG_NRF71_SYSTEM_MODE AND NOT CONFIG_NRF71_SCAN_ONLY)
+if(CONFIG_NRF71_WIFI_SYSTEM_MODE AND NOT CONFIG_NRF71_WIFI_SCAN_ONLY)
   zephyr_library_sources(src/system/wifi_mgmt.c)
 endif()
 
 zephyr_library_sources(src/system/wifi_pm.c)
 
-zephyr_library_sources_ifdef(CONFIG_NRF71_STA_MODE
+zephyr_library_sources_ifdef(CONFIG_NRF71_WIFI_STA_SUPPORT
   src/system/wpa_supp_if.c
 )
 
-if(CONFIG_NRF71_UTIL OR CONFIG_NRF71_DEBUG_SHELL)
+if(CONFIG_NRF71_WIFI_UTIL_SHELL OR CONFIG_NRF71_WIFI_DEBUG_SHELL)
   zephyr_library_sources(src/common/shell.c)
 endif()
 
-zephyr_library_sources_ifdef(CONFIG_NRF71_UTIL
+zephyr_library_sources_ifdef(CONFIG_NRF71_WIFI_UTIL_SHELL
   src/common/util_shell.c
   src/system/drv_dbg_stats.c
 )
 
-zephyr_library_sources_ifdef(CONFIG_NRF71_DEBUG_SHELL
+zephyr_library_sources_ifdef(CONFIG_NRF71_WIFI_DEBUG_SHELL
   src/common/debug_shell.c
 )

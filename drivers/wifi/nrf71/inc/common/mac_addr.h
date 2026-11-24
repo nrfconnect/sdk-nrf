@@ -37,7 +37,7 @@ enum nrf_wifi_mac_addr_src {
  *      non-secure builds where UICR is mapped to the secure domain only)
  *   2. FICR MACADDR[n]
  *   3. A locally administered address derived at runtime, if
- *      CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM is enabled
+ *      CONFIG_NRF71_WIFI_XICR_MAC_ADDRESS_FALLBACK_RANDOM is enabled
  *
  * A source is used in its entirety, that is, slots are never mixed between
  * UICR and FICR. Within the selected source:
@@ -47,9 +47,9 @@ enum nrf_wifi_mac_addr_src {
  *     VIFs derive their address from it by incrementing the device-unique
  *     part and setting the locally administered bit.
  *
- * @param vif_idx Index of the virtual interface to get the MAC address for.
- * @param mac_addr Buffer of WIFI_MAC_ADDR_LEN bytes to store the MAC address.
- * @param src Optional, filled in with the source the address was taken from.
+ * @param[in] vif_idx Index of the virtual interface to get the MAC address for.
+ * @param[out] mac_addr Buffer of WIFI_MAC_ADDR_LEN bytes to store the MAC address.
+ * @param[out] src Optional, filled in with the source the address was taken from.
  *
  * @retval 0 On success.
  * @retval -EINVAL If the parameters are invalid.

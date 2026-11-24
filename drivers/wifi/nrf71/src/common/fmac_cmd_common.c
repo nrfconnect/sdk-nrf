@@ -18,7 +18,7 @@
 #include <system/drv_dbg_stats.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 struct host_rpu_msg *umac_cmd_alloc(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				    int type,

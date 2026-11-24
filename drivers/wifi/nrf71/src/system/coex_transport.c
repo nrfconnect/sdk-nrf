@@ -34,7 +34,7 @@
 #include <common/fmac_api_common.h>
 #include <common/fmac_structs_common.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 #define COEX_EID_HT_OPERATION      61U
 #define COEX_HT_OP_INFO_IDX        3U /* [0] = ID, [1] = length, [2] = primary channel */

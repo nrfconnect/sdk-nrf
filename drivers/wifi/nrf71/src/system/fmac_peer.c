@@ -17,7 +17,7 @@
 #include <common/util.h>
 #include <system/fmac_peer.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_NRF71_WIFI_LOG_LEVEL);
 
 int nrf_wifi_fmac_peer_get_id(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			      const unsigned char *mac_addr)

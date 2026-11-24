@@ -17,9 +17,9 @@
 enum nrf_wifi_status
 umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned int *rf_params_addr,
 			 unsigned int vtf_buffer_start_address,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT
 			 int sleep_type,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_WIFI_LOW_POWER_SUPPORT */
 			 unsigned int phy_calib, unsigned char op_band, bool beamforming,
 			 struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 			 unsigned char *country_code);

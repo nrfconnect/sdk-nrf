@@ -150,7 +150,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: b19d6fa3c1bf4b671831a1061edae09e5311305e
+      revision: pull/2373/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -235,7 +235,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.47.0
+      revision: pull/130/head
       remote: memfault
     - name: bsim
       repo-path: bsim_west
