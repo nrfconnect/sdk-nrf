@@ -6,8 +6,8 @@
 
 / {
 	zephyr,user {
-		test-saadc-input0 = <NRF_SAADC_AIN4>; /* P1.04 */
-		test-saadc-input1 = <NRF_SAADC_AIN3>; /* P1.03 */
+		test-saadc-input0 = <NRF_SAADC_AIN0>; /* P1.00 */
+		test-saadc-input1 = <NRF_SAADC_AIN1>; /* P1.01 */
 	};
 };
 

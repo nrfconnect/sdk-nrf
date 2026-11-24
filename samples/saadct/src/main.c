@@ -12,7 +12,9 @@ LOG_MODULE_REGISTER(saadct_sample, LOG_LEVEL_INF);
 
 #define NUMBER_OF_MEASUREMENTS 100
 #define NUMBER_OF_SERIES       10
-#define ACQ_TIME               23
+#define ACQ_TIME               319  /* (TACQ + 1) x 125 ns */
+#define TEST_DURATION_MS       100
+#define SAADC_SAMPLERATE       10000
 
 #if NRF_SAADC_HAS_CH_CONFIG_RES
 #define SAADCT_RESISTOR_CFG                                                                        \
@@ -107,7 +109,7 @@ int main(void)
 		return 0;
 	}
 
-	k_msleep(100);
+	k_msleep(TEST_DURATION_MS);
 	saadct_stop(saadct_dev, false);
 	LOG_INF("Stop requested, pending series: %u", saadct_pending(saadct_dev));
 
@@ -123,6 +125,8 @@ int main(void)
 			break;
 		}
 
+		/* Process samples here. */
+
 		LOG_INF("series[%u]: first=0x%04x last=0x%04x", series_cnt, samples[0],
 			samples[samples_per_series - 1]);
 		saadct_put(saadct_dev, samples);
@@ -136,10 +140,25 @@ int main(void)
 			break;
 		}
 
+		/* Process/drop addition samples (if present). */
+
 		LOG_INF("drain series[%u]: first=0x%04x last=0x%04x", series_cnt, samples[0],
 			samples[samples_per_series - 1]);
 		saadct_put(saadct_dev, samples);
 		series_cnt++;
+	}
+
+	/* Check if correct number of series was acquired. */
+	uint32_t expected_samples_cnt = SAADC_SAMPLERATE * TEST_DURATION_MS / 1000;
+	uint32_t expected_series_cnt = expected_samples_cnt / NUMBER_OF_MEASUREMENTS;
+	uint32_t diff = 1;
+
+	if (series_cnt <= expected_series_cnt + diff && series_cnt >= expected_series_cnt - diff) {
+		LOG_INF("Number of series: observed: %u, expected: %u - PASS",
+			series_cnt, expected_series_cnt);
+	} else {
+		LOG_WRN("Invalid number of series: observed: %u, expected: %u (+/- %u)",
+			series_cnt, expected_series_cnt, diff);
 	}
 
 	LOG_INF("Measurement finished, series read: %u, callbacks: %u", series_cnt,
