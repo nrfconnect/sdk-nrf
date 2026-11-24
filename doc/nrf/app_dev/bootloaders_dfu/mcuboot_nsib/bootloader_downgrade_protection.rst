@@ -14,7 +14,7 @@ This can be useful for security reasons, because firmware downgrade can allow at
 As part of this process, the bootloader compares the new firmware image version with the version of the currently booted firmware.
 The bootloader rejects the update if the new image version is lower than the version of the currently booted firmware.
 
-The implementation is related to the :ref:`ug_fw_update_image_versions` and depends on the type of bootloader used:
+The implementation follows the versioning scheme described on the :ref:`ug_fw_update_image_versions` page, including how the signed application version is assigned, and depends on the type of bootloader used:
 
 * Software-based downgrade protection is supported only by MCUboot.
   In this kind of protection, the current firmware version is encoded into the currently active image.
@@ -41,7 +41,10 @@ To enable this feature, set the configuration option :kconfig:option:`CONFIG_MCU
    In such cases, the application could roll back to a previous working version, but the network core would remain unchanged, leading to inconsistencies.
    If the network core remains compatible with an updated version, these issues may go unnoticed for an extended period, making them difficult to debug.
 
-You can compile your application with this feature as follows:
+To set the signed application version, use the :file:`VERSION` file in your application directory, as described in :ref:`ug_fw_update_image_versions_mcuboot` and Zephyr's :ref:`zephyr:app-version-details`.
+The build system uses this file to set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option, which is passed to imgtool when signing the image.
+
+The following command shows how to enable downgrade prevention and override the signed application version for a single build:
 
 .. parsed-literal::
    :class: highlight
@@ -51,6 +54,10 @@ You can compile your application with this feature as follows:
    -DSB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y \\
    -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\\"0.1.2\\+3\\" \\
    -Dmcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+
+.. note::
+   If your application uses a :file:`VERSION` file for the sign version, do not set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option on the command line or in the application configuration.
+   Set this option only when you want to override the version from the :file:`VERSION` file.
 
 |how_to_configure|
 
