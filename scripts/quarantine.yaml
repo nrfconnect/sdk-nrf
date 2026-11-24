@@ -108,19 +108,3 @@
     - nrf7120dk/nrf7120/cpuapp/ns
     - nrf7120dk/nrf7120e/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41934"
-
-- scenarios:
-    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem_16k
-    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem_32k
-    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem_4k
-  platforms:
-    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-42599"
-
-- scenarios:
-    - benchmarks.current_consumption.systemoff.grtc_wakeup.retained_mem_16k
-    - benchmarks.current_consumption.systemoff.grtc_wakeup.retained_mem_32k
-    - benchmarks.current_consumption.systemoff.grtc_wakeup.retained_mem_4k
-  platforms:
-    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-42600"
