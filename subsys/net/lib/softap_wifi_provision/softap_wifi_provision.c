@@ -47,11 +47,13 @@ LOG_MODULE_REGISTER(softap_wifi_provision, CONFIG_SOFTAP_WIFI_PROVISION_LOG_LEVE
 		       NET_EVENT_WIFI_CONNECT_RESULT		| \
 		       NET_EVENT_WIFI_AP_STA_DISCONNECTED)
 
+#define BUFFER_SIZE ScanRecord_size * CONFIG_SOFTAP_WIFI_PROVISION_SAMPLE_SCAN_RESULTS
+
 /* Internal variables */
 static struct net_mgmt_event_callback net_l2_mgmt_cb;
-static ScanResults scan = ScanResults_init_zero;
-static uint8_t scan_result_buffer[CONFIG_SOFTAP_WIFI_PROVISION_SCAN_RESULT_BUFFER_SIZE];
+uint8_t *scan_result_buffer;
 static size_t scan_result_buffer_len;
+static uint32_t scan_result_count;
 static const struct smf_state state[];
 static struct http_parser_settings parser_settings;
 static char linkaddr_string[sizeof("xxxxxxxxxxxx")];
@@ -185,35 +187,32 @@ static void wifi_scan_result_handle(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_scan_result *entry = (const struct wifi_scan_result *)cb->info;
 
-	if (scan.results_count < ARRAY_SIZE(scan.results)) {
+	if (scan_result_count < CONFIG_SOFTAP_WIFI_PROVISION_SAMPLE_SCAN_RESULTS) {
+		ScanRecord scan = ScanRecord_init_zero;
+		pb_ostream_t stream;
 
-		scan.results[scan.results_count].has_wifi = true;
+		scan.has_wifi = true;
 
 		/* SSID */
-		size_t ssid_len = MIN(entry->ssid_length,
-				      sizeof(scan.results[scan.results_count].wifi.ssid.bytes));
-		memcpy(scan.results[scan.results_count].wifi.ssid.bytes, entry->ssid, ssid_len);
-		scan.results[scan.results_count].wifi.ssid.size = ssid_len;
+		scan.wifi.ssid.size = MIN(entry->ssid_length, sizeof(scan.wifi.ssid.bytes));
+		memcpy(scan.wifi.ssid.bytes, entry->ssid, scan.wifi.ssid.size);
 
 		/* BSSID */
-		size_t bssid_len = MIN(entry->mac_length,
-				       sizeof(scan.results[scan.results_count].wifi.bssid.bytes));
-		memcpy(scan.results[scan.results_count].wifi.bssid.bytes, entry->mac, bssid_len);
-		scan.results[scan.results_count].wifi.bssid.size = bssid_len;
+		scan.wifi.bssid.size = MIN(entry->mac_length, sizeof(scan.wifi.bssid.bytes));
+		memcpy(scan.wifi.bssid.bytes, entry->mac, scan.wifi.bssid.size);
 
 		/* Band */
-		scan.results[scan.results_count].wifi.has_band = true;
-		scan.results[scan.results_count].wifi.band =
-			(entry->band == WIFI_FREQ_BAND_2_4_GHZ) ? Band_BAND_2_4_GHZ :
-			(entry->band == WIFI_FREQ_BAND_5_GHZ) ? Band_BAND_5_GHZ :
-			Band_BAND_ANY;
+		scan.wifi.has_band = true;
+		scan.wifi.band = (entry->band == WIFI_FREQ_BAND_2_4_GHZ) ? Band_BAND_2_4_GHZ :
+				   (entry->band == WIFI_FREQ_BAND_5_GHZ) ? Band_BAND_5_GHZ :
+				   Band_BAND_ANY;
 
 		/* Channel */
-		scan.results[scan.results_count].wifi.channel = entry->channel;
+		scan.wifi.channel = entry->channel;
 
 		/* Auth mode - defaults to AuthMode_WPA_WPA2_PSK. */
-		scan.results[scan.results_count].wifi.has_auth = true;
-		scan.results[scan.results_count].wifi.auth =
+		scan.wifi.has_auth = true;
+		scan.wifi.auth =
 			(entry->security == WIFI_SECURITY_TYPE_NONE) ? AuthMode_OPEN :
 			(entry->security == WIFI_SECURITY_TYPE_PSK) ? AuthMode_WPA_WPA2_PSK :
 			(entry->security == WIFI_SECURITY_TYPE_PSK_SHA256) ? AuthMode_WPA2_PSK :
@@ -221,10 +220,21 @@ static void wifi_scan_result_handle(struct net_mgmt_event_callback *cb)
 			AuthMode_WPA_WPA2_PSK;
 
 		/* Signal strength */
-		scan.results[scan.results_count].has_rssi = true;
-		scan.results[scan.results_count].rssi = entry->rssi;
+		scan.has_rssi = true;
+		scan.rssi = entry->rssi;
 
-		scan.results_count++;
+		stream = pb_ostream_from_buffer(scan_result_buffer + scan_result_buffer_len,
+					BUFFER_SIZE - scan_result_buffer_len);
+
+		if (!pb_encode_tag(&stream, PB_WT_STRING, ScanResults_results_tag) ||
+			!pb_encode_submessage(&stream, ScanRecord_fields, &scan)) {
+			LOG_ERR(" Scan Results Encoding Failed");
+			notify_app(SOFTAP_WIFI_PROVISION_EVT_FATAL_ERROR);
+			return;
+		}
+
+		scan_result_buffer_len += stream.bytes_written;
+		scan_result_count++;
 	}
 }
 
@@ -328,10 +338,17 @@ static int wifi_scan(void)
 	struct net_if *iface = net_if_get_first_wifi();
 	struct wifi_scan_params params = { 0 };
 
-	LOG_DBG("Scanning for Wi-Fi networks...");
+	scan_result_buffer_len = 0;
+	scan_result_buffer = k_malloc(sizeof(uint8_t) * BUFFER_SIZE);
 
-	/* Clear scan result buffer */
-	memset(scan_result_buffer, 0, sizeof(scan_result_buffer));
+	if (!scan_result_buffer) {
+		LOG_ERR("Unable to allocate scan_result_buffer");
+		notify_app(SOFTAP_WIFI_PROVISION_EVT_FATAL_ERROR);
+		return 0;
+	}
+
+	memset(scan_result_buffer, 0, sizeof(uint8_t) * BUFFER_SIZE);
+	LOG_DBG("Scanning for Wi-Fi networks...");
 
 	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params, sizeof(params));
 	if (ret) {
@@ -651,22 +668,7 @@ static void unprovisioned_exit(void *o)
 {
 	ARG_UNUSED(o);
 
-	LOG_DBG("Scanning for Wi-Fi networks completed, preparing protobuf payload");
-
-	/* If we have received all scan results, copy them to a buffer and
-	 * notify the application.
-	 */
-	pb_ostream_t stream = pb_ostream_from_buffer(scan_result_buffer,
-						     sizeof(scan_result_buffer));
-	if (!pb_encode(&stream, ScanResults_fields, &scan)) {
-		LOG_ERR("Encoding scan results failed");
-		notify_app(SOFTAP_WIFI_PROVISION_EVT_FATAL_ERROR);
-		return;
-	}
-
-	LOG_DBG("Protobuf payload prepared, scan results encoded, size: %d", stream.bytes_written);
-
-	scan_result_buffer_len = stream.bytes_written;
+	LOG_DBG("Scanning for Wi-Fi networks completed");
 }
 
 /* Scan for available Wi-Fi networks when we enter the provisioning state. */
@@ -736,6 +738,8 @@ static void provisioning_exit(void *o)
 		notify_app(SOFTAP_WIFI_PROVISION_EVT_FATAL_ERROR);
 		return;
 	}
+
+	k_free(scan_result_buffer);
 }
 
 static enum smf_state_result provisioned_run(void *o)

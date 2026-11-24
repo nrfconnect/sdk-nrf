@@ -46,10 +46,6 @@ config SOFTAP_WIFI_PROVISION_TCP_RECV_BUF_SIZE
 	int "TCP receive buffer size"
 	default 256
 
-config SOFTAP_WIFI_PROVISION_SCAN_RESULT_BUFFER_SIZE
-	int "Scan result buffer size"
-	default 512
-
 config SOFTAP_WIFI_PROVISION_THREAD_STACK_SIZE
 	int "Thread stack size"
 	default 4096
@@ -98,6 +94,13 @@ config SOFTAP_WIFI_PROVISION_IPV4_NETMASK
 config SOFTAP_WIFI_PROVISION_MESSAGE_QUEUE_ENTRIES
 	int "Message queue entries"
 	default 5
+
+config SOFTAP_WIFI_PROVISION_SAMPLE_SCAN_RESULTS
+	int "Wi-Fi scan results"
+	default 5
+	help
+	  Specifies the maximum number of scan results that will be stored and
+	  sent to the connected client in SoftAP mode.
 
 module = SOFTAP_WIFI_PROVISION
 module-str = SoftAP Wi-Fi provision

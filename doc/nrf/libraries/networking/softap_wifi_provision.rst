@@ -116,7 +116,6 @@ The following Kconfig options are available to configure the library:
 * :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_SERVER_CERTIFICATES_FOLDER`
 * :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_RESPONSE_BUFFER_SIZE`
 * :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_TCP_RECV_BUF_SIZE`
-* :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_SCAN_RESULT_BUFFER_SIZE`
 * :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_THREAD_STACK_SIZE`
 * :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_URL_MAX_SIZE`
 * :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_BODY_MAX_SIZE`
@@ -127,6 +126,7 @@ The following Kconfig options are available to configure the library:
 * :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_IPV4_ADDRESS`
 * :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_IPV4_NETMASK`
 * :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_MESSAGE_QUEUE_ENTRIES`
+* :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_SAMPLE_SCAN_RESULTS`
 
 Usage
 *****
