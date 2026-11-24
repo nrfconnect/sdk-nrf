@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Backward compatibility: express the released NCS v2.8 Partition Manager layout in devicetree.
+ * Application core internal flash: MCUboot 0x0/0xc000 and primary slot 0xc000/0xf4000, which
+ * includes the 0x200 image header. External flash: application secondary slot 0x0/0xf4000 and
+ * network core secondary slot 0xf4000/0x40000. The network core primary slot is the default
+ * RAM-backed slot2 of the same 0x40000 size.
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0xc000 DT_SIZE_K(976)>;
+		};
+	};
+};
+
+&mx25r64 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x0 DT_SIZE_K(976)>;
+		};
+
+		slot3_partition: partition@f4000 {
+			label = "image-3";
+			reg = <0xf4000 DT_SIZE_K(256)>;
+		};
+	};
+};

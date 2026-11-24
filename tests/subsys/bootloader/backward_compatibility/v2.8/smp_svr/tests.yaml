@@ -1,0 +1,18 @@
+common:
+  sysbuild: true
+  build_only: true
+  tags:
+    - mcuboot
+    - ci_tests_subsys_bootloader
+
+tests:
+  # Build the UART update with the current NCS development toolchain.
+  # Keep RSA-2048, swap-using-move, and the NCS 2.8.0 slot geometry for
+  # compatibility with the released MCUboot on the device.
+  mcuboot.backward_compatibility.v2_8.smp_svr.serial.rsa_swap_move:
+    extra_args:
+      - FILE_SUFFIX=serial
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+      - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp

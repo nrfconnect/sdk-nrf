@@ -1,0 +1,17 @@
+common:
+  sysbuild: true
+  build_only: true
+  platform_allow:
+    - nrf5340dk/nrf5340/cpuapp
+  tags:
+    - mcuboot
+    - nsib
+    - ci_tests_subsys_bootloader
+
+tests:
+  # Build the MCUboot second-stage update with the current NCS development toolchain.
+  # Match the NCS 2.8.0 slot geometry and retain the b0 and MCUboot keys.
+  mcuboot.backward_compatibility.v2_8.nsib_mcuboot_update.dts_layout:
+    extra_args:
+      - FILE_SUFFIX=dts_layout
+      - SB_CONFIG_SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER=y
