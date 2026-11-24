@@ -47,7 +47,9 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
+* Added:
+
+  * The :ref:`ug_fw_update_test_confirm` documentation page that describes the upload-test-confirm DFU scheme.
 
 Developing with nRF91 Series
 ============================
