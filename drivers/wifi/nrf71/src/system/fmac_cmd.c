@@ -164,6 +164,18 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 		umac_cmd_data->stbc_enable_in_ht = 1;
 	#endif /* CONFIG_NRF_WIFI_RX_STBC_HT */
 
+	#ifdef CONFIG_NRF71_WIFI_LDPC_HT
+		umac_cmd_data->ldpc_config |= NRF_WIFI_LDPC_ENABLE_HT;
+	#endif /* CONFIG_NRF71_WIFI_LDPC_HT */
+
+	#ifdef CONFIG_NRF71_WIFI_LDPC_VHT
+		umac_cmd_data->ldpc_config |= NRF_WIFI_LDPC_ENABLE_VHT;
+	#endif /* CONFIG_NRF71_WIFI_LDPC_VHT */
+
+	#ifdef CONFIG_NRF71_WIFI_LDPC_HE
+		umac_cmd_data->ldpc_config |= NRF_WIFI_LDPC_ENABLE_HE;
+	#endif /* CONFIG_NRF71_WIFI_LDPC_HE */
+
 	#ifdef CONFIG_NRF_WIFI_DYNAMIC_BANDWIDTH_SIGNALLING
 		umac_cmd_data->dbs_war_ctrl = 1;
 	#endif /* CONFIG_NRF_WIFI_DYNAMIC_BANDWIDTH_SIGNALLING */
