@@ -18,7 +18,9 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -38,7 +40,9 @@ tests:
       - CONFIG_TEST_NUMBER_OF_I2S_CHANNELS=4
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -60,7 +64,9 @@ tests:
       - CONFIG_TEST_NUMBER_OF_I2S_CHANNELS=8
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp

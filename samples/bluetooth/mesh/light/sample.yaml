@@ -20,6 +20,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lc10dk/nrf54lc10a/cpuapp
   sample.bluetooth.mesh.light.dfu:
     sysbuild: true

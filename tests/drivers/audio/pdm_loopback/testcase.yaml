@@ -13,21 +13,27 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args: CONFIG_NRFX_TIMER=y
   drivers.audio.pdm_loopback.nrf54lm20.1000khz:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     extra_args:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=20000
   drivers.audio.pdm_loopback.nrf54lm20.custom_ratio:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     extra_args:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=20000
@@ -38,7 +44,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
@@ -50,7 +58,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
@@ -60,7 +70,9 @@ tests:
   drivers.audio.pdm_loopback.nrf54lm20.aclk.1000khz:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     extra_args:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=20000
@@ -68,7 +80,9 @@ tests:
   drivers.audio.pdm_loopback.nrf54lm20.aclk.1280khz:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     extra_args:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
@@ -77,7 +91,9 @@ tests:
   drivers.audio.pdm_loopback.nrf54lm20.aclk.1600khz:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     extra_args:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=32000
