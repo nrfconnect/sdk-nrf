@@ -154,6 +154,9 @@ config NRF53_ENFORCE_IMAGE_VERSION_EQUALITY
 	  When enabled, MCUboot proceeds with the image swapping only if both the application core and
 	  the network core updates have been downloaded and they have the same version.
 
+config SOC_SERIES_NRF71_SKIP_PREV_IMAGE_INIT
+	default y if SOC_SERIES_NRF71 && SECURE_BOOT
+
 rsource "bl_crypto/Kconfig"
 rsource "bl_validation/Kconfig"
 rsource "bl_storage/Kconfig"
