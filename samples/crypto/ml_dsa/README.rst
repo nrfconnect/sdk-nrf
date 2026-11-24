@@ -23,7 +23,7 @@ The sample :ref:`enables PSA Crypto API <psa_crypto_support_enable>` and configu
 
 * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY` - Used to enable support for the ML-DSA public key type from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_key_types`.
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA` - Used to enable support for the ML-DSA signature algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_signature_algorithms`.
-* :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65` - Used to enable support for the ML-DSA-65 key type.
+* :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65` - Used to enable support for the ML-DSA-65 key size from among the supported :ref:`ML-DSA key sizes <ug_crypto_supported_features_ml_dsa_key_sizes>`.
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128` and :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256` - Used to enable support for the XOF algorithms required internally by ML-DSA.
 
 Once built and run, the sample performs the following operations:
