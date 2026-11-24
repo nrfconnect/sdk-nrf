@@ -124,12 +124,13 @@ int dfu_target_smp_done(bool successful);
  * @brief Schedule update of image.
  *
  * This call requests image update. The update will be performed after
- * the device resets. The image pair given to @ref dfu_target_smp_init() is updated.
+ * the device resets. The image pair given to @ref dfu_target_smp_init() for the
+ * last upload is updated.
  *
  * @param[in] img_num Unused.
  *
- * @return 0 for a successful request or a negative error
- *	   code identicating reason of failure.
+ * @retval 0 On a successful request.
+ * @return A negative error code indicating the reason of failure.
  **/
 int dfu_target_smp_schedule_update(int img_num);
 

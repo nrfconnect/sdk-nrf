@@ -29,7 +29,7 @@ struct upload_progress {
 };
 
 static struct upload_progress upload_state;
-/* Image number given to dfu_target_smp_init(), the image to schedule */
+/* Image number given to dfu_target_smp_init() for the last upload, the image to schedule */
 static uint32_t update_image_num;
 static struct mcumgr_image_data image_info[CONFIG_DFU_TARGET_SMP_IMAGE_LIST_SIZE];
 static int image_count;
@@ -121,7 +121,12 @@ int dfu_target_smp_init(size_t file_size, int img_num, dfu_target_callback_t cb)
 		upload_state.image_num = (uint32_t)img_num;
 	}
 
-	update_image_num = (uint32_t)img_num;
+	/* A zero file size is not an upload: the target is re-initialized that way
+	 * before a schedule or reset request. Keep the uploaded image number.
+	 */
+	if (file_size != 0) {
+		update_image_num = (uint32_t)img_num;
+	}
 
 	upload_state.image_size = file_size;
 	upload_state.offset = 0;
