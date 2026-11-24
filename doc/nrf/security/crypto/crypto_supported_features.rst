@@ -136,15 +136,6 @@ The options are grouped by Series and drivers available for the device Series, a
                * - XMSS-MT Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
                  - --
-               * - ML-DSA-44
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - --
-               * - ML-DSA-65
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - --
-               * - ML-DSA-87
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - --
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                  - --
@@ -159,15 +150,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - --
-               * - ML-KEM-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - --
-               * - ML-KEM-768
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - --
-               * - ML-KEM-1024
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
                  - --
                * - ML-KEM Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
@@ -292,21 +274,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-               * - ML-DSA-44
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA-65
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA-87
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - Experimental
-                 - Experimental
-                 - Experimental
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                  - Experimental
@@ -329,21 +296,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM-768
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM-1024
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -452,15 +404,6 @@ The options are grouped by Series and drivers available for the device Series, a
                * - XMSS-MT Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
                  - --
-               * - ML-DSA-44
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - --
-               * - ML-DSA-65
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - --
-               * - ML-DSA-87
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - --
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                  - --
@@ -475,15 +418,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - --
-               * - ML-KEM-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - --
-               * - ML-KEM-768
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - --
-               * - ML-KEM-1024
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
                  - --
                * - ML-KEM Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
@@ -570,15 +504,6 @@ The options are grouped by Series and drivers available for the device Series, a
                * - XMSS-MT Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
                  - Experimental
-               * - ML-DSA-44
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - Experimental
-               * - ML-DSA-65
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - Experimental
-               * - ML-DSA-87
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - Experimental
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                  - Experimental
@@ -593,15 +518,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - Experimental
-               * - ML-KEM-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - Experimental
-               * - ML-KEM-768
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - Experimental
-               * - ML-KEM-1024
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
                  - Experimental
                * - ML-KEM Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
@@ -699,15 +615,6 @@ The options are grouped by Series and drivers available for the device Series, a
                * - XMSS-MT Public Key
                  - ``PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY``
                  - --
-               * - ML-DSA-44
-                 - ``PSA_WANT_ML_DSA_KEY_SIZE_44``
-                 - --
-               * - ML-DSA-65
-                 - ``PSA_WANT_ML_DSA_KEY_SIZE_65``
-                 - --
-               * - ML-DSA-87
-                 - ``PSA_WANT_ML_DSA_KEY_SIZE_87``
-                 - --
                * - ML-DSA Key Pair Import
                  - ``PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT``
                  - --
@@ -722,15 +629,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-DSA Public Key
                  - ``PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY``
-                 - --
-               * - ML-KEM-512
-                 - ``PSA_WANT_ML_KEM_KEY_SIZE_512``
-                 - --
-               * - ML-KEM-768
-                 - ``PSA_WANT_ML_KEM_KEY_SIZE_768``
-                 - --
-               * - ML-KEM-1024
-                 - ``PSA_WANT_ML_KEM_KEY_SIZE_1024``
                  - --
                * - ML-KEM Key Pair Import
                  - ``PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT``
@@ -976,39 +874,6 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
-              * - ML-DSA-44
-                - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-              * - ML-DSA-65
-                - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-              * - ML-DSA-87
-                - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
               * - ML-DSA Key Pair Import
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                 - --
@@ -1055,39 +920,6 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
               * - ML-DSA Public Key
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-              * - ML-KEM-512
-                - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-              * - ML-KEM-768
-                - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-              * - ML-KEM-1024
-                - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
                 - --
                 - --
                 - --
@@ -1390,39 +1222,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-               * - ML-DSA-44
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - --
-                 - --
-               * - ML-DSA-65
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - --
-                 - --
-               * - ML-DSA-87
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - --
-                 - --
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                  - Experimental
@@ -1469,39 +1268,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - --
-                 - --
-               * - ML-KEM-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - --
-                 - --
-               * - ML-KEM-768
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - --
-                 - --
-               * - ML-KEM-1024
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1715,24 +1481,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
-               * - ML-DSA-44
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - --
-                 - --
-                 - --
-                 - --
-               * - ML-DSA-65
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - --
-                 - --
-                 - --
-                 - --
-               * - ML-DSA-87
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - --
-                 - --
-                 - --
-                 - --
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                  - --
@@ -1759,24 +1507,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - --
-                 - --
-                 - --
-                 - --
-               * - ML-KEM-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - --
-                 - --
-                 - --
-                 - --
-               * - ML-KEM-768
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - --
-                 - --
-                 - --
-                 - --
-               * - ML-KEM-1024
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
                  - --
                  - --
                  - --
@@ -1944,24 +1674,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-               * - ML-DSA-44
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA-65
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA-87
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                  - Experimental
@@ -1988,24 +1700,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM-768
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM-1024
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -11571,7 +11265,7 @@ The options are grouped by Series and drivers available for the device Series, a
 Key size configurations
 =======================
 
-The following sections list the supported AES and RSA key size Kconfig options.
+The following sections list the supported AES, RSA, ML-DSA, and ML-KEM key size Kconfig options.
 The Kconfig options follow the ``CONFIG_PSA_WANT_*`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
 
 .. _ug_crypto_supported_features_aes_key_sizes:
@@ -12363,6 +12057,662 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+
+.. _ug_crypto_supported_features_ml_dsa_key_sizes:
+
+ML-DSA key size configuration
+-----------------------------
+
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring ML-DSA key sizes that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported ML-DSA key sizes.
+
+The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
+
+.. tabs::
+
+   .. tab:: nRF52 Series
+
+      The following tables list the supported ML-DSA key sizes for nRF52 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_cc3xx
+
+            .. list-table:: ML-DSA key size support (nrf_cc3xx driver) - nRF52 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-DSA key size
+                 - Configuration option
+                 - nRF52840
+
+               * - ML-DSA-44
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                 - --
+               * - ML-DSA-65
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
+                 - --
+               * - ML-DSA-87
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                 - --
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: ML-DSA key size support (nrf_oberon driver) - nRF52 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-DSA key size
+                 - Configuration option
+                 - nRF52832
+                 - nRF52833
+                 - nRF52840
+
+               * - ML-DSA-44
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ML-DSA-65
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ML-DSA-87
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
+
+   .. tab:: nRF53 Series
+
+      The following tables list the supported ML-DSA key sizes for nRF53 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_cc3xx
+
+            .. list-table:: ML-DSA key size support (nrf_cc3xx driver) - nRF53 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-DSA key size
+                 - Configuration option
+                 - nRF5340
+
+               * - ML-DSA-44
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                 - --
+               * - ML-DSA-65
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
+                 - --
+               * - ML-DSA-87
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                 - --
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: ML-DSA key size support (nrf_oberon driver) - nRF53 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-DSA key size
+                 - Configuration option
+                 - nRF5340
+
+               * - ML-DSA-44
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                 - Experimental
+               * - ML-DSA-65
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
+                 - Experimental
+               * - ML-DSA-87
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                 - Experimental
+
+
+   .. tab:: nRF54H Series
+
+      The following tables list the supported ML-DSA key sizes for nRF54H Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: ML-DSA key size support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-DSA key size
+                 - Supported directive
+                 - nRF54H20
+
+               * - ML-DSA-44
+                 - ``PSA_WANT_ML_DSA_KEY_SIZE_44``
+                 - --
+               * - ML-DSA-65
+                 - ``PSA_WANT_ML_DSA_KEY_SIZE_65``
+                 - --
+               * - ML-DSA-87
+                 - ``PSA_WANT_ML_DSA_KEY_SIZE_87``
+                 - --
+
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported ML-DSA key sizes for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: ML-DSA key size support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+              * - ML-DSA key size
+                - Configuration option
+                - nRF54L05
+                - nRF54L10
+                - nRF54L15
+                - nRF54LC10A
+                - nRF54LM20A
+                - nRF54LM20B
+                - nRF54LV10A
+                - nRF54LS05A
+                - nRF54LS05B
+
+              * - ML-DSA-44
+                - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+              * - ML-DSA-65
+                - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+              * - ML-DSA-87
+                - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: ML-DSA key size support (nrf_oberon driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-DSA key size
+                 - Configuration option
+                 - nRF54L05
+                 - nRF54L10
+                 - nRF54L15
+                 - nRF54LC10A
+                 - nRF54LM20A
+                 - nRF54LM20B
+                 - nRF54LV10A
+                 - nRF54LS05A
+                 - nRF54LS05B
+
+               * - ML-DSA-44
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - ML-DSA-65
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - ML-DSA-87
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+
+
+   .. tab:: nRF91 Series
+
+      The following tables list the supported ML-DSA key sizes for nRF91 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_cc3xx
+
+            .. list-table:: ML-DSA key size support (nrf_cc3xx driver) - nRF91 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-DSA key size
+                 - Configuration option
+                 - nRF9131
+                 - nRF9151
+                 - nRF9160
+                 - nRF9161
+
+               * - ML-DSA-44
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                 - --
+                 - --
+                 - --
+                 - --
+               * - ML-DSA-65
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
+                 - --
+                 - --
+                 - --
+                 - --
+               * - ML-DSA-87
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                 - --
+                 - --
+                 - --
+                 - --
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: ML-DSA key size support (nrf_oberon driver) - nRF91 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-DSA key size
+                 - Configuration option
+                 - nRF9131
+                 - nRF9151
+                 - nRF9160
+                 - nRF9161
+
+               * - ML-DSA-44
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ML-DSA-65
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ML-DSA-87
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
+
+.. _ug_crypto_supported_features_ml_kem_key_sizes:
+
+ML-KEM key size configuration
+-----------------------------
+
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring ML-KEM key sizes that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported ML-KEM key sizes.
+
+The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
+
+.. tabs::
+
+   .. tab:: nRF52 Series
+
+      The following tables list the supported ML-KEM key sizes for nRF52 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_cc3xx
+
+            .. list-table:: ML-KEM key size support (nrf_cc3xx driver) - nRF52 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-KEM key size
+                 - Configuration option
+                 - nRF52840
+
+               * - ML-KEM-512
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                 - --
+               * - ML-KEM-768
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
+                 - --
+               * - ML-KEM-1024
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                 - --
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: ML-KEM key size support (nrf_oberon driver) - nRF52 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-KEM key size
+                 - Configuration option
+                 - nRF52832
+                 - nRF52833
+                 - nRF52840
+
+               * - ML-KEM-512
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ML-KEM-768
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ML-KEM-1024
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
+
+   .. tab:: nRF53 Series
+
+      The following tables list the supported ML-KEM key sizes for nRF53 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_cc3xx
+
+            .. list-table:: ML-KEM key size support (nrf_cc3xx driver) - nRF53 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-KEM key size
+                 - Configuration option
+                 - nRF5340
+
+               * - ML-KEM-512
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                 - --
+               * - ML-KEM-768
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
+                 - --
+               * - ML-KEM-1024
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                 - --
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: ML-KEM key size support (nrf_oberon driver) - nRF53 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-KEM key size
+                 - Configuration option
+                 - nRF5340
+
+               * - ML-KEM-512
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                 - Experimental
+               * - ML-KEM-768
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
+                 - Experimental
+               * - ML-KEM-1024
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                 - Experimental
+
+
+   .. tab:: nRF54H Series
+
+      The following tables list the supported ML-KEM key sizes for nRF54H Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: ML-KEM key size support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-KEM key size
+                 - Supported directive
+                 - nRF54H20
+
+               * - ML-KEM-512
+                 - ``PSA_WANT_ML_KEM_KEY_SIZE_512``
+                 - --
+               * - ML-KEM-768
+                 - ``PSA_WANT_ML_KEM_KEY_SIZE_768``
+                 - --
+               * - ML-KEM-1024
+                 - ``PSA_WANT_ML_KEM_KEY_SIZE_1024``
+                 - --
+
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported ML-KEM key sizes for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: ML-KEM key size support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+              * - ML-KEM key size
+                - Configuration option
+                - nRF54L05
+                - nRF54L10
+                - nRF54L15
+                - nRF54LC10A
+                - nRF54LM20A
+                - nRF54LM20B
+                - nRF54LV10A
+                - nRF54LS05A
+                - nRF54LS05B
+
+              * - ML-KEM-512
+                - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+              * - ML-KEM-768
+                - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+              * - ML-KEM-1024
+                - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: ML-KEM key size support (nrf_oberon driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-KEM key size
+                 - Configuration option
+                 - nRF54L05
+                 - nRF54L10
+                 - nRF54L15
+                 - nRF54LC10A
+                 - nRF54LM20A
+                 - nRF54LM20B
+                 - nRF54LV10A
+                 - nRF54LS05A
+                 - nRF54LS05B
+
+               * - ML-KEM-512
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - ML-KEM-768
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - ML-KEM-1024
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+
+
+   .. tab:: nRF91 Series
+
+      The following tables list the supported ML-KEM key sizes for nRF91 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_cc3xx
+
+            .. list-table:: ML-KEM key size support (nrf_cc3xx driver) - nRF91 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-KEM key size
+                 - Configuration option
+                 - nRF9131
+                 - nRF9151
+                 - nRF9160
+                 - nRF9161
+
+               * - ML-KEM-512
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                 - --
+                 - --
+                 - --
+                 - --
+               * - ML-KEM-768
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
+                 - --
+                 - --
+                 - --
+                 - --
+               * - ML-KEM-1024
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                 - --
+                 - --
+                 - --
+                 - --
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: ML-KEM key size support (nrf_oberon driver) - nRF91 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ML-KEM key size
+                 - Configuration option
+                 - nRF9131
+                 - nRF9151
+                 - nRF9160
+                 - nRF9161
+
+               * - ML-KEM-512
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ML-KEM-768
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ML-KEM-1024
+                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
 
 .. _ug_crypto_supported_features_countermeasures:
 
