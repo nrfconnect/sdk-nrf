@@ -304,7 +304,10 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-* Added the :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
+* Added:
+
+  * The :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
+  * Experimental support for Bluetooth Mesh on the nRF54LC10A SoC.
 
 * Removed:
 
