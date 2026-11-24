@@ -14,12 +14,12 @@
 #include "bootutil/fault_injection_hardening.h"
 #include "bootutil/bootutil_public.h"
 
-fih_int boot_nv_security_counter_init(void)
+fih_ret boot_nv_security_counter_init(void)
 {
-	return FIH_SUCCESS;
+	FIH_RET(FIH_SUCCESS);
 }
 
-fih_int boot_nv_security_counter_get(uint32_t image_id, fih_int *security_cnt)
+fih_ret boot_nv_security_counter_get(uint32_t image_id, fih_int *security_cnt)
 {
 	int err;
 	counter_t cur_sec_cnt;
@@ -57,7 +57,7 @@ int32_t boot_nv_security_counter_update(uint32_t image_id, uint32_t img_security
 	 */
 	fih_int security_cnt;
 
-	fih_int fih_err;
+	FIH_DECLARE(fih_err, FIH_FAILURE);
 	int err;
 
 	FIH_CALL(boot_nv_security_counter_get, fih_err, image_id, &security_cnt);
@@ -75,7 +75,7 @@ int32_t boot_nv_security_counter_update(uint32_t image_id, uint32_t img_security
 	return err == 0 ? 0 : -BOOT_EBADSTATUS;
 }
 
-fih_int boot_nv_security_counter_is_update_possible(uint32_t image_id,
+fih_ret boot_nv_security_counter_is_update_possible(uint32_t image_id,
 						    uint32_t img_security_cnt)
 {
 	int err;

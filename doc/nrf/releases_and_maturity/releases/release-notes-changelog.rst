@@ -86,6 +86,7 @@ Bootloaders and DFU
     The signed variant images could miss |NCS|-specific image metadata, such as the security counter or the ROM-fixed flag.
     As a result, MCUboot could reject the secondary slot image unexpectedly.
   * Potential out-of-bounds access in application's SMP by validating image and slot indexes before use, returning safe fallback values for invalid inputs.
+  * MCUboot FIH profile low and medium failing to compile due to incorrectly used FIH types.
 
 * Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
   See the :ref:`migration_3.5` page for details.
