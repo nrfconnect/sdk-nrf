@@ -575,3 +575,4 @@ Documentation
 * Updated:
 
   * The :ref:`software_maturity_security_features_psa` section on the :ref:`software_maturity` page by changing the support level of the :ref:`nrf_oberon <crypto_drivers_oberon>` driver on the nRF54LS05A SoC from experimental to supported.
+  * The :ref:`ug_crypto_supported_features` page by moving the ``CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_*`` and ``CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_*`` configuration options from the :ref:`ug_crypto_supported_features_key_types` section to the :ref:`ug_crypto_supported_features_key_size` section under the new :ref:`ug_crypto_supported_features_ml_dsa_key_sizes` and :ref:`ug_crypto_supported_features_ml_kem_key_sizes` subsections.
