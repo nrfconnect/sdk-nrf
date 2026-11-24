@@ -10,18 +10,17 @@
 
 &cpuapp_mram {
 	/*
-	 * NVM layout on nRF7120 NS Application MCU with MCUboot. The secure image is set to 128 KB
-	 * to fit below the Wi-Fi ROM patch at 0x0010_0000:
+	 * Default NVM layout on NRF7120 NS Application MCU with MCUBoot:
 	 *
 	 * 0x0000_0000 Boot Partition (64 KB)
 	 *
 	 * 0x0001_0000 Primary image area (1952 KB):
-	 *   - 0x0001_0000 Secure image primary (128 KB)
-	 *   - 0x0003_0000 Non-secure image primary (1824 KB)
+	 *   - 0x0001_0000 Secure image primary (192 KB)
+	 *   - 0x0004_0000 Non-secure image primary (1760 KB)
 	 *
 	 * 0x001F_8000 Secondary image area (1952 KB):
-	 *   - 0x001F_8000 Secure image secondary (128 KB)
-	 *   - 0x0021_8000 Non-secure image secondary (1824 KB)
+	 *   - 0x001F_8000 Secure image secondary (192 KB)
+	 *   - 0x0022_8000 Non-secure image secondary (1760 KB)
 	 *
 	 * 0x003E_0000 Protected Storage Area (16 KB)
 	 * 0x003E_4000 Internal Trusted Storage Area (16 KB)
@@ -52,13 +51,13 @@
 			slot0_s_partition: partition@0 {
 				compatible = "zephyr,mapped-partition";
 				label = "image-0-secure";
-				reg = <0x0 DT_SIZE_K(128)>;
+				reg = <0x0 DT_SIZE_K(192)>;
 			};
 
-			slot0_ns_partition: partition@20000 {
+			slot0_ns_partition: partition@30000 {
 				compatible = "zephyr,mapped-partition";
 				label = "image-0-nonsecure";
-				reg = <0x20000 DT_SIZE_K(1824)>;
+				reg = <0x30000 DT_SIZE_K(1760)>;
 			};
 		};
 
@@ -73,13 +72,13 @@
 			slot1_s_partition: partition@0 {
 				compatible = "zephyr,mapped-partition";
 				label = "image-1-secure";
-				reg = <0x0 DT_SIZE_K(128)>;
+				reg = <0x0 DT_SIZE_K(192)>;
 			};
 
-			slot1_ns_partition: partition@20000 {
+			slot1_ns_partition: partition@30000 {
 				compatible = "zephyr,mapped-partition";
 				label = "image-1-nonsecure";
-				reg = <0x20000 DT_SIZE_K(1824)>;
+				reg = <0x30000 DT_SIZE_K(1760)>;
 			};
 		};
 
