@@ -1088,6 +1088,19 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx,
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   unsigned char rate_flag,
 						   int data_rate);
+
+/**
+ * @brief Configure the TX coding type (BCC or LDPC).
+ * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
+ * @param coding_type Coding type, 0 = BCC, 1 = LDPC.
+ *
+ * This function is used to send a command to RPU
+ *	    to configure the coding type used for transmission.
+ *
+ * @return Command execution status
+ */
+enum nrf_wifi_status nrf_wifi_sys_fmac_set_coding_type(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+						       unsigned char coding_type);
 #endif /* CONFIG_NRF71_UTIL */
 
 /**
