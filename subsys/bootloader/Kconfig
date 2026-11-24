@@ -19,7 +19,7 @@ config SECURE_BOOT
 
 config SB_IMAGE_BOOT_OFFSET
 	hex "Offset of executable code within firmware image"
-	default 0x800 if SOC_SERIES_NRF54L
+	default 0x800 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	default 0x200 if SOC_SERIES_NRF53 || SOC_SERIES_NRF91
 	default 0
 	help
