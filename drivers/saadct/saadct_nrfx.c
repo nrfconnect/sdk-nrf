@@ -361,11 +361,11 @@ static int timer_init(const struct device *dev)
 	uint32_t desired_ticks;
 	int rc;
 
-	desired_ticks = nrfx_timer_us_to_ticks(timer, TIMER_PERIOD_US(sample_rate_hz));
 	rc = nrfx_timer_init(timer, &timer_cfg, NULL);
 	if (rc < 0) {
 		return rc;
 	}
+	desired_ticks = nrfx_timer_us_to_ticks(timer, TIMER_PERIOD_US(sample_rate_hz));
 	nrfx_timer_extended_compare(timer, NRF_TIMER_CC_CHANNEL0, desired_ticks,
 				    NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
 
