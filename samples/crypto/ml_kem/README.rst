@@ -23,7 +23,7 @@ The sample :ref:`enables PSA Crypto API <psa_crypto_support_enable>` and configu
 
 * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT` and :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT` - Used to enable support for importing and exporting ML-KEM key pairs from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_key_types`.
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM` - Used to enable support for the ML-KEM key encapsulation algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_key_encapsulation_algorithms`.
-* :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768` - Used to enable support for the ML-KEM-768 key type from among the supported :ref:`key types <ug_crypto_supported_features_key_types>`.
+* :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768` - Used to enable support for the ML-KEM-768 key size from among the supported :ref:`ML-KEM key sizes <ug_crypto_supported_features_ml_kem_key_sizes>`.
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`, :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`, :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`, and :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512` - Used to enable the hash and extendable-output functions required internally by ML-KEM, from among the supported :ref:`ug_crypto_supported_features_hash_algorithms`.
 * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES` and :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM` - Used to store the shared secret returned by the ML-KEM operations as an AES key.
 
