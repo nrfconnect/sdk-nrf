@@ -1,0 +1,48 @@
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice SW_CODEC_DEFAULT
+	default SW_CODEC_G722
+
+config SW_CODEC_G722
+	bool "g722"
+
+endchoice
+
+choice AUDIO_SYSTEM_SAMPLE_RATE
+	default AUDIO_SAMPLE_RATE_48000_HZ
+endchoice
+
+config AUDIO_SAMPLE_RATE_HZ
+	default 48000
+
+config AUDIO_BIT_DEPTH_BITS
+	default 16
+
+config AUDIO_BIT_DEPTH_OCTETS
+	default 2
+
+config AUDIO_FRAME_DURATION_US
+	default 10000
+
+config AUDIO_ENCODE_CHANNELS_MAX
+	default 2
+
+config AUDIO_DECODE_CHANNELS_MAX
+	default 2
+
+config AUDIO_INPUT_CHANNELS
+	default 2
+
+config AUDIO_OUTPUT_CHANNELS
+	default 2
+
+config SW_CODEC_SELECT_LOG_LEVEL
+	default 3
+
+config MONO_TO_ALL_RECEIVERS
+	default n
+
+source "$(ZEPHYR_NRF_MODULE_DIR)/applications/nrf_audio/src/audio/Kconfig"
+source "Kconfig.zephyr"
