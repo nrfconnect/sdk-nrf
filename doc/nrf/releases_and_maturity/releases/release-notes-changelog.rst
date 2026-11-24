@@ -62,6 +62,7 @@ Bootloaders and DFU
   * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC.
   * The :ref:`mcuboot_on_nrf54l_series` documentation page that summarizes MCUboot feature support across the nRF54L SoC series.
   * The ``IMAGE_TLV_INSTALLER_IMAGE`` (``0xA0``) TLV to identify firmware loader installer images.
+  * The :ref:`ug_fw_update_test_confirm` documentation page that describes the upload-test-confirm DFU scheme.
 
 * Updated MCUboot to feed the watchdog more aggressively during the following time-consuming operations, to prevent a watchdog timeout:
 

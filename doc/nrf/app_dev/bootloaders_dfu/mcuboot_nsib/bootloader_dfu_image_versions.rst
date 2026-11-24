@@ -51,4 +51,4 @@ See the `Semantic versioning`_ webpage or :doc:`mcuboot:imgtool` for details on 
 
 Read the :ref:`app_build_mcuboot_output` page for the list of all the FOTA upgrade files that are automatically generated when using MCUboot.
 
-After an update is installed, use the :ref:`ug_fw_update_test_confirm` procedure to run the new firmware in test mode and confirm it permanently.
+After an update is installed, complete the :ref:`ug_fw_update_test_confirm` procedure to run the new firmware in test mode and confirm it permanently.
