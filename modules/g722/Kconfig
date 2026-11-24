@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module=G722
+module-str=G.722 Codec
+
+config SW_CODEC_G722
+	bool
