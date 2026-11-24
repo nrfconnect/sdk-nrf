@@ -12,6 +12,9 @@ project(smp_svr_ref)
 
 set(smp_srv_dir ${ZEPHYR_BASE}/samples/subsys/mgmt/mcumgr/smp_svr)
 
-# This project uses orginal sdk-zephyr C source code
-target_sources(app PRIVATE ${smp_srv_dir}/src/main.c)
+# This project uses original sdk-zephyr C source code
+target_sources(app PRIVATE
+  ${ZEPHYR_NRF_MODULE_DIR}/samples/dfu/mcuboot_serial_recovery/src/execution_context.c
+  ${smp_srv_dir}/src/main.c
+)
 target_sources_ifdef(CONFIG_MCUMGR_TRANSPORT_BT app PRIVATE ${smp_srv_dir}/src/bluetooth.c)
