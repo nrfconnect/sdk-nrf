@@ -22,7 +22,7 @@ boards:
   /.*/nrf54lc10./cpuapp/:
     append:
       EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
-  /.*/nrf54lm20./cpuapp/:
+  /.*/nrf54lm20./cpuapp(/ite)?/:
     append:
       EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
   /.*/nrf54ls05./cpuapp/:
