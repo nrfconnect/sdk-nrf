@@ -8,10 +8,10 @@ config SETTINGS
 	default y
 
 config ZMS
-	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM || FLASH_IRONSIDE_TE_RRAM)
 
 config NVS
-	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM || FLASH_IRONSIDE_TE_RRAM)
 
 config SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX
 	bool "Continuous report receiving"
