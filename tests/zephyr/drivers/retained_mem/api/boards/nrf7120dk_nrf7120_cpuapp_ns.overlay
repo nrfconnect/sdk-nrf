@@ -16,6 +16,7 @@
 	};
 };
 
-&cpuapp_sram {
-	reg = <0x60 (DT_SIZE_K(184) - 0x60)>;
+/* End zephyr,sram at the retained RAM, 0x2002e000 (sram0_ns + 0x16000) */
+&sram0_ns_app {
+	reg = <0x5000 (0x16000 - 0x5000)>;
 };

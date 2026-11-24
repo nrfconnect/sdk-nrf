@@ -24,7 +24,7 @@
 
 &cpuapp_sram_app {
 	/* Reserve two aligned 32 KiB sections for the retention test. */
-	reg = <0x60 (DT_SIZE_K(128) - 0x60)>;
+	reg = <0x5060 (DT_SIZE_K(128) - 0x5060)>;
 };
 
 &gpio4 {

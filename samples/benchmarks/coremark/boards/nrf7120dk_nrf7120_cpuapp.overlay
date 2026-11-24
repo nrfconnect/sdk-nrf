@@ -38,7 +38,7 @@
 };
 
 &cpuapp_sram_app {
-	reg = <0x60 (DT_SIZE_K(160) - 0x60)>;
+	reg = <0x5060 (DT_SIZE_K(160) - 0x5060)>;
 };
 
 &cpuflpr_vpr {
