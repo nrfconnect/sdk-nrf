@@ -1287,5 +1287,6 @@ static void softap_wifi_provision_thread_fn(void)
 	}
 }
 
-K_THREAD_DEFINE(softap_wifi_provision_thread_id, CONFIG_SOFTAP_WIFI_PROVISION_THREAD_STACK_SIZE,
-		softap_wifi_provision_thread_fn, NULL, NULL, NULL, 3, 0, 0);
+K_KERNEL_THREAD_DEFINE(softap_wifi_provision_thread_id,
+		       CONFIG_SOFTAP_WIFI_PROVISION_THREAD_STACK_SIZE,
+		       softap_wifi_provision_thread_fn, NULL, NULL, NULL, 3, 0, 0);

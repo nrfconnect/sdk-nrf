@@ -59,7 +59,7 @@ struct bh6_mdns_fwd_ctx {
 };
 
 static struct bh6_mdns_fwd_ctx bh6_mdns_fwd;
-K_THREAD_STACK_DEFINE(bh6_mdns_fwd_stack, BH6_MCAST_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(bh6_mdns_fwd_stack, BH6_MCAST_STACK_SIZE);
 /* RX buffer is large; keep off the thread stack (stack size Kconfig stays small). */
 static uint8_t bh6_mdns_fwd_rx_buf[BH6_MCAST_BUF_SIZE];
 
@@ -421,7 +421,7 @@ int dect_tether_ipv6_mdns_fwd_start(void)
 	}
 
 	bh6_mdns_fwd.tid = k_thread_create(&bh6_mdns_fwd.thread, bh6_mdns_fwd_stack,
-					   K_THREAD_STACK_SIZEOF(bh6_mdns_fwd_stack),
+					   K_KERNEL_STACK_SIZEOF(bh6_mdns_fwd_stack),
 					   bh6_mdns_fwd_thread, NULL, NULL, NULL, BH6_MCAST_PRIO,
 					   0, K_NO_WAIT);
 	if (bh6_mdns_fwd.tid == NULL) {

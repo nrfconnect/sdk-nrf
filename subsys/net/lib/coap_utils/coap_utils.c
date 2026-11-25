@@ -29,7 +29,7 @@ static struct coap_reply replies[COAP_MAX_REPLIES];
 static int proto_family;
 static struct sockaddr *bind_addr;
 
-static K_THREAD_STACK_DEFINE(receive_stack_area, COAP_RECEIVE_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(receive_stack_area, COAP_RECEIVE_STACK_SIZE);
 static struct k_thread receive_thread_data;
 
 static int coap_open_socket(void)
@@ -213,7 +213,7 @@ void coap_init(int ip_family, struct sockaddr *addr)
 
 	/* start sock receive thread */
 	k_thread_create(&receive_thread_data, receive_stack_area,
-			K_THREAD_STACK_SIZEOF(receive_stack_area),
+			K_KERNEL_STACK_SIZEOF(receive_stack_area),
 			(k_thread_entry_t)coap_receive, NULL, NULL, NULL,
 			/* Lowest priority cooperative thread */
 			K_PRIO_COOP(CONFIG_NUM_COOP_PRIORITIES - 1), 0,

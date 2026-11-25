@@ -1684,8 +1684,9 @@ static void dect_shell_rx_thread_handler(void)
 	}
 }
 
-K_THREAD_DEFINE(dect_shell_rx_thread, DECT_SHELL_RX_THREAD_STACK_SIZE, dect_shell_rx_thread_handler,
-		NULL, NULL, NULL, DECT_SHELL_RX_THREAD_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(dect_shell_rx_thread, DECT_SHELL_RX_THREAD_STACK_SIZE,
+		       dect_shell_rx_thread_handler, NULL, NULL, NULL,
+		       DECT_SHELL_RX_THREAD_PRIORITY, 0, 0);
 
 void dect_shell_rx_stop(void)
 {
