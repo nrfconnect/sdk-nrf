@@ -23,7 +23,7 @@ BUILD_ASSERT(sizeof(struct bt_gatt_service_val) % DATA_ALIGN == 0);
 BUILD_ASSERT(sizeof(struct bt_gatt_chrc) % DATA_ALIGN == 0);
 
 #if defined(CONFIG_BT_GATT_DM_WORKQ_OWN)
-K_THREAD_STACK_DEFINE(bt_gatt_dm_wq_stack_area, CONFIG_BT_GATT_DM_WORKQ_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(bt_gatt_dm_wq_stack_area, CONFIG_BT_GATT_DM_WORKQ_STACK_SIZE);
 static struct k_work_q bt_gatt_dm_wq;
 
 static int gatt_dm_wq_init(void)
@@ -32,7 +32,7 @@ static int gatt_dm_wq_init(void)
 
 	k_work_queue_init(&bt_gatt_dm_wq);
 	k_work_queue_start(&bt_gatt_dm_wq, bt_gatt_dm_wq_stack_area,
-			   K_THREAD_STACK_SIZEOF(bt_gatt_dm_wq_stack_area),
+			   K_KERNEL_STACK_SIZEOF(bt_gatt_dm_wq_stack_area),
 			   CONFIG_BT_GATT_DM_WORKQ_PRIO, &cfg);
 	return 0;
 }

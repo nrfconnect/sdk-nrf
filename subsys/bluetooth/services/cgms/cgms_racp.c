@@ -17,7 +17,7 @@ LOG_MODULE_DECLARE(cgms, CONFIG_BT_CGMS_LOG_LEVEL);
 
 #define RACP_Q_STACK_SIZE 2048
 #define RACP_Q_PRIORITY 1
-K_THREAD_STACK_DEFINE(racp_q_stack_area, RACP_Q_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(racp_q_stack_area, RACP_Q_STACK_SIZE);
 
 /* The number of measurement that can be stored */
 #define RECORD_NUM       CONFIG_BT_CGMS_MAX_MEASUREMENT_RECORD
@@ -498,6 +498,6 @@ void cgms_racp_init(void)
 
 	k_work_queue_init(&racp_work_q);
 	k_work_queue_start(&racp_work_q, racp_q_stack_area,
-			K_THREAD_STACK_SIZEOF(racp_q_stack_area), RACP_Q_PRIORITY, NULL);
+			K_KERNEL_STACK_SIZEOF(racp_q_stack_area), RACP_Q_PRIORITY, NULL);
 	k_work_init(&report_record_task.item, racp_task_handler);
 }
