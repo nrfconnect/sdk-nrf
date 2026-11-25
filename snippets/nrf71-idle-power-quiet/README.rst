@@ -23,10 +23,12 @@ Apply it together with ``nrf71-idle-power`` (or an equivalent ``CONFIG_NRF71_IDL
 Supported boards
 ****************
 
-The snippet supports the following board targets:
+The snippet supports the application core targets, secure and non-secure, of any board based on the nRF7120 or nRF7120e SoC, for example:
 
 * ``nrf7120dk/nrf7120/cpuapp``
 * ``nrf7120dk/nrf7120/cpuapp/ns``
+* ``nrf7120dk/nrf7120e/cpuapp``
+* ``nrf7120dk/nrf7120e/cpuapp/ns``
 
 Usage
 *****
