@@ -14,6 +14,9 @@
 #include <zephyr/sys/cbprintf.h>
 #include <zephyr/sys/clock.h>
 #include <zephyr/shell/shell.h>
+#if IS_ENABLED(CONFIG_SHELL_BACKEND_SERIAL)
+#include <zephyr/shell/shell_uart.h>
+#endif
 #include <modem/modem_info.h>
 
 #include <nrf_modem_at.h>
@@ -26,6 +29,44 @@
 #include "desh_print.h"
 
 extern const struct shell *desh_shell;
+
+/* net_mgmt may call desh_print() before main(); UART shell is ready after POST_KERNEL. */
+static const struct shell *desh_shell_resolve(void)
+{
+	if (desh_shell != NULL) {
+		return desh_shell;
+	}
+
+#if IS_ENABLED(CONFIG_SHELL_BACKEND_SERIAL)
+	desh_shell = shell_backend_uart_get_ptr();
+#endif
+	return desh_shell;
+}
+
+static void desh_emit(enum desh_print_level print_level, const char *msg)
+{
+	const struct shell *shell = desh_shell_resolve();
+
+	if (shell != NULL) {
+		switch (print_level) {
+		case DESH_PRINT_LEVEL_PRINT:
+			shell_print(shell, "%s", msg);
+			break;
+		case DESH_PRINT_LEVEL_WARN:
+			shell_warn(shell, "%s", msg);
+			break;
+		case DESH_PRINT_LEVEL_ERROR:
+			shell_error(shell, "%s", msg);
+			break;
+		default:
+			shell_error(shell, "Unknown print level for next log. Please fix it.");
+			shell_print(shell, "%s", msg);
+			break;
+		}
+	} else {
+		printk("%s\n", msg);
+	}
+}
 
 /** Configuration on whether timestamps are added to the print. */
 bool desh_print_timestamp_use;
@@ -82,6 +123,7 @@ bool create_timestamp_string(char *timestamp_buf, int timestamp_buf_len)
 void desh_fprintf_valist(enum desh_print_level print_level, const char *fmt, va_list args)
 {
 	int chars = 0;
+	const struct shell *shell = desh_shell_resolve();
 
 	k_mutex_lock(&desh_print_buf_mutex, K_FOREVER);
 
@@ -90,7 +132,9 @@ void desh_fprintf_valist(enum desh_print_level print_level, const char *fmt, va_
 		(void)create_timestamp_string(timestamp_str, sizeof(timestamp_str));
 		chars = snprintf(desh_print_buf, sizeof(desh_print_buf), "%s", timestamp_str);
 		if (chars < 0) {
-			shell_error(desh_shell, "Error while printing timestamp...");
+			if (shell != NULL) {
+				shell_error(shell, "Error while printing timestamp...");
+			}
 			chars = 0;
 		}
 	}
@@ -102,27 +146,16 @@ void desh_fprintf_valist(enum desh_print_level print_level, const char *fmt, va_
 	 */
 	chars += vsnprintfcb(desh_print_buf + chars, sizeof(desh_print_buf) - chars, fmt, args);
 	if (chars >= sizeof(desh_print_buf)) {
-		shell_error(desh_shell, "Cutting too long string while printing...");
+		if (shell != NULL) {
+			shell_error(shell, "Cutting too long string while printing...");
+		}
 	} else if (chars < 0) {
-		shell_error(desh_shell, "Error while printing...");
+		if (shell != NULL) {
+			shell_error(shell, "Error while printing...");
+		}
 	}
 
-	/* Print with given level */
-	switch (print_level) {
-	case DESH_PRINT_LEVEL_PRINT:
-		shell_print(desh_shell, "%s", desh_print_buf);
-		break;
-	case DESH_PRINT_LEVEL_WARN:
-		shell_warn(desh_shell, "%s", desh_print_buf);
-		break;
-	case DESH_PRINT_LEVEL_ERROR:
-		shell_error(desh_shell, "%s", desh_print_buf);
-		break;
-	default:
-		shell_error(desh_shell, "Unknown print level for next log. Please fix it.");
-		shell_print(desh_shell, "%s", desh_print_buf);
-		break;
-	}
+	desh_emit(print_level, desh_print_buf);
 #if defined(CONFIG_SAMPLE_DESH_CLOUD_MQTT)
 	if (desh_print_cloud_echo) {
 		struct nrf_cloud_sensor_data desh_cloud_print = {.type = NRF_CLOUD_DEVICE_INFO,
@@ -147,7 +180,7 @@ void desh_fprintf(enum desh_print_level print_level, const char *fmt, ...)
 
 void desh_print_no_format(const char *usage)
 {
-	shell_print(desh_shell, "%s", usage);
+	desh_emit(DESH_PRINT_LEVEL_PRINT, usage);
 }
 
 int desh_print_help_shell(const struct shell *shell, size_t argc, char **argv)
