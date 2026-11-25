@@ -21,12 +21,20 @@
 #include <drivers/saadct.h>
 #include <nrfx_saadc.h>
 
-#define NUM_OF_MEAS            16
+#define NUM_OF_MEAS            100
 #define SAMPLE_RATE_HZ         KHZ(20)
+#define MEASUREMENT_TIMEOUT_MS 50
+/* Select MEASUREMENT_TIMEOUT_MS to be an integer multiple of time
+ * needed to acquire NUM_OF_MEAS ADC samples at SAMPLE_RATE_HZ.
+ * (which is NUM_OF_MEAS * 1/SAMPLE_RATE_HZ [sec])
+ * Otherwise, test may fail due to rounding errors.
+ */
+#define SERIE_TIME_MS          (1000 * NUM_OF_MEAS / SAMPLE_RATE_HZ)
+#define EXPECTED_SERIES_CNT    (MEASUREMENT_TIMEOUT_MS / SERIE_TIME_MS)
+
 #define SAADCT_RESOLUTION      NRF_SAADC_RESOLUTION_10BIT
 #define RESOLUTION_BITS        10
 #define MAX_SAMPLE_VALUE       (1U << RESOLUTION_BITS)
-#define MEASUREMENT_TIMEOUT_MS 100
 
 #define SAMPLE_LOW_EXPECTED  (nrf_saadc_value_t)0
 #define SAMPLE_HIGH_EXPECTED (nrf_saadc_value_t)(MAX_SAMPLE_VALUE - 1)
@@ -66,14 +74,20 @@ static const nrfx_saadc_channel_t test_channels[] = {
 
 #define MEAS_BLOCK_SIZE SAADCT_MEAS_BLOCK_SIZE(NUM_OF_MEAS, NUM_OF_CHANNELS)
 
-K_MEM_SLAB_DEFINE(test_slab, MEAS_BLOCK_SIZE, 4, sizeof(void *));
+K_MEM_SLAB_DEFINE(test_slab, MEAS_BLOCK_SIZE, 32, 4);
 
 static struct saadct_config test_cfg = {
 	.num_of_channels = NUM_OF_CHANNELS,
 	.num_of_meas = NUM_OF_MEAS,
 	.resolution = SAADCT_RESOLUTION,
 	.sample_rate_hz = SAMPLE_RATE_HZ,
+#if defined(CONFIG_TEST_SAADCT_MODE_ONE_SHOT)
 	.mode = saadct_mode_one_shot,
+#elif defined(CONFIG_TEST_SAADCT_MODE_CONTINUOUS)
+	.mode = saadct_mode_continuous,
+#else
+#error Unknown TEST_SAADCT_MODE
+#endif
 	.user_handler = NULL,
 	.user_context = NULL,
 	.channels_config = test_channels,
@@ -85,7 +99,7 @@ static const struct device *const saadct_dev = DEVICE_DT_GET(SAADCT_NODE);
 static const struct gpio_dt_spec loopback_gpio =
 	GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_gpios);
 
-static void *saadct_setup(void)
+static void *suite_setup(void)
 {
 	int ret;
 
@@ -101,11 +115,31 @@ static void *saadct_setup(void)
 	return NULL;
 }
 
+static void verify_samples(nrf_saadc_value_t *data, size_t size, uint32_t level)
+{
+	nrf_saadc_value_t expected;
+	nrf_saadc_value_t tolerance;
+
+	if (level) {
+		expected = SAMPLE_HIGH_EXPECTED;
+		tolerance = SAMPLE_HIGH_EXPECTED_TOLERANCE;
+	} else {
+		expected = SAMPLE_LOW_EXPECTED;
+		tolerance = SAMPLE_LOW_EXPECTED_TOLERANCE;
+	}
+
+	for (size_t i = 0; i < size; i++) {
+		zexpect_within(data[i], expected, tolerance,
+			       "Sample %u: %d while expected is %d (+/- %u)",
+			       i, data[i], expected, tolerance);
+	}
+}
+
 /*
  * Drive the loopback pin to the requested level, capture one one-shot series
  * and return it. The caller must release the buffer with saadct_put().
  */
-static nrf_saadc_value_t *capture_series_at_level(int level)
+static void capture_series_at_level(int level)
 {
 	int ret;
 	nrf_saadc_value_t *data = NULL;
@@ -116,66 +150,82 @@ static nrf_saadc_value_t *capture_series_at_level(int level)
 	/* Allow the pad voltage to settle before sampling. */
 	k_msleep(2);
 
+#if defined(CONFIG_TEST_SAADCT_MODE_ONE_SHOT)
 	ret = saadct_start(saadct_dev, &test_slab);
 	zassert_ok(ret, "saadct_start failed: %d", ret);
 
-	ret = saadct_get(saadct_dev, &data, K_MSEC(MEASUREMENT_TIMEOUT_MS));
+	ret = saadct_get(saadct_dev, &data, K_MSEC(2 * SERIE_TIME_MS));
 	zassert_ok(ret, "saadct_get failed: %d", ret);
-
-	zassert_not_null(data, "meas_get returned NULL data");
-
-	return data;
-}
-
-ZTEST(saadct_gpio_loopback, test_reading_follows_gpio_high)
-{
-	nrf_saadc_value_t *data = capture_series_at_level(1);
-
-	for (size_t i = 0; i < SAMPLES_PER_SERIES; i++) {
-		zexpect_within(data[i], SAMPLE_HIGH_EXPECTED, SAMPLE_HIGH_EXPECTED_TOLERANCE,
-			       "Sample %u = 0x%04x is not within range",
-			       (unsigned int)i, (uint16_t)data[i]);
-	}
+	zassert_not_null(data, "saadct_get returned NULL data");
+	verify_samples(data, SAMPLES_PER_SERIES, level);
 
 	saadct_put(saadct_dev, data);
+
+	/* Confirm only one series was acquired. */
+	k_msleep(2 * SERIE_TIME_MS);
+	zassert_ok(saadct_pending(saadct_dev), "Unexpected second series was acquired");
+
+#elif defined(CONFIG_TEST_SAADCT_MODE_CONTINUOUS)
+	uint32_t series_cnt = 0;
+
+	ret = saadct_start(saadct_dev, &test_slab);
+	zassert_ok(ret, "saadct_start failed: %d", ret);
+
+	/* Waiting for some time to acquire expected number of series is not accurate. */
+	k_msleep(MEASUREMENT_TIMEOUT_MS);
+
+#if defined(CONFIG_TEST_SAADCT_STOP_IMMEDIATELY)
+	/* saadct_stop(dev, true) immediately stops sampling. Any incomplete series is discarded.
+	 * This may result in less acquired series than expected.
+	 */
+	saadct_stop(saadct_dev, true);
+#else
+	/* saadct_stop(dev, false) completes the current serie before stopping hardware.
+	 * This may result in an additional serie of samples.
+	 */
+	saadct_stop(saadct_dev, false);
+#endif /* defined(CONFIG_TEST_SAADCT_STOP_IMMEDIATELY) */
+
+	while (true) {
+		ret = saadct_get(saadct_dev, &data, K_MSEC(2 * SERIE_TIME_MS));
+		if (ret == -EIO) {
+			/* No more series will arrive. */
+			TC_PRINT("Break after %u series\n", series_cnt);
+			break;
+		}
+
+		/* Verify data in expected series. */
+		zassert_ok(ret, "saadct_get returned %d", ret);
+		zassert_not_null(data, "saadct_get returned NULL data");
+		verify_samples(data, SAMPLES_PER_SERIES, level);
+
+		saadct_put(saadct_dev, data);
+
+		series_cnt++;
+	}
+
+	zassert_within(series_cnt, EXPECTED_SERIES_CNT, 1,
+		      "Number of series = %d while expected is %d",
+		      series_cnt, EXPECTED_SERIES_CNT);
+#endif /* defined(CONFIG_TEST_SAADCT_MODE_CONTINUOUS) */
 }
 
-ZTEST(saadct_gpio_loopback, test_reading_follows_gpio_low)
+ZTEST(saadct_gpio_loopback, test_high_level)
 {
-	nrf_saadc_value_t *data = capture_series_at_level(0);
-
-	for (size_t i = 0; i < SAMPLES_PER_SERIES; i++) {
-		zexpect_within(data[i], SAMPLE_LOW_EXPECTED, SAMPLE_LOW_EXPECTED_TOLERANCE,
-			       "Sample %u = 0x%04x is not within range",
-			       (unsigned int)i, (uint16_t)data[i]);
-	}
-
-	saadct_put(saadct_dev, data);
+	capture_series_at_level(1);
 }
 
-ZTEST(saadct_gpio_loopback, test_high_reads_above_low)
+ZTEST(saadct_gpio_loopback, test_low_level)
 {
-	nrf_saadc_value_t *high = capture_series_at_level(1);
-	int high_avg = 0;
-
-	for (size_t i = 0; i < SAMPLES_PER_SERIES; i++) {
-		high_avg += high[i];
-	}
-	high_avg /= (int)SAMPLES_PER_SERIES;
-	saadct_put(saadct_dev, high);
-
-	nrf_saadc_value_t *low = capture_series_at_level(0);
-	int low_avg = 0;
-
-	for (size_t i = 0; i < SAMPLES_PER_SERIES; i++) {
-		low_avg += low[i];
-	}
-	low_avg /= (int)SAMPLES_PER_SERIES;
-	saadct_put(saadct_dev, low);
-
-	zassert_true(high_avg > low_avg,
-		     "Expected high average (%d) to exceed low average (%d)",
-		     high_avg, low_avg);
+	capture_series_at_level(0);
 }
 
-ZTEST_SUITE(saadct_gpio_loopback, NULL, saadct_setup, NULL, NULL, NULL);
+ZTEST(saadct_gpio_loopback, test_toggle)
+{
+	capture_series_at_level(0);
+	capture_series_at_level(1);
+	capture_series_at_level(0);
+	capture_series_at_level(1);
+}
+
+ZTEST_SUITE(saadct_gpio_loopback, NULL, suite_setup, NULL, NULL, NULL);
