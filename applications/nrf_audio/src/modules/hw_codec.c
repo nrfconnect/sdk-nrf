@@ -37,7 +37,7 @@ static cs47l63_t cs47l63_driver;
 static k_tid_t volume_msg_sub_thread_id;
 static struct k_thread volume_msg_sub_thread_data;
 
-K_THREAD_STACK_DEFINE(volume_msg_sub_thread_stack, CONFIG_VOLUME_MSG_SUB_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(volume_msg_sub_thread_stack, CONFIG_VOLUME_MSG_SUB_STACK_SIZE);
 
 /**
  * @brief	Convert the zbus volume to the actual volume setting for the HW codec.
