@@ -99,21 +99,16 @@ static bool region_should_attempt_write(const struct reserved_mem_region *region
 
 static bool read_test_region(const struct reserved_mem_region *region)
 {
-	uint32_t test_buffer = 0xAB;
-	bool region_ok = true;
-
 	printk("[R] Access given memory area\n");
 
-	for (uint32_t *mem_region = (uint32_t *)region->addr;
-	     mem_region < (uint32_t *)(region->addr + region->size); mem_region++) {
+	volatile uint32_t read_checksum = 0;
 
-		if (memcpy((void *)&test_buffer, (void *)mem_region, sizeof(test_buffer)) == NULL) {
-			printk("Given memory region cannot be read: %p\n", mem_region);
-			region_ok = false;
-		}
+	for (size_t offset = 0; offset < region->size; offset += sizeof(uint32_t)) {
+		read_checksum ^= sys_read32(region->addr + offset);
 	}
 
-	return region_ok;
+	/* Unreadable addresses fault at runtime; success means every load completed. */
+	return true;
 }
 
 static bool write_test_region(const struct reserved_mem_region *region)
