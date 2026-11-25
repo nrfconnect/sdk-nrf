@@ -1363,7 +1363,7 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 	ongoing_obj_id = UNUSED_OBJ_ID;
 	firmware_fota_event_cb = cb;
 #ifdef CONFIG_DFU_TARGET_SMP
-	tid = k_thread_create(&thread, thread_stack, K_THREAD_STACK_SIZEOF(thread_stack),
+	tid = k_thread_create(&thread, thread_stack, K_KERNEL_STACK_SIZEOF(thread_stack),
 			      update_thread, NULL, NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0,
 			      K_NO_WAIT);
 
