@@ -21,18 +21,18 @@
 			};
 		};
 
-		cpuflpr_sram_code_data: memory@20028000 {
+		cpuflpr_sram_code_data: memory@20027c00 {
 			compatible = "mmio-sram";
-			reg = <0x20028000 DT_SIZE_K(96)>;
+			reg = <0x20027c00 DT_SIZE_K(96)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x20028000 0x18000>;
+			ranges = <0x0 0x20027c00 0x18000>;
 		};
 	};
 };
 
 &cpuapp_sram_app {
-	reg = <0x60 (DT_SIZE_K(160) - 0x60)>;
+	reg = <0x60 (DT_SIZE_K(159) - 0x60)>;
 };
 
 &cpuflpr_vpr {

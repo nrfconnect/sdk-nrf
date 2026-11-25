@@ -5,20 +5,20 @@
  */
 
 &sram_rx {
-	reg = <0x20039000 0x07f0>;
+	reg = <0x20038c00 0x07f0>;
 };
 
 &sram_tx {
-	reg = <0x200397f0 0x07f0>;
+	reg = <0x200393f0 0x07f0>;
 };
 
 &cpuflpr_error_code {
-	reg = <0x20039fe0 0x0020>; /* 32bytes */
+	reg = <0x20039be0 0x0020>; /* 32bytes */
 };
 
 &cpuflpr_sram_code_data {
-	reg = <0x2003a000 DT_SIZE_K(24)>;
-	ranges = <0x0 0x2003a000 0x6000>;
+	reg = <0x20039c00 DT_SIZE_K(24)>;
+	ranges = <0x0 0x20039c00 0x6000>;
 	status = "reserved";
 };
 
@@ -35,5 +35,5 @@
 };
 
 &cpuapp_sram_app {
-	reg = <0x60 (DT_SIZE_K(228) - 0x60)>;
+	reg = <0x60 (DT_SIZE_K(227) - 0x60)>;
 };

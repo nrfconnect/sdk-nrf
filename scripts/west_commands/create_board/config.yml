@@ -85,11 +85,12 @@ products:
             cores:
               - name: cpuapp
                 arch: arm
-                ram: 188
+                ram: 255
                 flash: 1428
               - name: cpuflpr
                 arch: riscv
                 ram: 96
+                xip_ram: 68
                 flash: 96
                 xip: true
   - series: nrf54lm

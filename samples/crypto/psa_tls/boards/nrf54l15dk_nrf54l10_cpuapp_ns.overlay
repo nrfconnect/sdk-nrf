@@ -15,19 +15,10 @@
 /delete-node/ &sram0_s;
 /delete-node/ &sram0_ns;
 
-&rram_controller {
-	/delete-node/ cpuflpr_sram;
-	/delete-node/ cpuflpr_rram;
-};
-
-/* Adjust cpuapp_sram to include the freed-up cpuflpr_sram (192 kB total)
- * and rebalance the secure/non-secure split to 64 kB / 128 kB so the
+/* Rebalance the secure/non-secure split to 64 kB / 128 kB so the
  * non-secure image (psa_tls needs ~115 kB of RAM) fits.
  */
 &cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(192)>;
-	ranges = <0x0 0x20000000 0x20030000>;
-
 	sram0_s: image_s@0 {
 		#address-cells = <1>;
 		#size-cells = <1>;

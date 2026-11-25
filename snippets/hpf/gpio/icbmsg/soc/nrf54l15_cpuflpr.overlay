@@ -10,12 +10,12 @@
 		#size-cells = <1>;
 		ranges;
 
-		sram_tx: memory@2003b800 {
-			reg = <0x2003b800 0x0800>;
+		sram_tx: memory@2003b400 {
+			reg = <0x2003b400 0x0800>;
 		};
 
-		sram_rx: memory@2003c000 {
-			reg = <0x2003c000 0x0800>;
+		sram_rx: memory@2003bc00 {
+			reg = <0x2003bc00 0x0800>;
 		};
 	};
 
@@ -45,6 +45,6 @@
 };
 
 &cpuflpr_sram {
-	reg = <0x2003c800 DT_SIZE_K(14)>;
-	ranges = <0x0 0x2003c800 0x3800>;
+	reg = <0x2003c400 DT_SIZE_K(14)>;
+	ranges = <0x0 0x2003c400 0x3800>;
 };

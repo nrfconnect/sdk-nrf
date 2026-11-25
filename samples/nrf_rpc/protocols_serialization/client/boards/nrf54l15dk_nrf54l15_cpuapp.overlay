@@ -69,12 +69,3 @@
 	pinctrl-names = "default", "sleep";
 	hw-flow-control;
 };
-
-&cpuapp_sram_app {
-	reg = <0x60 (DT_SIZE_K(256) - 0x60)>;
-};
-
-&rram_controller {
-	/delete-node/ cpuflpr_sram;
-	/delete-node/ cpuflpr_rram;
-};
