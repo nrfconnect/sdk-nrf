@@ -388,7 +388,7 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 
 	k_work_queue_init(&uart_tr->rx_workq);
 	k_work_queue_start(&uart_tr->rx_workq, uart_tr->rx_workq_stack,
-			   K_THREAD_STACK_SIZEOF(uart_tr->rx_workq_stack), K_PRIO_PREEMPT(0),
+			   K_KERNEL_STACK_SIZEOF(uart_tr->rx_workq_stack), K_PRIO_PREEMPT(0),
 			   &workq_cfg);
 
 	k_work_init(&uart_tr->rx_work, work_handler);
