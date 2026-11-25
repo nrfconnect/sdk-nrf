@@ -523,8 +523,9 @@ int dm_init(struct dm_init_param *init_param)
 	return 0;
 }
 
-K_THREAD_DEFINE(dm_thread_id, DM_THREAD_STACK_SIZE,
-		dm_thread, NULL, NULL, NULL, DM_THREAD_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(dm_thread_id, DM_THREAD_STACK_SIZE,
+		       dm_thread, NULL, NULL, NULL, DM_THREAD_PRIORITY, 0, 0);
 
-K_THREAD_DEFINE(mpsl_nonpreemptible_thread_id, MPSL_THREAD_STACK_SIZE,
-		mpsl_nonpreemptible_thread, NULL, NULL, NULL, K_PRIO_COOP(MPSL_THREAD_PRIO), 0, 0);
+K_KERNEL_THREAD_DEFINE(mpsl_nonpreemptible_thread_id, MPSL_THREAD_STACK_SIZE,
+		       mpsl_nonpreemptible_thread, NULL, NULL, NULL, K_PRIO_COOP(MPSL_THREAD_PRIO),
+		       0, 0);
