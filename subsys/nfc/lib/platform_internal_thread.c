@@ -180,7 +180,7 @@ static void nfc_cb_wrapper(void)
 	}
 }
 
-K_THREAD_DEFINE(nfc_cb_thread, CONFIG_NFC_THREAD_STACK_SIZE, nfc_cb_wrapper,
+K_KERNEL_THREAD_DEFINE(nfc_cb_thread, CONFIG_NFC_THREAD_STACK_SIZE, nfc_cb_wrapper,
 		 NULL, NULL, NULL, CONFIG_NFC_THREAD_PRIORITY, 0, 0);
 #else
 static K_WORK_DEFINE(nfc_cb_work, cb_work);
