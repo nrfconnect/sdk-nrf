@@ -40,7 +40,8 @@ jobs:
       - name: Run mypy
         working-directory: ncs/nrf/scripts/west_commands
         run: |
-          python3 -m mypy --config-file mypy.ini ncs_west_helpers.py pygit2_helpers.py ncs_commands.py
+          python3 -m mypy --config-file mypy.ini \
+            ncs_west_helpers.py pygit2_helpers.py ncs_commands.py ncs_hpf_asm_update.py
 
   run-west-cmds:
     name: Run smoke tests for ncs west commands
@@ -69,6 +70,11 @@ jobs:
         run: |
           west ncs-loot -h
           west ncs-compare -h
+      - name: Smoke test ncs-hpf-asm-update
+        shell: bash
+        run: |
+          west ncs-hpf-asm-update -h
+          west ncs-hpf-asm-update --list
       # Keep the ncs-sbom test to see if changes to requirements are affecting it
       - name: Smoke test ncs-sbom
         shell: bash
