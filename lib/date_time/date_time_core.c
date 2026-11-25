@@ -27,7 +27,7 @@ BUILD_ASSERT(CONFIG_DATE_TIME_TOO_OLD_SECONDS <= CONFIG_DATE_TIME_UPDATE_INTERVA
 
 #define DATE_TIME_EVT_TYPE_PREVIOUS 0xFF
 
-K_THREAD_STACK_DEFINE(date_time_stack, CONFIG_DATE_TIME_THREAD_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(date_time_stack, CONFIG_DATE_TIME_THREAD_STACK_SIZE);
 struct k_work_q date_time_work_q;
 
 static void date_time_update_work_fn(struct k_work *work);

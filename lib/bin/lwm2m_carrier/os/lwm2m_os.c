@@ -48,7 +48,7 @@ static struct nvs_fs fs = {
 	.flash_device = NVS_FLASH_DEVICE,
 };
 
-K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS,
+K_KERNEL_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS,
 			    CONFIG_LWM2M_CARRIER_WORKQ_STACK_SIZE);
 static struct k_work_q lwm2m_os_work_qs[LWM2M_OS_MAX_WORK_QS];
 
@@ -208,7 +208,7 @@ lwm2m_os_work_q_t *lwm2m_os_work_q_start(int index, const char *name)
 	lwm2m_os_work_q_t *work_q = (lwm2m_os_work_q_t *)&lwm2m_os_work_qs[index];
 
 	k_work_queue_start(&lwm2m_os_work_qs[index], lwm2m_os_work_q_client_stack[index],
-			   K_THREAD_STACK_SIZEOF(lwm2m_os_work_q_client_stack[index]),
+			   K_KERNEL_STACK_SIZEOF(lwm2m_os_work_q_client_stack[index]),
 			   K_LOWEST_APPLICATION_THREAD_PRIO, NULL);
 
 	k_thread_name_set(lwm2m_os_work_qs[index].thread_id, name);

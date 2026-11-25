@@ -554,5 +554,5 @@ int nrf_modem_lib_trace_clear(void)
 	return 0;
 }
 
-K_THREAD_DEFINE(trace_thread, CONFIG_NRF_MODEM_LIB_TRACE_STACK_SIZE, trace_thread_handler,
+K_KERNEL_THREAD_DEFINE(trace_thread, CONFIG_NRF_MODEM_LIB_TRACE_STACK_SIZE, trace_thread_handler,
 	       NULL, NULL, NULL, TRACE_THREAD_PRIORITY, 0, 0);

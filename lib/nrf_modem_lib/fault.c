@@ -93,7 +93,7 @@ static void restart_on_fault(void *p1, void *p2, void *p3)
  * than any other application thread that wants to see the NRF_ESHUTDOWN error
  * when the Modem library is shutdown or the modem has faulted.
  */
-K_THREAD_DEFINE(nrf_modem_lib_fault, CONFIG_NRF_MODEM_LIB_FAULT_THREAD_STACK_SIZE,
-		restart_on_fault, NULL, NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
+K_KERNEL_THREAD_DEFINE(nrf_modem_lib_fault, CONFIG_NRF_MODEM_LIB_FAULT_THREAD_STACK_SIZE,
+		       restart_on_fault, NULL, NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
 #endif /* CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM */
