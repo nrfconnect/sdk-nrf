@@ -13,6 +13,7 @@
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/sys_io.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/log_cfg.h>
 
@@ -381,6 +382,40 @@ static void log_error_stats(const char *func,
 }
 #endif /* CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF */
 
+#ifdef CONFIG_NRF71_WIFI_FETCH_FW_LOG_ON_NO_RX_FRAMES
+/* LMAC RX statistics mirrored in RPU SYSMEM (firmware build dependent). */
+#define LMAC_RX_STATS_RAM_ADDR 0x28003530UL
+#define PMB_WLAN_MAC_CTRL_DEAGG_CRC32PASS_CNT      0x4808E078UL
+#define PMB_WLAN_MAC_CTRL_DEAGG_CRC32FAIL_CNT      0x4808E07CUL
+#define PMB_WLAN_MAC_CTRL_DEAGG_DSSS_CRC32PASS_CNT 0x4808E0B8UL
+#define PMB_WLAN_MAC_CTRL_DEAGG_DSSS_CRC32FAIL_CNT 0x4808E0BCUL
+
+static void nrf_wifi_fmac_fetch_fw_log_on_no_rcv_frames(void)
+{
+	const volatile struct lmac_rx_stats *rx =
+		(const volatile struct lmac_rx_stats *)LMAC_RX_STATS_RAM_ADDR;
+
+	LOG_INF("%s: LMAC RX snapshot (no receive frames in 2 seconds)", __func__);
+	LOG_INF("  LMAC RAM @0x%x: deagg_isr=%u lmac_rxisr_cnt=%u "
+		"lmac_rx_isr_dropped_cnt=%u rx_ctrl_mem_full=%u",
+		(unsigned int)LMAC_RX_STATS_RAM_ADDR,
+		rx->deagg_isr, rx->lmac_rxisr_cnt, rx->lmac_rx_isr_dropped_cnt,
+		rx->rx_ctrl_mem_full);
+	LOG_INF("  rx_total_mpdu_cnt=%u rx_mpdu_crc_fail_cnt=%u rx_mpdu_crc_success_cnt=%u",
+		rx->rx_total_mpdu_cnt, rx->rx_mpdu_crc_fail_cnt,
+		rx->rx_mpdu_crc_success_cnt);
+	LOG_INF("  rx_ofdm_crc_success_cnt=%u rx_ofdm_crc_fail_cnt=%u "
+		"rx_dsss_crc_success_cnt=%u rx_dsss_crc_fail_cnt=%u",
+		rx->rx_ofdm_crc_success_cnt, rx->rx_ofdm_crc_fail_cnt,
+		rx->rx_dsss_crc_success_cnt, rx->rx_dsss_crc_fail_cnt);
+	LOG_INF("  HW DEAGG: CRC32 pass=%u fail=%u DSSS pass=%u fail=%u",
+		sys_read32(PMB_WLAN_MAC_CTRL_DEAGG_CRC32PASS_CNT),
+		sys_read32(PMB_WLAN_MAC_CTRL_DEAGG_CRC32FAIL_CNT),
+		sys_read32(PMB_WLAN_MAC_CTRL_DEAGG_DSSS_CRC32PASS_CNT),
+		sys_read32(PMB_WLAN_MAC_CTRL_DEAGG_DSSS_CRC32FAIL_CNT));
+}
+#endif /* CONFIG_NRF71_WIFI_FETCH_FW_LOG_ON_NO_RX_FRAMES */
+
 
 static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						       struct host_rpu_msg *rpu_msg)
@@ -511,6 +546,12 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 			break;
 		}
 #endif /* CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF */
+#ifdef CONFIG_NRF71_WIFI_FETCH_FW_LOG_ON_NO_RX_FRAMES
+		if (err_ev->stats_type == RPU_STATS_TYPE_LMAC &&
+		    err_ev->status_code == NO_RCV_FRAMES_IN_2_SECONDS) {
+			nrf_wifi_fmac_fetch_fw_log_on_no_rcv_frames();
+		}
+#endif /* CONFIG_NRF71_WIFI_FETCH_FW_LOG_ON_NO_RX_FRAMES */
 		status = NRF_WIFI_STATUS_SUCCESS;
 		break;
 	}

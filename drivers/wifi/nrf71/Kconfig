@@ -220,6 +220,15 @@ config WIFI_NRF71_LOG_LEVEL
 	# Enable error by default
 	default 1
 
+config NRF71_WIFI_FETCH_FW_LOG_ON_NO_RX_FRAMES
+	bool "Dump LMAC RX snapshot on no-RX-frames error"
+	depends on WIFI_NRF71 && WIFI_NRF71_LOG_LEVEL >= 3
+	default n
+	help
+	  When the RPU raises LMAC error NO_RCV_FRAMES_IN_2_SECONDS, read the
+	  LMAC RX statistics block from RPU RAM and WLAN MAC DEAGG hardware
+	  counters and emit them in the host log.
+
 config NRF71_MAX_TX_PENDING_QLEN
 	int "Maximum number of pending TX packets"
 	default 18
