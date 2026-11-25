@@ -174,7 +174,7 @@ Developing with nRF54L Series
 Developing with nRF53 Series
 ============================
 
-* Moved the Thingy:53 to a new section, :ref:`ug_thingy53`, under :ref:`ug_app_dev`.
+* Moved the Thingy:53 to a new section, Developing with Thingy:53, under :ref:`ug_app_dev`.
 
 Developing with Front-End Modules
 =================================

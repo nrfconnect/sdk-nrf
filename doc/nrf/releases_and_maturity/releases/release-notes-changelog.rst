@@ -1866,7 +1866,6 @@ Documentation
   * The :ref:`install_ncs` page by adding a button for installing the |nRFVSC| with the latest stable release of the |NCS|.
     This has also simplified the structure of the page.
   * The :ref:`ug_wifi` documentation to make it agnostic to Nordic Semiconductor Wi-Fi devices by moving nRF70 Series specific pages, including Wi-Fi stack configuration and performance, Debugging, and Wi-Fi certification, under :ref:`ug_nrf70`.
-  * The :ref:`thingy53_app_guide` page by removing the section about samples and applications that enable FOTA for Thingy:53 by default.
   * The :ref:`dfu_over_ble` page by removing the section about out-of-the-box point-to-point DFU over Bluetooth Low Energy on Thingy:53.
   * The :ref:`ug_bt_mesh_configuring` page by removing Thingy:53 as an example of a board with the Bluetooth LE Controller on a separate image.
   * The :ref:`ug_bt_mesh_configuring` page by adding the :ref:`ug_bt_mesh_configuring_lto` section.
@@ -1877,3 +1876,5 @@ Documentation
   * The :ref:`ug_nrf54h20_mcuboot_requests` page by adding figures that illustrate the initialization, read, clear, and write procedures of the bootloader requests module.
   * The :ref:`ug_nrf54h20_partitioning_merged` page by adding figures that illustrate the partition layouts, the bootchains, the radio core slot selection, and the image version dependencies.
   * The :ref:`ug_nrf54h20_mcuboot_manifest` page by adding figures that illustrate the manifest partitions and the manifest TLV structure, and by spelling out the term TLV.
+
+* Removed the Developing with Thingy:53 guide and Thingy:53 references from the documentation.
