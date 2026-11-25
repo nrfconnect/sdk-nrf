@@ -136,6 +136,22 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Enclave (IronSide SE) v24.0.0+38
+================================================
+
+Added
+-----
+
+* The IronSide OTP service, which you can use to read from and write to OTP memory. (NRFX-9196)
+* Support for the new device revision with hybrid key signature. (NRFX-9984)
+
+Updated
+-------
+
+* The MRAM10 memory map, increasing the maximum size of the application firmware to 1 MB. (NRFX-9688)
+  The application firmware start address has changed from ``0x0e312000`` to ``0x0e300000``.
+* Security improvements that break backward compatibility with the CELL immutable bootloader. (NRFX-9168)
+
 IronSide Secure Enclave (IronSide SE) v23.8.3+36
 ================================================
 
