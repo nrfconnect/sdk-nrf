@@ -22,4 +22,14 @@ common:
     - nrf54l15dk/nrf54l15/cpuapp
 
 tests:
-  drivers.saadct.gpio_loopback: {}
+  drivers.saadct.gpio_loopback.one_shot:
+    extra_configs:
+      - CONFIG_TEST_SAADCT_MODE_ONE_SHOT=y
+  drivers.saadct.gpio_loopback.continuous:
+    extra_configs:
+      - CONFIG_TEST_SAADCT_MODE_CONTINUOUS=y
+      - CONFIG_TEST_SAADCT_STOP_IMMEDIATELY=n
+  drivers.saadct.gpio_loopback.continuous.stop_immediately:
+    extra_configs:
+      - CONFIG_TEST_SAADCT_MODE_CONTINUOUS=y
+      - CONFIG_TEST_SAADCT_STOP_IMMEDIATELY=y

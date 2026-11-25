@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "SAADCT GPIO Loopback Test Settings"
+
+choice TEST_SAADCT_MODE
+	prompt "Select SAADCT Mode"
+	default TEST_SAADCT_MODE_ONE_SHOT
+
+config TEST_SAADCT_MODE_ONE_SHOT
+	bool "One series is captured and the measurement stops automatically"
+
+config TEST_SAADCT_MODE_CONTINUOUS
+	bool "Series are captured continuously until saadct_stop is called"
+
+endchoice
+
+config TEST_SAADCT_STOP_IMMEDIATELY
+	bool "When set sampling stops immediately and any incomplete series is discarded"
+	depends on TEST_SAADCT_MODE_CONTINUOUS
+
+endmenu
+
+source "Kconfig.zephyr"
