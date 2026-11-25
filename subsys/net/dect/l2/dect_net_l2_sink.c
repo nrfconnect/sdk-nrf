@@ -214,6 +214,140 @@ static struct k_work_delayable sink_dhcpv6_start_work;
 #define SINK_ETH_UNSOL_NA_ADDR_ADD_DELAY_MS 100
 static struct k_work_delayable sink_eth_unsol_na_work;
 #endif
+
+static void sink_learn_prefix_from_global_addr(const struct in6_addr *ipv6_addr)
+{
+	struct dect_sink_status_evt sink_status_data = {
+		.sink_status = DECT_SINK_STATUS_CONNECTED,
+		.br_iface = iface_for_prefix,
+	};
+	struct dect_net_ipv6_prefix_config new_prefix;
+	struct in6_addr delegated_ra64;
+
+	if (atomic_get(&sink_prefix_addr_set) || !net_ipv6_is_global_addr(ipv6_addr)) {
+		return;
+	}
+
+	memcpy(delegated_ra64.s6_addr, ipv6_addr->s6_addr,
+	       DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES);
+	sink_apply_learned_delegated_prefix(&delegated_ra64);
+	new_prefix.prefix = sink_prefix_addr;
+	new_prefix.prefix_len = sink_dect_prefix_len_bytes;
+
+	LOG_DBG("SINK: IPv6 addr %s added for dect nr+ prefix usage (DECT /%u)",
+		net_sprint_ipv6_addr(ipv6_addr),
+		(unsigned int)new_prefix.prefix_len * 8U);
+
+	dect_net_l2_sink_ipv6_config_changed(iface_for_dect, &new_prefix);
+	dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+	sink_install_eth_upstream_prefix_route();
+#endif
+}
+
+#if defined(CONFIG_NET_L2_ETHERNET)
+static void sink_try_learn_prefix_from_existing_addrs(struct net_if *iface)
+{
+	struct net_if_ipv6 *ipv6;
+
+	if (iface == NULL) {
+		return;
+	}
+
+	ipv6 = iface->config.ip.ipv6;
+	if (ipv6 == NULL) {
+		return;
+	}
+
+	ARRAY_FOR_EACH(ipv6->unicast, i)
+	{
+		struct in6_addr *ipv6_addr = &ipv6->unicast[i].address.in6_addr;
+
+		if (!ipv6->unicast[i].is_used ||
+		    ipv6->unicast[i].address.family != AF_INET6) {
+			continue;
+		}
+
+		sink_learn_prefix_from_global_addr(ipv6_addr);
+		if (atomic_get(&sink_prefix_addr_set)) {
+			break;
+		}
+	}
+}
+#endif /* CONFIG_NET_L2_ETHERNET */
+
+static void sink_notify_disconnected(void)
+{
+	struct dect_sink_status_evt sink_status_data = {
+		.sink_status = DECT_SINK_STATUS_DISCONNECTED,
+		.br_iface = iface_for_prefix,
+	};
+
+	dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
+}
+
+static void sink_schedule_rs_after_if_up(void)
+{
+	/* Schedule router solicitation work to be run in a while.
+	 * We wait 20 seconds to have a chance to get RS initiated otherwise.
+	 * Reset the retry budget for this fresh up cycle; the work then
+	 * retries on its own until a prefix is learned (see handler).
+	 */
+	sink_rs_attempts = 0;
+	k_work_reschedule(&dect_sink_rs_work, K_SECONDS(20));
+}
+
+static void sink_on_prefix_iface_brought_up(void)
+{
+	LOG_INF("NET_EVENT_IF_UP: Sink networking iface (%p) is up", iface_for_prefix);
+	sink_notify_disconnected();
+	sink_schedule_rs_after_if_up();
+}
+
+#if defined(CONFIG_NET_L2_ETHERNET)
+/* SYS_INIT priority must be a literal (not CONFIG_* + n). Default app init is 90. */
+#define DECT_NET_L2_SINK_UPLINK_SYNC_INIT_PRIO 99
+
+BUILD_ASSERT(DECT_NET_L2_SINK_UPLINK_SYNC_INIT_PRIO > CONFIG_APPLICATION_INIT_PRIORITY,
+	     "Raise DECT_NET_L2_SINK_UPLINK_SYNC_INIT_PRIO above CONFIG_APPLICATION_INIT_PRIORITY");
+
+static int dect_net_l2_sink_uplink_sync(void)
+{
+	struct net_if_router *router;
+
+	if (iface_for_prefix == NULL || !net_if_is_up(iface_for_prefix)) {
+		return 0;
+	}
+
+	router = net_if_ipv6_router_find_default(iface_for_prefix, NULL);
+	if (router != NULL) {
+		net_ipv6_addr_copy_raw(ipv6_router_addr.s6_addr,
+				       router->address.in6_addr.s6_addr);
+	}
+
+	if (atomic_get(&sink_prefix_addr_set)) {
+		return 0;
+	}
+
+	LOG_INF("SINK: Ethernet iface already up before sink handlers, syncing state");
+	sink_notify_disconnected();
+	sink_try_learn_prefix_from_existing_addrs(iface_for_prefix);
+
+	if (atomic_get(&sink_prefix_addr_set)) {
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
+		(void)k_work_reschedule(&sink_eth_unsol_na_work,
+				       K_MSEC(SINK_ETH_UNSOL_NA_ADDR_ADD_DELAY_MS));
+#endif
+	} else {
+		sink_rs_attempts = 0;
+		(void)k_work_reschedule(&dect_sink_rs_work, K_NO_WAIT);
+	}
+
+	return 0;
+}
+#endif /* CONFIG_NET_L2_ETHERNET */
+
 static struct net_mgmt_event_callback dect_net_l2_net_mgmt_ipv6_event_cb;
 
 static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callback *cb,
@@ -370,35 +504,7 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 		/* This is the trick: we get the 8 bytes as a prefix for
 		 * dect nr+ network usage from 1st added public address.
 		 */
-		if (!atomic_get(&sink_prefix_addr_set) && net_ipv6_is_global_addr(ipv6_addr)) {
-			struct dect_sink_status_evt sink_status_data = {
-				.sink_status = DECT_SINK_STATUS_CONNECTED,
-				.br_iface = iface_for_prefix,
-			};
-			struct dect_net_ipv6_prefix_config new_prefix;
-			struct in6_addr delegated_ra64;
-
-			memcpy(delegated_ra64.s6_addr, ipv6_addr->s6_addr,
-			       DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES);
-			sink_apply_learned_delegated_prefix(&delegated_ra64);
-			new_prefix.prefix = sink_prefix_addr;
-			new_prefix.prefix_len = sink_dect_prefix_len_bytes;
-
-			LOG_DBG("SINK: IPv6 addr %s added for dect nr+ prefix usage (DECT /%u)",
-				net_sprint_ipv6_addr(ipv6_addr),
-				(unsigned int)new_prefix.prefix_len * 8U);
-
-			dect_net_l2_sink_ipv6_config_changed(
-				iface_for_dect,
-				&new_prefix);
-
-			dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
-
-#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
-			/* Retry upstream /N route if ROUTER_ADD ran before iface was ready. */
-			sink_install_eth_upstream_prefix_route();
-#endif
-		}
+		sink_learn_prefix_from_global_addr(ipv6_addr);
 
 #if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
 		/* Schedule uplink unsolicited NA after global ADDR_ADD. */
@@ -521,24 +627,9 @@ static void dect_net_l2_sink_net_if_mgmt_event_handler(struct net_mgmt_event_cal
 	}
 
 	switch (event) {
-	case NET_EVENT_IF_UP: {
-		struct dect_sink_status_evt sink_status_data = {
-			.sink_status = DECT_SINK_STATUS_DISCONNECTED,
-			.br_iface = iface_for_prefix,
-		};
-
-		LOG_INF("NET_EVENT_IF_UP: Sink networking iface (%p) is up", iface_for_prefix);
-		dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
-
-		/* Schedule router solicitation work to be run in a while.
-		 * We wait 20 seconds to have a chance to get RS initiated otherwise.
-		 * Reset the retry budget for this fresh up cycle; the work then
-		 * retries on its own until a prefix is learned (see handler).
-		 */
-		sink_rs_attempts = 0;
-		k_work_reschedule(&dect_sink_rs_work, K_SECONDS(20));
+	case NET_EVENT_IF_UP:
+		sink_on_prefix_iface_brought_up();
 		break;
-	}
 	case NET_EVENT_IF_DOWN:
 		struct dect_sink_status_evt sink_status_data = {
 			.sink_status = DECT_SINK_STATUS_DISCONNECTED,
@@ -978,3 +1069,7 @@ static int dect_net_l2_sink_init(void)
 }
 
 SYS_INIT(dect_net_l2_sink_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+#if defined(CONFIG_NET_L2_ETHERNET)
+/* After sink + dect_mdm_sink inits at CONFIG_APPLICATION_INIT_PRIORITY. */
+SYS_INIT(dect_net_l2_sink_uplink_sync, APPLICATION, DECT_NET_L2_SINK_UPLINK_SYNC_INIT_PRIO);
+#endif
