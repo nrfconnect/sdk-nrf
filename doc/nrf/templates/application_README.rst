@@ -62,7 +62,7 @@ The application supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52dk_nrf52832, nrf52840dk_nrf52840
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp
 
 The application also requires ...
 

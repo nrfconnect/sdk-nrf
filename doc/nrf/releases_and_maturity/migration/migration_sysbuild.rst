@@ -585,6 +585,11 @@ Example for MCUboot
 The following table shows how to add custom MCUboot configuration for a project.
 The ``sysbuild`` folder must be created in the application's folder:
 
+.. note::
+   Starting with the |NCS| release v3.5.0, the nRF52 Series is considered feature complete in the |NCS| and is no longer supported for new application development.
+   For new designs, use the nRF53, nRF54, or nRF91 Series, or another device Series supported in the |NCS|.
+   The ``nrf52840dk/nrf52840`` entries in the table illustrate board-specific MCUboot configuration when migrating an existing project.
+
 +------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
 | File                                                             | Description                                                                                                                               |
 +==================================================================+===========================================================================================================================================+

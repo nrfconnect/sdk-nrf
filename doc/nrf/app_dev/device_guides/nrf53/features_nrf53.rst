@@ -79,7 +79,7 @@ The OpenAMP library uses the IPM SHIM layer, which in turn uses the IPC driver i
 Enhanced security features
 **************************
 
-In addition to a :ref:`secure bootloader chain <ug_bootloader>` (as in the nRF52 Series), the nRF53 Series incorporates the following within its dual-core architecture:
+In addition to a :ref:`secure bootloader chain <ug_bootloader>`, the nRF53 Series incorporates the following within its dual-core architecture:
 
 * Arm TrustZone® for hardware-enforced isolation.
 * CryptoCell-312 for encryption, decryption, and cryptographic operations.

@@ -26,13 +26,13 @@ Nordic Semiconductor devices implement access port protection using the followin
 AP-Protect controlled by hardware
    * Protection is controlled only by the ``UICR.APPROTECT`` register.
    * Devices ship with AP-Protect disabled (debug access open).
-   * Used on nRF9160 and older HW build codes of nRF52 Series devices.
+   * Used on nRF9160 devices.
 
 AP-Protect controlled by hardware and software
    * Protection is controlled by both the ``UICR.APPROTECT`` register and software.
      For the |NCS|, the software side is handled using Kconfig options.
    * Devices ship with AP-Protect enabled (debug access blocked) and it re-enables on every hard reset.
-   * Used on nRF53, nRF54L, nRF91x1, and newer HW build codes of nRF52 Series devices.
+   * Used on nRF53, nRF54L, and nRF91x1 devices.
 
 Secure AP-Protect
    * An additional protection layer for SoCs or SiPs that support `ARM TrustZone`_ and different :ref:`app_boards_spe_nspe`.
@@ -60,7 +60,7 @@ See the following sections for more information about the available implementati
 Flow for AP-Protect controlled by hardware
 ==========================================
 
-This flow applies to the nRF9160 and older HW build codes of nRF52 Series devices.
+This flow applies to nRF9160 devices.
 
 .. figure:: images/ap_protect_hw_flow.svg
    :alt: AP-Protect controlled by hardware
@@ -111,7 +111,7 @@ This command erases the flash, RAM, and UICR (including ``UICR.APPROTECT``), and
 Flow for AP-Protect controlled by hardware and software
 =======================================================
 
-This flow applies to nRF53, nRF54L, nRF91x1, and newer HW build codes of nRF52 Series devices.
+This flow applies to nRF53, nRF54L, and nRF91x1 devices.
 
 .. figure:: images/ap_protect_hwsw_flow.svg
    :alt: AP-Protect controlled by hardware and software
@@ -442,6 +442,7 @@ nRF91 Series
 
       This command enables Secure AP-Protect on the hardware side and hard resets the device.
 
+
       .. note::
          With devices that use AP-Protect controlled by software, nRF Util cannot enable Secure AP-Protect on the hardware side if the Secure AP-Protect on the software side is already enabled.
          If you encounter errors with nRF Util, make sure that AP-Protect on the software side and Secure AP-Protect on the software side are disabled.
@@ -655,6 +656,7 @@ nRF54L Series
          nrfutil device protection-set SecureRegions
 
       This command enables Secure AP-Protect on the hardware side and hard resets the device.
+
 
       .. note::
          With devices that use software AP-Protect, nRF Util cannot enable hardware Secure AP-Protect if the software Secure AP-Protect is already enabled.
@@ -882,6 +884,7 @@ nRF54L Series
 
       This set of commands enables AP-Protect on the hardware side and hard resets the device.
 
+
       **Disabling AP-Protect:**
 
       To disable AP-Protect, run the following nRF Util command:
@@ -956,6 +959,7 @@ nRF54L Series
          nrfutil device protection-set All
 
       This set of commands enables AP-Protect on the hardware side and hard resets the device.
+
 
       **Disabling AP-Protect:**
 
@@ -1154,6 +1158,7 @@ nRF53 Series
       nRF5340 only supports Secure AP-Protect for the application core.
       You can check the serial number of your device by running the ``nrfutil device list`` command.
 
+
       .. note::
          With devices that use software AP-Protect, nRF Util cannot enable hardware Secure AP-Protect if the software Secure AP-Protect is already enabled.
          If you encounter errors with nRF Util, make sure that software AP-Protect and software Secure AP-Protect are disabled.
@@ -1198,206 +1203,3 @@ nRF53 Series
       * `Disabling AP-Protect on nRF5340`_
       * `Enabling device protection on nRF5340`_
       * `AP-Protect and ERASEPROTECT troubleshooting for nRF5340`_
-
-.. _app_approtect_nrf52_series:
-
-nRF52 Series
-============
-
-.. note::
-   In the tables below, "depending on HW build code" means that the AP-Protect support is different depending on the build code of the device.
-   Check the hardware documentation for the build code differences.
-
-.. tabs::
-
-   .. tab:: nRF52840
-
-      .. list-table:: nRF52840 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✔
-           - ✔ (depending on HW build code)
-           - ✗
-           - `AP-Protect for nRF52840`_
-
-      .. nrf52840_approtect_tab_start
-
-      **Configuring AP-Protect on the software side:**
-
-      The following Kconfig options configure AP-Protect on the nRF52 Series devices in the |NCS|:
-
-      .. list-table:: AP-Protect software configuration options in the |NCS|
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - Desired AP-Protect state
-           - Kconfig option
-           - Description
-           - Applicability
-         * - Enabled
-           - :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK`
-           - | With this Kconfig option selected, the MDK locks AP-Protect in ``SystemInit()`` at every boot.
-             | It also prevents CPU from disabling AP-Protect in software.
-             | UICR is not modified by this Kconfig option.
-           - Only HW build codes supporting AP-Protect controlled by hardware and software
-         * - Disabled
-           - :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR`
-           - | This option is selected by default in the |NCS| for this device.
-             |
-             | With this Kconfig option selected, AP-Protect follows the UICR register. If UICR is open (``UICR.APPROTECT`` disabled), AP-Protect is disabled.
-           - All HW build codes
-
-      **Enabling AP-Protect on the hardware side:**
-
-      To enable AP-Protect on the hardware side, write ``Enabled`` to ``UICR.APPROTECT`` to lock the register and reset the device.
-      For example, you can use the following nRF Util command:
-
-      .. nrfutil-command:: console
-
-         nrfutil device protection-set All
-
-      This command enables AP-Protect on the hardware side and hard resets the device.
-
-      **Keeping AP-Protect disabled after hard reset:**
-
-      If your device supports hardware and software AP-Protect and you want to keep the AP-Protect disabled after hard reset, you must flash firmware that writes ``SwDisable`` to ``APPROTECT.DISABLE`` during boot.
-      In the |NCS|, :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` handles the software unlock.
-
-      **Forcing AP-Protect to be disabled after hard reset:**
-
-      To keep AP-Protect disabled after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
-
-      .. nrfutil-command:: console
-
-         nrfutil device recover
-
-      The device is automatically unlocked after erase.
-
-      .. nrf52840_approtect_tab_end
-
-   .. tab:: nRF52833
-
-      .. list-table:: nRF52833 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✔
-           - ✔ (depending on HW build code)
-           - ✗
-           - `AP-Protect for nRF52833`_
-
-      .. include:: ./ap_protect.rst
-         :start-after: .. nrf52840_approtect_tab_start
-         :end-before: .. nrf52840_approtect_tab_end
-
-   .. tab:: nRF52832
-
-      .. list-table:: nRF52832 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✔
-           - ✔ (depending on HW build code)
-           - ✗
-           - `AP-Protect for nRF52832`_
-
-      .. include:: ./ap_protect.rst
-         :start-after: .. nrf52840_approtect_tab_start
-         :end-before: .. nrf52840_approtect_tab_end
-
-   .. tab:: nRF52820
-
-      .. list-table:: nRF52820 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✔
-           - ✔ (depending on HW build code)
-           - ✗
-           - `AP-Protect for nRF52820`_
-
-      .. include:: ./ap_protect.rst
-         :start-after: .. nrf52840_approtect_tab_start
-         :end-before: .. nrf52840_approtect_tab_end
-
-   .. tab:: nRF52811
-
-      .. list-table:: nRF52811 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✔
-           - ✔ (depending on HW build code)
-           - ✗
-           - `AP-Protect for nRF52811`_
-
-      .. include:: ./ap_protect.rst
-         :start-after: .. nrf52840_approtect_tab_start
-         :end-before: .. nrf52840_approtect_tab_end
-
-   .. tab:: nRF52810
-
-      .. list-table:: nRF52810 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✔
-           - ✔ (depending on HW build code)
-           - ✗
-           - `AP-Protect for nRF52810`_
-
-      .. include:: ./ap_protect.rst
-         :start-after: .. nrf52840_approtect_tab_start
-         :end-before: .. nrf52840_approtect_tab_end
-
-   .. tab:: nRF52805
-
-      .. list-table:: nRF52805 AP-Protect support
-         :header-rows: 1
-         :align: center
-         :widths: auto
-
-         * - AP-Protect (hardware only)
-           - AP-Protect (hardware and software)
-           - Secure AP-Protect
-           - Hardware documentation
-         * - ✔
-           - ✔ (depending on HW build code)
-           - ✗
-           - `AP-Protect for nRF52805`_
-
-      .. include:: ./ap_protect.rst
-         :start-after: .. nrf52840_approtect_tab_start
-         :end-before: .. nrf52840_approtect_tab_end

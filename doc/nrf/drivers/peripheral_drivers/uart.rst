@@ -125,8 +125,8 @@ If HWFC is used, the receiver is always restarted when the line is idle.
 The same happens in communication protocols where the transmitter waits for response but there are cases with a risk of losing the byte.
 In such case, you need to use a special driver mode that uses more resources (one instance of TIMER peripheral, one (D)PPI channel, and additional RAM buffer).
 
-Reliable reception on nRF52, nRF53 and nRF91 Series
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Reliable reception on nRF53 and nRF91 Series
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To enable reliable reception without HWFC, you need to provide a TIMER instance.
 For example, enabling the :kconfig:option:`CONFIG_UART_1_NRF_HW_ASYNC` Kconfig option and setting :kconfig:option:`CONFIG_UART_1_NRF_HW_ASYNC_TIMER` to ``2`` ensure reliable reception for a UARTE1 instance using the TIMER2 peripheral.

@@ -35,7 +35,6 @@ Supported platforms
 The following platforms are supported:
 
 * nRF5340 DK with nRF7002 EK as a shield
-* nRF52840 DK with nRF7002 EK as a shield
 * nRF7002 DK (requires latest version of nRF Util tool)
 
 Available options

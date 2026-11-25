@@ -104,6 +104,7 @@
 .. _`hwmv2 conversion script`: https://github.com/nrfconnect/sdk-zephyr/blob/v4.0.99-ncs1/scripts/utils/board_v1_to_v2.py
 .. _`sdk-zephyr west build patch`: https://github.com/nrfconnect/sdk-zephyr/blob/1a5d3b4a4ff98a33222856526afdf9c089b96d2b/scripts/west_commands/build.py#L585-L598
 .. _`nRF52840 DK board.cmake`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf52840dk/board.cmake
+.. _`nRF5340 DK board.cmake`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf5340dk/board.cmake
 
 .. _`ncs-example-application commit f9f2da`: https://github.com/nrfconnect/ncs-example-application/commit/f9f2da24041a7b1923e49893cca912482c138aae
 
@@ -649,6 +650,7 @@
 .. _`nRF54L Series menu`: https://docs.nordicsemi.com/category/nrf-54L-series
 .. _`nRF54L15 Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/keyfeatures_html5.html
 .. _`nRF54L15 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54l15_dk/page/UG/nRF54L15_DK/intro/intro.html
+.. _`nRF54L15 DK Debug output`: https://docs.nordicsemi.com/r/bundle/ug_nrf54l15_dk/page/ug/nrf54l15_dk/program_debug/debug_out_ext_board.html
 .. _`nRF54L15 TAG debug guide`: https://docs.nordicsemi.com/r/bundle/ug_nrf54l15_tag/page/ug/nrf54l15_tag/nrf54l15_tag_debug.html
 .. _`nRF54L15 Debugger signals`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/tampc.html#ariaid-title6
 .. _`nRF54L15 Security`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/chapters/security.html

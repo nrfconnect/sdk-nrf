@@ -3,7 +3,7 @@
 Enabling support for nRF2240
 ############################
 
-The nRF2240 device is a range extender that you can use with nRF52, nRF53 and nRF54L Series devices.
+The nRF2240 device is a range extender that you can use with nRF53 and nRF54L Series devices.
 For the reception the nRF2240 features a low-attenuation bypass circuit.
 For the transmission, either the bypass circuit or the power amplifier of the nRF2240 can be used.
 The power amplifier can be used with two different output power levels from range 7 to 21 dBm.
