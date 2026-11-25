@@ -86,7 +86,8 @@ psa_status_t cracen_sw_aes_ccm_set_nonce(cracen_aead_operation_t *operation, con
  * @param[in]     ad_length        Length of additional data.
  * @param[in]     plaintext_length Length of plaintext.
  *
- * @retval PSA_SUCCESS Lengths set successfully.
+ * @retval PSA_SUCCESS The lengths have been set successfully.
+ *
  */
 psa_status_t cracen_sw_aes_ccm_set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
 					    size_t plaintext_length);
@@ -165,7 +166,8 @@ psa_status_t cracen_sw_aes_ccm_verify(cracen_aead_operation_t *operation, uint8_
  *
  * @param[in,out] operation Pointer to the AEAD operation structure.
  *
- * @retval PSA_SUCCESS Operation aborted successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_sw_aes_ccm_abort(cracen_aead_operation_t *operation);
 

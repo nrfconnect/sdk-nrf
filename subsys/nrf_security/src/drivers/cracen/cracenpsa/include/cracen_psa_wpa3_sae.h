@@ -53,8 +53,9 @@ psa_status_t cracen_wpa3_sae_setup(cracen_wpa3_sae_operation_t *operation,
  * @param[in] user_id         User identifier (6-byte MAC address).
  * @param[in] user_id_len     Length of the user identifier in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
- * @retval PSA_ERROR_INVALID_ARGUMENT Invalid input argument.
+ * @retval PSA_SUCCESS The user identifier has been set successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p user_id_len is not 6 bytes.
+ *
  */
 psa_status_t cracen_wpa3_sae_set_user(cracen_wpa3_sae_operation_t *operation,
 				      const uint8_t *user_id, size_t user_id_len);
@@ -68,8 +69,9 @@ psa_status_t cracen_wpa3_sae_set_user(cracen_wpa3_sae_operation_t *operation,
  * @param[in] peer_id         Peer identifier (6-byte MAC address).
  * @param[in] peer_id_len     Length of the peer identifier in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
- * @retval PSA_ERROR_INVALID_ARGUMENT Invalid input argument.
+ * @retval PSA_SUCCESS The peer identifier has been set successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p peer_id_len is not 6 bytes.
+ *
  */
 psa_status_t cracen_wpa3_sae_set_peer(cracen_wpa3_sae_operation_t *operation,
 				      const uint8_t *peer_id, size_t peer_id_len);
@@ -82,11 +84,13 @@ psa_status_t cracen_wpa3_sae_set_peer(cracen_wpa3_sae_operation_t *operation,
  * @param[in] output_size        Size of the output buffer in bytes.
  * @param[out] output_length     Length of the generated output in bytes.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
- * @retval PSA_ERROR_INVALID_ARGUMENT Invalid input argument.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p step is not a WPA3 SAE output step, or the peer commit
+ *     message is not valid for key derivation.
  * @retval PSA_ERROR_CORRUPTION_DETECTED A tampering attempt was detected.
+ *
  */
 psa_status_t cracen_wpa3_sae_output(cracen_wpa3_sae_operation_t *operation, psa_pake_step_t step,
 				    uint8_t *output, size_t output_size, size_t *output_length);
@@ -98,10 +102,12 @@ psa_status_t cracen_wpa3_sae_output(cracen_wpa3_sae_operation_t *operation, psa_
  * @param[in] input          Input data.
  * @param[in] input_length   Length of the input data in bytes.
  *
- * @retval PSA_SUCCESS         The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
- * @retval PSA_ERROR_INVALID_ARGUMENT Invalid input argument.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p step is not a WPA3 SAE input step, @p input_length is
+ *     invalid for the step, or the peer commit scalar or element is invalid.
  * @retval PSA_ERROR_CORRUPTION_DETECTED A tampering attempt was detected.
+ *
  */
 psa_status_t cracen_wpa3_sae_input(cracen_wpa3_sae_operation_t *operation, psa_pake_step_t step,
 				   const uint8_t *input, size_t input_length);
@@ -128,7 +134,8 @@ psa_status_t cracen_wpa3_sae_get_shared_key(cracen_wpa3_sae_operation_t *operati
  *
  * @param[in,out] operation SAE operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_wpa3_sae_abort(cracen_wpa3_sae_operation_t *operation);
 

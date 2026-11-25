@@ -50,6 +50,7 @@ typedef uint64_t psa_drv_slot_number_t;
  * @param[in] slot_id KMU slot index (0-255).
  *
  * @return PSA key handle value.
+ *
  */
 #define PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(scheme, slot_id)                                       \
 	(0x7fff0000 | ((scheme) << 12) | ((slot_id)&0xff))
@@ -63,6 +64,7 @@ typedef uint64_t psa_drv_slot_number_t;
  * @param[in] key_id PSA key ID.
  *
  * @return Key usage scheme value (0-15).
+ *
  */
 #define CRACEN_PSA_GET_KEY_USAGE_SCHEME(key_id) (((key_id) >> 12) & 0xf)
 
@@ -71,6 +73,7 @@ typedef uint64_t psa_drv_slot_number_t;
  * @param[in] key_id PSA key ID.
  *
  * @return KMU slot number (0-255).
+ *
  */
 #define CRACEN_PSA_GET_KMU_SLOT(key_id) ((key_id)&0xff)
 
@@ -110,9 +113,11 @@ enum cracen_kmu_metadata_key_usage_scheme {
  * @param[out] lifetime    Lifetime for the key.
  * @param[out] slot_number The key's slot number.
  *
- * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
  * @retval PSA_ERROR_DOES_NOT_EXIST The key does not exist.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key has an unknown revocation policy.
+ *
  */
 psa_status_t cracen_kmu_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
 				     psa_drv_slot_number_t *slot_number);

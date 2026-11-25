@@ -35,10 +35,13 @@
  * @param[in] ciphertext_size        Size of the ciphertext buffer in bytes.
  * @param[out] ciphertext_length     Length of the generated ciphertext in bytes.
  *
- * @retval PSA_SUCCESS                The operation completed successfully.
- * @retval PSA_ERROR_INVALID_HANDLE   The key handle is invalid.
- * @retval PSA_ERROR_NOT_SUPPORTED    The algorithm is not supported.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
+ * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The ciphertext buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key is too large for the operation key buffer, the CCM
+ *     tag length is not an even value from 4 to 16 bytes, or the AES-CCM nonce length is invalid.
+ *
  */
 psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *nonce,
@@ -63,11 +66,15 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
  * @param[in] plaintext_size         Size of the plaintext buffer in bytes.
  * @param[out] plaintext_length      Length of the decrypted plaintext in bytes.
  *
- * @retval PSA_SUCCESS                 The operation completed successfully.
- * @retval PSA_ERROR_INVALID_HANDLE    The key handle is invalid.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
  * @retval PSA_ERROR_INVALID_SIGNATURE The authentication tag is invalid.
- * @retval PSA_ERROR_NOT_SUPPORTED     The algorithm is not supported.
- * @retval PSA_ERROR_BUFFER_TOO_SMALL  The plaintext buffer is too small.
+ * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The plaintext buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key is too large for the operation key buffer, the CCM
+ *     tag length is not an even value from 4 to 16 bytes, the AES-CCM nonce length is invalid, or
+ *     @p ciphertext_length is shorter than the tag.
+ *
  */
 psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *nonce,
@@ -84,8 +91,11 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
  * @param[in] key_buffer_size   Size of the key buffer in bytes.
  * @param[in] alg               AEAD algorithm.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key is too large for the operation key buffer, or the
+ *     CCM tag length is not an even value from 4 to 16 bytes.
+ *
  */
 psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 				       const psa_key_attributes_t *attributes,
@@ -100,8 +110,11 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
  * @param[in] key_buffer_size   Size of the key buffer in bytes.
  * @param[in] alg               AEAD algorithm.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key is too large for the operation key buffer, or the
+ *     CCM tag length is not an even value from 4 to 16 bytes.
+ *
  */
 psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 				       const psa_key_attributes_t *attributes,
@@ -114,8 +127,10 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
  * @param[in] nonce           Nonce or IV.
  * @param[in] nonce_length    Length of the nonce in bytes.
  *
- * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The AES-CCM nonce length is invalid.
+ *
  */
 psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
 				   size_t nonce_length);
@@ -127,7 +142,7 @@ psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uin
  * @param[in] plaintext_length   Length of the plaintext in bytes.
  *
  * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
 				     size_t plaintext_length);
@@ -139,7 +154,7 @@ psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t 
  * @param[in] input_length   Length of the Additional Authenticated Data (AAD) in bytes.
  *
  * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_aead_update_ad(cracen_aead_operation_t *operation, const uint8_t *input,
 				   size_t input_length);
@@ -154,7 +169,7 @@ psa_status_t cracen_aead_update_ad(cracen_aead_operation_t *operation, const uin
  * @param[out] output_length  Length of the generated output in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
  */
 psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_t *input,
@@ -172,7 +187,7 @@ psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_
  * @param[out] tag_length         Length of the generated tag in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL A buffer is too small.
  */
 psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *ciphertext,
@@ -190,7 +205,7 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
  *
  * @retval PSA_SUCCESS              The operation completed successfully and the tag is valid.
  * @retval PSA_ERROR_INVALID_SIGNATURE The authentication tag is invalid.
- * @retval PSA_ERROR_BAD_STATE      The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE      The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The plaintext buffer is too small.
  */
 psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *plaintext,
@@ -201,7 +216,8 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
  *
  * @param[in,out] operation AEAD operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_aead_abort(cracen_aead_operation_t *operation);
 

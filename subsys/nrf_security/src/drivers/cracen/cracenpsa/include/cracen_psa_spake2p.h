@@ -26,8 +26,11 @@
  * @param[in] password_length   Length of the password in bytes.
  * @param[in] cipher_suite      PAKE cipher suite.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p password_length is not valid, or the password does not
+ *     contain an uncompressed point where one is expected.
+ *
  */
 psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
 				  const uint8_t *password,
@@ -42,6 +45,7 @@ psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
  * @param[in] password_length   Length of the password in bytes.
  *
  * @retval PSA_SUCCESS The operation completed successfully.
+ *
  */
 psa_status_t cracen_spake2p_set_password_key(cracen_spake2p_operation_t *operation,
 					     const psa_key_attributes_t *attributes,
@@ -53,7 +57,9 @@ psa_status_t cracen_spake2p_set_password_key(cracen_spake2p_operation_t *operati
  * @param[in] user_id       User identifier.
  * @param[in] user_id_len   Length of the user identifier in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The user identifier has been set successfully.
+ * @retval PSA_ERROR_INSUFFICIENT_MEMORY The identifier is too long.
+ *
  */
 psa_status_t cracen_spake2p_set_user(cracen_spake2p_operation_t *operation, const uint8_t *user_id,
 				     size_t user_id_len);
@@ -64,7 +70,9 @@ psa_status_t cracen_spake2p_set_user(cracen_spake2p_operation_t *operation, cons
  * @param[in] peer_id       Peer identifier.
  * @param[in] peer_id_len   Length of the peer identifier in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The peer identifier has been set successfully.
+ * @retval PSA_ERROR_INSUFFICIENT_MEMORY The identifier is too long.
+ *
  */
 psa_status_t cracen_spake2p_set_peer(cracen_spake2p_operation_t *operation, const uint8_t *peer_id,
 				     size_t peer_id_len);
@@ -75,7 +83,11 @@ psa_status_t cracen_spake2p_set_peer(cracen_spake2p_operation_t *operation, cons
  * @param[in] context          Context data.
  * @param[in] context_length   Length of the context data in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The context has been set successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The context is too long.
+ * @retval PSA_ERROR_BAD_STATE The hash operation is not initialized.
+ * @retval PSA_ERROR_NOT_SUPPORTED The hash algorithm is not supported.
+ *
  */
 psa_status_t cracen_spake2p_set_context(cracen_spake2p_operation_t *operation,
 					const uint8_t *context, size_t context_length);
@@ -85,7 +97,11 @@ psa_status_t cracen_spake2p_set_context(cracen_spake2p_operation_t *operation,
  * @param[in,out] operation SPAKE2+ operation context.
  * @param[in] role         PAKE role.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The role has been set successfully.
+ * @retval PSA_ERROR_NOT_SUPPORTED The role is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT Point multiplication or modular reduction failed.
+ * @retval PSA_ERROR_INVALID_SIGNATURE A CRACEN operand was out of range.
+ *
  */
 psa_status_t cracen_spake2p_set_role(cracen_spake2p_operation_t *operation, psa_pake_role_t role);
 
@@ -97,9 +113,11 @@ psa_status_t cracen_spake2p_set_role(cracen_spake2p_operation_t *operation, psa_
  * @param[in] output_size        Size of the output buffer in bytes.
  * @param[out] output_length     Length of the generated output in bytes.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p step is not a SPAKE2+ output step.
+ *
  */
 psa_status_t cracen_spake2p_output(cracen_spake2p_operation_t *operation, psa_pake_step_t step,
 				   uint8_t *output, size_t output_size, size_t *output_length);
@@ -111,8 +129,11 @@ psa_status_t cracen_spake2p_output(cracen_spake2p_operation_t *operation, psa_pa
  * @param[in] input           Input data.
  * @param[in] input_length    Length of the input data in bytes.
  *
- * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p step is not a SPAKE2+ input step, or the key share is
+ *     not an uncompressed point of the expected length.
+ *
  */
 psa_status_t cracen_spake2p_input(cracen_spake2p_operation_t *operation, psa_pake_step_t step,
 				  const uint8_t *input, size_t input_length);
@@ -125,7 +146,7 @@ psa_status_t cracen_spake2p_input(cracen_spake2p_operation_t *operation, psa_pak
  * @param[out] output_length    Length of the generated shared key in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
  */
 psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation,
@@ -135,7 +156,8 @@ psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation
  *
  * @param[in,out] operation SPAKE2+ operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_spake2p_abort(cracen_spake2p_operation_t *operation);
 

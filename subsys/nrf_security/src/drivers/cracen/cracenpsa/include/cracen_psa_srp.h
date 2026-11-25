@@ -27,8 +27,11 @@
  * @param[in] password_length   Length of the password in bytes.
  * @param[in] cipher_suite      PAKE cipher suite.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p password_length is not the length of an SRP password
+ *     hash or verifier.
+ *
  */
 psa_status_t cracen_srp_setup(cracen_srp_operation_t *operation,
 			      const psa_key_attributes_t *attributes, const uint8_t *password,
@@ -40,7 +43,11 @@ psa_status_t cracen_srp_setup(cracen_srp_operation_t *operation,
  * @param[in] user_id       User identifier.
  * @param[in] user_id_len   Length of the user identifier in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The user identifier has been set successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The user identifier hash length is invalid.
+ * @retval PSA_ERROR_NOT_SUPPORTED The hash algorithm is not supported.
+ * @retval PSA_ERROR_BAD_STATE The hash operation is not initialized.
+ *
  */
 psa_status_t cracen_srp_set_user(cracen_srp_operation_t *operation, const uint8_t *user_id,
 				 size_t user_id_len);
@@ -50,7 +57,10 @@ psa_status_t cracen_srp_set_user(cracen_srp_operation_t *operation, const uint8_
  * @param[in,out] operation SRP operation context.
  * @param[in] role          PAKE role.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The role has been set successfully.
+ * @retval PSA_ERROR_NOT_SUPPORTED The role is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT Server verifier calculation failed.
+ *
  */
 psa_status_t cracen_srp_set_role(cracen_srp_operation_t *operation, psa_pake_role_t role);
 
@@ -62,6 +72,8 @@ psa_status_t cracen_srp_set_role(cracen_srp_operation_t *operation, psa_pake_rol
  * @param[in] password_length   Length of the password in bytes.
  *
  * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The password length is invalid.
+ *
  */
 psa_status_t cracen_srp_set_password_key(cracen_srp_operation_t *operation,
 					 const psa_key_attributes_t *attributes,
@@ -75,9 +87,11 @@ psa_status_t cracen_srp_set_password_key(cracen_srp_operation_t *operation,
  * @param[in] output_size        Size of the output buffer in bytes.
  * @param[out] output_length     Length of the generated output in bytes.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p step is not an SRP output step.
+ *
  */
 psa_status_t cracen_srp_output(cracen_srp_operation_t *operation, psa_pake_step_t step,
 			       uint8_t *output, size_t output_size, size_t *output_length);
@@ -89,8 +103,12 @@ psa_status_t cracen_srp_output(cracen_srp_operation_t *operation, psa_pake_step_
  * @param[in] input           Input data.
  * @param[in] input_length    Length of the input data in bytes.
  *
- * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p step is not an SRP input step, or the key share has an
+ *     invalid length or value.
+ * @retval PSA_ERROR_NOT_SUPPORTED The salt is longer than the operation can store.
+ *
  */
 psa_status_t cracen_srp_input(cracen_srp_operation_t *operation, psa_pake_step_t step,
 			      const uint8_t *input, size_t input_length);
@@ -104,7 +122,7 @@ psa_status_t cracen_srp_input(cracen_srp_operation_t *operation, psa_pake_step_t
  * @param[out] output_length    Length of the generated shared key in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
  */
 psa_status_t cracen_srp_get_shared_key(cracen_srp_operation_t *operation,
@@ -115,7 +133,8 @@ psa_status_t cracen_srp_get_shared_key(cracen_srp_operation_t *operation,
  *
  * @param[in,out] operation SRP operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_srp_abort(cracen_srp_operation_t *operation);
 

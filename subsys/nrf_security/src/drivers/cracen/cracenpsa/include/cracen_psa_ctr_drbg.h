@@ -23,6 +23,9 @@
  * @param[in,out] context PRNG context.
  *
  * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_HARDWARE_FAILURE Entropy collection failed.
+ * @retval PSA_ERROR_INVALID_ARGUMENT Initial DRBG update failed.
+ *
  */
 psa_status_t cracen_init_random(cracen_prng_context_t *context);
 
@@ -33,6 +36,10 @@ psa_status_t cracen_init_random(cracen_prng_context_t *context);
  * @param[in] output_size    Number of random bytes to generate.
  *
  * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p output is NULL when @p output_size is nonzero, @p output_size
+ *     is too large, or initializing the DRBG failed.
+ * @retval PSA_ERROR_HARDWARE_FAILURE Entropy collection, reseeding, or CRACEN hardware setup failed.
+ *
  */
 psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, size_t output_size);
 
@@ -40,7 +47,8 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
  *
  * @param[in,out] context PRNG context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS PRNG context has been freed successfully.
+ *
  */
 psa_status_t cracen_free_random(cracen_prng_context_t *context);
 
@@ -50,6 +58,9 @@ psa_status_t cracen_free_random(cracen_prng_context_t *context);
  * @param[in] output_size  Number of random bytes to generate.
  *
  * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p output is NULL or @p output_size is zero.
+ * @retval PSA_ERROR_HARDWARE_FAILURE The TRNG operation failed.
+ *
  */
 psa_status_t cracen_get_trng(uint8_t *output, size_t output_size);
 

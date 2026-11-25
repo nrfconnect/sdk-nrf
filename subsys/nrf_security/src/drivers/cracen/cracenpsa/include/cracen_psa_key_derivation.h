@@ -31,10 +31,13 @@
  * @param[out] output_length Length of the generated shared secret in bytes.
  * @param[in] alg            Key agreement algorithm.
  *
- * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
- * @retval PSA_ERROR_NOT_SUPPORTED  The algorithm is not supported.
+ * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p alg is not a key agreement algorithm, the key is not an
+ *     elliptic curve key pair, or @p priv_key_size does not match the curve size.
+ *
  */
 psa_status_t cracen_key_agreement(const psa_key_attributes_t *attributes, const uint8_t *priv_key,
 				  size_t priv_key_size, const uint8_t *publ_key,
@@ -59,8 +62,11 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
  * @param[in,out] operation Key derivation operation context.
  * @param[in] capacity      Maximum capacity in bytes.
  *
- * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p capacity is larger than the current capacity of the
+ *     operation.
+ *
  */
 psa_status_t cracen_key_derivation_set_capacity(cracen_key_derivation_operation_t *operation,
 						size_t capacity);
@@ -74,7 +80,7 @@ psa_status_t cracen_key_derivation_set_capacity(cracen_key_derivation_operation_
  * @param[in] key_buffer_size   Size of the key buffer in bytes.
  *
  * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *operation,
 					     psa_key_derivation_step_t step,
@@ -89,7 +95,7 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
  * @param[in] data_length   Length of the input data in bytes.
  *
  * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t *operation,
 					       psa_key_derivation_step_t step, const uint8_t *data,
@@ -102,7 +108,7 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
  * @param[in] value         Integer value.
  *
  * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_key_derivation_input_integer(cracen_key_derivation_operation_t *operation,
 						 psa_key_derivation_step_t step, uint64_t value);
@@ -114,7 +120,7 @@ psa_status_t cracen_key_derivation_input_integer(cracen_key_derivation_operation
  * @param[in] output_length    Length of the output to read in bytes.
  *
  * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_t *operation,
 						uint8_t *output, size_t output_length);
@@ -123,7 +129,8 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
  *
  * @param[in,out] operation Key derivation operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_key_derivation_abort(cracen_key_derivation_operation_t *operation);
 

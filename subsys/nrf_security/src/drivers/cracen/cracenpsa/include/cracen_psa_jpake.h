@@ -43,6 +43,9 @@ psa_status_t cracen_jpake_setup(cracen_jpake_operation_t *operation,
  * @param[in] password_length   Length of the password in bytes.
  *
  * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_HANDLE The password is invalid.
+ * @retval PSA_ERROR_INVALID_ARGUMENT Modular reduction failed.
+ *
  */
 psa_status_t cracen_jpake_set_password_key(cracen_jpake_operation_t *operation,
 					   const psa_key_attributes_t *attributes,
@@ -54,7 +57,9 @@ psa_status_t cracen_jpake_set_password_key(cracen_jpake_operation_t *operation,
  * @param[in] user_id       User identifier.
  * @param[in] user_id_len   Length of the user identifier in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The user identifier has been set successfully.
+ * @retval PSA_ERROR_NOT_SUPPORTED The user identifier is too long.
+ *
  */
 psa_status_t cracen_jpake_set_user(cracen_jpake_operation_t *operation, const uint8_t *user_id,
 				   size_t user_id_len);
@@ -65,7 +70,9 @@ psa_status_t cracen_jpake_set_user(cracen_jpake_operation_t *operation, const ui
  * @param[in] peer_id       Peer identifier.
  * @param[in] peer_id_len   Length of the peer identifier in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The peer identifier has been set successfully.
+ * @retval PSA_ERROR_NOT_SUPPORTED The peer identifier is too long.
+ *
  */
 psa_status_t cracen_jpake_set_peer(cracen_jpake_operation_t *operation, const uint8_t *peer_id,
 				   size_t peer_id_len);
@@ -75,7 +82,9 @@ psa_status_t cracen_jpake_set_peer(cracen_jpake_operation_t *operation, const ui
  * @param[in,out] operation JPAKE operation context.
  * @param[in] role          PAKE role.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The role has been set successfully.
+ * @retval PSA_ERROR_NOT_SUPPORTED The role is not supported.
+ *
  */
 psa_status_t cracen_jpake_set_role(cracen_jpake_operation_t *operation, psa_pake_role_t role);
 
@@ -87,9 +96,11 @@ psa_status_t cracen_jpake_set_role(cracen_jpake_operation_t *operation, psa_pake
  * @param[in] output_size        Size of the output buffer in bytes.
  * @param[out] output_length     Length of the generated output in bytes.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p step is not a J-PAKE output step.
+ *
  */
 psa_status_t cracen_jpake_output(cracen_jpake_operation_t *operation, psa_pake_step_t step,
 				 uint8_t *output, size_t output_size, size_t *output_length);
@@ -101,8 +112,12 @@ psa_status_t cracen_jpake_output(cracen_jpake_operation_t *operation, psa_pake_s
  * @param[in] input           Input data.
  * @param[in] input_length    Length of the input data in bytes.
  *
- * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p step is not a J-PAKE input step, @p input_length or
+ *     the point format is invalid for the step, or the peer identifier is the same as the user
+ *     identifier.
+ *
  */
 psa_status_t cracen_jpake_input(cracen_jpake_operation_t *operation, psa_pake_step_t step,
 				const uint8_t *input, size_t input_length);
@@ -116,7 +131,7 @@ psa_status_t cracen_jpake_input(cracen_jpake_operation_t *operation, psa_pake_st
  * @param[out] output_length    Length of the generated shared key in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
  */
 psa_status_t cracen_jpake_get_shared_key(cracen_jpake_operation_t *operation,
@@ -127,7 +142,8 @@ psa_status_t cracen_jpake_get_shared_key(cracen_jpake_operation_t *operation,
  *
  * @param[in,out] operation JPAKE operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_jpake_abort(cracen_jpake_operation_t *operation);
 

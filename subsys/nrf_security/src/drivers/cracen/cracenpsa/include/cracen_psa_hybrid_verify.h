@@ -71,7 +71,9 @@ struct cracen_hybrid_verify_ecdsa {
  *
  * @retval ::PSA_SUCCESS Both signatures are valid.
  * @retval ::PSA_ERROR_INVALID_SIGNATURE At least one signature is invalid.
- * @retval Other PSA status codes on invalid arguments and internal errors. The
+ * @retval ::PSA_ERROR_INVALID_ARGUMENT A required pointer is NULL, the ECDSA algorithm or curve
+ *     family is not valid, or the ECDSA public key or signature length does not match the curve.
+ * @retval Other PSA status codes on other invalid arguments and internal errors. The
  *         ECDSA status is returned when both components fail.
  */
 psa_status_t cracen_hybrid_verify(const struct cracen_hybrid_verify_ml_dsa *ml_dsa,

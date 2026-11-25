@@ -26,6 +26,19 @@
 #include <stdint.h>
 #include <psa/crypto.h>
 
+/** @brief Get a built-in IKG key.
+ *
+ * @param[in] slot_number         Built-in key slot number.
+ * @param[out] attributes         Key attributes.
+ * @param[out] key_buffer         Buffer representing the built-in key.
+ * @param[in] key_buffer_size     Size of the key buffer in bytes.
+ * @param[out] key_buffer_length  Length of key buffer for the built-in key in bytes.
+ *
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p slot_number is not a built-in IKG key.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
+ *
+ */
 psa_status_t cracen_ikg_get_builtin_key(psa_drv_slot_number_t slot_number,
 					psa_key_attributes_t *attributes,
 					uint8_t *key_buffer, size_t key_buffer_size,

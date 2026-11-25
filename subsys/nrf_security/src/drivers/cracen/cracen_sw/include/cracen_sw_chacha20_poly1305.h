@@ -87,7 +87,8 @@ psa_status_t cracen_sw_chacha20_poly1305_set_nonce(cracen_aead_operation_t *oper
  * @param[in]     ad_length        Length of additional data.
  * @param[in]     plaintext_length Length of plaintext.
  *
- * @retval PSA_SUCCESS Lengths set successfully.
+ * @retval PSA_SUCCESS The lengths have been set successfully.
+ *
  */
 psa_status_t cracen_sw_chacha20_poly1305_set_lengths(cracen_aead_operation_t *operation,
 						     size_t ad_length,
@@ -172,7 +173,8 @@ psa_status_t cracen_sw_chacha20_poly1305_verify(cracen_aead_operation_t *operati
  *
  * @param[in,out] operation Pointer to the AEAD operation structure.
  *
- * @retval PSA_SUCCESS Operation aborted successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_sw_chacha20_poly1305_abort(cracen_aead_operation_t *operation);
 

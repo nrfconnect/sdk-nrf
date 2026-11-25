@@ -40,7 +40,12 @@ psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
  * @param[in] user_id       User identifier.
  * @param[in] user_id_len   Length of the user identifier in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The user identifier has been set successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized or the algorithm is not supported.
+ * @retval PSA_ERROR_INSUFFICIENT_MEMORY The user identifier is too long for SPAKE2+.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The user identifier length is invalid for the selected
+ *     algorithm.
+ *
  */
 psa_status_t cracen_pake_set_user(cracen_pake_operation_t *operation, const uint8_t *user_id,
 				  size_t user_id_len);
@@ -51,7 +56,12 @@ psa_status_t cracen_pake_set_user(cracen_pake_operation_t *operation, const uint
  * @param[in] peer_id       Peer identifier.
  * @param[in] peer_id_len   Length of the peer identifier in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The peer identifier has been set successfully.
+ * @retval PSA_ERROR_NOT_SUPPORTED The algorithm or peer identifier is not supported.
+ * @retval PSA_ERROR_INSUFFICIENT_MEMORY The peer identifier is too long for SPAKE2+.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The peer identifier length is invalid for the selected
+ *     algorithm.
+ *
  */
 psa_status_t cracen_pake_set_peer(cracen_pake_operation_t *operation, const uint8_t *peer_id,
 				  size_t peer_id_len);
@@ -62,7 +72,11 @@ psa_status_t cracen_pake_set_peer(cracen_pake_operation_t *operation, const uint
  * @param[in] context          Context data.
  * @param[in] context_length   Length of the context data in bytes.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The context has been set successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
+ * @retval PSA_ERROR_NOT_SUPPORTED The algorithm does not support a context.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The context is too long.
+ *
  */
 psa_status_t cracen_pake_set_context(cracen_pake_operation_t *operation, const uint8_t *context,
 				     size_t context_length);
@@ -72,7 +86,10 @@ psa_status_t cracen_pake_set_context(cracen_pake_operation_t *operation, const u
  * @param[in,out] operation PAKE operation context.
  * @param[in] role          PAKE role.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The role has been set successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
+ * @retval PSA_ERROR_NOT_SUPPORTED The role is not supported.
+ *
  */
 psa_status_t cracen_pake_set_role(cracen_pake_operation_t *operation, psa_pake_role_t role);
 
@@ -85,7 +102,7 @@ psa_status_t cracen_pake_set_role(cracen_pake_operation_t *operation, psa_pake_r
  * @param[out] output_length     Length of the generated output in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
  */
 psa_status_t cracen_pake_output(cracen_pake_operation_t *operation, psa_pake_step_t step,
@@ -99,7 +116,7 @@ psa_status_t cracen_pake_output(cracen_pake_operation_t *operation, psa_pake_ste
  * @param[in] input_length    Length of the input data in bytes.
  *
  * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_pake_input(cracen_pake_operation_t *operation, psa_pake_step_t step,
 			       const uint8_t *input, size_t input_length);
@@ -113,7 +130,7 @@ psa_status_t cracen_pake_input(cracen_pake_operation_t *operation, psa_pake_step
  * @param[out] key_buffer_length Length of the generated shared key in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
  */
 psa_status_t cracen_pake_get_shared_key(cracen_pake_operation_t *operation,
@@ -124,7 +141,9 @@ psa_status_t cracen_pake_get_shared_key(cracen_pake_operation_t *operation,
  *
  * @param[in,out] operation PAKE operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation algorithm is not supported.
+ *
  */
 psa_status_t cracen_pake_abort(cracen_pake_operation_t *operation);
 

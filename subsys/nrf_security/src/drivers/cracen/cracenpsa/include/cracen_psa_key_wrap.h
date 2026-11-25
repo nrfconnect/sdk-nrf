@@ -33,10 +33,11 @@
  * @param[out] data_length            On success, the number of bytes that make up
  *                                    the wrapped key data.
  *
- * @retval PSA_SUCCESS                The operation completed successfully.
- * @retval PSA_ERROR_INVALID_ARGUMENT
- * @retval PSA_ERROR_NOT_SUPPORTED
- * @retval PSA_ERROR_BUFFER_TOO_SMALL
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p key_size is not valid for @p alg.
+ * @retval PSA_ERROR_NOT_SUPPORTED @p alg is not supported, or the wrapping key is not an AES key.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL @p data_size is too small for the wrapped key.
+ *
  */
 psa_status_t cracen_wrap_key(const psa_key_attributes_t *wrapping_key_attributes,
 			     const uint8_t *wrapping_key_data, size_t wrapping_key_size,
@@ -63,11 +64,13 @@ psa_status_t cracen_wrap_key(const psa_key_attributes_t *wrapping_key_attributes
  * @param[out] bits                   On success, the number of bits that make up
  *                                    the unwrapped key data
  *
- * @retval PSA_SUCCESS                The operation completed successfully.
- * @retval PSA_ERROR_INVALID_ARGUMENT
- * @retval PSA_ERROR_NOT_SUPPORTED
- * @retval PSA_ERROR_BUFFER_TOO_SMALL
- * @retval PSA_ERROR_INVALID_SIGNATURE
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p data_length is not valid for @p alg, or the unwrapped
+ *     key is a malformed public key.
+ * @retval PSA_ERROR_NOT_SUPPORTED @p alg is not supported, or the wrapping key is not an AES key.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL @p key_size is too small for the unwrapped key.
+ * @retval PSA_ERROR_INVALID_SIGNATURE The integrity check of the wrapped data failed.
+ *
  */
 psa_status_t cracen_unwrap_key(const psa_key_attributes_t *attributes,
 			       const psa_key_attributes_t *wrapping_key_attributes,

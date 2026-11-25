@@ -34,9 +34,9 @@ psa_status_t cracen_xof_setup(cracen_xof_operation_t *operation, psa_algorithm_t
  * @param[in] context            Buffer containing the context value.
  * @param[in] context_length     Length of the context in bytes.
  *
- * @retval PSA_SUCCESS             The context was set successfully.
+ * @retval PSA_SUCCESS             The context has been set successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The operation does not support context setting.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  */
 psa_status_t cracen_xof_set_context(cracen_xof_operation_t *operation, const uint8_t *context,
 				    size_t context_length);
@@ -48,7 +48,7 @@ psa_status_t cracen_xof_set_context(cracen_xof_operation_t *operation, const uin
  * @param[in] input_length   Length of the input in bytes.
  *
  * @retval PSA_SUCCESS         The input was processed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_xof_update(cracen_xof_operation_t *operation, const uint8_t *input,
 			       size_t input_length);
@@ -60,7 +60,7 @@ psa_status_t cracen_xof_update(cracen_xof_operation_t *operation, const uint8_t 
  * @param[in] output_length  Number of output bytes to produce.
  *
  * @retval PSA_SUCCESS         Output was generated successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_xof_output(cracen_xof_operation_t *operation, uint8_t *output,
 			       size_t output_length);
@@ -69,7 +69,8 @@ psa_status_t cracen_xof_output(cracen_xof_operation_t *operation, uint8_t *outpu
  *
  * @param[in,out] operation XOF operation context.
  *
- * @retval PSA_SUCCESS Always succeeds.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_xof_abort(cracen_xof_operation_t *operation);
 
