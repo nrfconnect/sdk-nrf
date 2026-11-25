@@ -383,7 +383,8 @@ static void log_error_stats(const char *func,
 #endif /* CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF */
 
 #ifdef CONFIG_NRF71_WIFI_FETCH_FW_LOG_ON_NO_RX_FRAMES
-/* LMAC RX statistics mirrored in RPU SYSMEM (firmware build dependent). */
+/* LMAC debug stats mirrored in RPU SYSMEM (firmware build dependent). */
+#define LMAC_TX_STATS_RAM_ADDR 0x2800348cUL
 #define LMAC_RX_STATS_RAM_ADDR 0x28003530UL
 #define PMB_WLAN_MAC_CTRL_DEAGG_CRC32PASS_CNT      0x4808E078UL
 #define PMB_WLAN_MAC_CTRL_DEAGG_CRC32FAIL_CNT      0x4808E07CUL
@@ -398,11 +399,23 @@ static unsigned int no_rcv_fw_log_iter;
 
 static void nrf_wifi_fmac_fetch_fw_log_on_no_rcv_frames(unsigned int iter)
 {
+	const volatile struct lmac_tx_stats *tx =
+		(const volatile struct lmac_tx_stats *)LMAC_TX_STATS_RAM_ADDR;
 	const volatile struct lmac_rx_stats *rx =
 		(const volatile struct lmac_rx_stats *)LMAC_RX_STATS_RAM_ADDR;
 
 	LOG_ERR("%s: LMAC RX snapshot %u/%u (no receive frames in 2 seconds)",
 		__func__, iter, NO_RCV_FW_LOG_ITERATIONS);
+	LOG_ERR("  LMAC TX RAM @0x%x: tx_pkt_cnt=%u tx_pkt_done_cnt=%u tx_pkt_success=%u",
+		(unsigned int)LMAC_TX_STATS_RAM_ADDR,
+		tx->tx_pkt_cnt, tx->tx_pkt_done_cnt, tx->tx_pkt_success);
+	LOG_ERR("  tx_pkt_underrun=%u unknown_status=%u agg_tx_timeout=%u agg_phy_cca_abort=%u",
+		tx->tx_pkt_underrun, tx->unknown_status, tx->agg_tx_timeout,
+		tx->agg_phy_cca_abort);
+	LOG_ERR("  bt_abort_at_start=%u bt_abort_at_end=%u scan_pkt_cnt=%u",
+		tx->bt_abort_at_start, tx->bt_abort_at_end, tx->scan_pkt_cnt);
+	LOG_ERR("  internal_pkt_cnt=%u internal_pkt_done_cnt=%u",
+		tx->internal_pkt_cnt, tx->internal_pkt_done_cnt);
 	LOG_ERR("  LMAC RAM @0x%x: deagg_isr=%u lmac_rxisr_cnt=%u "
 		"lmac_rx_isr_dropped_cnt=%u rx_ctrl_mem_full=%u",
 		(unsigned int)LMAC_RX_STATS_RAM_ADDR,
