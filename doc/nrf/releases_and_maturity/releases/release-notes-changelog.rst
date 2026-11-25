@@ -1665,8 +1665,13 @@ Libraries for networking
 
   * Updated the API documentation of the :c:func:`azure_iot_hub_connect` and :c:func:`azure_iot_hub_dps_start` functions to describe the positive error code that they return when the host name cannot be resolved.
 
-  * Fixed an issue where the device did not load the stored DPS assignment after a reboot when the NVS settings backend was used.
-    The device then ran the DPS registration again.
+  * Fixed:
+
+    * An issue where a non-shadow topic containing a Device Shadow operation name, such as ``update/delta``, was reported as a shadow topic.
+    * An issue where named shadow topics and other AWS reserved topics were reported as classic shadow topics.
+      This happened when the topic ended with a classic shadow operation.
+    * An issue where the device did not load the stored DPS assignment after a reboot when the NVS settings backend was used.
+      The device then ran the DPS registration again.
 
 Libraries for NFC
 -----------------
