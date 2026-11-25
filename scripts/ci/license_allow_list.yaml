@@ -22,8 +22,9 @@ exclude:
   # - nrfxlib/blocked_dir
   - modules/lib/openthread/third_party
   - modules/lib/openthread/tests
+  - zephyr/doc/_extensions/moderncmakedomain/
   files:
-  # - modules/crypto/oberon-psa-crypto/a_new_file.h
+  - zephyr/tests/application_development/software_bill_of_materials/used_module/src/no_header.c
   patterns:
   # - '^modules/crypto/oberon-psa-crypto/.*\.c$'
 
@@ -102,14 +103,20 @@ MIT: |
   ^nrf/doc/_doxygen/doxygen-awesome-darkmode-toggle.js
   ^nrf/doc/_doxygen/doxygen-awesome-interactive-toc.js
   ^nrf/doc/_doxygen/doxygen-awesome-paragraph-link.js
+  ^zephyr/LICENSES/MIT.txt
 BSD-3-CLAUSE: |
   ^modules/lib/openthread/
   ^modules/tee/tf-m/psa-arch-tests/
   ^modules/tee/tf-m/trusted-firmware-m/
+  ^modules/lib/hostap/
   ^nrfxlib/openthread/include/openthread/
   ^nrfxlib/nrf_802154/
   ^nrf/ext/
   ^nrf/drivers/wifi/nrf71/
+  ^zephyr/LICENSES/BSD-3-Clause.txt
+  ^zephyr/scripts/dts/python-devicetree/tests/test-bindings/
+  ^zephyr/scripts/dts/python-devicetree/tests/test-bindings-include/
+  ^zephyr/scripts/dts/python-devicetree/tests/test-bindings-init/
 BSD-2-CLAUSE-NETBSD: "^nrf/ext/"
 Apache-2.0 OR GPL-2.0-or-later: |
   ^modules/crypto/mbedtls/
