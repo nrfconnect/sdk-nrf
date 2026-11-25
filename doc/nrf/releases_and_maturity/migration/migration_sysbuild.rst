@@ -487,6 +487,10 @@ Example output files
 
 To demonstrate the expected output files when using sysbuild for an application build, the following sections show and describe the output files for the Matter Weather Station sample when building using the Thingy:53 DK with the nRF7002-EB II shield attached board target:
 
+.. note::
+   Starting with the |NCS| release v3.5.0, the Nordic Thingy:53 is no longer supported in the |NCS| and the Matter Weather Station application has been moved to the `Matter add-on <ncs-matter add-on repository_>`_ repository.
+   This example is kept for reference.
+
 Provision/container files
 =========================
 

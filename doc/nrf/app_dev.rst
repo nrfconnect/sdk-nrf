@@ -9,6 +9,9 @@ Read these guides together with Zephyr's :ref:`zephyr:application` documentation
 
 For detailed integration instructions of specific technologies and components, check the pages in other top sections of the documentation (like Protocols, Applications, or Samples).
 
+.. note::
+   Starting with the |NCS| release v3.5.0, the Nordic Thingy:53 is no longer supported in the |NCS|.
+
 .. figure:: /images/ncs_app_dev.svg
    :alt: Application development section overview
 
@@ -36,7 +39,6 @@ For detailed integration instructions of specific technologies and components, c
    app_dev/device_guides/nrf52/index
    app_dev/device_guides/thingy91x/index
    app_dev/device_guides/thingy91/index
-   app_dev/device_guides/thingy53/index
    app_dev/device_guides/pmic/index
    app_dev/device_guides/fem/index
    app_dev/device_guides/custom/index
