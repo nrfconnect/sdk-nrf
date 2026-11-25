@@ -54,7 +54,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_QOS_LOG_LEVEL);
 
 #define MAX_KEY_LEN 20
 
-static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
 static struct k_thread thread;
 
 struct params_ble {
