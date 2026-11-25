@@ -494,9 +494,9 @@ static void data_handler_thread_fn(void)
 	}
 }
 
-K_THREAD_DEFINE(gnss_data_handler, GNSS_DATA_HANDLER_THREAD_STACK_SIZE,
-		data_handler_thread_fn, NULL, NULL, NULL,
-		K_PRIO_PREEMPT(GNSS_DATA_HANDLER_THREAD_PRIORITY), 0, 0);
+K_KERNEL_THREAD_DEFINE(gnss_data_handler, GNSS_DATA_HANDLER_THREAD_STACK_SIZE,
+		       data_handler_thread_fn, NULL, NULL, NULL,
+		       K_PRIO_PREEMPT(GNSS_DATA_HANDLER_THREAD_PRIORITY), 0, 0);
 
 static int gnss_enable_all_nmeas(void)
 {

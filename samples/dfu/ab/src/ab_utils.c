@@ -39,7 +39,7 @@ LOG_MODULE_DECLARE(ab_sample);
 
 #define STATUS_LEDS_THREAD_STACK_SIZE 512
 #define STATUS_LEDS_THREAD_PRIORITY (CONFIG_NUM_PREEMPT_PRIORITIES - 1)
-K_THREAD_STACK_DEFINE(status_leds_thread_stack_area, STATUS_LEDS_THREAD_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(status_leds_thread_stack_area, STATUS_LEDS_THREAD_STACK_SIZE);
 
 /** @brief Radio firmware self test
  *
@@ -271,7 +271,7 @@ void ab_actions_perform(void)
 	}
 
 	k_thread_create(&status_leds_thread_data, status_leds_thread_stack_area,
-			K_THREAD_STACK_SIZEOF(status_leds_thread_stack_area),
+			K_KERNEL_STACK_SIZEOF(status_leds_thread_stack_area),
 			status_leds_thread_entry_point,
 			NULL, NULL, NULL,
 			STATUS_LEDS_THREAD_PRIORITY, 0, K_NO_WAIT);

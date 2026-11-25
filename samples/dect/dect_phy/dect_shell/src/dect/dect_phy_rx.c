@@ -64,8 +64,9 @@ static void dect_phy_rx_th_op_handler_thread_fn(void)
 	}
 }
 
-K_THREAD_DEFINE(dect_phy_rx_th, DECT_PHY_RX_THREAD_STACK_SIZE, dect_phy_rx_th_op_handler_thread_fn,
-		NULL, NULL, NULL, K_PRIO_PREEMPT(DECT_PHY_RX_THREAD_PRIORITY), 0, 0);
+K_KERNEL_THREAD_DEFINE(dect_phy_rx_th, DECT_PHY_RX_THREAD_STACK_SIZE,
+		       dect_phy_rx_th_op_handler_thread_fn, NULL, NULL, NULL,
+		       K_PRIO_PREEMPT(DECT_PHY_RX_THREAD_PRIORITY), 0, 0);
 
 /**************************************************************************************************/
 

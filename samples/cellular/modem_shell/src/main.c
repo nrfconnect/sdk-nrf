@@ -69,7 +69,7 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_SHELL_BACKEND_SERIAL) || IS_ENABLED(CONFIG_SHELL_
 /***** Work queue and work item definitions *****/
 
 #define MOSH_COMMON_WORKQ_PRIORITY CONFIG_MOSH_COMMON_WORKQUEUE_PRIORITY
-K_THREAD_STACK_DEFINE(mosh_common_workq_stack, CONFIG_MOSH_COMMON_WORKQUEUE_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(mosh_common_workq_stack, CONFIG_MOSH_COMMON_WORKQUEUE_STACK_SIZE);
 struct k_work_q mosh_common_work_q;
 
 /* Global variables */
@@ -286,7 +286,7 @@ int main(void)
 	k_work_queue_start(
 		&mosh_common_work_q,
 		mosh_common_workq_stack,
-		K_THREAD_STACK_SIZEOF(mosh_common_workq_stack),
+		K_KERNEL_STACK_SIZEOF(mosh_common_workq_stack),
 		MOSH_COMMON_WORKQ_PRIORITY,
 		&cfg);
 

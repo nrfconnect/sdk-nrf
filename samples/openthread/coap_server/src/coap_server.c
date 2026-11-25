@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(coap_server, CONFIG_COAP_SERVER_LOG_LEVEL);
 #define COAP_SERVER_WORKQ_STACK_SIZE 512
 #define COAP_SERVER_WORKQ_PRIORITY 5
 
-K_THREAD_STACK_DEFINE(coap_server_workq_stack_area, COAP_SERVER_WORKQ_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(coap_server_workq_stack_area, COAP_SERVER_WORKQ_STACK_SIZE);
 static struct k_work_q coap_server_workq;
 
 static struct k_work provisioning_work;
@@ -144,7 +144,7 @@ int main(void)
 
 	k_work_queue_init(&coap_server_workq);
 	k_work_queue_start(&coap_server_workq, coap_server_workq_stack_area,
-					K_THREAD_STACK_SIZEOF(coap_server_workq_stack_area),
+					K_KERNEL_STACK_SIZEOF(coap_server_workq_stack_area),
 					COAP_SERVER_WORKQ_PRIORITY, NULL);
 	k_work_init(&provisioning_work, activate_provisioning);
 

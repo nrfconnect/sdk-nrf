@@ -672,8 +672,8 @@ static void dfu_thread_fn(void *arg1, void *arg2, void *arg3)
 	}
 }
 
-K_THREAD_DEFINE(dfu_thread_id, DFU_THREAD_STACK_SIZE, dfu_thread_fn, NULL, NULL,
-		NULL, DFU_THREAD_PRIO, 0, 0);
+K_KERNEL_THREAD_DEFINE(dfu_thread_id, DFU_THREAD_STACK_SIZE, dfu_thread_fn, NULL, NULL,
+		       NULL, DFU_THREAD_PRIO, 0, 0);
 
 static void button_handler(uint32_t button_state, uint32_t has_changed)
 {

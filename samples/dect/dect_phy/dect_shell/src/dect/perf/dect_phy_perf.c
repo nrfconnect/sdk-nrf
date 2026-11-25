@@ -1734,8 +1734,8 @@ rx_pcc_debug:
 	}
 }
 
-K_THREAD_DEFINE(dect_phy_perf_th, DECT_PHY_PERF_THREAD_STACK_SIZE, dect_phy_perf_thread_fn, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(DECT_PHY_PERF_THREAD_PRIORITY), 0, 0);
+K_KERNEL_THREAD_DEFINE(dect_phy_perf_th, DECT_PHY_PERF_THREAD_STACK_SIZE, dect_phy_perf_thread_fn,
+		       NULL, NULL, NULL, K_PRIO_PREEMPT(DECT_PHY_PERF_THREAD_PRIORITY), 0, 0);
 
 /**************************************************************************************************/
 

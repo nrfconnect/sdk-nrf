@@ -86,6 +86,6 @@ static void network_task(void)
 	}
 }
 
-K_THREAD_DEFINE(network_task_id,
-		CONFIG_MQTT_SAMPLE_NETWORK_THREAD_STACK_SIZE,
-		network_task, NULL, NULL, NULL, 3, 0, 0);
+K_KERNEL_THREAD_DEFINE(network_task_id,
+		       CONFIG_MQTT_SAMPLE_NETWORK_THREAD_STACK_SIZE,
+		       network_task, NULL, NULL, NULL, 3, 0, 0);

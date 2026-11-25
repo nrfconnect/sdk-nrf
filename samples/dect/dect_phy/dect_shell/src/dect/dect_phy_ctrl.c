@@ -36,7 +36,7 @@
 
 #define DECT_PHY_CTRL_STACK_SIZE 4096
 #define DECT_PHY_CTRL_PRIORITY	 K_PRIO_COOP(9) /* -7 */
-K_THREAD_STACK_DEFINE(dect_phy_ctrl_th_stack, DECT_PHY_CTRL_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(dect_phy_ctrl_th_stack, DECT_PHY_CTRL_STACK_SIZE);
 
 struct k_work_q dect_phy_ctrl_work_q;
 
@@ -735,8 +735,9 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 	}
 }
 
-K_THREAD_DEFINE(dect_phy_ctrl_msgq_th, DECT_PHY_CTRL_STACK_SIZE, dect_phy_ctrl_msgq_thread_handler,
-		NULL, NULL, NULL, DECT_PHY_CTRL_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(dect_phy_ctrl_msgq_th, DECT_PHY_CTRL_STACK_SIZE,
+		       dect_phy_ctrl_msgq_thread_handler, NULL, NULL, NULL, DECT_PHY_CTRL_PRIORITY,
+		       0, 0);
 
 /**************************************************************************************************/
 
@@ -1955,7 +1956,7 @@ static int dect_phy_ctrl_init(void)
 
 	ctrl_data.debug = true; /* Debugs enabled as a default */
 	k_work_queue_start(&dect_phy_ctrl_work_q, dect_phy_ctrl_th_stack,
-			   K_THREAD_STACK_SIZEOF(dect_phy_ctrl_th_stack), DECT_PHY_CTRL_PRIORITY,
+			   K_KERNEL_STACK_SIZEOF(dect_phy_ctrl_th_stack), DECT_PHY_CTRL_PRIORITY,
 			   NULL);
 	k_thread_name_set(dect_phy_ctrl_work_q.thread_id, "dect_phy_ctrl_worker_th");
 

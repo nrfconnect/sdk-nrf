@@ -24,11 +24,11 @@
 
 #define TH_1_STACK_SIZE CONFIG_MOSH_WORKER_THREADS_STACK_SIZE
 #define TH_1_PRIORITY 5
-K_THREAD_STACK_DEFINE(th_stack_area_1, TH_1_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(th_stack_area_1, TH_1_STACK_SIZE);
 
 #define TH_2_STACK_SIZE CONFIG_MOSH_WORKER_THREADS_STACK_SIZE
 #define TH_2_PRIORITY 5
-K_THREAD_STACK_DEFINE(th_stack_area_2, TH_2_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(th_stack_area_2, TH_2_STACK_SIZE);
 
 struct k_work_q th_work_q_1;
 struct k_work_q th_work_q_2;
@@ -340,7 +340,7 @@ void th_ctrl_start(const struct shell *shell,
 void th_ctrl_init(void)
 {
 	k_work_queue_start(&th_work_q_1, th_stack_area_1,
-			   K_THREAD_STACK_SIZEOF(th_stack_area_1),
+			   K_KERNEL_STACK_SIZEOF(th_stack_area_1),
 			   TH_1_PRIORITY, NULL);
 	k_thread_name_set(th_work_q_1.thread_id, "mosh_bg_1");
 	k_work_init(&th_work_data_1.work, th_ctrl_work_handler);
@@ -348,7 +348,7 @@ void th_ctrl_init(void)
 	th_work_data_1.th_nbr = 1;
 
 	k_work_queue_start(&th_work_q_2, th_stack_area_2,
-			   K_THREAD_STACK_SIZEOF(th_stack_area_2),
+			   K_KERNEL_STACK_SIZEOF(th_stack_area_2),
 			   TH_2_PRIORITY, NULL);
 	k_thread_name_set(th_work_q_2.thread_id, "mosh_bg_2");
 	k_work_init(&th_work_data_2.work, th_ctrl_work_handler);

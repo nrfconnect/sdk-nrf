@@ -175,5 +175,5 @@ int main(void)
 	}
 }
 
-K_THREAD_DEFINE(console_print_thread_id, CONFIG_MAIN_STACK_SIZE, console_print_thread, NULL, NULL,
-		NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
+K_KERNEL_THREAD_DEFINE(console_print_thread_id, CONFIG_MAIN_STACK_SIZE, console_print_thread, NULL,
+		       NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);

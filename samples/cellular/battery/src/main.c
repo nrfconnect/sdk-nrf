@@ -18,8 +18,8 @@
 #define WORK_Q_STACK_SIZE 1024
 #define WORK_Q_PRIORITY 5
 
-K_THREAD_STACK_DEFINE(low_level_work_q_stack_area, WORK_Q_STACK_SIZE);
-K_THREAD_STACK_DEFINE(pofwarn_work_q_stack_area, WORK_Q_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(low_level_work_q_stack_area, WORK_Q_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(pofwarn_work_q_stack_area, WORK_Q_STACK_SIZE);
 
 struct k_work_q low_level_work_q;
 struct k_work_q pofwarn_work_q;
@@ -214,10 +214,10 @@ static void setup_workqueues(void)
 	k_work_queue_init(&pofwarn_work_q);
 
 	k_work_queue_start(&low_level_work_q, low_level_work_q_stack_area,
-			   K_THREAD_STACK_SIZEOF(low_level_work_q_stack_area), WORK_Q_PRIORITY,
+			   K_KERNEL_STACK_SIZEOF(low_level_work_q_stack_area), WORK_Q_PRIORITY,
 			   NULL);
 	k_work_queue_start(&pofwarn_work_q, pofwarn_work_q_stack_area,
-			   K_THREAD_STACK_SIZEOF(pofwarn_work_q_stack_area), WORK_Q_PRIORITY,
+			   K_KERNEL_STACK_SIZEOF(pofwarn_work_q_stack_area), WORK_Q_PRIORITY,
 			   NULL);
 
 	k_work_init(&low_level_work, low_level_state_update);

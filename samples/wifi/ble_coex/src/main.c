@@ -68,15 +68,15 @@ K_SEM_DEFINE(udp_callback, 0, 1);
 
 static void run_bt_benchmark(void);
 
-K_THREAD_DEFINE(run_bt_traffic,
-		CONFIG_WIFI_THREAD_STACK_SIZE,
-		run_bt_benchmark,
-		NULL,
-		NULL,
-		NULL,
-		CONFIG_WIFI_THREAD_PRIORITY,
-		0,
-		K_TICKS_FOREVER);
+K_KERNEL_THREAD_DEFINE(run_bt_traffic,
+		       CONFIG_WIFI_THREAD_STACK_SIZE,
+		       run_bt_benchmark,
+		       NULL,
+		       NULL,
+		       NULL,
+		       CONFIG_WIFI_THREAD_PRIORITY,
+		       0,
+		       K_TICKS_FOREVER);
 
 struct wifi_iface_status status = { 0 };
 

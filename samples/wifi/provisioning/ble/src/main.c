@@ -45,7 +45,7 @@
 #define ADV_DAEMON_STACK_SIZE 4096
 #define ADV_DAEMON_PRIORITY 5
 
-K_THREAD_STACK_DEFINE(adv_daemon_stack_area, ADV_DAEMON_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(adv_daemon_stack_area, ADV_DAEMON_STACK_SIZE);
 
 static struct k_work_q adv_daemon_work_q;
 
@@ -291,7 +291,7 @@ int main(void)
 
 	k_work_queue_init(&adv_daemon_work_q);
 	k_work_queue_start(&adv_daemon_work_q, adv_daemon_stack_area,
-			K_THREAD_STACK_SIZEOF(adv_daemon_stack_area), ADV_DAEMON_PRIORITY,
+			K_KERNEL_STACK_SIZEOF(adv_daemon_stack_area), ADV_DAEMON_PRIORITY,
 			NULL);
 
 	k_work_init_delayable(&update_adv_param_work, update_adv_param_task);

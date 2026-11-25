@@ -39,7 +39,7 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_SHELL_BACKEND_SERIAL),
 #if defined(CONFIG_DESH_STARTUP_CMDS)
 #define DESH_COMMON_WORKQUEUE_STACK_SIZE 4096
 #define DESH_COMMON_WORKQ_PRIORITY 5
-K_THREAD_STACK_DEFINE(desh_common_workq_stack, DESH_COMMON_WORKQUEUE_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(desh_common_workq_stack, DESH_COMMON_WORKQUEUE_STACK_SIZE);
 struct k_work_q desh_common_work_q;
 #endif
 
@@ -183,7 +183,7 @@ int main(void)
 	k_work_queue_start(
 		&desh_common_work_q,
 		desh_common_workq_stack,
-		K_THREAD_STACK_SIZEOF(desh_common_workq_stack),
+		K_KERNEL_STACK_SIZEOF(desh_common_workq_stack),
 		DESH_COMMON_WORKQ_PRIORITY,
 		&cfg);
 #endif

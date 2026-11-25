@@ -23,7 +23,7 @@ See the :ncs-file:`/samples/net/mqtt/src/common/message_channel.c` and :ncs-file
 
 .. note::
    The sample does not include a :file:`main.c` file.
-   Instead, the application uses a modular architecture where each module defines its own thread using the :c:macro:`K_THREAD_DEFINE` macro.
+   Instead, the application uses a modular architecture where each module defines its own thread using the :c:macro:`K_KERNEL_THREAD_DEFINE` macro.
    This approach eliminates the need for a traditional ``main()`` function and allows each module to initialize and run independently.
    The modules communicate with each other through the :ref:`zbus` message passing system.
    This creates a loosely coupled, event-driven architecture.
@@ -41,7 +41,7 @@ Instead of a single ``main()`` function, the MQTT sample uses multiple entry poi
 * LED Module - Uses a listener callback (no dedicated thread) to control LEDs based on network status.
 * Error Module - Uses a listener callback (no dedicated thread) to handle fatal errors.
 
-Each module's thread is defined using :c:macro:`K_THREAD_DEFINE` and starts automatically during system initialization.
+Each module's thread is defined using :c:macro:`K_KERNEL_THREAD_DEFINE` and starts automatically during system initialization.
 This distributed approach provides better modularity, easier testing, and clearer separation of concerns compared to a monolithic ``main()`` function.
 
 Modules

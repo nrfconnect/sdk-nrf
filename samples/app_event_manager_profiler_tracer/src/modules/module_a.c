@@ -20,7 +20,7 @@
 #define MODULE module_a
 
 
-static K_THREAD_STACK_DEFINE(module_a_thread_stack,
+static K_KERNEL_STACK_DEFINE(module_a_thread_stack,
 			     MODULE_A_THREAD_STACK_SIZE);
 static struct k_thread module_a_thread;
 

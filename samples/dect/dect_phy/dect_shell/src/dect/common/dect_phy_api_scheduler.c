@@ -1804,6 +1804,6 @@ static void dect_phy_api_scheduler_th_handler(void)
 #define DECT_PHY_API_SCHEDULER_TICK_THREAD_STACK_SIZE 4096
 #define DECT_PHY_API_SCHEDULER_TICK_THREAD_PRIORITY   K_PRIO_COOP(5) /* -11 */
 
-K_THREAD_DEFINE(dect_phy_api_scheduler_th, DECT_PHY_API_SCHEDULER_TICK_THREAD_STACK_SIZE,
-		dect_phy_api_scheduler_th_handler, NULL, NULL, NULL,
-		DECT_PHY_API_SCHEDULER_TICK_THREAD_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(dect_phy_api_scheduler_th, DECT_PHY_API_SCHEDULER_TICK_THREAD_STACK_SIZE,
+		       dect_phy_api_scheduler_th_handler, NULL, NULL, NULL,
+		       DECT_PHY_API_SCHEDULER_TICK_THREAD_PRIORITY, 0, 0);

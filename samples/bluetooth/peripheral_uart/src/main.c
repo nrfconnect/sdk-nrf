@@ -690,5 +690,5 @@ void ble_write_thread(void)
 	}
 }
 
-K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
-		NULL, PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
+		       NULL, PRIORITY, 0, 0);

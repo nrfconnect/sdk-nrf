@@ -30,7 +30,7 @@
 LOG_MODULE_REGISTER(rcp_hci_module, CONFIG_OT_COPROCESSOR_LOG_LEVEL);
 
 static const struct device *const hci_uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_bt_c2h_uart));
-static K_THREAD_STACK_DEFINE(tx_thread_stack, CONFIG_BT_HCI_TX_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(tx_thread_stack, CONFIG_BT_HCI_TX_STACK_SIZE);
 static struct k_thread tx_thread_data;
 static K_FIFO_DEFINE(tx_queue);
 
@@ -377,7 +377,7 @@ void run_hci(void)
 	/* Spawn the TX thread and start feeding commands and data to the
 	 * controller
 	 */
-	k_thread_create(&tx_thread_data, tx_thread_stack, K_THREAD_STACK_SIZEOF(tx_thread_stack),
+	k_thread_create(&tx_thread_data, tx_thread_stack, K_KERNEL_STACK_SIZEOF(tx_thread_stack),
 			tx_thread, NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
 	k_thread_name_set(&tx_thread_data, "HCI uart TX");
 

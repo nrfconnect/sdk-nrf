@@ -459,5 +459,5 @@ int main(void)
 	}
 }
 
-K_THREAD_DEFINE(hrs_notify_thread_id, STACKSIZE, hrs_notify_thread,
-		NULL, NULL, NULL, PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(hrs_notify_thread_id, STACKSIZE, hrs_notify_thread,
+		       NULL, NULL, NULL, PRIORITY, 0, 0);

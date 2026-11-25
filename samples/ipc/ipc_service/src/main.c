@@ -18,7 +18,7 @@
 #define STACKSIZE	(1024)
 #endif
 
-K_THREAD_STACK_DEFINE(ipc0_stack, STACKSIZE);
+K_KERNEL_STACK_DEFINE(ipc0_stack, STACKSIZE);
 
 LOG_MODULE_REGISTER(host, LOG_LEVEL_INF);
 
@@ -81,8 +81,8 @@ static void check_task(void *arg1, void *arg2, void *arg3)
 	}
 }
 
-K_THREAD_DEFINE(thread_check_id, STACKSIZE, check_task, NULL, NULL, NULL,
-		K_PRIO_COOP(1), 0, -1);
+K_KERNEL_THREAD_DEFINE(thread_check_id, STACKSIZE, check_task, NULL, NULL, NULL,
+		       K_PRIO_COOP(1), 0, -1);
 
 int main(void)
 {

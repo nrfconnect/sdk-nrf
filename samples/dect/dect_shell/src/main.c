@@ -46,7 +46,7 @@ struct k_poll_signal desh_signal;
 
 #define DESH_COMMON_WORKQUEUE_STACK_SIZE CONFIG_SAMPLE_DESH_COMMON_WORKQ_STACK_SIZE
 #define DESH_COMMON_WORKQ_PRIORITY	 5
-K_THREAD_STACK_DEFINE(desh_common_workq_stack, DESH_COMMON_WORKQUEUE_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(desh_common_workq_stack, DESH_COMMON_WORKQUEUE_STACK_SIZE);
 struct k_work_q desh_common_work_q;
 
 static const char *modem_crash_reason_get(uint32_t reason)
@@ -231,7 +231,7 @@ int main(void)
 	desh_print_reset_reason();
 
 	k_work_queue_start(&desh_common_work_q, desh_common_workq_stack,
-			   K_THREAD_STACK_SIZEOF(desh_common_workq_stack),
+			   K_KERNEL_STACK_SIZEOF(desh_common_workq_stack),
 			   DESH_COMMON_WORKQ_PRIORITY, &cfg);
 
 #if defined(CONFIG_AT_SHELL)

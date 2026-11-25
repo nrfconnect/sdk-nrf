@@ -88,19 +88,19 @@ static uint8_t led_states[2];
 #define RESPONSE_500 "HTTP/1.1 500 Internal Server Error\r\n\r\n"
 
 /* Processing threads for incoming connections */
-K_THREAD_STACK_ARRAY_DEFINE(tcp4_handler_stack, MAX_CLIENT_QUEUE, STACK_SIZE);
+K_KERNEL_STACK_ARRAY_DEFINE(tcp4_handler_stack, MAX_CLIENT_QUEUE, STACK_SIZE);
 static struct k_thread tcp4_handler_thread[MAX_CLIENT_QUEUE];
 static k_tid_t tcp4_handler_tid[MAX_CLIENT_QUEUE];
-K_THREAD_DEFINE(tcp4_thread_id, STACK_SIZE,
-		process_tcp4, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, -1);
+K_KERNEL_THREAD_DEFINE(tcp4_thread_id, STACK_SIZE,
+		       process_tcp4, NULL, NULL, NULL,
+		       THREAD_PRIORITY, 0, -1);
 
-K_THREAD_STACK_ARRAY_DEFINE(tcp6_handler_stack, MAX_CLIENT_QUEUE, STACK_SIZE);
+K_KERNEL_STACK_ARRAY_DEFINE(tcp6_handler_stack, MAX_CLIENT_QUEUE, STACK_SIZE);
 static struct k_thread tcp6_handler_thread[MAX_CLIENT_QUEUE];
 static k_tid_t tcp6_handler_tid[MAX_CLIENT_QUEUE];
-K_THREAD_DEFINE(tcp6_thread_id, STACK_SIZE,
-		process_tcp6, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, -1);
+K_KERNEL_THREAD_DEFINE(tcp6_thread_id, STACK_SIZE,
+		       process_tcp6, NULL, NULL, NULL,
+		       THREAD_PRIORITY, 0, -1);
 
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
 static K_SEM_DEFINE(ipv6_setup_sem, 0, 1);
@@ -548,7 +548,7 @@ static void process_tcp(sa_family_t family, int *sock, int *accepted)
 		tcp6_handler_tid[slot] = k_thread_create(
 			&tcp6_handler_thread[slot],
 			tcp6_handler_stack[slot],
-			K_THREAD_STACK_SIZEOF(tcp6_handler_stack[slot]),
+			K_KERNEL_STACK_SIZEOF(tcp6_handler_stack[slot]),
 			(k_thread_entry_t)client_conn_handler,
 			INT_TO_POINTER(slot),
 			&accepted[slot],
@@ -560,7 +560,7 @@ static void process_tcp(sa_family_t family, int *sock, int *accepted)
 		tcp4_handler_tid[slot] = k_thread_create(
 			&tcp4_handler_thread[slot],
 			tcp4_handler_stack[slot],
-			K_THREAD_STACK_SIZEOF(tcp4_handler_stack[slot]),
+			K_KERNEL_STACK_SIZEOF(tcp4_handler_stack[slot]),
 			(k_thread_entry_t)client_conn_handler,
 			INT_TO_POINTER(slot),
 			&accepted[slot],
