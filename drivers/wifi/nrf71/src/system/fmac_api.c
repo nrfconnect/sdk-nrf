@@ -3727,6 +3727,23 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_conf_ltf_gi(struct nrf_wifi_fmac_dev_ctx 
 out:
 	return status;
 }
+
+enum nrf_wifi_status nrf_wifi_sys_fmac_set_coding_type(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+						       unsigned char coding_type)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+
+	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
+		LOG_ERR("%s: Invalid op mode",
+				      __func__);
+		goto out;
+	}
+
+	status = umac_cmd_sys_coding_type(fmac_dev_ctx, coding_type);
+
+out:
+	return status;
+}
 #endif /* CONFIG_NRF71_UTIL */
 
 #ifdef CONFIG_NRF71_DEBUG_SHELL

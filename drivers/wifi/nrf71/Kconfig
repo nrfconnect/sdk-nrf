@@ -873,6 +873,22 @@ config NRF_WIFI_RX_STBC_HT
 	  Receive packets encoded with STBC (Space-Time Block Coding)
 	  in HT (Wi-Fi4) mode.
 
+config NRF71_WIFI_LDPC_HT
+	bool "LDPC coding in HT (Wi-Fi4) mode"
+	help
+	  Enable LDPC (Low-Density Parity-Check) coding in HT (Wi-Fi4) mode.
+
+config NRF71_WIFI_LDPC_VHT
+	bool "LDPC coding in VHT (Wi-Fi5) mode"
+	help
+	  Enable LDPC (Low-Density Parity-Check) coding in VHT (Wi-Fi5) mode.
+
+config NRF71_WIFI_LDPC_HE
+	bool "LDPC coding in HE (Wi-Fi6) mode"
+	default y
+	help
+	  Enable LDPC (Low-Density Parity-Check) coding in HE (Wi-Fi6) mode.
+
 config NRF_WIFI_DYNAMIC_BANDWIDTH_SIGNALLING
 	bool "Dynamic bandwidth signalling for Wi-Fi"
 	help

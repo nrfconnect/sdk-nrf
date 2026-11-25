@@ -185,6 +185,57 @@ static int nrf_wifi_util_set_he_ltf_gi(const struct shell *sh,
 	return 0;
 }
 
+
+static int nrf_wifi_util_set_coding_type(const struct shell *sh,
+					 size_t argc,
+					 const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	char *ptr = NULL;
+	unsigned long val = 0;
+	int ret = 0;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if ((ptr == argv[1]) || (*ptr != '\0') || (val > 1)) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Invalid value(%s).\n",
+			      argv[1]);
+		shell_help(sh);
+		return -ENOEXEC;
+	}
+
+	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
+	if (!ctx->rpu_ctx) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "RPU context not initialized\n");
+		ret = -ENOEXEC;
+		goto unlock;
+	}
+
+	status = nrf_wifi_sys_fmac_set_coding_type(ctx->rpu_ctx,
+						   (unsigned char)val);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Programming coding_type failed\n");
+		ret = -ENOEXEC;
+		goto unlock;
+	}
+
+	shell_fprintf(sh,
+		      SHELL_INFO,
+		      "Coding type set to %s\n",
+		      val ? "LDPC" : "BCC");
+
+unlock:
+	k_mutex_unlock(&ctx->rpu_lock);
+	return ret;
+}
+
 #ifdef CONFIG_NRF71_STA_MODE
 static int nrf_wifi_util_set_uapsd_queue(const struct shell *sh,
 					 size_t argc,
@@ -1114,6 +1165,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "0 - Disable\n"
 		      "1 - Enable",
 		      nrf_wifi_util_set_he_ltf_gi,
+		      2,
+		      0),
+	SHELL_CMD_ARG(coding_type,
+		      NULL,
+		      "0 - BCC\n"
+		      "1 - LDPC",
+		      nrf_wifi_util_set_coding_type,
 		      2,
 		      0),
 #ifdef CONFIG_NRF71_STA_MODE

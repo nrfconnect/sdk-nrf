@@ -164,6 +164,18 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 		umac_cmd_data->stbc_enable_in_ht = 1;
 	#endif /* CONFIG_NRF_WIFI_RX_STBC_HT */
 
+	#ifdef CONFIG_NRF71_WIFI_LDPC_HT
+		umac_cmd_data->ldpc_config |= NRF_WIFI_LDPC_ENABLE_HT;
+	#endif /* CONFIG_NRF71_WIFI_LDPC_HT */
+
+	#ifdef CONFIG_NRF71_WIFI_LDPC_VHT
+		umac_cmd_data->ldpc_config |= NRF_WIFI_LDPC_ENABLE_VHT;
+	#endif /* CONFIG_NRF71_WIFI_LDPC_VHT */
+
+	#ifdef CONFIG_NRF71_WIFI_LDPC_HE
+		umac_cmd_data->ldpc_config |= NRF_WIFI_LDPC_ENABLE_HE;
+	#endif /* CONFIG_NRF71_WIFI_LDPC_HE */
+
 	#ifdef CONFIG_NRF_WIFI_DYNAMIC_BANDWIDTH_SIGNALLING
 		umac_cmd_data->dbs_war_ctrl = 1;
 	#endif /* CONFIG_NRF_WIFI_DYNAMIC_BANDWIDTH_SIGNALLING */
@@ -314,6 +326,40 @@ enum nrf_wifi_status umac_cmd_sys_umac_int_stats_get(struct nrf_wifi_fmac_dev_ct
 
 	sys_head->cmd_event = NRF_WIFI_CMD_UMAC_INT_STATS;
 	sys_head->len = len;
+
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
+
+out:
+	return status;
+}
+
+enum nrf_wifi_status umac_cmd_sys_coding_type(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+					      unsigned char coding_type)
+{
+	struct host_rpu_msg *umac_cmd = NULL;
+	struct nrf_wifi_cmd_coding_type_config *umac_cmd_data = NULL;
+	int len = 0;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+
+	len = sizeof(*umac_cmd_data);
+
+	umac_cmd = umac_cmd_alloc(fmac_dev_ctx,
+				  NRF_WIFI_HOST_RPU_MSG_TYPE_SYSTEM,
+				  len);
+
+	if (!umac_cmd) {
+		LOG_ERR("%s: umac_cmd_alloc failed",
+				      __func__);
+		goto out;
+	}
+
+	umac_cmd_data = (struct nrf_wifi_cmd_coding_type_config *)(umac_cmd->msg);
+
+	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_CODING_TYPE_CONFIG;
+	umac_cmd_data->sys_head.len = len;
+	umac_cmd_data->coding_type = coding_type;
 
 	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
 				       umac_cmd,
