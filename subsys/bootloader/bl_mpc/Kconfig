@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BL_MPC
+	bool "Lock MPC protection before hand-off"
+	depends on SOC_NRF54L_CPUAPP_COMMON
+	depends on IS_BOOTLOADER_IMG
+	depends on !TRUSTED_EXECUTION_NONSECURE
+	help
+	  Programs MPC00 override regions and locks all software-configurable
+	  overrides until reset. Intended for the last bootloader stage.

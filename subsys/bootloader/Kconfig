@@ -155,6 +155,7 @@ config NRF53_ENFORCE_IMAGE_VERSION_EQUALITY
 	  the network core updates have been downloaded and they have the same version.
 
 rsource "bl_crypto/Kconfig"
+rsource "bl_mpc/Kconfig"
 rsource "bl_validation/Kconfig"
 rsource "bl_storage/Kconfig"
 
