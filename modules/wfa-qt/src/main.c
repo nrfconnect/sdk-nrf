@@ -19,15 +19,15 @@ int control_socket_init(int port);
 void qt_main(void);
 int wpa_supp_events_register(void);
 int wait_for_wpa_s_ready(void);
-K_THREAD_DEFINE(qt_main_tid,
-		CONFIG_WFA_QT_THREAD_STACK_SIZE,
-		qt_main,
-		NULL,
-		NULL,
-		NULL,
-		0,
-		0,
-		0);
+K_KERNEL_THREAD_DEFINE(qt_main_tid,
+		       CONFIG_WFA_QT_THREAD_STACK_SIZE,
+		       qt_main,
+		       NULL,
+		       NULL,
+		       NULL,
+		       0,
+		       0,
+		       0);
 
 /* Show the welcome message with role and version */
 static void print_welcome(void)
