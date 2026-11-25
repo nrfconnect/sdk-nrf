@@ -144,9 +144,9 @@ static void mpsl_log_thread_fn(void *p1, void *p2, void *p3)
 	}
 }
 
-K_THREAD_DEFINE(mpsl_log_thread, CONFIG_MPSL_LOG_THREAD_STACK_SIZE,
-		mpsl_log_thread_fn, NULL, NULL, NULL,
-		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
+K_KERNEL_THREAD_DEFINE(mpsl_log_thread, CONFIG_MPSL_LOG_THREAD_STACK_SIZE,
+		       mpsl_log_thread_fn, NULL, NULL, NULL,
+		       K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
 /*
  * Called from the MPSL-based libraries.
