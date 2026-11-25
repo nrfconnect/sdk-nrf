@@ -8,7 +8,7 @@
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -19,7 +19,7 @@ Overview
 
 The Modem trace backend sample implements and selects a custom trace backend to receive traces from the nRF91 Series modem.
 For demonstration purposes, the custom trace backend counts the number of bytes received and calculates the data rate of modem traces received.
-The CPU utilization is also measured.
+The CPU utilization is also measured, except on the nRF9251 DK, where the :ref:`cpu_load` module is not supported.
 The byte count, data rate, and CPU load are periodically printed to terminal using a delayable work item and the system workqueue.
 The custom trace backend is implemented in :ncs-file:`/samples/cellular/modem_trace_backend/src/trace_print_stats.c`.
 However, it is possible to add a custom modem trace backend as a library and use it in more than one application.

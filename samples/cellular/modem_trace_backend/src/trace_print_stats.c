@@ -25,8 +25,6 @@ static void print_stats(struct k_work *item)
 	uint32_t uptime;
 	uint32_t num_bytes;
 	double throughput;
-	double cpu_load_percent;
-	int load;
 
 	ARG_UNUSED(item);
 
@@ -36,14 +34,18 @@ static void print_stats(struct k_work *item)
 
 	printk("Traces received: %5.1fkB, %4.1fkB/s", num_bytes / 1000.0, throughput / 1000.0);
 
-	load = cpu_load_get();
+#if defined(CONFIG_NRF_CPU_LOAD)
+	int load = cpu_load_get();
+
 	if (load >= 0) {
-		cpu_load_percent = load / 1000.0;
-		printk(", CPU-load: %5.2f%%\n", cpu_load_percent);
+		printk(", CPU-load: %5.2f%%\n", load / 1000.0);
 		cpu_load_reset();
 	} else {
 		printk("\n");
 	}
+#else
+	printk("\n");
+#endif
 
 	uptime_prev = uptime;
 	num_bytes_prev = num_bytes;
@@ -59,7 +61,9 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 
 	trace_processed_callback = trace_processed_cb;
 
+#if defined(CONFIG_NRF_CPU_LOAD)
 	cpu_load_reset();
+#endif
 
 	num_bytes_prev = tot_bytes_rcvd;
 	uptime_prev = k_uptime_get_32();
