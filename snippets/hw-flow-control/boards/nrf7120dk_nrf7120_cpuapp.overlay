@@ -1,0 +1,3 @@
+&uart20 {
+	hw-flow-control;
+};

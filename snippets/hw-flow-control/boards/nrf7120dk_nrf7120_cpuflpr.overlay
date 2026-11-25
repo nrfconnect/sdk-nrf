@@ -1,0 +1,3 @@
+&uart21 {
+	hw-flow-control;
+};

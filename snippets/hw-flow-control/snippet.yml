@@ -16,3 +16,27 @@ boards:
   nrf54l15dk/nrf54l15/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf54l15dk_nrf54l15_cpuapp.overlay
+  nrf7120dk/nrf7120/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120dk_nrf7120_cpuapp.overlay
+  nrf7120dk/nrf7120e/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120dk_nrf7120_cpuapp.overlay
+  nrf7120dk/nrf7120/cpuapp/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120dk_nrf7120_cpuapp.overlay
+  nrf7120dk/nrf7120e/cpuapp/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120dk_nrf7120_cpuapp.overlay
+  nrf7120dk/nrf7120/cpuflpr:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120dk_nrf7120_cpuflpr.overlay
+  nrf7120dk/nrf7120e/cpuflpr:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120dk_nrf7120_cpuflpr.overlay
+  nrf7120dk/nrf7120/cpuflpr/xip:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120dk_nrf7120_cpuflpr.overlay
+  nrf7120dk/nrf7120e/cpuflpr/xip:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120dk_nrf7120_cpuflpr.overlay
