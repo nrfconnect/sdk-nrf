@@ -23,7 +23,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include "bttester.h"
 
 #define STACKSIZE 4096
-static K_THREAD_STACK_DEFINE(stack, STACKSIZE);
+static K_KERNEL_STACK_DEFINE(stack, STACKSIZE);
 static struct k_thread cmd_thread;
 
 #define CMD_QUEUED 2

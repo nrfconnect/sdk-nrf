@@ -14,7 +14,7 @@
 
 #define FAKE_FIFO_CALL_TX_RX_TEST_COUNT (3)
 
-K_THREAD_STACK_DEFINE(mod_stack, TEST_MOD_THREAD_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(mod_stack, TEST_MOD_THREAD_STACK_SIZE);
 K_MEM_SLAB_DEFINE(data_slab, TEST_MOD_DATA_SIZE, FAKE_FIFO_MSG_QUEUE_SIZE, 4);
 
 static const char *test_base_name = "Test base name";

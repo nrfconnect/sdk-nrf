@@ -38,8 +38,8 @@ static void timer_handler(struct k_timer *timer_id)
 }
 
 static K_TIMER_DEFINE(test_timer, timer_handler, NULL);
-static K_THREAD_STACK_DEFINE(thread_stack1, THREAD_STACK_SIZE);
-static K_THREAD_STACK_DEFINE(thread_stack2, THREAD_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(thread_stack1, THREAD_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(thread_stack2, THREAD_STACK_SIZE);
 
 static struct k_thread thread1;
 static struct k_thread thread2;
