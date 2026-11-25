@@ -395,20 +395,20 @@ static void nrf_wifi_fmac_fetch_fw_log_on_no_rcv_frames(void)
 	const volatile struct lmac_rx_stats *rx =
 		(const volatile struct lmac_rx_stats *)LMAC_RX_STATS_RAM_ADDR;
 
-	LOG_INF("%s: LMAC RX snapshot (no receive frames in 2 seconds)", __func__);
-	LOG_INF("  LMAC RAM @0x%x: deagg_isr=%u lmac_rxisr_cnt=%u "
+	LOG_ERR("%s: LMAC RX snapshot (no receive frames in 2 seconds)", __func__);
+	LOG_ERR("  LMAC RAM @0x%x: deagg_isr=%u lmac_rxisr_cnt=%u "
 		"lmac_rx_isr_dropped_cnt=%u rx_ctrl_mem_full=%u",
 		(unsigned int)LMAC_RX_STATS_RAM_ADDR,
 		rx->deagg_isr, rx->lmac_rxisr_cnt, rx->lmac_rx_isr_dropped_cnt,
 		rx->rx_ctrl_mem_full);
-	LOG_INF("  rx_total_mpdu_cnt=%u rx_mpdu_crc_fail_cnt=%u rx_mpdu_crc_success_cnt=%u",
+	LOG_ERR("  rx_total_mpdu_cnt=%u rx_mpdu_crc_fail_cnt=%u rx_mpdu_crc_success_cnt=%u",
 		rx->rx_total_mpdu_cnt, rx->rx_mpdu_crc_fail_cnt,
 		rx->rx_mpdu_crc_success_cnt);
-	LOG_INF("  rx_ofdm_crc_success_cnt=%u rx_ofdm_crc_fail_cnt=%u "
+	LOG_ERR("  rx_ofdm_crc_success_cnt=%u rx_ofdm_crc_fail_cnt=%u "
 		"rx_dsss_crc_success_cnt=%u rx_dsss_crc_fail_cnt=%u",
 		rx->rx_ofdm_crc_success_cnt, rx->rx_ofdm_crc_fail_cnt,
 		rx->rx_dsss_crc_success_cnt, rx->rx_dsss_crc_fail_cnt);
-	LOG_INF("  HW DEAGG: CRC32 pass=%u fail=%u DSSS pass=%u fail=%u",
+	LOG_ERR("  HW DEAGG: CRC32 pass=%u fail=%u DSSS pass=%u fail=%u",
 		sys_read32(PMB_WLAN_MAC_CTRL_DEAGG_CRC32PASS_CNT),
 		sys_read32(PMB_WLAN_MAC_CTRL_DEAGG_CRC32FAIL_CNT),
 		sys_read32(PMB_WLAN_MAC_CTRL_DEAGG_DSSS_CRC32PASS_CNT),
