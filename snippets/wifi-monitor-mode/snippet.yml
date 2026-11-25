@@ -24,9 +24,6 @@ boards:
   nrf54lm20dk/nrf54lm20b/cpuapp:
     append:
       EXTRA_CONF_FILE: wifi-monitor-mode-nrf70.conf
-  nrf7120dk/nrf7120/cpuapp:
-    append:
-      EXTRA_CONF_FILE: wifi-monitor-mode-nrf71.conf
-  nrf7120dk/nrf7120/cpuapp/ns:
+  /.*/nrf7120e?/cpuapp(/ns)?/:
     append:
       EXTRA_CONF_FILE: wifi-monitor-mode-nrf71.conf

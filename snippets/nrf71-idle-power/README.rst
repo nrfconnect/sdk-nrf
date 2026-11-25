@@ -7,7 +7,7 @@ nRF71 idle power snippet (nrf71-idle-power)
    :local:
    :depth: 2
 
-The nRF71 idle power snippet enables the :ref:`lib_nrf71_idle_power` library for nRF71 idle-current measurement builds on supported nRF7120 DK board targets.
+The nRF71 idle power snippet enables the :ref:`lib_nrf71_idle_power` library for nRF71 idle-current measurement builds on boards based on the nRF7120 or nRF7120e SoC.
 
 .. code-block:: console
 
@@ -27,10 +27,12 @@ Combine it with ``nrf71-idle-power-quiet`` snippet for a clean current measureme
 Supported boards
 ****************
 
-The snippet supports the following board targets:
+The snippet supports the application core targets, secure and non-secure, of any board based on the nRF7120 or nRF7120e SoC, for example:
 
 * ``nrf7120dk/nrf7120/cpuapp``
 * ``nrf7120dk/nrf7120/cpuapp/ns``
+* ``nrf7120dk/nrf7120e/cpuapp``
+* ``nrf7120dk/nrf7120e/cpuapp/ns``
 
 Usage
 *****
