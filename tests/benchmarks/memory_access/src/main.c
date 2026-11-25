@@ -60,6 +60,10 @@ static bool region_is_peripherals(const struct reserved_mem_region *region)
 		return true;
 	}
 
+	if (strstr(label, "cram") != NULL) {
+		return true;
+	}
+
 	return false;
 }
 
