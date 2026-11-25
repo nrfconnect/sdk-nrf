@@ -208,8 +208,8 @@ static int dap_usb_thread_fn(const struct device *dev)
 
 const struct device *const swd_dev = DEVICE_DT_GET_ONE(zephyr_swdp_gpio);
 
-K_THREAD_DEFINE(dap_usb_thread,
-		CONFIG_BULK_USB_THREAD_STACK_SIZE, dap_usb_thread_fn, NULL, NULL, NULL, 5, 0, 0);
+K_KERNEL_THREAD_DEFINE(dap_usb_thread, CONFIG_BULK_USB_THREAD_STACK_SIZE, dap_usb_thread_fn, NULL,
+		       NULL, NULL, 5, 0, 0);
 
 static bool app_event_handler(const struct app_event_header *aeh)
 {
