@@ -101,7 +101,7 @@ static bool last_applied_ts_valid;
 
 static void ble_apply_work_handler(struct k_work *work);
 
-static K_THREAD_STACK_DEFINE(coex_ble_workq_stack, CONFIG_NRF71_SR_COEX_BLE_WORKQ_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(coex_ble_workq_stack, CONFIG_NRF71_SR_COEX_BLE_WORKQ_STACK_SIZE);
 static struct k_work_q coex_ble_workq;
 static K_WORK_DELAYABLE_DEFINE(coex_ble_work, ble_apply_work_handler);
 
@@ -304,7 +304,7 @@ void cd_ble_init(void)
 	};
 
 	k_work_queue_start(&coex_ble_workq, coex_ble_workq_stack,
-			   K_THREAD_STACK_SIZEOF(coex_ble_workq_stack),
+			   K_KERNEL_STACK_SIZEOF(coex_ble_workq_stack),
 			   K_LOWEST_APPLICATION_THREAD_PRIO, &wq_cfg);
 }
 

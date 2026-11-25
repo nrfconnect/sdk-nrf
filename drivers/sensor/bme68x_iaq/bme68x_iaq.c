@@ -111,7 +111,7 @@ static const bsec_sensor_configuration_t quick_init_sensor_config[] = {
 #define SETTINGS_BSEC_STATE SETTINGS_NAME_BSEC "/" SETTINGS_KEY_STATE
 
 /* Stack size of internal BSEC thread. */
-static K_THREAD_STACK_DEFINE(thread_stack, CONFIG_BME68X_IAQ_THREAD_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(thread_stack, CONFIG_BME68X_IAQ_THREAD_STACK_SIZE);
 
 /* Used for a timeout for when BSEC's state should be saved. */
 static K_TIMER_DEFINE(bsec_save_state_timer, NULL, NULL);

@@ -154,9 +154,9 @@ static void dect_mdm_rx_th_op_handler_thread_fn(void)
 	}
 }
 
-K_THREAD_DEFINE(dect_mdm_rx_th, DECT_MDM_RX_THREAD_STACK_SIZE,
-		dect_mdm_rx_th_op_handler_thread_fn, NULL, NULL, NULL,
-		K_PRIO_PREEMPT(DECT_MDM_RX_THREAD_PRIORITY), 0, 0);
+K_KERNEL_THREAD_DEFINE(dect_mdm_rx_th, DECT_MDM_RX_THREAD_STACK_SIZE,
+		       dect_mdm_rx_th_op_handler_thread_fn, NULL, NULL, NULL,
+		       K_PRIO_PREEMPT(DECT_MDM_RX_THREAD_PRIORITY), 0, 0);
 
 int dect_mdm_rx_msgq_data_op_add(uint16_t event_id, void *data, size_t data_size)
 {

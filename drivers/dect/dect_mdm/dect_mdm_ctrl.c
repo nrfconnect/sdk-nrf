@@ -2979,9 +2979,9 @@ static void dect_mdm_ctrl_msgq_thread_handler(void)
 #define DECT_MDM_CTRL_STACK_SIZE CONFIG_DECT_MDM_NRF_CTRL_THREAD_STACK_SIZE
 #define DECT_MDM_CTRL_PRIORITY   K_PRIO_COOP(9) /* -7 */
 
-K_THREAD_DEFINE(dect_mdm_ctrl_msgq_th, DECT_MDM_CTRL_STACK_SIZE,
-		dect_mdm_ctrl_msgq_thread_handler, NULL, NULL, NULL, DECT_MDM_CTRL_PRIORITY, 0,
-		0);
+K_KERNEL_THREAD_DEFINE(dect_mdm_ctrl_msgq_th, DECT_MDM_CTRL_STACK_SIZE,
+		       dect_mdm_ctrl_msgq_thread_handler, NULL, NULL, NULL, DECT_MDM_CTRL_PRIORITY,
+		       0, 0);
 int dect_mdm_ctrl_internal_init(struct net_if *iface)
 {
 	__ASSERT_NO_MSG(iface);

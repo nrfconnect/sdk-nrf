@@ -80,7 +80,7 @@ BUILD_ASSERT(DISP_SCAN_RES_WQ_PRIO >= NET_MGMT_HANDLER_PRIO,
 	     "Display scan results workqueue must not preempt the net_mgmt event handler");
 #endif
 
-K_THREAD_STACK_DEFINE(nrf_wifi_disp_scan_res_wq_stack, CONFIG_NRF71_DISP_SCAN_RES_WQ_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(nrf_wifi_disp_scan_res_wq_stack, CONFIG_NRF71_DISP_SCAN_RES_WQ_STACK_SIZE);
 static struct k_work_q nrf_wifi_disp_scan_res_wq;
 
 static int nrf_wifi_disp_scan_res_wq_init(void)
@@ -88,7 +88,7 @@ static int nrf_wifi_disp_scan_res_wq_init(void)
 	k_work_queue_init(&nrf_wifi_disp_scan_res_wq);
 	k_work_queue_start(&nrf_wifi_disp_scan_res_wq,
 			   nrf_wifi_disp_scan_res_wq_stack,
-			   K_THREAD_STACK_SIZEOF(nrf_wifi_disp_scan_res_wq_stack),
+			   K_KERNEL_STACK_SIZEOF(nrf_wifi_disp_scan_res_wq_stack),
 			   DISP_SCAN_RES_WQ_PRIO,
 			   NULL);
 	k_thread_name_set(nrf_wifi_disp_scan_res_wq.thread_id, "nrf71_scan_res_wq");
