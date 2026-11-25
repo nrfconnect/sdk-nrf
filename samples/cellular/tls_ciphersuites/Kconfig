@@ -4,17 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "TLS CipherSuites sample"
-
-config EXTENDED_CIPHERSUITE_LIST
-	bool "Extended ciphersuite list"
-	help
-	  Extends the ciphersuite list with extra ciphersuites that are
-	  only supported by Modem Firmware v1.3.x >= 1 and Modem
-	  Firmware v1.2.x >= 7.
-
-endmenu
-
 if BUILD_WITH_TFM
 
 choice TFM_PROFILE_TYPE
