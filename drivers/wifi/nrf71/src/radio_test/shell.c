@@ -1139,13 +1139,23 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 
 	}
 
-	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+	{
+		unsigned int rx_bss_color = ctx->conf_params.rx_bss_color;
+		unsigned int rx_station_id = ctx->conf_params.rx_station_id;
+		unsigned char bss_check_enable = ctx->conf_params.bss_check_enable;
 
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Configuration init failed\n");
-		return -ENOEXEC;
+		status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Configuration init failed\n");
+			return -ENOEXEC;
+		}
+
+		ctx->conf_params.rx_bss_color = rx_bss_color;
+		ctx->conf_params.rx_station_id = rx_station_id;
+		ctx->conf_params.bss_check_enable = bss_check_enable;
 	}
 
 	ctx->conf_params.chan.op_band = (1 << band);
