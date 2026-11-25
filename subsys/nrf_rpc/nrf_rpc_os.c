@@ -33,7 +33,7 @@ static struct k_msgq pool_start_msg;
 static struct k_sem context_reserved;
 static atomic_t context_mask;
 
-static K_THREAD_STACK_ARRAY_DEFINE(pool_stacks,
+static K_KERNEL_STACK_ARRAY_DEFINE(pool_stacks,
 	CONFIG_NRF_RPC_THREAD_POOL_SIZE,
 	CONFIG_NRF_RPC_THREAD_STACK_SIZE);
 
@@ -79,7 +79,7 @@ int nrf_rpc_os_init(nrf_rpc_os_work_t callback)
 
 	for (i = 0; i < CONFIG_NRF_RPC_THREAD_POOL_SIZE; i++) {
 		k_thread_create(&pool_threads[i], pool_stacks[i],
-			K_THREAD_STACK_SIZEOF(pool_stacks[i]),
+			K_KERNEL_STACK_SIZEOF(pool_stacks[i]),
 			thread_pool_entry,
 			NULL, NULL, NULL,
 			CONFIG_NRF_RPC_THREAD_PRIORITY, 0, K_NO_WAIT);
