@@ -529,6 +529,7 @@ struct nrf_wifi_ftm_loc_params {
 
 #define NRF_WIFI_LDPC_ENABLE_HT  (1 << 0)
 #define NRF_WIFI_LDPC_ENABLE_VHT (1 << 1)
+#define NRF_WIFI_LDPC_ENABLE_HE  (1 << 2)
 /**
  * @brief This structure defines the command responsible for initializing the UMAC.
  *  After the host driver brings up, the host sends NRF_WIFI_CMD_INIT to the RPU.
@@ -621,6 +622,7 @@ struct nrf_wifi_cmd_sys_init {
 	struct nrf_wifi_ftm_loc_params ftm_loc_params;
 	/** Bit 0 : LDPC in HT mode. Use NRF_WIFI_LDPC_ENABLE_HT
 	 *  Bit 1 : LDPC in VHT mode. Use NRF_WIFI_LDPC_ENABLE_VHT
+	 *  Bit 2 : LDPC in HE mode. Use NRF_WIFI_LDPC_ENABLE_HE
 	 */
 	unsigned char ldpc_config;
 	/** Protocol mode bitmap for registration. Use NRF_WIFI_802_11G,
