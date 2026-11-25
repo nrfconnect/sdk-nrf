@@ -79,7 +79,7 @@
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
 .. _`MCUboot Kconfig option`: https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370
 
-.. _`MCUboot Kconfig option documentation`: https://github.com/nrfconnect/sdk-nrf/blob/main/modules/mcuboot/boot/zephyr/Kconfig#L27C11-L27C12
+.. _`MCUboot Kconfig option documentation`: https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig
 
 .. _`sdk-mbedtls`: https://github.com/nrfconnect/sdk-mbedtls
 .. _`official Mbed TLS releases`: https://github.com/Mbed-TLS/mbedtls/releases
