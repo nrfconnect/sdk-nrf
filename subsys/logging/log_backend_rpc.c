@@ -120,7 +120,7 @@ static K_MUTEX_DEFINE(history_transfer_mtx);
 static uint32_t history_transfer_id;
 static union log_msg_generic *history_cur_msg;
 static K_WORK_DEFINE(history_transfer_work, history_transfer_task);
-static K_THREAD_STACK_DEFINE(history_transfer_workq_stack,
+static K_KERNEL_STACK_DEFINE(history_transfer_workq_stack,
 			     CONFIG_LOG_BACKEND_RPC_HISTORY_UPLOAD_THREAD_STACK_SIZE);
 static struct k_work_q history_transfer_workq;
 #endif
@@ -625,7 +625,7 @@ static void init(struct log_backend const *const backend)
 	log_rpc_history_init();
 	k_work_queue_init(&history_transfer_workq);
 	k_work_queue_start(&history_transfer_workq, history_transfer_workq_stack,
-			   K_THREAD_STACK_SIZEOF(history_transfer_workq_stack),
+			   K_KERNEL_STACK_SIZEOF(history_transfer_workq_stack),
 			   K_LOWEST_APPLICATION_THREAD_PRIO, NULL);
 #endif
 }
