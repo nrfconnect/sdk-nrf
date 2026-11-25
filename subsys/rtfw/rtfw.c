@@ -58,7 +58,7 @@ static void (*delivery_release_hook)(void);
 static void (*delivery_rearm_hook)(void);
 #endif
 
-K_THREAD_STACK_DEFINE(delivery_stack, CONFIG_RTFW_WORKQ_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(delivery_stack, CONFIG_RTFW_WORKQ_STACK_SIZE);
 static struct k_work_q delivery_work_q;
 static struct k_work delivery_work;
 
@@ -188,7 +188,7 @@ int rtfw_init(const struct rtfw_config *config)
 	k_work_queue_init(&delivery_work_q);
 	k_work_init(&delivery_work, delivery_handler);
 	k_work_queue_start(&delivery_work_q, delivery_stack,
-			   K_THREAD_STACK_SIZEOF(delivery_stack),
+			   K_KERNEL_STACK_SIZEOF(delivery_stack),
 			   CONFIG_RTFW_WORKQ_PRIORITY, NULL);
 	k_thread_name_set(k_work_queue_thread_get(&delivery_work_q), "rtfw_delivery");
 	rtfw_doorbell_init();
