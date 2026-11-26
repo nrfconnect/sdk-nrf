@@ -3357,53 +3357,6 @@ The following table indicates the software maturity levels of the support for Fr
 
   .. tabs::
 
-    .. group-tab:: nRF52 Series
-
-        .. list-table:: Front-End Module support
-          :widths: auto
-          :header-rows: 1
-
-          * - FEM device
-            - Implementation
-            - nRF52810
-            - nRF52811
-            - nRF52820
-            - nRF52832
-            - nRF52833
-            - nRF52840
-          * - nRF21540
-            - nRF21540 GPIO
-            - --
-            - --
-            - --
-            - --
-            - Supported
-            - Supported
-          * - nRF21540
-            - nRF21540 GPIO+SPI
-            - --
-            - --
-            - --
-            - --
-            - Supported
-            - Supported
-          * - SKY66112-11
-            - Simple GPIO
-            - --
-            - --
-            - --
-            - --
-            - Supported
-            - Supported
-          * - nRF2240
-            - nRF2240
-            - --
-            - --
-            - --
-            - --
-            - Supported
-            - Supported
-
     .. group-tab:: nRF53 Series
 
         .. list-table:: Front-End Module support
