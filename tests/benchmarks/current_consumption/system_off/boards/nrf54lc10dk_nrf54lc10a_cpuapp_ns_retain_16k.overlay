@@ -1,7 +1,16 @@
 / {
-	cpuapp_sram@2002bc00 {
+	chosen {
+		zephyr,sram = &ns_app_sram;
+	};
+
+	ns_app_sram: memory@20018000 {
+		compatible = "mmio-sram";
+		reg = <0x20018000 DT_SIZE_K(76)>;
+	};
+
+	cpuapp_sram@2002b000 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x2002bc00 DT_SIZE_K(16)>;
+		reg = <0x2002b000 DT_SIZE_K(16)>;
 		zephyr,memory-region = "RetainedMem";
 		status = "okay";
 
@@ -14,12 +23,4 @@
 	aliases {
 		retainedmemdevice = &retainedmem0;
 	};
-};
-
-&sram0_ns {
-	/* Shrink the non-secure SRAM to end where the retained memory region
-	 * starts: 175 - 96 = 79 kB
-	 */
-	reg = <0x18000 DT_SIZE_K(79)>;
-	ranges = <0x0 0x18000 DT_SIZE_K(79)>;
 };
