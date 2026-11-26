@@ -1945,6 +1945,7 @@ void nrf_wifi_wpa_supp_event_get_wiphy(void *if_priv,
 		if (rpu_ctx_zep->extended_capa) {
 			memcpy(rpu_ctx_zep->extended_capa, wiphy_info->extended_capabilities,
 			       ec_len);
+			rpu_ctx_zep->extended_capa_len = ec_len;
 		}
 
 		rpu_ctx_zep->extended_capa_mask =
