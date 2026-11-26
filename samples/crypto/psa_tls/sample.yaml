@@ -180,8 +180,10 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -377,6 +379,10 @@ tests:
     extra_args:
       EXTRA_CONF_FILE="overlays/server.conf;overlays/tls_1_2_rsa.conf;overlays/cracen.conf"
     platform_allow: *cracen_platforms
+    # IronSide TE has no RSA.
+    platform_exclude: &ironside_te_platforms
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms: *nrf54lv10a_integration_platforms
     tags:
       - cracen
@@ -384,6 +390,7 @@ tests:
     extra_args:
       EXTRA_CONF_FILE="overlays/server.conf;overlays/tls_1_2_rsa.conf;overlays/cracen.conf;overlays/dtls.conf"
     platform_allow: *cracen_platforms
+    platform_exclude: *ironside_te_platforms
     integration_platforms: *nrf54l15_integration_platforms
     tags:
       - dtls
@@ -392,6 +399,7 @@ tests:
     extra_args:
       EXTRA_CONF_FILE="overlays/client.conf;overlays/tls_1_2_rsa.conf;overlays/cracen.conf"
     platform_allow: *cracen_platforms
+    platform_exclude: *ironside_te_platforms
     integration_platforms: *nrf54lm20b_integration_platforms
     tags:
       - cracen
@@ -399,6 +407,7 @@ tests:
     extra_args:
       EXTRA_CONF_FILE="overlays/client.conf;overlays/tls_1_2_rsa.conf;overlays/cracen.conf;overlays/dtls.conf"
     platform_allow: *cracen_platforms
+    platform_exclude: *ironside_te_platforms
     integration_platforms: *nrf54l15_integration_platforms
     tags:
       - dtls
@@ -407,6 +416,7 @@ tests:
     extra_args:
       EXTRA_CONF_FILE="overlays/server.conf;overlays/tls_1_3_rsa.conf;overlays/cracen.conf"
     platform_allow: *cracen_platforms
+    platform_exclude: *ironside_te_platforms
     integration_platforms: *nrf54lm20b_integration_platforms
     tags:
       - tls_1_3
@@ -415,6 +425,7 @@ tests:
     extra_args:
       EXTRA_CONF_FILE="overlays/client.conf;overlays/tls_1_3_rsa.conf;overlays/cracen.conf"
     platform_allow: *cracen_platforms
+    platform_exclude: *ironside_te_platforms
     integration_platforms: &nrf54lc10a_integration_platforms
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns

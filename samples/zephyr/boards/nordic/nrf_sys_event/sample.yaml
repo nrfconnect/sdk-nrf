@@ -13,6 +13,7 @@ common:
     - nrf54ls05dk/nrf54ls05a/cpuapp
     - nrf54ls05dk/nrf54ls05b/cpuapp
     - nrf54lm20dk/nrf54lm20b/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp/ite
   integration_platforms:
     - nrf54lm20dk/nrf54lm20b/cpuapp
 
@@ -22,6 +23,9 @@ tests:
     extra_configs:
       - CONFIG_SOC_NRF_FORCE_CONSTLAT=y
   nrf.extended.sample.boards.nordic.nrf_sys_event.rramc_wakeup:
+    # RRAMC is secure-only on IronSide TE.
+    platform_exclude:
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     harness: pytest
     harness_config:
       pytest_root:

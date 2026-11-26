@@ -1369,10 +1369,10 @@ sysbuild_snippets:
   files:
     - zephyr/tests/cmake/sysbuild_snippets/
 
-nrf_ironside:
+ironside_se:
   files:
-    - zephyr/samples/boards/nordic/nrf_ironside/
-    - zephyr/modules/hal_nordic/ironside/
+    - zephyr/samples/boards/nordic/ironside_se/
+    - zephyr/modules/hal_nordic/ironside_se/
 
 footprint:
   files:

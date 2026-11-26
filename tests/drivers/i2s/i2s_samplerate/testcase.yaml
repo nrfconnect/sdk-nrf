@@ -101,7 +101,9 @@ tests:
       - CONFIG_CLOCK_CONTROL_NRF=n
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
   # nrf54lm20: PCLK32 and HFXO
@@ -121,7 +123,9 @@ tests:
       - CONFIG_CLOCK_CONTROL_NRF=n
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
   # nrf54lm20: ACLK and internal RC is not possible. Selecting ACLK automatically starts HFXO.
@@ -156,7 +160,9 @@ tests:
       - CONFIG_CLOCK_CONTROL_NRF=n
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
   # nrf54lm20: ACLK and HFXO
@@ -191,7 +197,9 @@ tests:
       - CONFIG_CLOCK_CONTROL_NRF=n
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
   # ACLK allows to obtain more accurate actual samplerate
@@ -469,7 +477,9 @@ tests:
       - CONFIG_DEPRECATION_TEST=y
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # nrf54lm20: PCLK32 and HFXO
@@ -490,7 +500,9 @@ tests:
       - CONFIG_DEPRECATION_TEST=y
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # nrf54lm20: ACLK and internal RC is not possible. Selecting ACLK automatically starts HFXO.
@@ -526,7 +538,9 @@ tests:
       - CONFIG_DEPRECATION_TEST=y
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # nrf54lm20: ACLK and HFXO
@@ -562,7 +576,9 @@ tests:
       - CONFIG_DEPRECATION_TEST=y
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # ACLK allows to obtain more accurate actual samplerate

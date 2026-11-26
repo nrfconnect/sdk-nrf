@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if SOC_FLASH_NRF || SOC_FLASH_NRF_RRAM || SOC_NRF54H20
+if SOC_FLASH_NRF || SOC_FLASH_NRF_RRAM || SOC_NRF54H20 || FLASH_IRONSIDE_TE_RRAM
 
 config SOC_FLASH_NRF_RADIO_SYNC_RPC
 	bool "Flash driver synchronization with radio protocols through RPC"

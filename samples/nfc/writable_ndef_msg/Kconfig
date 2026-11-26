@@ -8,7 +8,7 @@ source "Kconfig.zephyr"
 
 config ZMS
 	select CRC
-	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM || FLASH_IRONSIDE_TE_RRAM)
 
 config NVS
-	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM || FLASH_IRONSIDE_TE_RRAM)

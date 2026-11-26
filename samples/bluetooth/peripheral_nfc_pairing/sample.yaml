@@ -16,8 +16,10 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ite
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     tags:
       - bluetooth

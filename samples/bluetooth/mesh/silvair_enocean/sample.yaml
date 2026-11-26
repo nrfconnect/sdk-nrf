@@ -21,6 +21,7 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
   sample.bluetooth.mesh.silvair_enocean.settings_ext_flash:
     sysbuild: true
     build_only: true
