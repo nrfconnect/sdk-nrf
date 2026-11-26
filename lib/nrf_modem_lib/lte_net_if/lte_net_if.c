@@ -65,12 +65,6 @@ void lte_net_if_modem_fault_handler(void)
 	k_work_submit(&modem_fault_handler_work);
 }
 
-static void modem_fault_work_fn(struct k_work *work)
-{
-	net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, iface_bound);
-	net_if_dormant_on(iface_bound);
-}
-
 static uint16_t pdn_mtu(void)
 {
 	struct lte_lc_pdn_dynamic_info info;
@@ -189,6 +183,30 @@ static void update_has_cell(bool has_cell)
 	}
 
 	(void)k_mutex_unlock(&internal_state_lock);
+}
+
+static void modem_fault_work_fn(struct k_work *work)
+{
+	int ret = 0;
+
+#if CONFIG_NET_IPV4
+	ret = lte_ipv4_addr_remove(iface_bound);
+	if (ret) {
+		LOG_ERR("lte_ipv4_addr_remove, error: %d", ret);
+	}
+#endif
+#if CONFIG_NET_IPV6
+	ret = lte_ipv6_addr_remove(iface_bound);
+	if (ret) {
+		LOG_ERR("lte_ipv6_addr_remove, error: %d", ret);
+	}
+#endif
+	(void)ret;
+
+	update_has_pdn(false);
+	update_has_cell(false);
+
+	net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, iface_bound);
 }
 
 /* Work handler that deactivates LTE. */
