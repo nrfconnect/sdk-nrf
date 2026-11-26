@@ -8,7 +8,7 @@ pyasn1==0.6.4
 jinja2>=3.1.6 # https://github.com/advisories/GHSA-cpwx-vrp4-4pq7
 zcbor>=0.8.0
 nrfcredstore>=3.1.0
-nrfcloud-utils>=3.0.12
+nrfcloud-utils>=4.0.0
 pynrfjprog>=10.24.2
 idna>=3.7 # https://github.com/advisories/GHSA-jjg7-2v4v-x38h
 python-path>=0.1.3
