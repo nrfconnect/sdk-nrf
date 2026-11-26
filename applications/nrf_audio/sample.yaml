@@ -113,11 +113,15 @@ tests:
       - CONFIG_STACK_USAGE=n
       - CONFIG_THREAD_MONITOR=n
       - CONFIG_SERIAL=n
-      - CONFIG_CONSOLE=n
+      # Ineffective here: prj.conf enables the RTT shell backend, which selects CONSOLE,
+      # so the console cannot be switched off from the scenario.
+#      - CONFIG_CONSOLE=n
       - CONFIG_PRINTK=n
       - CONFIG_BT_SETTINGS_USE_PRINTK=n
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
+      # LOG_BACKEND_UART depends on UART_CONSOLE, so it cannot stay enabled here.
+      - CONFIG_LOG_BACKEND_UART=n
       - CONFIG_BOOT_BANNER=n
       - CONFIG_AUDIO_SOURCE_I2S=y
       - EXTRA_CONF_FILE=broadcast_sink/overlay-broadcast_sink.conf
@@ -140,11 +144,15 @@ tests:
       - CONFIG_STACK_USAGE=n
       - CONFIG_THREAD_MONITOR=n
       - CONFIG_SERIAL=n
-      - CONFIG_CONSOLE=n
+      # Ineffective here: prj.conf enables the RTT shell backend, which selects CONSOLE,
+      # so the console cannot be switched off from the scenario.
+#      - CONFIG_CONSOLE=n
       - CONFIG_PRINTK=n
       - CONFIG_BT_SETTINGS_USE_PRINTK=n
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
+      # LOG_BACKEND_UART depends on UART_CONSOLE, so it cannot stay enabled here.
+      - CONFIG_LOG_BACKEND_UART=n
       - CONFIG_BOOT_BANNER=n
       - CONFIG_STREAM_BIDIRECTIONAL=y
       - CONFIG_AUDIO_SOURCE_I2S=y
@@ -168,11 +176,15 @@ tests:
       - CONFIG_STACK_USAGE=n
       - CONFIG_THREAD_MONITOR=n
       - CONFIG_SERIAL=n
-      - CONFIG_CONSOLE=n
+      # Ineffective here: prj.conf enables the RTT shell backend, which selects CONSOLE,
+      # so the console cannot be switched off from the scenario.
+#      - CONFIG_CONSOLE=n
       - CONFIG_PRINTK=n
       - CONFIG_BT_SETTINGS_USE_PRINTK=n
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
+      # LOG_BACKEND_UART depends on UART_CONSOLE, so it cannot stay enabled here.
+      - CONFIG_LOG_BACKEND_UART=n
       - CONFIG_BOOT_BANNER=n
       - EXTRA_CONF_FILE=broadcast_source/overlay-broadcast_source.conf
   applications.nrf_audio.gateway_unicast_client_bidir_alternative_i2s:
@@ -194,11 +206,15 @@ tests:
       - CONFIG_STACK_USAGE=n
       - CONFIG_THREAD_MONITOR=n
       - CONFIG_SERIAL=n
-      - CONFIG_CONSOLE=n
+      # Ineffective here: prj.conf enables the RTT shell backend, which selects CONSOLE,
+      # so the console cannot be switched off from the scenario.
+#      - CONFIG_CONSOLE=n
       - CONFIG_PRINTK=n
       - CONFIG_BT_SETTINGS_USE_PRINTK=n
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
+      # LOG_BACKEND_UART depends on UART_CONSOLE, so it cannot stay enabled here.
+      - CONFIG_LOG_BACKEND_UART=n
       - CONFIG_BOOT_BANNER=n
       - CONFIG_STREAM_BIDIRECTIONAL=y
       - CONFIG_AUDIO_SOURCE_I2S=y
