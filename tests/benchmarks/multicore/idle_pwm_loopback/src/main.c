@@ -12,6 +12,9 @@ LOG_MODULE_REGISTER(idle_pwm_loop, LOG_LEVEL_INF);
 #include <zephyr/drivers/pwm.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/pm/device_runtime.h>
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+#include <modem/nrf_modem_lib.h>
+#endif
 
 #if !DT_NODE_EXISTS(DT_NODELABEL(pwm_to_gpio_loopback))
 #error "Unsupported board: pwm_to_gpio_loopback node is not defined"
@@ -67,6 +70,14 @@ int main(void)
 	uint32_t tolerance;
 	int ret;
 	int test_repetitions = 3;
+
+#if IS_ENABLED(CONFIG_SOC_NRF9251_CPUAPP)
+	ret = nrf_modem_lib_init();
+	if (ret < 0) {
+		LOG_ERR("Failed to initialize modem library (%d)", ret);
+		return 0;
+	}
+#endif
 
 	ret = gpio_is_ready_dt(&led);
 	__ASSERT(ret, "Error: GPIO Device not ready");
