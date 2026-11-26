@@ -145,7 +145,8 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   # 'west sign' arguments for confirmed, unconfirmed and encrypted images.
   set(encrypted_args)
 
-  if(SB_CONFIG_SOC_SERIES_NRF54L AND SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
+  if(SB_CONFIG_SOC_SERIES_NRF54L AND SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519 OR
+     SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512)
     if(NOT SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
       set(imgtool_extra --sha 512 ${imgtool_extra})
     else()
