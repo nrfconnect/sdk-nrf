@@ -5,7 +5,6 @@
 
 config SAMPLE_DESH_NATIVE_TLS
 	bool "Custom ``AT%CMNG`` command to store credentials for native TLS"
-	default n
 	select AT_CMD_CUSTOM
 	help
 	  Enable the custom ``AT%CMNG`` command to store TLS credentials for native TLS usage.

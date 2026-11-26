@@ -111,7 +111,6 @@ config BT_AUDIO_BROADCAST_NAME_ALT
 
 config BT_AUDIO_USE_BROADCAST_NAME_ALT
 	bool "Use the alternative broadcast name"
-	default n
 	# TODO: Add back 'depends on TRANSPORT_BIS' once applications are ready
 	help
 	  Use the alternative broadcast name.
@@ -119,7 +118,6 @@ config BT_AUDIO_USE_BROADCAST_NAME_ALT
 config BT_AUDIO_BROADCAST_ENCRYPTED
 	bool "Encrypted broadcast"
 	depends on TRANSPORT_BIS
-	default n
 	help
 	  Encrypt the broadcast to limit the connection possibilities.
 
@@ -205,7 +203,6 @@ config BT_AUDIO_BROADCAST_PARENTAL_RATING
 config BT_AUDIO_BROADCAST_IMMEDIATE_FLAG
 	bool "Immediate rendering flag"
 	depends on TRANSPORT_BIS
-	default n
 	help
 	  Set the immediate rendering flag.
 

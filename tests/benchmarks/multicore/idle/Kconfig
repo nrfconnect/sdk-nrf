@@ -11,6 +11,5 @@ config SOC_NRF53_CPUNET_ENABLE
 
 config FIRST_SLEEP_OFFSET
 	bool "Enable the time shift before first sleep in a loop"
-	default n
 
 source "Kconfig.zephyr"
