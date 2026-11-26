@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../../boards/nrf54lm20dongle_nrf54lm20b_cpuapp.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
+
+/ {
+	chosen {
+		/delete-property/ zephyr,console;
+		/delete-property/ zephyr,shell-uart;
+		/delete-property/ zephyr,bt-mon-uart;
+		/delete-property/ zephyr,bt-c2h-uart;
+	};
+};
+
+&zephyr_udc0 {
+	/delete-node/ board_cdc_acm_uart;
+	/delete-node/ mcumgr_cdc_acm_uart;
+};
+
+/ {
+	chosen {
+		zephyr,uart-mcumgr = &cdc_acm_uart0;
+	};
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+};
+
+
+&cdc_acm_uart0 {
+	label = "nRF54LM20 Dongle MCUmgr";
+};
