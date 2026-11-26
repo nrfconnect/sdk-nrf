@@ -52,6 +52,8 @@ devices:
   status: pre-release
 - soc: nrf7120
   status: active
+- soc: nrf7120e
+  status: active
 - soc: nrf9131
   status: active
 - soc: nrf9151
