@@ -210,7 +210,7 @@ LC3 is mandatory for LE Audio.
 CS47L63 hardware codec (optional)
 =================================
 
-You can enable the CS47L63 hardware codec using the :option:`CONFIG_NRF_AUDIO_CS47L63_DRIVER` Kconfig option.
+You can enable the CS47L63 hardware codec driver using the :kconfig:option:`CONFIG_AUDIO_CODEC_CS47L63` Kconfig option.
 
 The codec selection affects audio quality, processing requirements, and power consumption.
 
