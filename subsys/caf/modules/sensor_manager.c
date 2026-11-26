@@ -35,7 +35,7 @@ struct sensor_data {
 
 static struct sensor_data sensor_data[ARRAY_SIZE(sensor_configs)];
 
-static K_THREAD_STACK_DEFINE(sample_thread_stack, SAMPLE_THREAD_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(sample_thread_stack, SAMPLE_THREAD_STACK_SIZE);
 static struct k_thread sample_thread;
 static struct k_sem can_sample;
 

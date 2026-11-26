@@ -58,7 +58,7 @@ static uint8_t buffer_commands[CONFIG_NRF_PROFILER_NORDIC_COMMAND_BUFFER_SIZE];
 
 static k_tid_t protocol_thread_id;
 
-static K_THREAD_STACK_DEFINE(nrf_profiler_nordic_stack,
+static K_KERNEL_STACK_DEFINE(nrf_profiler_nordic_stack,
 			     CONFIG_NRF_PROFILER_NORDIC_STACK_SIZE);
 static struct k_thread nrf_profiler_nordic_thread;
 
@@ -249,7 +249,7 @@ int nrf_profiler_init(void)
 
 	protocol_thread_id =  k_thread_create(&nrf_profiler_nordic_thread,
 			nrf_profiler_nordic_stack,
-			K_THREAD_STACK_SIZEOF(nrf_profiler_nordic_stack),
+			K_KERNEL_STACK_SIZEOF(nrf_profiler_nordic_stack),
 			(k_thread_entry_t) nrf_profiler_nordic_thread_fn,
 			NULL, NULL, NULL,
 			CONFIG_NRF_PROFILER_NORDIC_THREAD_PRIORITY, 0, K_NO_WAIT);

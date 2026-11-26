@@ -77,7 +77,7 @@ static int wait_for_valid_modem_time(int timeout_seconds);
 
 K_WORK_DEFINE(init_work, init_work_fn);
 K_WORK_DELAYABLE_DEFINE(provisioning_work, nrf_provisioning_work);
-K_THREAD_STACK_DEFINE(nrf_provisioning_stack, CONFIG_NRF_PROVISIONING_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(nrf_provisioning_stack, CONFIG_NRF_PROVISIONING_STACK_SIZE);
 
 #if defined(CONFIG_NRF_PROVISIONING_WITH_CERT)
 NRF_MODEM_LIB_ON_INIT(nrf_provisioning_on_modem_init, nrf_provisioning_on_modem_init, NULL);
@@ -428,7 +428,7 @@ int nrf_provisioning_init(nrf_provisioning_event_cb_t callback_handler)
 
 	k_work_queue_init(&provisioning_work_q);
 	k_work_queue_start(&provisioning_work_q,
-		nrf_provisioning_stack, K_THREAD_STACK_SIZEOF(nrf_provisioning_stack),
+		nrf_provisioning_stack, K_KERNEL_STACK_SIZEOF(nrf_provisioning_stack),
 		K_LOWEST_APPLICATION_THREAD_PRIO, &work_q_config);
 
 	/* Offload time consuming work to the work queue to avoid blocking the caller. */

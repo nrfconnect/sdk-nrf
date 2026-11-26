@@ -106,9 +106,9 @@ packet_stats stats = {0};
 /* Structure for the MAC header */
 static void create_rx_thread(void);
 
-K_THREAD_DEFINE(receiver_thread_id, CONFIG_PROMISCUOUS_SAMPLE_RX_THREAD_STACK_SIZE,
-		create_rx_thread, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, -1);
+K_KERNEL_THREAD_DEFINE(receiver_thread_id, CONFIG_PROMISCUOUS_SAMPLE_RX_THREAD_STACK_SIZE,
+		       create_rx_thread, NULL, NULL, NULL,
+		       THREAD_PRIORITY, 0, -1);
 
 #ifdef CONFIG_NET_CAPTURE
 static const struct device *capture_dev;

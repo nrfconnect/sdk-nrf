@@ -142,8 +142,8 @@ static void button_publish_thread(void)
 	}
 }
 
-K_THREAD_DEFINE(Msg_pub_btn, CONFIG_BUTTON_PUBLISH_STACK_SIZE, button_publish_thread, NULL, NULL,
-		NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_PUBLISH_THREAD_PRIO), 0, 0);
+K_KERNEL_THREAD_DEFINE(Msg_pub_btn, CONFIG_BUTTON_PUBLISH_STACK_SIZE, button_publish_thread, NULL,
+		       NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_PUBLISH_THREAD_PRIO), 0, 0);
 
 /*  ISR triggered by GPIO when assigned button(s) are pushed */
 static void button_isr(const struct device *port, struct gpio_callback *cb, uint32_t pin_msk)

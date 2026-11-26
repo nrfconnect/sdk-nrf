@@ -76,7 +76,7 @@ RING_BUF_DECLARE(m_ringbuf_audio_data_lc3, CONFIG_SD_CARD_PLAYBACK_RING_BUF_SIZE
 K_SEM_DEFINE(m_sem_ringbuf_space_available, 0, 1);
 K_MUTEX_DEFINE(mtx_ringbuf);
 K_SEM_DEFINE(m_sem_playback, 0, 1);
-K_THREAD_STACK_DEFINE(sd_card_playback_thread_stack, CONFIG_SD_CARD_PLAYBACK_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(sd_card_playback_thread_stack, CONFIG_SD_CARD_PLAYBACK_STACK_SIZE);
 
 /* Thread */
 static struct k_thread sd_card_playback_thread_data;

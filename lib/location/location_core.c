@@ -35,7 +35,7 @@ static struct location_request_info loc_req_info;
 
 #define LOCATION_CORE_STACK_SIZE CONFIG_LOCATION_WORKQUEUE_STACK_SIZE
 #define LOCATION_CORE_PRIORITY  5
-K_THREAD_STACK_DEFINE(location_core_stack, LOCATION_CORE_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(location_core_stack, LOCATION_CORE_STACK_SIZE);
 
 /** Work queue for location library. Location methods can run their tasks in it. */
 static struct k_work_q location_core_work_q;
@@ -237,7 +237,7 @@ int location_core_init(void)
 	k_work_queue_start(
 		&location_core_work_q,
 		location_core_stack,
-		K_THREAD_STACK_SIZEOF(location_core_stack),
+		K_KERNEL_STACK_SIZEOF(location_core_stack),
 		LOCATION_CORE_PRIORITY,
 		&cfg);
 

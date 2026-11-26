@@ -89,7 +89,7 @@ BUILD_ASSERT((RING_AND_MOTION_LED_MOTION_INDICATE_TOGGLE_COUNT_MAX % 2) == 0);
 #define LED_WORKQ_PRIORITY	K_PRIO_PREEMPT(0)
 #define LED_WORKQ_STACK_SIZE	512
 
-static K_THREAD_STACK_DEFINE(led_workq_stack, LED_WORKQ_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(led_workq_stack, LED_WORKQ_STACK_SIZE);
 static struct k_work_q led_workq;
 
 static void run_led_work_handle(struct k_work *item);
@@ -383,7 +383,7 @@ int app_ui_init(void)
 
 	k_work_queue_init(&led_workq);
 	k_work_queue_start(&led_workq, led_workq_stack,
-			   K_THREAD_STACK_SIZEOF(led_workq_stack), LED_WORKQ_PRIORITY,
+			   K_KERNEL_STACK_SIZEOF(led_workq_stack), LED_WORKQ_PRIORITY,
 			   NULL);
 
 	err = dk_leds_init();

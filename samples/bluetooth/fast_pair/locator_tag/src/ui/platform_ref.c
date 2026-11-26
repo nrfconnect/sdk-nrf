@@ -656,8 +656,9 @@ static void indication_thread_process(void)
 	}
 }
 
-K_THREAD_DEFINE(indication_thread_id, INDICATION_THREAD_STACK_SIZE, indication_thread_process,
-		NULL, NULL, NULL, INDICATION_THREAD_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(indication_thread_id, INDICATION_THREAD_STACK_SIZE,
+		       indication_thread_process, NULL, NULL, NULL, INDICATION_THREAD_PRIORITY, 0,
+		       0);
 
 static void cancel_ringing_work_handle(struct k_work *w)
 {

@@ -65,7 +65,7 @@ static bool dps_was_successful;
  * This is done to avoid blocking for example the system work queue for extended
  * periods of time.
  */
-static K_THREAD_STACK_DEFINE(application_stack_area, APP_WORK_Q_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(application_stack_area, APP_WORK_Q_STACK_SIZE);
 static struct k_work_q application_work_q;
 
 /* Returns a positive integer if the new interval can be parsed, otherwise -1 */
@@ -440,7 +440,7 @@ static void work_init(void)
 	k_work_init_delayable(&reboot_work, reboot_work_fn);
 
 	k_work_queue_start(&application_work_q, application_stack_area,
-		       K_THREAD_STACK_SIZEOF(application_stack_area),
+		       K_KERNEL_STACK_SIZEOF(application_stack_area),
 		       K_HIGHEST_APPLICATION_THREAD_PRIO, &cfg);
 }
 

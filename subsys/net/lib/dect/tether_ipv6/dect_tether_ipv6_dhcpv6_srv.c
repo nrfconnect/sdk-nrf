@@ -41,7 +41,7 @@ LOG_MODULE_REGISTER(dect_tether_ipv6_dhcpv6_srv, CONFIG_DECT_TETHER_IPV6_LOG_LEV
 
 #define DHCPV6_THREAD_PRIO K_PRIO_COOP(CONFIG_DECT_TETHER_IPV6_DHCPV6_THREAD_PRIO)
 
-K_THREAD_STACK_DEFINE(dhcpv6_srv_stack, CONFIG_DECT_TETHER_IPV6_DHCPV6_THREAD_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(dhcpv6_srv_stack, CONFIG_DECT_TETHER_IPV6_DHCPV6_THREAD_STACK_SIZE);
 
 /* RX/TX buffers must not live on dhcp_thread stack (RECV_BUF_SIZE + MAX_MSG > default stack). */
 static uint8_t dhcp_msg_rbuf[RECV_BUF_SIZE];
@@ -1052,7 +1052,7 @@ int dect_tether_ipv6_dhcpv6_srv_init(void)
 	dhcp.sock = -1;
 
 	dhcp.tid = k_thread_create(&dhcp.thread, dhcpv6_srv_stack,
-				   K_THREAD_STACK_SIZEOF(dhcpv6_srv_stack), dhcp_thread, NULL, NULL,
+				   K_KERNEL_STACK_SIZEOF(dhcpv6_srv_stack), dhcp_thread, NULL, NULL,
 				   NULL, DHCPV6_THREAD_PRIO, 0, K_NO_WAIT);
 	if (dhcp.tid == NULL) {
 		return -ENOMEM;

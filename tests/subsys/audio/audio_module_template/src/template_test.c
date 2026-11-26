@@ -50,7 +50,7 @@ struct audio_metadata test_metadata = {.data_coding = LC3,
 				       .data_rx_ts_us = 0,
 				       .bad_data = false};
 
-K_THREAD_STACK_ARRAY_DEFINE(mod_temp_stack, TEST_MODULES_NUM, TEST_MOD_THREAD_STACK_SIZE);
+K_KERNEL_STACK_ARRAY_DEFINE(mod_temp_stack, TEST_MODULES_NUM, TEST_MOD_THREAD_STACK_SIZE);
 DATA_FIFO_DEFINE(msg_fifo_tx0, TEST_MSG_QUEUE_SIZE, TEST_MSG_SIZE);
 DATA_FIFO_DEFINE(msg_fifo_rx0, TEST_MSG_QUEUE_SIZE, TEST_MSG_SIZE);
 DATA_FIFO_DEFINE(msg_fifo_tx1, TEST_MSG_QUEUE_SIZE, TEST_MSG_SIZE);

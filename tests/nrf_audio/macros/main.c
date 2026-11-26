@@ -42,7 +42,7 @@ LOG_MODULE_REGISTER(macros_main);
 #define ERROR_HANDLER_NOT_CALLED 0
 #define MAGIC_RET_VAL 999
 
-static K_THREAD_STACK_DEFINE(macros_stack, 8192);
+static K_KERNEL_STACK_DEFINE(macros_stack, 8192);
 static struct k_thread macros_thread;
 volatile int rv;
 
@@ -70,7 +70,7 @@ void thread_err_chk_msg(void *p_err_val, void *p_rv_in)
 
 void create_thread(void (*thread_ptr)(void *, void *), int err_val, int rv_in)
 {
-	k_thread_create(&macros_thread, macros_stack, K_THREAD_STACK_SIZEOF(macros_stack),
+	k_thread_create(&macros_thread, macros_stack, K_KERNEL_STACK_SIZEOF(macros_stack),
 			(k_thread_entry_t)thread_ptr, (void *)&err_val, (void *)&rv_in, NULL,
 			K_PRIO_COOP(PRIORITY), 0, K_NO_WAIT);
 }

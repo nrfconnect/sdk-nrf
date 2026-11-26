@@ -56,7 +56,7 @@ static void sampler_task(void)
 	}
 }
 
-K_THREAD_DEFINE(sampler_task_id,
-		CONFIG_MQTT_SAMPLE_SAMPLER_THREAD_STACK_SIZE,
-		sampler_task, NULL, NULL, NULL, 3, 0, 0);
+K_KERNEL_THREAD_DEFINE(sampler_task_id,
+		       CONFIG_MQTT_SAMPLE_SAMPLER_THREAD_STACK_SIZE,
+		       sampler_task, NULL, NULL, NULL, 3, 0, 0);
 /* include_endpoint_architecture_rst_3 (used by docs; keep this marker) */

@@ -109,7 +109,7 @@ K_MSGQ_DEFINE(cd_cm_event_q, sizeof(struct cd_cm_event), CD_CM_EVENT_QUEUE_LEN, 
 static K_MUTEX_DEFINE(cd_lock);
 static K_MUTEX_DEFINE(cd_cmd_lock);
 
-static K_THREAD_STACK_DEFINE(cd_wq_stack, CONFIG_NRF71_SR_COEX_WQ_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(cd_wq_stack, CONFIG_NRF71_SR_COEX_WQ_STACK_SIZE);
 static struct k_work_q cd_wq;
 
 static void cd_apply_work_handler(struct k_work *work);
@@ -962,7 +962,7 @@ static int nrf71_sr_coex_sys_init(void)
 	cd_coexc_configure(NRF71_SR_COEX_ANTENNA_SHARED);
 	cd_ble_init();
 
-	k_work_queue_start(&cd_wq, cd_wq_stack, K_THREAD_STACK_SIZEOF(cd_wq_stack),
+	k_work_queue_start(&cd_wq, cd_wq_stack, K_KERNEL_STACK_SIZEOF(cd_wq_stack),
 			   CONFIG_NRF71_SR_COEX_WQ_PRIORITY, &wq_cfg);
 
 	/* Must be in place before the first CD2CM command is posted. */

@@ -69,7 +69,7 @@ enum sensor_opt {
 };
 
 static K_SEM_DEFINE(sem, 1, 1);
-static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
 static struct k_thread thread;
 
 static const struct device *sensor_dev =

@@ -30,7 +30,7 @@ static void connect_work_fn(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(connect_work, connect_work_fn);
 
 /* Define stack_area of application workqueue */
-K_THREAD_STACK_DEFINE(stack_area, CONFIG_MQTT_SAMPLE_TRANSPORT_WORKQUEUE_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(stack_area, CONFIG_MQTT_SAMPLE_TRANSPORT_WORKQUEUE_STACK_SIZE);
 
 /* Declare application workqueue. This workqueue is used to call mqtt_helper_connect(), and
  * schedule reconnectionn attempts upon network loss or disconnection from MQTT.
@@ -374,7 +374,7 @@ static void transport_task(void)
 
 	k_work_queue_init(&transport_queue);
 	k_work_queue_start(&transport_queue, stack_area,
-			   K_THREAD_STACK_SIZEOF(stack_area),
+			   K_KERNEL_STACK_SIZEOF(stack_area),
 			   K_HIGHEST_APPLICATION_THREAD_PRIO,
 			   &queue_cfg);
 
@@ -457,6 +457,6 @@ static void transport_task(void)
 	}
 }
 
-K_THREAD_DEFINE(transport_task_id,
-		CONFIG_MQTT_SAMPLE_TRANSPORT_THREAD_STACK_SIZE,
-		transport_task, NULL, NULL, NULL, 3, 0, 0);
+K_KERNEL_THREAD_DEFINE(transport_task_id,
+		       CONFIG_MQTT_SAMPLE_TRANSPORT_THREAD_STACK_SIZE,
+		       transport_task, NULL, NULL, NULL, 3, 0, 0);

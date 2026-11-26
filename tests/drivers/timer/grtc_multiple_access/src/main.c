@@ -38,11 +38,11 @@ static void thread_worker(void *param1, void *param2, void *param3)
 	}
 }
 
-K_THREAD_DEFINE(thread_a, THREAD_STACK_SIZE, thread_worker, (void *)&id_thread_a, NULL, NULL,
-		THREAD_A_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(thread_a, THREAD_STACK_SIZE, thread_worker, (void *)&id_thread_a, NULL, NULL,
+		       THREAD_A_PRIORITY, 0, 0);
 
-K_THREAD_DEFINE(thread_b, THREAD_STACK_SIZE, thread_worker, (void *)&id_thread_b, NULL, NULL,
-		THREAD_B_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(thread_b, THREAD_STACK_SIZE, thread_worker, (void *)&id_thread_b, NULL, NULL,
+		       THREAD_B_PRIORITY, 0, 0);
 
 /*
  * The GRTC timer operation is looped.

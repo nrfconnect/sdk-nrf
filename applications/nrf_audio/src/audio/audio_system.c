@@ -36,7 +36,7 @@ LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
 #define DEBUG_INTERVAL_NUM     1000
 #define TEST_TONE_BASE_FREQ_HZ 1000
 
-K_THREAD_STACK_DEFINE(encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE);
 
 K_MSGQ_DEFINE(audio_q_out, sizeof(struct net_buf *), FIFO_OUT_BLOCK_COUNT, sizeof(void *));
 K_MSGQ_DEFINE(audio_q_in, sizeof(struct net_buf *), FIFO_IN_BLOCK_COUNT, sizeof(void *));

@@ -36,6 +36,6 @@ static void led_thread_fn(void *p1, void *p2, void *p3)
 	}
 }
 
-K_THREAD_DEFINE(usb_mcumgr_led_thread, LED_THREAD_STACK_SIZE,
-		led_thread_fn, NULL, NULL, NULL,
-		LED_THREAD_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(usb_mcumgr_led_thread, LED_THREAD_STACK_SIZE,
+		       led_thread_fn, NULL, NULL, NULL,
+		       LED_THREAD_PRIORITY, 0, 0);

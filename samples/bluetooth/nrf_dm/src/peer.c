@@ -323,5 +323,5 @@ int peer_init(void)
 	return 0;
 }
 
-K_THREAD_DEFINE(peer_consumer_thred_id, STACKSIZE, peer_thread,
-		NULL, NULL, NULL, PEER_THREAD_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(peer_consumer_thred_id, STACKSIZE, peer_thread,
+		       NULL, NULL, NULL, PEER_THREAD_PRIORITY, 0, 0);

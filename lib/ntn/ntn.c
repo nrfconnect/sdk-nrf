@@ -35,7 +35,7 @@ static struct ntn_evt prev_location_request_evt;
 static ntn_evt_handler_t event_handler;
 
 /* Work queue for NTN library. */
-static K_THREAD_STACK_DEFINE(ntn_workq_stack, CONFIG_NTN_WORKQUEUE_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(ntn_workq_stack, CONFIG_NTN_WORKQUEUE_STACK_SIZE);
 static struct k_work_q ntn_workq;
 
 AT_MONITOR(ntn_atmon_location, "%LOCATION", at_handler_location);
@@ -278,7 +278,7 @@ static int ntn_init(void)
 	/* Initialize work queue. */
 	k_work_queue_init(&ntn_workq);
 	k_work_queue_start(&ntn_workq, ntn_workq_stack,
-			   K_THREAD_STACK_SIZEOF(ntn_workq_stack),
+			   K_KERNEL_STACK_SIZEOF(ntn_workq_stack),
 			   CONFIG_NTN_WORKQUEUE_PRIORITY, NULL);
 
 	return 0;

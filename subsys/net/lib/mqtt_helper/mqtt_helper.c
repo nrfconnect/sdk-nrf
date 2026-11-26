@@ -897,6 +897,6 @@ static void mqtt_helper_run(void)
 	}
 }
 
-K_THREAD_DEFINE(mqtt_helper_thread, CONFIG_MQTT_HELPER_STACK_SIZE,
-		mqtt_helper_run, false, NULL, NULL,
-		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
+K_KERNEL_THREAD_DEFINE(mqtt_helper_thread, CONFIG_MQTT_HELPER_STACK_SIZE,
+		       mqtt_helper_run, false, NULL, NULL,
+		       K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);

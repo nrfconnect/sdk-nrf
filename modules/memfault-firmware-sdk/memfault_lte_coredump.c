@@ -603,6 +603,6 @@ static void mflt_lte_coredump_fn(void)
 	}
 }
 
-K_THREAD_DEFINE(mflt_lte_coredump_thread_id, 4096,
-		mflt_lte_coredump_fn, NULL, NULL, NULL,
-		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
+K_KERNEL_THREAD_DEFINE(mflt_lte_coredump_thread_id, 4096,
+		       mflt_lte_coredump_fn, NULL, NULL, NULL,
+		       K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);

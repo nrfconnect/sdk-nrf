@@ -148,9 +148,9 @@ int init_usb(void)
 
 static void create_rx_thread(void);
 
-K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE,
-		create_rx_thread, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, -1);
+K_KERNEL_THREAD_DEFINE(receiver_thread_id, STACK_SIZE,
+		       create_rx_thread, NULL, NULL, NULL,
+		       THREAD_PRIORITY, 0, -1);
 
 /* Function to parse and update statistics for Wi-Fi packets */
 static void parse_and_update_stats(unsigned char *packet, packet_stats *stats)

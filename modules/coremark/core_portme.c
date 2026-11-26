@@ -11,7 +11,7 @@
 #define _COREMARK_THREAD_STACK_ARRAY_ITEM(n, _) CONCAT(CONCAT(coremark_thread_, n), _stack)
 
 #define _COREMARK_THREAD_STACK_DEFINE(n, _)							\
-	static K_THREAD_STACK_DEFINE(_COREMARK_THREAD_STACK_ARRAY_ITEM(n, _), THREAD_STACK_SIZE)
+	static K_KERNEL_STACK_DEFINE(_COREMARK_THREAD_STACK_ARRAY_ITEM(n, _), THREAD_STACK_SIZE)
 
 /**
  *  @brief Statically define thread stack structure array.

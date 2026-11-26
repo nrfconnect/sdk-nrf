@@ -28,12 +28,12 @@
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 #if defined(CONFIG_NRF71_TX_DONE_WQ_ENABLED)
-K_THREAD_STACK_DEFINE(nrf_wifi_tx_done_wq_stack, CONFIG_NRF71_TX_DONE_WQ_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(nrf_wifi_tx_done_wq_stack, CONFIG_NRF71_TX_DONE_WQ_STACK_SIZE);
 struct k_work_q nrf_wifi_tx_done_wq;
 #endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
 
 #if defined(CONFIG_NRF71_RX_WQ_ENABLED)
-K_THREAD_STACK_DEFINE(nrf_wifi_rx_wq_stack, CONFIG_NRF71_RX_WQ_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(nrf_wifi_rx_wq_stack, CONFIG_NRF71_RX_WQ_STACK_SIZE);
 struct k_work_q nrf_wifi_rx_wq;
 #endif /* CONFIG_NRF71_RX_WQ_ENABLED */
 
@@ -43,7 +43,7 @@ static int nrf_wifi_work_queues_init(void)
 	k_work_queue_init(&nrf_wifi_tx_done_wq);
 	k_work_queue_start(&nrf_wifi_tx_done_wq,
 			   nrf_wifi_tx_done_wq_stack,
-			   K_THREAD_STACK_SIZEOF(nrf_wifi_tx_done_wq_stack),
+			   K_KERNEL_STACK_SIZEOF(nrf_wifi_tx_done_wq_stack),
 			   CONFIG_NRF71_TX_DONE_WQ_PRIORITY,
 			   NULL);
 	k_thread_name_set(nrf_wifi_tx_done_wq.thread_id, "nrf71_tx_done_wq");
@@ -53,7 +53,7 @@ static int nrf_wifi_work_queues_init(void)
 	k_work_queue_init(&nrf_wifi_rx_wq);
 	k_work_queue_start(&nrf_wifi_rx_wq,
 			   nrf_wifi_rx_wq_stack,
-			   K_THREAD_STACK_SIZEOF(nrf_wifi_rx_wq_stack),
+			   K_KERNEL_STACK_SIZEOF(nrf_wifi_rx_wq_stack),
 			   CONFIG_NRF71_RX_WQ_PRIORITY,
 			   NULL);
 	k_thread_name_set(nrf_wifi_rx_wq.thread_id, "nrf71_rx_wq");

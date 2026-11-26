@@ -420,7 +420,7 @@ int downloader_init(struct downloader *const dl, struct downloader_cfg *dl_cfg)
 	 * it is resumed when the download is started via the API.
 	 */
 	dl->tid = k_thread_create(&dl->thread, dl->thread_stack,
-				  K_THREAD_STACK_SIZEOF(dl->thread_stack), download_thread, dl,
+				  K_KERNEL_STACK_SIZEOF(dl->thread_stack), download_thread, dl,
 				  NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
 
 	k_thread_name_set(dl->tid, "downloader");

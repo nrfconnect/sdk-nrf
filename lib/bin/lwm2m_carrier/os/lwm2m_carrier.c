@@ -272,6 +272,6 @@ void lwm2m_carrier_thread_run(void)
 	}
 }
 
-K_THREAD_DEFINE(lwm2m_carrier_thread, CONFIG_LWM2M_CARRIER_THREAD_STACK_SIZE,
-		lwm2m_carrier_thread_run, NULL, NULL, NULL,
-		LWM2M_CARRIER_THREAD_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(lwm2m_carrier_thread, CONFIG_LWM2M_CARRIER_THREAD_STACK_SIZE,
+		       lwm2m_carrier_thread_run, NULL, NULL, NULL,
+		       LWM2M_CARRIER_THREAD_PRIORITY, 0, 0);

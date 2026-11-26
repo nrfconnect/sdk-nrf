@@ -32,7 +32,7 @@ K_SEM_DEFINE(wpa_supp_ready_sem, 0, 1);
 
 /* Delayable work used to handle Wi-Fi connection timeouts. */
 static void wifi_conn_work_handler(struct k_work *work);
-K_THREAD_STACK_DEFINE(l2_wifi_wq_stack_area, CONFIG_L2_WIFI_CONN_WQ_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(l2_wifi_wq_stack_area, CONFIG_L2_WIFI_CONN_WQ_STACK_SIZE);
 struct k_work_q wifi_conn_wq;
 static K_WORK_DELAYABLE_DEFINE(wifi_conn_work, wifi_conn_work_handler);
 
@@ -234,7 +234,7 @@ void net_l2_wifi_init(struct conn_mgr_conn_binding *const binding)
 
 	k_work_queue_start(&wifi_conn_wq,
 			   l2_wifi_wq_stack_area,
-			   K_THREAD_STACK_SIZEOF(l2_wifi_wq_stack_area),
+			   K_KERNEL_STACK_SIZEOF(l2_wifi_wq_stack_area),
 			   0,
 			   NULL);
 }

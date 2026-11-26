@@ -29,7 +29,7 @@ static const struct power_rail_config rail_config[POWER_RAIL_NUM] = {
 };
 static bool rail_enabled[POWER_RAIL_NUM];
 
-K_THREAD_STACK_DEFINE(meas_stack, CONFIG_POWER_MEAS_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(meas_stack, CONFIG_POWER_MEAS_STACK_SIZE);
 static struct k_thread meas_thread;
 K_SEM_DEFINE(meas_sem, 0, 1);
 static bool meas_enabled;

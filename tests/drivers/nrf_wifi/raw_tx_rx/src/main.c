@@ -54,8 +54,8 @@ struct sockaddr_ll sa;
 
 static void rx_thread_oneshot(void);
 
-K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE, rx_thread_oneshot, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, -1);
+K_KERNEL_THREAD_DEFINE(receiver_thread_id, STACK_SIZE, rx_thread_oneshot, NULL, NULL, NULL,
+		       THREAD_PRIORITY, 0, -1);
 
 #define NRF_WIFICORE_RPURFBUS_BASE		     0x48020000UL
 #define NRF_WIFICORE_RPURFBUS_RFCTRL		     ((NRF_WIFICORE_RPURFBUS_BASE) + 0x00010000UL)
@@ -323,7 +323,7 @@ static void rx_thread_oneshot(void)
 
 static volatile uint32_t g_rx_packets_received;
 
-K_THREAD_STACK_DEFINE(rx_n_stack, STACK_SIZE);
+K_KERNEL_STACK_DEFINE(rx_n_stack, STACK_SIZE);
 
 static void rx_thread_n_packets(void *p1, void *p2, void *p3)
 {
@@ -469,7 +469,7 @@ ZTEST(nrf_wifi, test_rx_only)
 	zassert_false(setup_raw_pkt_socket(&sa, &rx_raw_socket_fd),
 		      "Setting RX socket failed");
 
-	rx_n_tid = k_thread_create(&rx_n_thread, rx_n_stack, K_THREAD_STACK_SIZEOF(rx_n_stack),
+	rx_n_tid = k_thread_create(&rx_n_thread, rx_n_stack, K_KERNEL_STACK_SIZEOF(rx_n_stack),
 				   rx_thread_n_packets, NULL, NULL, NULL,
 				   THREAD_PRIORITY, 0, K_NO_WAIT);
 

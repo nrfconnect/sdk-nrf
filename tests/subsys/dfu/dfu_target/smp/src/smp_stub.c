@@ -13,7 +13,7 @@
 #include <mgmt/mcumgr/transport/smp_internal.h>
 #include "smp_stub.h"
 
-K_THREAD_STACK_DEFINE(smp_stub_work_queue_stack, CONFIG_MCUMGR_TRANSPORT_WORKQUEUE_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(smp_stub_work_queue_stack, CONFIG_MCUMGR_TRANSPORT_WORKQUEUE_STACK_SIZE);
 
 static mcmgr_client_data_check_fn rx_verify_cb;
 static int send_client_failure;
@@ -117,7 +117,7 @@ void stub_smp_client_transport_register(void)
 	k_work_queue_init(&smp_work_queue);
 
 	k_work_queue_start(&smp_work_queue, smp_stub_work_queue_stack,
-			   K_THREAD_STACK_SIZEOF(smp_stub_work_queue_stack),
+			   K_KERNEL_STACK_SIZEOF(smp_stub_work_queue_stack),
 			   CONFIG_MCUMGR_TRANSPORT_WORKQUEUE_THREAD_PRIO, &smp_work_queue_config);
 
 	k_work_init(&stub_work, smp_client_handle_reqs);

@@ -451,9 +451,9 @@ int start_app(void)
 #ifdef CONFIG_WIFI_READY_LIB
 void start_wifi_thread(void);
 #define THREAD_PRIORITY K_PRIO_COOP(CONFIG_NUM_COOP_PRIORITIES - 1)
-K_THREAD_DEFINE(start_wifi_thread_id, CONFIG_STA_SAMPLE_START_WIFI_THREAD_STACK_SIZE,
-		start_wifi_thread, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, -1);
+K_KERNEL_THREAD_DEFINE(start_wifi_thread_id, CONFIG_STA_SAMPLE_START_WIFI_THREAD_STACK_SIZE,
+		       start_wifi_thread, NULL, NULL, NULL,
+		       THREAD_PRIORITY, 0, -1);
 
 void start_wifi_thread(void)
 {

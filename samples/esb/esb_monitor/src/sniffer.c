@@ -22,7 +22,7 @@ static uint8_t rtt_comm_ret_buff[CONFIG_ESB_SNIFFER_RTT_CMD_RET_BUF_SZ];
 static uint8_t rtt_comm_buff[CONFIG_ESB_SNIFFER_RTT_CMD_BUF_SZ];
 
 static k_tid_t rtt_comm_thread_id;
-static K_THREAD_STACK_DEFINE(rtt_comm_thread_stack, CONFIG_ESB_SNIFFER_THREAD_STACK_SZ);
+static K_KERNEL_STACK_DEFINE(rtt_comm_thread_stack, CONFIG_ESB_SNIFFER_THREAD_STACK_SZ);
 static struct k_thread rtt_comm_thread;
 
 static struct esb_sniffer_cfg sniffer_cfg;

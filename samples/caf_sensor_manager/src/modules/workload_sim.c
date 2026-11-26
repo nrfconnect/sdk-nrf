@@ -28,7 +28,7 @@ struct workload {
 	const char *sensor_descr;
 };
 
-static K_THREAD_STACK_DEFINE(workload_simulated_thread_stack,
+static K_KERNEL_STACK_DEFINE(workload_simulated_thread_stack,
 			     WORKLOAD_SIMULATED_THREAD_STACK_SIZE);
 static struct k_work_q workload_simulated_work_q;
 
@@ -64,7 +64,7 @@ static void init(void)
 	k_work_queue_init(&workload_simulated_work_q);
 	k_work_queue_start(&workload_simulated_work_q,
 			   workload_simulated_thread_stack,
-			   K_THREAD_STACK_SIZEOF(workload_simulated_thread_stack),
+			   K_KERNEL_STACK_SIZEOF(workload_simulated_thread_stack),
 			   WORKLOAD_SIMULATED_THREAD_PRIORITY,
 			   NULL);
 

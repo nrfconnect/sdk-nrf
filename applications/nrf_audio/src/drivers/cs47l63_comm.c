@@ -41,7 +41,7 @@ static void *bsp_callback_arg;
 static struct gpio_callback gpio_cb;
 
 static struct k_thread cs47l63_data;
-static K_THREAD_STACK_DEFINE(cs47l63_stack, CONFIG_CS47L63_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(cs47l63_stack, CONFIG_CS47L63_STACK_SIZE);
 
 static K_SEM_DEFINE(sem_cs47l63, 0, 1);
 

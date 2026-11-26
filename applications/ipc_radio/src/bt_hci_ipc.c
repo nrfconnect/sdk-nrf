@@ -304,9 +304,9 @@ static void queue_thread(void)
 	}
 }
 
-K_THREAD_DEFINE(queue_thread_id, CONFIG_QUEUE_THREAD_STACK_SIZE, queue_thread,
-		NULL, NULL, NULL,
-		CONFIG_QUEUE_THREAD_PRIO, 0, 0);
+K_KERNEL_THREAD_DEFINE(queue_thread_id, CONFIG_QUEUE_THREAD_STACK_SIZE, queue_thread,
+		       NULL, NULL, NULL,
+		       CONFIG_QUEUE_THREAD_PRIO, 0, 0);
 
 static void tx_thread(void)
 {
@@ -325,9 +325,9 @@ static void tx_thread(void)
 	}
 }
 
-K_THREAD_DEFINE(tx_thread_id, CONFIG_BT_HCI_TX_STACK_SIZE, tx_thread,
-		NULL, NULL, NULL,
-		CONFIG_BT_HCI_TX_PRIO, 0, 0);
+K_KERNEL_THREAD_DEFINE(tx_thread_id, CONFIG_BT_HCI_TX_STACK_SIZE, tx_thread,
+		       NULL, NULL, NULL,
+		       CONFIG_BT_HCI_TX_PRIO, 0, 0);
 
 static struct ipc_ept_cfg hci_ept_cfg = {
 	.name = "nrf_bt_hci",

@@ -66,7 +66,7 @@ BUILD_ASSERT(ISO_FLUSH_Q_PRIORITY > CONFIG_BT_TX_PROCESSOR_THREAD_PRIO,
 
 static const int prio_bt_tx = CONFIG_BT_TX_PROCESSOR_THREAD_PRIO;
 
-K_THREAD_STACK_DEFINE(iso_flush_work_q_stack_area, ISO_FLUSH_Q_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(iso_flush_work_q_stack_area, ISO_FLUSH_Q_STACK_SIZE);
 
 static struct k_work_q iso_flush_work_q;
 static struct k_work iso_flush_work;
@@ -804,7 +804,7 @@ int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx, bool is_clock_master)
 		k_work_init(&iso_flush_work, iso_flush_work_handler);
 
 		k_work_queue_start(&iso_flush_work_q, iso_flush_work_q_stack_area,
-				   K_THREAD_STACK_SIZEOF(iso_flush_work_q_stack_area),
+				   K_KERNEL_STACK_SIZEOF(iso_flush_work_q_stack_area),
 				   ISO_FLUSH_Q_PRIORITY, NULL);
 	}
 

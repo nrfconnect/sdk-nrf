@@ -18,7 +18,7 @@ LOG_MODULE_REGISTER(ras_rrsp, CONFIG_BT_RAS_RRSP_LOG_LEVEL);
 
 #define RRSP_WQ_STACK_SIZE 1024
 #define RRSP_WQ_PRIORITY   K_PRIO_PREEMPT(K_LOWEST_APPLICATION_THREAD_PRIO)
-K_THREAD_STACK_DEFINE(rrsp_wq_stack_area, RRSP_WQ_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(rrsp_wq_stack_area, RRSP_WQ_STACK_SIZE);
 
 NET_BUF_SIMPLE_DEFINE_STATIC(segment_buf, CONFIG_BT_L2CAP_TX_MTU);
 
@@ -600,7 +600,7 @@ static int ras_rrsp_init(void)
 	const struct k_work_queue_config cfg = {.name = "BT RAS RRSP WQ"};
 
 	k_work_queue_init(&rrsp_wq);
-	k_work_queue_start(&rrsp_wq, rrsp_wq_stack_area, K_THREAD_STACK_SIZEOF(rrsp_wq_stack_area),
+	k_work_queue_start(&rrsp_wq, rrsp_wq_stack_area, K_KERNEL_STACK_SIZEOF(rrsp_wq_stack_area),
 			   RRSP_WQ_PRIORITY, &cfg);
 
 	bt_ras_rd_buffer_cb_register(&rd_buffer_callbacks);

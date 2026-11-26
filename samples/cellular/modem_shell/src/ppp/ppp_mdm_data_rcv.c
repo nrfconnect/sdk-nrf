@@ -103,6 +103,6 @@ static void ppp_modem_dl_data_thread_handler(void)
 	}
 }
 
-K_THREAD_DEFINE(ppp_modem_dl_data_thread, PPP_MODEM_DATA_RCV_THREAD_STACK_SIZE,
-		ppp_modem_dl_data_thread_handler, NULL, NULL, NULL,
-		PPP_MODEM_DATA_RCV_THREAD_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(ppp_modem_dl_data_thread, PPP_MODEM_DATA_RCV_THREAD_STACK_SIZE,
+		       ppp_modem_dl_data_thread_handler, NULL, NULL, NULL,
+		       PPP_MODEM_DATA_RCV_THREAD_PRIORITY, 0, 0);

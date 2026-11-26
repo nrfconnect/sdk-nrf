@@ -151,7 +151,7 @@ struct nrf_rpc_ipc_rx_packet {
 			      sizeof(struct nrf_rpc_ipc_rx_packet),          \
 			      CONFIG_NRF_RPC_IPC_SERVICE_RX_QUEUE_SIZE,      \
 			      sizeof(void *));                               \
-		static K_THREAD_STACK_DEFINE(_name##_rx_stack,               \
+		static K_KERNEL_STACK_DEFINE(_name##_rx_stack,               \
 			CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD_STACK_SIZE);    \
 		static struct k_thread _name##_rx_thread;                    \
 	))                                                                   \

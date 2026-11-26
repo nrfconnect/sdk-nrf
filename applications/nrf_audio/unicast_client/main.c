@@ -57,9 +57,9 @@ static k_tid_t button_msg_sub_thread_id;
 static k_tid_t le_audio_msg_sub_thread_id;
 static k_tid_t content_control_thread_id;
 
-K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
-K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
-K_THREAD_STACK_DEFINE(content_control_msg_sub_thread_stack,
+K_KERNEL_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(content_control_msg_sub_thread_stack,
 		      CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE);
 
 #define SRV_STORE_LOCK_WAIT_TIME_MS K_MSEC(50)

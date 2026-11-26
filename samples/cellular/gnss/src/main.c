@@ -27,7 +27,7 @@ static struct k_work_q gnss_work_q;
 #define GNSS_WORKQ_THREAD_STACK_SIZE 2304
 #define GNSS_WORKQ_THREAD_PRIORITY   5
 
-K_THREAD_STACK_DEFINE(gnss_workq_stack_area, GNSS_WORKQ_THREAD_STACK_SIZE);
+K_KERNEL_STACK_DEFINE(gnss_workq_stack_area, GNSS_WORKQ_THREAD_STACK_SIZE);
 #endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE || CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */
 
 #if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)
@@ -471,7 +471,7 @@ static int sample_init(void)
 	k_work_queue_start(
 		&gnss_work_q,
 		gnss_workq_stack_area,
-		K_THREAD_STACK_SIZEOF(gnss_workq_stack_area),
+		K_KERNEL_STACK_SIZEOF(gnss_workq_stack_area),
 		GNSS_WORKQ_THREAD_PRIORITY,
 		&cfg);
 #endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE || CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */

@@ -16,7 +16,7 @@
 #define SENSOR_SIMULATED_THREAD_SLEEP 500
 #define MODULE sensor_sim
 
-static K_THREAD_STACK_DEFINE(sensor_simulated_thread_stack,
+static K_KERNEL_STACK_DEFINE(sensor_simulated_thread_stack,
 			     SENSOR_SIMULATED_THREAD_STACK_SIZE);
 static struct k_thread sensor_simulated_thread;
 

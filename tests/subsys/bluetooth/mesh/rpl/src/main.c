@@ -785,7 +785,7 @@ ZTEST(bt_mesh_rpl_ncs, test_concurrent_update_during_write)
 
 #define STORE_THREAD_STACK_SIZE 2048
 
-static K_THREAD_STACK_ARRAY_DEFINE(store_thread_stacks, 2, STORE_THREAD_STACK_SIZE);
+static K_KERNEL_STACK_ARRAY_DEFINE(store_thread_stacks, 2, STORE_THREAD_STACK_SIZE);
 static struct k_thread store_threads[2];
 
 static void store_thread_entry(void *p1, void *p2, void *p3)
@@ -800,7 +800,7 @@ static void store_thread_entry(void *p1, void *p2, void *p3)
 static k_tid_t start_store_thread(int idx)
 {
 	return k_thread_create(&store_threads[idx], store_thread_stacks[idx],
-			       K_THREAD_STACK_SIZEOF(store_thread_stacks[idx]), store_thread_entry,
+			       K_KERNEL_STACK_SIZEOF(store_thread_stacks[idx]), store_thread_entry,
 			       NULL, NULL, NULL, K_PRIO_PREEMPT(0), 0, K_NO_WAIT);
 }
 

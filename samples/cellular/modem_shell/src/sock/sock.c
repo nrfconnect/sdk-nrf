@@ -1191,9 +1191,9 @@ static void sock_receive_handler(void)
 	mosh_print("%s exit", __func__);
 }
 
-K_THREAD_DEFINE(sock_receive_thread, SOCK_RECEIVE_STACK_SIZE,
-		sock_receive_handler, NULL, NULL, NULL,
-		SOCK_RECEIVE_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(sock_receive_thread, SOCK_RECEIVE_STACK_SIZE,
+		       sock_receive_handler, NULL, NULL, NULL,
+		       SOCK_RECEIVE_PRIORITY, 0, 0);
 
 int sock_recv(int socket_id, bool receive_start, int data_length, bool blocking,
 	      enum sock_recv_print_format print_format)

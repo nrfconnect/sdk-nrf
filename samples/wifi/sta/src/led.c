@@ -56,5 +56,5 @@ static void toggle_led(void)
 	}
 }
 
-K_THREAD_DEFINE(led_thread_id, 1024, toggle_led, NULL, NULL, NULL,
-		7, 0, 0);
+K_KERNEL_THREAD_DEFINE(led_thread_id, 1024, toggle_led, NULL, NULL, NULL,
+		       7, 0, 0);

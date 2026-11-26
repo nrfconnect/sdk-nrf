@@ -477,9 +477,9 @@ static void nrf91_non_offload_modem_dl_data_thread_handler(void)
 #define NRF91_MODEM_DATA_DL_THREAD_STACK_SIZE 2048
 #define NRF91_MODEM_DATA_RCV_THREAD_PRIORITY K_PRIO_COOP(10) /* -6 */
 
-K_THREAD_DEFINE(nrf91_modem_dl_data_thread, NRF91_MODEM_DATA_DL_THREAD_STACK_SIZE,
-		nrf91_non_offload_modem_dl_data_thread_handler, NULL, NULL, NULL,
-		NRF91_MODEM_DATA_RCV_THREAD_PRIORITY, 0, 0);
+K_KERNEL_THREAD_DEFINE(nrf91_modem_dl_data_thread, NRF91_MODEM_DATA_DL_THREAD_STACK_SIZE,
+		       nrf91_non_offload_modem_dl_data_thread_handler, NULL, NULL, NULL,
+		       NRF91_MODEM_DATA_RCV_THREAD_PRIORITY, 0, 0);
 
 /******************************************************************************/
 

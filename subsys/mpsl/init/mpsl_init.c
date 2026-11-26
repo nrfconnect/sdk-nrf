@@ -183,7 +183,7 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_GRTC_TIMER_AUTO_KEEP_ALIVE),
 
 static struct k_work mpsl_low_prio_work;
 struct k_work_q mpsl_work_q;
-static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
+static K_KERNEL_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
 
 #if IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS)
 /* Check existence of rram_controller or mram_controller node in the device tree to figure out
@@ -581,7 +581,7 @@ static int mpsl_low_prio_init(void)
 {
 
 	k_work_queue_start(&mpsl_work_q, mpsl_work_stack,
-			   K_THREAD_STACK_SIZEOF(mpsl_work_stack),
+			   K_KERNEL_STACK_SIZEOF(mpsl_work_stack),
 			   K_PRIO_COOP(CONFIG_MPSL_THREAD_COOP_PRIO), NULL);
 	k_thread_name_set(mpsl_work_q.thread_id, "MPSL Work");
 	k_work_init(&mpsl_low_prio_work, mpsl_low_prio_work_handler);
