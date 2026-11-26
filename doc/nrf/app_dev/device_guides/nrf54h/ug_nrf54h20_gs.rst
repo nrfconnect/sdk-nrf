@@ -59,7 +59,7 @@ Using the nRF54H20 DK with the |NCS| version |release| also requires the followi
 +----------------------------------------------+-------------------------------------+
 | nRF Util ``device`` command                  | version |54H_nrfutil_device_ver|    |
 +----------------------------------------------+-------------------------------------+
-| nRF Util ``trace`` command                   | version |54H_nrfutil_trace_ver|     |
+| nRF Util ``trace`` command                   | Latest                              |
 +----------------------------------------------+-------------------------------------+
 
 To install the required versions of the nRF Util commands, complete the following steps:
@@ -79,7 +79,7 @@ To install the required versions of the nRF Util commands, complete the followin
    .. nrfutil-command::
 
       nrfutil install device=|54H_nrfutil_device_ver| --force
-      nrfutil install trace=|54H_nrfutil_trace_ver| --force
+      nrfutil install trace --force
 
 #. Verify the installation of the nRF Util commands:
 

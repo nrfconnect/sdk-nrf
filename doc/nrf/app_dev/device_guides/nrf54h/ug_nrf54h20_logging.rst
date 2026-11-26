@@ -155,10 +155,11 @@ To read the dictionary-based STM log output, do the following:
 
       nrfutil trace stm \
        --database-config <domain_id>:build/<app_name>/zephyr/log_dictionary.json \
-       --input-serialport port=<port>,baud_rate=115200 \
-       --stdout ascii
+       --input-serialport port=<port>,baud_rate=115200
 
-   The output can be either the console (``--stdout ascii``) or a file (the :file:`out.txt` file if ``--output-ascii out.txt``).
+   The command prints the decoded output to the console.
+   To save the output to a file, redirect it, for example with ``> out.txt``.
+   To also save the raw trace data to a file, add the ``--output-raw out.bin`` option.
 
 #. When done, stop tracing by pressing CTRL-C.
 #. Read the terminal or open the output file to review the decoded log messages.
