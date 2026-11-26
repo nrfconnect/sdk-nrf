@@ -430,7 +430,6 @@ tests:
       - EXTRA_CONF_FILE="overlay-bt.conf"
       - mcuboot_CONFIG_MULTITHREADING=y
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
-      - mcuboot_CONFIG_SOC_EARLY_RESET_HOOK=y
       - CONFIG_PM=y
       - CONFIG_PM_DEVICE=y
       - CONFIG_PM_DEVICE_RUNTIME=y
