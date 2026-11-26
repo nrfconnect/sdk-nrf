@@ -221,5 +221,27 @@ config FIND_NEXT_SLOT_HOOK_BOOT_REQ
 	  This will read the image preference from the bootloader requests
 	  module and if found, alter the Direct XIP slot selection.
 
+config BL_MPC_MCUBOOT
+	bool "Lock MPC protection of MCUboot slot and storage partitions before hand-off"
+	depends on SOC_NRF54L_CPUAPP_COMMON
+	depends on MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1
+	depends on !BASE_BOARD_IS_NON_SECURE
+	select BL_MPC
+	select MCUBOOT_ACTION_HOOKS
+	help
+	  Before hand-off, MCUboot programs and locks MPC00 override regions
+	  built from the devicetree slot and storage partitions.
+	  The code of the booted image is read-execute (read-only in RAM-load
+	  mode). The rest of its slot, the other slots and the storage partition
+	  are read-write. In RAM-load mode, the last 4 kB page of the booted
+	  slot, which holds the image trailer, is always read-write.
+	  Direct-XIP with revert is not supported.
+	  After the first boot, a debug probe can program the slots only with a
+	  runner that halts the core at reset, for example the J-Link runner.
+	  This option provides the mcuboot_status_change() action hook, so it
+	  cannot be combined with another action hook implementation.
+	  It is not available for TF-M (/ns) builds, because TF-M configures
+	  MPC itself.
+
 config BASE_BOARD_IS_NON_SECURE
 	bool "Base board target is non-secure (informative only, do not change)"

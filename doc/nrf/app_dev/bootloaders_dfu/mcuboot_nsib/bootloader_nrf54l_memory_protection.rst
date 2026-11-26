@@ -117,6 +117,30 @@ This allows the installer to replace the firmware loader.
 
 If MCUboot is used without NSIB and fits within a single RRAMC region, the layout can instead rely on FPROTECT alone for overwrite protection, as described in :ref:`ug_nrf54l_dfu_config`.
 
+To also protect the application slots with the memory protection controller (MPC), enable :kconfig:option:`CONFIG_BL_MPC_MCUBOOT` for the MCUboot image, for example in the :file:`sysbuild/mcuboot.conf` file of your application.
+Before hand-off, MCUboot builds a list of MPC00 override regions from the devicetree slot and storage partitions, and locks all software-configurable overrides until the next reset:
+
+* The code of the booted image, from the start of its slot to the end of the image rounded up to 4 kB, is read-execute, or read-only in RAM-load mode.
+* The rest of the booted slot is read-write, so that the application can still write the image trailer, for example to confirm the image.
+  In RAM-load mode, the read-only region always ends before the last 4 kB page of the booted slot, which holds the trailer, so this page is read-write.
+* The other slot of each image and the ``storage_partition`` partition are read-write.
+
+Adjacent regions with the same permissions are merged.
+All covered partitions must be aligned to 4 kB, and the worst-case number of regions (three per image, plus one for ``storage_partition``) must not exceed the number of general-purpose MPC00 overrides of the SoC, otherwise the build fails.
+Memory that is not covered, such as the MCUboot partition, gaps between partitions, and partitions other than the slots and ``storage_partition``, keeps the MPC default access (Secure read, write, and execute).
+If MCUboot cannot build or lock the region list, it does not boot the image.
+
+The option implements the ``mcuboot_status_change()`` MCUboot action hook, so you cannot combine it with another implementation of this hook.
+It is not available for TF-M (``/ns`` board targets), because TF-M configures the MPC itself.
+Direct-XIP with revert is not supported and fails the build, because the image can reach the trailer page, which then could not be written to confirm the image.
+Single-slot, firmware loader, and second-stage MCUboot configurations are not supported.
+
+.. note::
+   After the first boot with this option, MCUboot locks MPC00 again on every reset before a debug probe can program the slots.
+   The default ``west flash`` runner then fails with a memory access error at the start of the primary slot.
+   To reprogram the device, use a runner that halts the core at reset, for example ``west flash --runner jlink``.
+   As a last resort, ``nrfutil device recover`` also works, but it erases the whole device, including UICR.
+
 .. _ug_bootloader_nrf54l_memory_protection_application:
 .. rst-class:: numbered-step
 
@@ -169,6 +193,9 @@ Summary
    * - End of MCUboot
      - :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX`
      - Removes read, write, and execute access to MCUboot program memory for later stages.
+   * - End of MCUboot
+     - :kconfig:option:`CONFIG_BL_MPC_MCUBOOT`
+     - Locks MPC00 regions so that the booted image code is not writable and the remaining slot and storage memory is not executable.
    * - Firmware loader hand-off
      - :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES`
      - Write-protects the firmware loader partition except when booting an authenticated installer.

@@ -62,6 +62,7 @@ Bootloaders and DFU
   * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC.
   * The :ref:`mcuboot_on_nrf54l_series` documentation page that summarizes MCUboot feature support across the nRF54L SoC series.
   * The ``IMAGE_TLV_INSTALLER_IMAGE`` (``0xA0``) TLV to identify firmware loader installer images.
+  * The :kconfig:option:`CONFIG_BL_MPC_MCUBOOT` Kconfig option to lock MPC protection of the MCUboot slot and storage partitions before MCUboot boots the application on the nRF54L Series.
 
 * Updated MCUboot to feed the watchdog more aggressively during the following time-consuming operations, to prevent a watchdog timeout:
 

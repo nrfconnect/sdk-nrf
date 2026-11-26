@@ -1,0 +1,16 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../dts/ram_load_memory_map.dtsi"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+		zephyr,sram = &cpuapp_sram_mcuboot_ram_region;
+		mcuboot,image-ram = &cpuapp_sram_app_rxm_region;
+		zephyr,bootloader-info = &boot_info0;
+	};
+};

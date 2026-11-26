@@ -1,0 +1,43 @@
+common:
+  sysbuild: true
+  harness: ztest
+  tags:
+    - mcuboot
+    - bl_mpc
+    - ci_tests_subsys_bootloader
+
+tests:
+  # jlink_reflash: after boot, MPC00 blocks probe writes to the slots; only a halt-at-reset
+  # runner (for example J-Link) can reflash the DK.
+  bl_mpc.mcuboot.swap:
+    harness_config:
+      fixture: jlink_reflash
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+  bl_mpc.mcuboot.swap.build:
+    build_only: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  bl_mpc.mcuboot.ram_load:
+    harness_config:
+      fixture: jlink_reflash
+    extra_args:
+      - FILE_SUFFIX=ram_load
+      - SB_CONFIG_MCUBOOT_MODE_RAM_LOAD=y
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+  bl_mpc.mcuboot.direct_xip:
+    build_only: true
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
