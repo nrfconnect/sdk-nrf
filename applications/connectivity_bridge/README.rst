@@ -3,7 +3,7 @@
 .. ncs-sample::
    :title: Connectivity bridge
 
-   The Connectivity bridge application demonstrates the bridge functionality for the Thingy:91 and Thingy:91 X hardwares.
+   The Connectivity bridge application demonstrates the bridge functionality for the Thingy:91 X hardware.
 
    Additionally, the application also provides an option of adding the Bluetooth® functionality by making use of the :ref:`nus_service_readme`.
 
@@ -23,8 +23,6 @@ The mapping of the UART interfaces is done in the following way:
      - CDC_0
    * - UART_1
      - CDC_1
-
-See :ref:`thingy91_serialports` for information on the baud rate configuration for Thingy:91 serial ports.
 
 The application adds the functionality of a USB Mass Storage device, which contains several utility files such as a :file:`README.txt` file.
 
@@ -46,7 +44,7 @@ It can be turned on at runtime by setting the appropriate option in the :file:`C
 Requirements
 ************
 
-The sample supports the following nRF52840-based device:
+The sample supports the following device:
 
 .. table-from-sample-yaml::
 

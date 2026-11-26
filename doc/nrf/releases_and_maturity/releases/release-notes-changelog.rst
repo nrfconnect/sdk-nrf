@@ -418,6 +418,8 @@ Connectivity bridge
 * Fixed an issue on the Thingy:91 X where the CMSIS-DAP interface could not connect to the nRF91 Series SiP.
   The connection failed because the SiP was held in reset while the debug port was enabled.
 
+* Removed support for the Thingy:91.
+
 High-Performance Framework (HPF)
 --------------------------------
 
