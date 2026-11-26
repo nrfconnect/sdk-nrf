@@ -40,6 +40,17 @@ tests:
   sample.benchmarks.power_consumption.ram_powerdown_used:
     extra_configs:
       - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_USED_ONLY=y
+  sample.benchmarks.power_consumption.lfxo_pixo:
+    filter: not CONFIG_TRUSTED_EXECUTION_NONSECURE
+    extra_args:
+      - platform:nrf7120dk/nrf7120/cpuapp:EXTRA_DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuapp_lfxo_pixo.overlay"
+      - platform:nrf7120dk/nrf7120e/cpuapp:EXTRA_DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120e_cpuapp_lfxo_pixo.overlay"
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Power consumption demo ready."
+        - 'Woken up 2 time\(s\)'
   #
   # Configurations to use in CI with Power Profiler Kit
   #
