@@ -39,6 +39,43 @@ struct bt_hci_cp_set_power_control_request_param {
 	uint8_t apr_margin;
 } __packed;
 
+#if defined(CONFIG_BT_NRF_LE_POWER_CONTROL_EXT)
+/* The commands of the LE Power Control extensions are sub-commands of one vendor-specific
+ * command. The first parameter of each sub-command is its sub-opcode.
+ */
+#define BT_HCI_OP_POWER_CONTROL_EXT_COMMAND	BT_OP(BT_OGF_VS, 0x0125)
+
+#define BT_HCI_POWER_CONTROL_EXT_SET_CONN_REQUEST_PARAMS	0x00
+#define BT_HCI_POWER_CONTROL_EXT_SET_CONN_TX_POWER_BOUNDS	0x01
+#define BT_HCI_POWER_CONTROL_EXT_RSP_REPORT_ENABLE		0x02
+
+struct bt_hci_cp_set_conn_power_control_request_param {
+	uint8_t sub_opcode;
+	uint16_t handle;
+	uint8_t auto_enable;
+	uint8_t apr_enable;
+	uint16_t beta;
+	int8_t lower_limit;
+	int8_t upper_limit;
+	int8_t lower_target_rssi;
+	int8_t upper_target_rssi;
+	uint16_t wait_period_ms;
+	uint8_t apr_margin;
+} __packed;
+
+struct bt_hci_cp_set_conn_tx_power_bounds {
+	uint8_t sub_opcode;
+	uint16_t handle;
+	int8_t min_tx_power;
+	int8_t max_tx_power;
+} __packed;
+
+struct bt_hci_cp_power_control_rsp_report_enable {
+	uint8_t sub_opcode;
+	uint8_t enable;
+} __packed;
+#endif /* CONFIG_BT_NRF_LE_POWER_CONTROL_EXT */
+
 /**
  * @}
  */

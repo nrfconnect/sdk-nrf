@@ -1797,6 +1797,13 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 		return sdc_hci_cmd_vs_write_remote_tx_power((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_SET_POWER_CONTROL_REQUEST_PARAMS:
 		return sdc_hci_cmd_vs_set_power_control_request_params((void *)cmd_params);
+#if defined(CONFIG_BT_NRF_LE_POWER_CONTROL_EXT)
+	case SDC_HCI_OPCODE_CMD_VS_POWER_CONTROL_EXT_COMMAND:
+		return sdc_hci_cmd_vs_power_control_ext_command(
+			(sdc_hci_cmd_vs_power_control_ext_command_t const *)cmd_params,
+			event_out_params,
+			param_length_out);
+#endif /* CONFIG_BT_NRF_LE_POWER_CONTROL_EXT */
 	case SDC_HCI_OPCODE_CMD_VS_READ_AVERAGE_RSSI:
 		*param_length_out += sizeof(sdc_hci_cmd_vs_read_average_rssi_return_t);
 		return sdc_hci_cmd_vs_read_average_rssi((void *)cmd_params,

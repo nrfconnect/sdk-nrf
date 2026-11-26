@@ -22,3 +22,16 @@ config BT_NRF_CONN_SET_LTK
 	depends on BT_SMP
 	help
 	  Enables the bt_nrf_conn_set_ltk() API.
+
+config BT_NRF_LE_POWER_CONTROL_EXT
+	bool "LE Power Control extensions [EXPERIMENTAL]"
+	depends on BT_TRANSMIT_POWER_CONTROL || BT_CTLR_LE_POWER_CONTROL
+	depends on !BT_LL_SOFTDEVICE || BT_LL_SOFTDEVICE_MULTIROLE
+	select EXPERIMENTAL
+	help
+	  Enables the bt_conn_set_conn_power_control_request_params(),
+	  bt_conn_set_tx_power_bounds() and bt_nrf_power_control_rsp_report_enable() APIs,
+	  and the vendor-specific HCI command that they use in the SoftDevice Controller.
+	  Only the multirole library of the SoftDevice Controller supports it.
+	  When the host and the controller are built as separate images, enable this option in
+	  both images.
