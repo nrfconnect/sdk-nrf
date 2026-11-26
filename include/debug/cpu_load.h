@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 /**
- * @defgroup cpu_load CPU load
+ * @defgroup ncs_cpu_load CPU load
  * @brief Module for measuring CPU load.
  *
  * @{
