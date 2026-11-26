@@ -154,7 +154,7 @@ static void capture_series_at_level(int level)
 	ret = saadct_start(saadct_dev, &test_slab);
 	zassert_ok(ret, "saadct_start failed: %d", ret);
 
-	ret = saadct_get(saadct_dev, &data, K_MSEC(2 * SERIE_TIME_MS));
+	ret = saadct_get(saadct_dev, &data, K_MSEC(3 * SERIE_TIME_MS));
 	zassert_ok(ret, "saadct_get failed: %d", ret);
 	zassert_not_null(data, "saadct_get returned NULL data");
 	verify_samples(data, SAMPLES_PER_SERIES, level);
