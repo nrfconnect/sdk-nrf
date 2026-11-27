@@ -56,19 +56,19 @@ The sample shows the following output:
    Modem trace backend sample started
    Connecting to network
    LTE mode changed to 1
-   Traces received:   9.2kB, 18.4kB/s, CPU-load:  6.48%
-   Traces received:  14.4kB, 10.3kB/s, CPU-load:  3.65%
-   Traces received:  36.7kB, 44.3kB/s, CPU-load:  6.36%
-   Traces received:  51.6kB, 29.4kB/s, CPU-load:  5.72%
-   Traces received:  65.9kB, 28.3kB/s, CPU-load:  5.00%
-   Traces received:  67.5kB,  3.3kB/s, CPU-load:  2.34%
-   Traces received:  68.6kB,  2.1kB/s, CPU-load:  2.10%
-   Traces received:  70.0kB,  2.7kB/s, CPU-load:  2.12%
-   Traces received:  71.5kB,  3.0kB/s, CPU-load:  2.23%
-   Traces received:  74.2kB,  5.4kB/s, CPU-load:  2.60%
-   Traces received:  81.8kB, 15.1kB/s, CPU-load:  3.38%
-   Traces received:  82.2kB,  0.7kB/s, CPU-load:  1.64%
-   Traces received:  83.9kB,  3.4kB/s, CPU-load:  2.37%
+   Traces received:   9.2kB, 18.4kB/s, CPU-load:  6.5%
+   Traces received:  14.4kB, 10.3kB/s, CPU-load:  3.7%
+   Traces received:  36.7kB, 44.3kB/s, CPU-load:  6.4%
+   Traces received:  51.6kB, 29.4kB/s, CPU-load:  5.7%
+   Traces received:  65.9kB, 28.3kB/s, CPU-load:  5.0%
+   Traces received:  67.5kB,  3.3kB/s, CPU-load:  2.3%
+   Traces received:  68.6kB,  2.1kB/s, CPU-load:  2.1%
+   Traces received:  70.0kB,  2.7kB/s, CPU-load:  2.1%
+   Traces received:  71.5kB,  3.0kB/s, CPU-load:  2.2%
+   Traces received:  74.2kB,  5.4kB/s, CPU-load:  2.6%
+   Traces received:  81.8kB, 15.1kB/s, CPU-load:  3.4%
+   Traces received:  82.2kB,  0.7kB/s, CPU-load:  1.6%
+   Traces received:  83.9kB,  3.4kB/s, CPU-load:  2.4%
    LTE mode changed to 0
    Custom trace backend deinitialized
    Bye
@@ -79,7 +79,6 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`nrf_modem_lib_readme`
-* :ref:`cpu_load`
 
 It uses the following `sdk-nrfxlib`_ library:
 
@@ -89,6 +88,7 @@ It uses the following Zephyr library:
 
 * :ref:`workqueues_v2`
 * :ref:`float_v2`
+* :ref:`zephyr:cpu_load`
 
 In addition, it uses the following secure firmware component:
 
