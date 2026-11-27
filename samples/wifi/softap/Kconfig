@@ -49,7 +49,7 @@ config SOFTAP_SAMPLE_CHANNEL
 
 config SOFTAP_SAMPLE_SSID
 	string "SoftAP SSID"
-	default "Myssid"
+	default "Myssid_softap"
 	help
 	  Set the SSID (Service Set Identifier) for the SoftAP.
 	  This is the name that will be broadcasted for client(s) to connect.
