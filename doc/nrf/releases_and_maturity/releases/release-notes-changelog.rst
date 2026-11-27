@@ -165,7 +165,11 @@ Developing with Front-End Modules
 =================================
 
 * Added support for TX/RX bypass for the SKY66409-11 FEM on the nRF54L Series devices.
-* Removed support for the nRF2220 Front-End Module (FEM).
+
+* Removed:
+
+  * Support for the nRF2220 Front-End Module (FEM).
+  * Support for the nRF52 Series devices.
 
 Developing with custom boards
 =============================
