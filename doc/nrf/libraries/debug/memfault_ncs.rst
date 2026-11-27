@@ -136,7 +136,7 @@ The Kconfig options for Memfault that are defined in |NCS| provide some addition
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS`
 
-.. _snippet-memfault-coredump:
+.. _memfault_ncs_flash_backed_coredump:
 
 Flash-backed coredump storage
 -----------------------------

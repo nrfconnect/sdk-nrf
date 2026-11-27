@@ -191,6 +191,7 @@ external_content_contents = [
     (NRF_BASE, "boards/nordic/**/doc/*.rst"),
     (NRF_BASE, "samples/**/*.rst"),
     (NRF_BASE, "scripts/**/*.rst"),
+    (NRF_BASE, "snippets/**/*.rst"),
     (NRF_BASE, "tests/**/*.rst"),
 ]
 external_content_keep = ["versions.txt"]
@@ -245,6 +246,7 @@ gh_link_prefixes = {
     "applications/.*": "",
     "samples/.*": "",
     "scripts/.*": "",
+    "snippets/.*": "",
     "tests/.*": "",
     "boards/.*": "",
     ".*": "doc/nrf",

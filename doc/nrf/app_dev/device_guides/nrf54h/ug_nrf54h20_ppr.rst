@@ -23,6 +23,7 @@ Bootstrapping the PPR core
 
 The |NCS| provides a PPR snippet that adds the overlay needed for bootstrapping the PPR core.
 The primary purpose of this snippet is to enable the transfer of the PPR code to the designated memory region (if required) and to initiate the PPR core.
+see :ref:`ug_snippets` for more details where these snippets are documented.
 
 When building for the ``nrf54h20dk/nrf54h20/cpuppr`` target, a minimal sample is automatically loaded onto the application core.
 For more details, see :ref:`building_nrf54h_app_ppr_core`.
@@ -63,10 +64,10 @@ This section explains how to build and program both cores, covering separate bui
 The PPR core supports two variants:
 
 * ``nrf54h20dk/nrf54h20/cpuppr``: PPR runs from ``RAM_30`` (recommended method).
-  The application core image must include the ``nordic-ppr`` :ref:`snippet <app_build_snippets>`.
+  The application core image must include the ``nordic-ppr`` snippet (:ref:`snippet-nordic-ppr`).
 
 * ``nrf54h20dk/nrf54h20/cpuppr/xip``: PPR runs from MRAM.
-  The application core image must include the ``nordic-ppr-xip`` snippet.
+  The application core image must include the ``nordic-ppr-xip`` snippet (:ref:`snippet-nordic-ppr`).
 
 Standard build
 --------------

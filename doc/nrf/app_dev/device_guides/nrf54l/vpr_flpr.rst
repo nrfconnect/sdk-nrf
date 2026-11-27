@@ -81,8 +81,9 @@ However, the application core build must incorporate an overlay that enables the
 Bootstrapping the FLPR core
 ===========================
 
-The |NCS| provides an FLPR snippet that adds an overlay required for bootstrapping the FLPR core.
+The |NCS| provides an FLPR snippets (``nordic-flpr`` and ``nordic-flpr-xip``) that add an overlay required for bootstrapping the FLPR core.
 Snippet's primary function is to enable the code that transfers the FLPR code to the designated region (if necessary) and to initiate the FLPR core.
+see :ref:`ug_snippets` for more details where these snippets are documented.
 
 When building for the ``<board target>/cpuflpr`` or ``<board target>/cpuflpr/xip``, where *board target* depends on the device you are using, a minimal sample is automatically loaded onto the application core.
 See more information on :ref:`building_nrf54l_app_flpr_core`.

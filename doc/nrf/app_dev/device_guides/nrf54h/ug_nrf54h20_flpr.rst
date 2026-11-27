@@ -37,8 +37,9 @@ Building the FLPR target is similar to building the application core, but the ap
 Bootstrapping the FLPR core
 ===========================
 
-The |NCS| provides a FLPR snippet that adds the overlay needed for bootstrapping the FLPR core.
+The |NCS| provides a FLPR snippets (``nordic-flpr`` and ``nordic-flpr-xip``) that adds the overlay needed for bootstrapping the FLPR core.
 The primary purpose of this snippet is to enable the transfer of the FLPR code to the designated memory region (if required) and initiate the FLPR core.
+see :ref:`ug_snippets` for more details where these snippets are documented.
 
 When building for the ``nrf54h20dk/nrf54h20/cpuflpr`` target, a minimal sample is automatically loaded onto the application core.
 For more details, see :ref:`building_nrf54h_app_flpr_core`.
@@ -84,10 +85,10 @@ This section explains how to build and program both cores, covering separate bui
 The FLPR core supports two variants:
 
 * ``nrf54h20dk/nrf54h20/cpuflpr``: FLPR runs from RAM_21 (recommended method).
-  The application core image must include the ``nordic-flpr`` :ref:`snippet <app_build_snippets>`.
+  The application core image must include the ``nordic-flpr`` snippet (:ref:`nordic-flpr`).
 
 * ``nrf54h20dk/nrf54h20/cpuflpr/xip``: FLPR runs from MRAM.
-  The application core image must include the ``nordic-flpr-xip`` snippet.
+  The application core image must include the ``nordic-flpr-xip`` snippet (:ref:`nordic-flpr-xip`).
 
 Standard build
 --------------

@@ -78,7 +78,7 @@ In this case the upload of the firmware patch from the external memory to the nR
 1. The firmware patch is loaded from the external memory onto internal RAM.
 #. The firmware patch is uploaded to the nRF70 device.
 
-You can enable this feature using the :ref:`app_build_snippets` feature.
+You can enable this feature using the :ref:`snippet-nrf70-fw-patch-ext-flash` snippet, which provides a working starting point for the configuration described in this section.
 
 Configuration
 -------------
@@ -107,31 +107,15 @@ The partition node must use the node label ``nrf70_wifi_fw_partition`` (see the 
    };
 
 Adjust the parent node (for example, ``&mx25r64``), as well as the offsets and sizes, to match your board's external flash layout.
-The ``nrf70-fw-patch-ext-flash`` snippet provides a working starting point, together with the devicetree ``chosen`` property ``nordic,pm-ext-flash``.
+The ``nrf70-fw-patch-ext-flash`` (:ref:`snippet-nrf70-fw-patch-ext-flash`) snippet provides a working starting point, together with the devicetree ``chosen`` property ``nordic,pm-ext-flash``.
 
 Building
 --------
 
 See :ref:`nrf7002dk_nrf5340` for general instructions on building.
 
-Additionally, you can build the sample using the ``nrf70-fw-patch-ext-flash`` snippet and set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option to ``y``.
-
-For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with the ``nrf70-fw-patch-ext-flash`` snippet enabled, run the following commands.
-
-With west
-^^^^^^^^^
-
-.. code-block:: console
-
-    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SHIELD=nrf7002ek -Dshell_SNIPPET="nrf70-fw-patch-ext-flash"
-
-With CMake
-^^^^^^^^^^
-
-.. code-block:: console
-
-    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dshell_SHIELD=nrf7002ek -Dshell_SNIPPET="nrf70-fw-patch-ext-flash"
-    ninja -C build
+Additionally, you can build the sample using the ``nrf70-fw-patch-ext-flash`` (:ref:`snippet-nrf70-fw-patch-ext-flash`) snippet and set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option to ``y``.
+The snippet page shows the build commands for the :ref:`wifi_shell_sample` sample on the nRF5340 DK with the nRF7002 EK shield.
 
 Programming
 -----------

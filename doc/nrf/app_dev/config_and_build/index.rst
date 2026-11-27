@@ -41,5 +41,6 @@ Make sure to consider :ref:`app_bootloaders` and :ref:`app_dfu` already at this 
    hardware/index
    kconfig/index
    sysbuild/index
+   snippets
    building
    output_build_files

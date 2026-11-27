@@ -37,11 +37,11 @@ The FLPR core supports two variants:
 
 * ``<board target>/cpuflpr``, where *board target* depends on the device you are using.
   In this variant, FLPR runs from SRAM, which is the recommended method.
-  To build FLPR image with this variant, the application core image must include the ``nordic-flpr`` :ref:`snippet <app_build_snippets>`.
+  To build FLPR image with this variant, the application core image must include the ``nordic-flpr`` snippet (:ref:`nordic-flpr`).
 
 * ``<board target>/cpuflpr/xip``, where *board target* depends on the device you are using.
   In this variant, FLPR runs from RRAM.
-  To build FLPR image with this variant, the application core image must include the ``nordic-flpr-xip`` snippet.
+  To build FLPR image with this variant, the application core image must include the ``nordic-flpr-xip`` snippet (:ref:`nordic-flpr-xip`).
 
 Standard build
 --------------

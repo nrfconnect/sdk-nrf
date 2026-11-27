@@ -21,81 +21,26 @@ Enable debug features
 The nRF Wi-Fi driver, WPA supplicant, and networking stack have debug features that can be enabled to help debug issues.
 
 You can enable debug features by using the :ref:`app_build_snippets` feature.
+The |NCS| provides the following snippets for this purpose:
 
-For example, to build the :ref:`wifi_shell_sample` sample for the nRF7002 DK with debugging enabled, run the following commands.
+* :ref:`snippet-wpa-supplicant-debug` (``wpa-supplicant-debug``) - Enables the WPA supplicant debug logs.
+  The WPA supplicant manages the Wi-Fi® connection and is responsible for the 802.11 protocol.
+  Use this snippet to debug issues related to the Wi-Fi connection, such as failure to initiate, failed connections, or disconnections.
+* :ref:`snippet-nrf70-driver-debug` (``nrf70-driver-verbose-debug``) - Enables the driver debug logs.
+  The nRF Wi-Fi driver manages the data path and control path between the host and the nRF70 firmware.
+  Use this snippet to debug issues related to the data path and control path, such as not receiving or sending packets, failures in sending commands, or not receiving events.
+* :ref:`snippet-nrf70-driver-verbose-debug` (``nrf70-driver-debug``) - Enables the driver debug logs and, in addition, the BUS interface level debug logs.
 
+see :ref:`ug_snippets` for more details where these snippets are documented.
 
-WPA supplicant debug logs
-=========================
-
-The WPA supplicant manages the Wi-Fi® connection and is responsible for the 802.11 protocol.
-To debug issues related to the Wi-Fi connection, such as failure to initiate, failed connections, or disconnections, you can enable WPA supplicant debug logs.
-To build with WPA supplicant debug logs enabled, run the following commands:
-
-With west
-
- .. code-block:: console
-
-    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SNIPPET="wpa-supplicant-debug"
-
-With CMake
-
- .. code-block:: console
-
-    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dshell_SNIPPET="wpa-supplicant-debug" samples/wifi/shell
-    ninja -C build
-
-.. note::
-
-   By default, this feature enables the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option, which can help prevent log buffer overflows.
-   However, it may impact system timing and performance.
-   If you experience issues with the system timing or performance, you can disable this option by setting the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option to ``n`` in your project configuration file.
-
-Driver debug logs
-=================
-
-The nRF Wi-Fi driver manages the data path and control path between the host and the nRF70 firmware.
-To debug issues related to the data path and control path, such as not receiving or sending packets, failures in sending commands, or not receiving events, you can enable driver debug logs.
-To build with driver verbose, firmware interface, and BUS interface debug logs enabled, run the following commands:
-
-Basic driver debug
-------------------
-
-With west
-
- .. code-block:: console
-
-    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SNIPPET="nrf70-driver-debug"
-
-With CMake
-
- .. code-block:: console
-
-    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dshell_SNIPPET="nrf70-driver-debug" samples/wifi/shell
-    ninja -C build
-
-BUS interface level debug
--------------------------
-
-With west
-
- .. code-block:: console
-
-    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SNIPPET="nrf70-driver-verbose-debug"
-
-With CMake
-
- .. code-block:: console
-
-    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dshell_SNIPPET="nrf70-driver-verbose-debug" samples/wifi/shell
-    ninja -C build
+Each snippet page lists the Kconfig options that the snippet sets and shows how to build the :ref:`wifi_shell_sample` sample with the snippet applied.
 
 Statistics
-==========
+**********
 
 The nRF Wi-Fi driver, firmware, and networking stack have statistics feature that can be enabled to help debug issues.
 
-You can enable statistics by using either the ``wpa-supplicant-debug``, ``nrf70-driver-verbose-debug``, or ``nrf70-driver-debug`` snippets.
+You can enable statistics by using either the ``wpa-supplicant-debug``, ``nrf70-driver-verbose-debug``, or ``nrf70-driver-debug`` snippet.
 See `Enable debug features`_.
 
 .. list-table:: Statistics table

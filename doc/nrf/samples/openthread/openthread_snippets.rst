@@ -3,21 +3,14 @@
 OpenThread snippet collection
 #############################
 
-This page lists and documents the available OpenThread-related snippets in this directory.
-The snippets in this directory are small code or configuration blocks that you can use to enable or configure specific OpenThread features or architectures in your application.
+The OpenThread-related snippets are small code or configuration blocks that you can use to enable or configure specific OpenThread features or architectures in your application.
+They are documented together with the other |NCS| snippets on the :ref:`ug_snippets` page.
 
-You can use the snippets only with the OpenThread samples.
+See the following pages for the snippets that you can use with the OpenThread samples:
 
-See each snippet for more detailed information and usage instructions:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Subpages
-   :glob:
-
-   openthread_ci_snippet
-   openthread_debug_snippet
-   openthread_diag_gpio_snippet
-   openthread_logging_snippet
-   openthread_usb_snippet
-   openthread_zephyr_l2_snippet
+* :ref:`snippet_ot_ci` - Disables the boot banner and the shell prompt.
+* :ref:`snippet_ot_debug` - Enables the :c:func:`__ASSERT` statements, multithread support in GDB, and thread monitoring.
+* :ref:`snippet_ot_diag_gpio` - Configures the DK buttons and LEDs for the diagnostic GPIO commands.
+* :ref:`snippet_ot_logging` - Enables RTT logging for the OpenThread stack.
+* :ref:`snippet_ot_usb` - Enables the USB CDC ACM transport.
+* :ref:`snippet_ot_zephyr_l2` - Enables the Zephyr networking layer.
