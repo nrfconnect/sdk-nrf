@@ -49,6 +49,10 @@ IMAGE="${PIP_COMPILE_DOCKER_IMAGE:-python:${PYTHON_VERSION}}"
 
 DOCKER_PLATFORM="${DOCKER_PLATFORM:-linux/amd64}"
 
+# Zephyr requirements left out of the toolchain.
+# spsdk (NXP only) needs chardet<6, which conflicts with libusb>=1.0.30.
+EXCLUDED_PACKAGES=(spsdk)
+
 echo "NCS workspace: $NCS_TOP"
 echo "Docker image:  $IMAGE (platform: $DOCKER_PLATFORM)"
 echo "Output file:   $OUT_FILE"
@@ -65,6 +69,7 @@ DOCKER_ARGS=(
   -e OUT_FILE="$OUT_FILE"
   -e INDEX_URL="$INDEX_URL"
   -e INTERACTIVE="$INTERACTIVE"
+  -e EXCLUDED_PACKAGES="${EXCLUDED_PACKAGES[*]}"
 )
 
 if [[ "$INTERACTIVE" == 1 ]]; then
@@ -78,6 +83,19 @@ exec docker run "${DOCKER_ARGS[@]}" "$IMAGE" -lc '
   python -m pip install -U pip setuptools wheel
   pip install --index-url "$INDEX_URL" \
     "pip-compile-cross-platform==1.4.2+nordic.3" --upgrade
+
+  # Compile from /work, which has filtered copies of the Zephyr requirements.
+  # Paths stay relative, so the command recorded in the output file is unchanged.
+  mkdir -p /work/zephyr/scripts
+  ln -s /ncs/bootloader /ncs/nrf /work/
+  exclude_re="^[[:space:]]*(${EXCLUDED_PACKAGES// /|})[[:space:]]*([<>=!~;[]|$)"
+  for req in zephyr/scripts/requirements*.txt; do
+    grep -Eiv "$exclude_re" "$req" > "/work/$req" || true
+    if ! cmp -s "$req" "/work/$req"; then
+      echo "Excluded ${EXCLUDED_PACKAGES} from $req"
+    fi
+  done
+  cd /work
 
   if [[ "$INTERACTIVE" == 1 ]]; then
     cat <<EOF

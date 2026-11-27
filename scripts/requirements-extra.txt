@@ -1,13 +1,14 @@
 --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
 
 pygit2>=1.15.0
-Pillow>=10.3.0 #  https://github.com/advisories/GHSA-44wm-f244-xhp3
+Pillow>=13.0.0 #  https://github.com/advisories/GHSA-44wm-f244-xhp3
 editdistance>=0.5.0
 PyGithub
-pyasn1==0.6.4
+pyasn1==0.6.5
 jinja2>=3.1.6 # https://github.com/advisories/GHSA-cpwx-vrp4-4pq7
 zcbor>=0.8.0
-nrfcredstore>=2.0.6
-nrfcloud-utils>=3.0.12
+nrfcredstore>=3.1.0
+nrfcloud-utils>=4.0.0
+pynrfjprog>=10.24.2
 idna>=3.7 # https://github.com/advisories/GHSA-jjg7-2v4v-x38h
 python-path>=0.1.3

@@ -7,8 +7,8 @@ construct>=2.10.70
 cryptography>=46.0.1
 imagesize>=1.2.0
 intelhex
-pylint
-setuptools>=80.8.0
+pylint>=4.0.9
+setuptools>=84.1.0
 zcbor~=0.8.0
 nrf-regtool==9.2.1
 windows-curses; sys_platform == 'win32'
