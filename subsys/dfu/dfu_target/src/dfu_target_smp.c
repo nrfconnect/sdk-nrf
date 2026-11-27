@@ -29,6 +29,8 @@ struct upload_progress {
 };
 
 static struct upload_progress upload_state;
+/* Image number given to dfu_target_smp_init() for the last upload, the image to schedule */
+static uint32_t update_image_num;
 static struct mcumgr_image_data image_info[CONFIG_DFU_TARGET_SMP_IMAGE_LIST_SIZE];
 static int image_count;
 static bool recovery_mode_active;
@@ -110,9 +112,20 @@ int dfu_target_smp_init(size_t file_size, int img_num, dfu_target_callback_t cb)
 	}
 
 	if (dfu_target_reset_cb) {
+		/* Recovery mode uploads to the secondary slot of image 0 */
+		if (img_num != 0) {
+			return -ENOTSUP;
+		}
 		upload_state.image_num = 2;
 	} else {
 		upload_state.image_num = (uint32_t)img_num;
+	}
+
+	/* A zero file size is not an upload: the target is re-initialized that way
+	 * before a schedule or reset request. Keep the uploaded image number.
+	 */
+	if (file_size != 0) {
+		update_image_num = (uint32_t)img_num;
 	}
 
 	upload_state.image_size = file_size;
@@ -194,14 +207,14 @@ end:
 	return smp_err_to_errno(rc);
 }
 
-static struct mcumgr_image_data *discover_secondary_image_info(void)
+static struct mcumgr_image_data *discover_secondary_image_info(uint32_t img_num)
 {
 	if (!image_count) {
 		return NULL;
 	}
 
 	for (int i = 0; i < image_count; i++) {
-		if (image_info[i].slot_num == 0) {
+		if (image_info[i].img_num != img_num || image_info[i].slot_num == 0) {
 			continue;
 		}
 		return &image_info[i];
@@ -216,8 +229,10 @@ int dfu_target_smp_schedule_update(int img_num)
 	struct mcumgr_image_state res_buf;
 	struct mcumgr_image_data *secondary_image;
 
-	/* Discover always Secondary image */
-	secondary_image = discover_secondary_image_info();
+	ARG_UNUSED(img_num);
+
+	/* Discover the secondary slot of the uploaded image */
+	secondary_image = discover_secondary_image_info(update_image_num);
 	/* Test functionality here */
 	if (!secondary_image) {
 		LOG_ERR("Secondary Image info not available");
@@ -230,7 +245,7 @@ int dfu_target_smp_schedule_update(int img_num)
 	}
 
 	LOG_INF("MCUBoot image-%d upgrade scheduled. Reset device to apply",
-		secondary_image->slot_num);
+		secondary_image->img_num);
 
 	err = img_mgmt_client_state_write(&img_gr_client, secondary_image->hash,
 					  secondary_image->hash_len, false, &res_buf);
