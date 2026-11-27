@@ -513,7 +513,7 @@
 /lib/modem_attest_token/                  @nrfconnect/ncs-modem
 /lib/modem_battery/                       @nrfconnect/ncs-modem
 /lib/modem_info/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
-/lib/modem_jwt/                           @nrfconnect/ncs-iot-oulu @nrfconnect/ncs-modem
+/lib/modem_jwt/                           @nrfconnect/ncs-lr-app-domain @nrfconnect/ncs-modem
 /lib/modem_key_mgmt/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
 /lib/nrf71_idle_power/                    @nrfconnect/ncs-wcg-drivers
@@ -615,11 +615,11 @@
 /samples/cellular/gnss/                   @nrfconnect/ncs-modem-tre
 /samples/cellular/location/               @nrfconnect/ncs-modem-tre
 /samples/cellular/lwm2m_carrier/          @nrfconnect/ncs-carrier
-/samples/cellular/lwm2m_client/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
+/samples/cellular/lwm2m_client/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-lr-app-domain
 /samples/cellular/modem_shell/            @nrfconnect/ncs-modem-tre
 /samples/cellular/nidd/                   @stig-bjorlykke
 /samples/cellular/nrf_cloud_*             @nrfconnect/ncs-nrf-cloud
-/samples/cellular/nrf_device_provisioning/ @nrfconnect/ncs-iot-oulu
+/samples/cellular/nrf_device_provisioning/ @nrfconnect/ncs-lr-app-domain
 /samples/cellular/modem_trace_flash/      @nrfconnect/ncs-modem
 /samples/cellular/sms/                    @nrfconnect/ncs-modem-tre
 /samples/cellular/system_off/             @nrfconnect/ncs-modem-tre
@@ -1025,7 +1025,7 @@
 /subsys/net/lib/downloader/               @nrfconnect/ncs-modem
 /subsys/net/lib/hostap_crypto/            @krish2718 @jukkar
 /subsys/net/lib/icalendar_parser/         @lats1980
-/subsys/net/lib/lwm2m_client_utils/       @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
+/subsys/net/lib/lwm2m_client_utils/       @nrfconnect/ncs-co-networking @nrfconnect/ncs-lr-app-domain
 /subsys/net/lib/nrf70_fw_ext/             @nrfconnect/ncs-wcg-drivers
 /subsys/net/lib/nrf_cloud/                @nrfconnect/ncs-nrf-cloud
 /subsys/net/lib/nrf_cloud/mqtt/           @nrfconnect/ncs-bifrost
@@ -1113,7 +1113,7 @@
 /tests/lib/lte_lc_pdn/                    @nrfconnect/ncs-modem-tre @nrfconnect/ncs-modem
 /tests/lib/modem_battery/                 @nrfconnect/ncs-modem
 /tests/lib/modem_info/                    @nrfconnect/ncs-modem
-/tests/lib/modem_jwt/                     @nrfconnect/ncs-iot-oulu
+/tests/lib/modem_jwt/                     @nrfconnect/ncs-lr-app-domain
 /tests/lib/modem_key_mgmt/                @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /tests/lib/nrf_802154_callbacks_dispatcher/ @nrfconnect/ncs-thread
 /tests/lib/nrf_fuel_gauge/                @nordic-auko
@@ -1167,7 +1167,7 @@
 /tests/subsys/net/lib/dect/tether_ipv6/   @nrfconnect/ncs-dect-nr-plus
 /tests/subsys/net/lib/downloader/         @nrfconnect/ncs-modem
 /tests/subsys/net/lib/fota_download/      @nrfconnect/ncs-eris
-/tests/subsys/net/lib/lwm2m_*/            @nrfconnect/ncs-iot-oulu
+/tests/subsys/net/lib/lwm2m_*/            @nrfconnect/ncs-lr-app-domain
 /tests/subsys/net/lib/mcumgr_smp_client/  @nrfconnect/ncs-modem
 /tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-modem
 /tests/subsys/net/lib/nrf_cloud/          @nrfconnect/ncs-nrf-cloud
