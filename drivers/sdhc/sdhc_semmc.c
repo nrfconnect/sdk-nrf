@@ -14,6 +14,7 @@
 #include <zephyr/sys/util.h>
 
 #include <nrf_semmc.h>
+#include <softperipheral_regif.h>
 #if defined(CONFIG_SOC_SERIES_NRF54L)
 #include <hal/nrf_memconf.h>
 #include <hal/nrf_spu.h>
@@ -24,12 +25,10 @@ LOG_MODULE_REGISTER(sdhc_semmc, CONFIG_SDHC_LOG_LEVEL);
 
 #define VPR_NODE DT_NODELABEL(cpuflpr_vpr)
 
-#define FREQUENCY_MIN  KHZ(100)
-#if defined(CONFIG_SOC_SERIES_NRF54L)
-#define FREQUENCY_MAX  MHZ(32)
-#else
-#define FREQUENCY_MAX  MHZ(80)
-#endif
+#define FREQ_DIV_MIN 4
+#define FREQ_MIN     KHZ(100)
+#define FREQ_MAX     (SP_VPR_BASE_FREQ_HZ / FREQ_DIV_MIN)
+#define FREQ_DEFAULT KHZ(400)
 
 struct sdhc_semmc_data {
 	struct k_sem finished;
@@ -74,6 +73,8 @@ static int send_request(const struct device *dev,
 	k_timeout_t timeout;
 	nrf_semmc_error_t err;
 	int rc;
+
+	LOG_DBG("CMD%u/%08X", semmc_cmd->cmd, semmc_cmd->arg);
 
 	if (timeout_ms == SDHC_TIMEOUT_FOREVER) {
 		timeout = K_FOREVER;
@@ -146,33 +147,21 @@ static int _api_request(const struct device *dev,
 	case SD_RSP_TYPE_R5:
 		semmc_cmd.resp_type = NRF_SEMMC_RESP_R5;
 		break;
+	case SD_RSP_TYPE_R6:
+		semmc_cmd.resp_type = NRF_SEMMC_RESP_R6;
+		break;
+	case SD_RSP_TYPE_R7:
+		semmc_cmd.resp_type = NRF_SEMMC_RESP_R7;
+		break;
 	default:
 		LOG_ERR("Unsupported response type: 0x%02X",
 			cmd->response_type);
 		return -EINVAL;
 	}
 
-	/* For commands that read and write multiple blocks (CMD18 and CMD25,
-	 * respectively), the SD stack expects that they will be automatically
-	 * preceded by the host with CMD23 that sets the number of blocks (see
-	 * note in the implementation of card_read() in sd_ops.c).
-	 */
-	if (cmd->opcode == SD_READ_MULTIPLE_BLOCK ||
-	    cmd->opcode == SD_WRITE_MULTIPLE_BLOCK) {
-		nrf_semmc_cmd_desc_t blk_cnt_cmd = {
-			.cmd = SD_SET_BLOCK_COUNT,
-			.arg = data->blocks,
-			.resp_type = NRF_SEMMC_RESP_R1,
-			.resp_buffer = semmc_cmd.resp_buffer,
-		};
-
-		rc = send_request(dev, &blk_cnt_cmd, NULL, cmd->timeout_ms);
-		if (rc < 0) {
-			return rc;
-		}
-	}
-
-	if (data) {
+	if (data == NULL) {
+		rc = send_request(dev, &semmc_cmd, NULL, cmd->timeout_ms);
+	} else {
 		bool write = cmd->opcode == SD_WRITE_SINGLE_BLOCK ||
 			     cmd->opcode == SD_WRITE_MULTIPLE_BLOCK;
 		nrf_semmc_transfer_desc_t transfer = {
@@ -210,8 +199,28 @@ static int _api_request(const struct device *dev,
 						    buf_size,
 						    transfer.buffer);
 		}
-	} else {
-		rc = send_request(dev, &semmc_cmd, NULL, cmd->timeout_ms);
+
+		/* According to the SD specification, after a multiple blocks
+		 * command (read or write), no matter if successful or not,
+		 * the host should issue CMD12 (stop transmission) to force
+		 * the card to go back to "tran" state. The SD stack doesn't do
+		 * this itself, but expects the host driver to take care of it
+		 * (see note in card_read() in sd_ops.c).
+		 */
+		if (cmd->opcode == SD_READ_MULTIPLE_BLOCK ||
+		    cmd->opcode == SD_WRITE_MULTIPLE_BLOCK) {
+			nrf_semmc_cmd_desc_t stop_cmd = {
+				.cmd = SD_STOP_TRANSMISSION,
+				.resp_type = NRF_SEMMC_RESP_R1,
+				.resp_buffer = semmc_cmd.resp_buffer,
+			};
+			int rc2;
+
+			rc2 = send_request(dev, &stop_cmd, NULL, cmd->timeout_ms);
+			if (rc2 < 0) {
+				return rc2;
+			}
+		}
 	}
 
 	if (rc < 0) {
@@ -233,14 +242,6 @@ static int api_request(const struct device *dev,
 {
 	struct sdhc_semmc_data *dev_data = dev->data;
 	int rc, rc2;
-
-	/* During common SD initialization, CMD8 (SEND_IF_COND) is requested
-	 * with expected response R7. Since this driver only supports the MMC
-	 * protocol, indicate that such command in not supported.
-	 */
-	if ((cmd->response_type & SDHC_NATIVE_RESPONSE_MASK) == SD_RSP_TYPE_R7) {
-		return -ENOTSUP;
-	}
 
 	rc = pm_device_runtime_get(dev);
 	if (rc < 0) {
@@ -280,12 +281,29 @@ static int api_set_io(const struct device *dev, struct sdhc_io *ios)
 	nrf_semmc_config_t new_config = dev_data->semmc_config;
 
 	if (ios->clock) {
-		if (ios->clock < FREQUENCY_MIN ||
-		    ios->clock > FREQUENCY_MAX) {
+		if (ios->clock < FREQ_MIN ||
+		    ios->clock > FREQ_MAX) {
+			LOG_ERR("Unsupported frequency: %u", ios->clock);
 			return -EINVAL;
 		}
 
-		new_config.clk_freq_hz = ios->clock;
+		/* The sEMMC soft peripheral uses integer division (discarding
+		 * the fractional part) to calculate the frequency divider and
+		 * it requires the divider value to be even. Take this into
+		 * account when changing the frequency to be used in transfers,
+		 * so that the sEMMC can be reconfigured successfully.
+		 */
+		uint32_t freq_div = DIV_ROUND_UP(SP_VPR_BASE_FREQ_HZ,
+						 ios->clock);
+
+		if (freq_div & 1) {
+			++freq_div;
+		}
+
+		new_config.clk_freq_hz = SP_VPR_BASE_FREQ_HZ / freq_div;
+
+		LOG_DBG("set_io, freq req: %u Hz, act: %u Hz",
+			ios->clock, new_config.clk_freq_hz);
 	}
 
 	if (ios->bus_width) {
@@ -295,9 +313,6 @@ static int api_set_io(const struct device *dev, struct sdhc_io *ios)
 			break;
 		case SDHC_BUS_WIDTH4BIT:
 			new_config.bus_width = NRF_SEMMC_BUS_WIDTH_4;
-			break;
-		case SDHC_BUS_WIDTH8BIT:
-			new_config.bus_width = NRF_SEMMC_BUS_WIDTH_8;
 			break;
 		default:
 			LOG_ERR("Unsupported bus width: %d", ios->bus_width);
@@ -327,11 +342,11 @@ static int api_get_host_props(const struct device *dev,
 {
 	memset(props, 0, sizeof(*props));
 
-	props->f_min = FREQUENCY_MIN;
-	props->f_max = FREQUENCY_MAX;
+	props->f_min = FREQ_MIN;
+	props->f_max = FREQ_MAX;
 
 	props->bus_4_bit_support = 1;
-	props->host_caps.vol_180_support = 1;
+	props->host_caps.vol_330_support = 1;
 
 	return 0;
 }
@@ -369,16 +384,17 @@ static int dev_pm_action_cb(const struct device *dev,
 
 	if (IS_ENABLED(CONFIG_PM_DEVICE) &&
 	    action == PM_DEVICE_ACTION_SUSPEND) {
+		if (k_sem_take(&dev_data->ctx_lock, K_NO_WAIT) != 0) {
+			LOG_ERR("Controller in use, cannot be suspended");
+			return -EBUSY;
+		}
+
 		rc = pinctrl_apply_state(dev_config->pcfg,
 					 PINCTRL_STATE_SLEEP);
 		if (rc < 0) {
 			LOG_ERR("Cannot apply sleep pins state (%d)", rc);
+			k_sem_give(&dev_data->ctx_lock);
 			return rc;
-		}
-
-		if (k_sem_take(&dev_data->ctx_lock, K_NO_WAIT) != 0) {
-			LOG_ERR("Controller in use, cannot be suspended");
-			return -EBUSY;
 		}
 
 #if defined(CONFIG_SOC_SERIES_NRF54L)
@@ -407,7 +423,7 @@ static int dev_init(const struct device *dev)
 	int rc;
 	nrf_semmc_error_t err;
 
-	dev_data->semmc_config.clk_freq_hz = KHZ(400);
+	dev_data->semmc_config.clk_freq_hz = FREQ_DEFAULT;
 	dev_data->semmc_config.bus_width = NRF_SEMMC_BUS_WIDTH_1;
 
 	k_sem_init(&dev_data->finished, 0, 1);
