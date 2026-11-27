@@ -68,9 +68,14 @@ The MCUboot target type supports multiple image pairs, like the application core
 
 When the image data transfer is completed, the application using the DFU target library must do the following:
 
-1. Call the :c:func:`dfu_target_done` function to finish the image data collection.
-2. Call the :c:func:`dfu_target_schedule_update` function to mark the firmware as *ready to be booted*.
-   On the next reboot, the device will run with the new firmware.
+#. Call the :c:func:`dfu_target_done` function to finish the image data collection.
+#. Call the :c:func:`dfu_target_schedule_update` function to mark the firmware as *ready to be booted*.
+   This schedules a test upgrade.
+   On the next reboot, MCUboot runs the new firmware.
+#. After the new firmware starts, run application-specific checks and call the :c:func:`boot_write_img_confirmed` function to make the update permanent.
+
+   If the image is not confirmed, MCUboot can revert to the previously running firmware on a later reset (in MCUboot modes that support revert).
+   See :ref:`ug_fw_update_test_confirm` for the full procedure and required Kconfig options.
 
 After that, the application can call the :c:func:`dfu_target_init` function for another image pair index.
 

@@ -32,6 +32,7 @@ Documentation
 For more in-depth understanding of bootloader's capabilities, such as upgradable bootloader or encryption, refer to the following documentation:
 
 * :ref:`Conceptual documentation <ug_bootloader_mcuboot_nsib>`
+* :ref:`ug_fw_update_test_confirm` — Test and confirm procedure after a DFU update
 
 * Device-specific guides:
 
