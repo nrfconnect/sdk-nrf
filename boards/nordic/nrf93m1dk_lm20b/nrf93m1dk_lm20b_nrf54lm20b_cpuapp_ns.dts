@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/dts-v1/;
+
+#define USE_NON_SECURE_ADDRESS_MAP 1
+
+#include <nordic/nrf54lm20b_cpuapp.dtsi>
+#include "nrf93m1dk_lm20b_nrf54lm20b_cpuapp_common.dtsi"
+
+/ {
+	compatible = "nordic,nrf93m1dk_lm20b_nrf54lm20b-cpuapp-ns";
+	model = "Nordic nRF93M1 DK nRF54LM20B Application MCU Non-Secure";
+
+	chosen {
+		zephyr,code-partition = &slot0_ns_partition;
+		zephyr,sram = &sram0_ns;
+		zephyr,entropy = &psa_rng;
+	};
+
+	/delete-node/ rng;
+
+	psa_rng: psa-rng {
+		status = "okay";
+	};
+};
+
+&bt_hci_controller {
+	status = "disabled";
+};
+
+/* Include default memory partition configuration file */
+#include <vendor/nordic/nrf54lm20b_cpuapp_ns_partition.dtsi>

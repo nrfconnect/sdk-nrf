@@ -1,0 +1,45 @@
+board:
+  name: nrf93m1dk_lm20b
+  full_name: nRF93M1 DK (nRF54LM20B)
+  vendor: nordic
+  revision:
+    format: major.minor.patch
+    default: "0.5.0"
+    revisions:
+    - name: "0.5.0"
+  socs:
+  - name: nrf54lm20b
+    variants:
+    - name: ns
+      cpucluster: cpuapp
+runners:
+  run_once:
+    '--recover':
+    - runners:
+      - nrfutil
+      run: first
+      groups:
+      - boards:
+        - nrf93m1dk_lm20b@0.5.0/nrf54lm20b/cpuapp
+        - nrf93m1dk_lm20b@0.5.0/nrf54lm20b/cpuapp/ns
+        - nrf93m1dk_lm20b@0.5.0/nrf54lm20b/cpuflpr
+    '--erase':
+    - runners:
+      - jlink
+      - nrfutil
+      run: first
+      groups:
+      - boards:
+        - nrf93m1dk_lm20b@0.5.0/nrf54lm20b/cpuapp
+        - nrf93m1dk_lm20b@0.5.0/nrf54lm20b/cpuapp/ns
+        - nrf93m1dk_lm20b@0.5.0/nrf54lm20b/cpuflpr
+    '--reset':
+    - runners:
+      - jlink
+      - nrfutil
+      run: last
+      groups:
+      - boards:
+        - nrf93m1dk_lm20b@0.5.0/nrf54lm20b/cpuapp
+        - nrf93m1dk_lm20b@0.5.0/nrf54lm20b/cpuapp/ns
+        - nrf93m1dk_lm20b@0.5.0/nrf54lm20b/cpuflpr

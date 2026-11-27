@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		modem = &modem;
+	};
+};
+
+&uart00 {
+	status = "okay";
+	current-speed = <115200>;
+	zephyr,pm-device-runtime-auto;
+	hw-flow-control;
+};
+
+&modem {
+	status = "okay";
+	zephyr,pm-device-runtime-auto;
+};

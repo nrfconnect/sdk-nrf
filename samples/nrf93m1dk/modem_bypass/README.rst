@@ -34,7 +34,7 @@ Configuration
 Sysbuild Kconfig options
 ========================
 
-When building for the ``nrf93m1dk/nrf54l15/cpuflpr`` board target using sysbuild, you can combine this sample with the :ref:`radio_test` running on the application core.
+When building for the ``nrf93m1dk/nrf54l15/cpuflpr`` or ``nrf93m1dk_lm20b/nrf54lm20b/cpuflpr`` board target using sysbuild, you can combine this sample with the :ref:`radio_test` running on the application core.
 
 To enable this, use the following sysbuild configuration options:
 
@@ -47,6 +47,8 @@ For example, when building on the command line, enter the following command:
 .. code-block:: console
 
    west build -p -b nrf93m1dk/nrf54l15/cpuflpr --sysbuild -- -DSB_CONFIG_APPCORE_RADIO_TEST=y -DSB_CONFIG_VPR_LAUNCHER=n -Dradio_test_SNIPPET="nordic-flpr"
+
+For the nRF93M1 DK v0.5.0, replace the board target with ``nrf93m1dk_lm20b/nrf54lm20b/cpuflpr``.
 
 
 Building and running

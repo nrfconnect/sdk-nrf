@@ -24,8 +24,10 @@ tests:
       - radio_test_SNIPPET="nordic-flpr"
     integration_platforms:
       - nrf93m1dk/nrf54l15/cpuflpr
+      - nrf93m1dk_lm20b/nrf54lm20b/cpuflpr
     platform_allow:
       - nrf93m1dk/nrf54l15/cpuflpr
+      - nrf93m1dk_lm20b/nrf54lm20b/cpuflpr
     tags:
       - ci_build
       - ci_samples_nrf93m1dk
