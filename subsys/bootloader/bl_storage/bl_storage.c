@@ -12,6 +12,20 @@
 #include <assert.h>
 #include <zephyr/devicetree.h>
 
+/*
+ * Bootloader storage can either access UICR via the Zephyr flash driver, or
+ * directly via nrfx storage drivers (NVMC, RRAMC, or MRAMC). RRAMC and MRAMC
+ * are grouped together because they both use 32-bit word accesses, whereas NVMC
+ * uses 16-bit halfwords.
+ */
+#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#define BL_BACKEND_FLASH_API
+#elif defined(CONFIG_NRFX_NVMC)
+#define BL_BACKEND_NVMC
+#elif defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_NRFX_MRAMC)
+#define BL_BACKEND_XRAMC
+#endif
+
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
 #endif
@@ -19,7 +33,8 @@
 #define BL_STORAGE_ADDRESS	TFM_BL_STORAGE_ADDR
 #else
 /* Address of storage as seen in processor address space */
-#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
+#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr) ||                    \
+	DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf71_uicr)
 #define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
 #else
 #include <zephyr/storage/flash_map.h>
@@ -27,11 +42,11 @@
 #define BL_STORAGE_ADDRESS	PARTITION_ADDRESS(bl_storage)
 #endif
 #endif
-#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#if defined(BL_BACKEND_FLASH_API)
 #include <zephyr/drivers/flash.h>
 #endif
 
-#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#if defined(BL_BACKEND_FLASH_API)
 static const struct device *nvm_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
 #endif
 
@@ -45,7 +60,8 @@ const volatile struct bl_storage_data *const BL_STORAGE =
 #if defined(CONFIG_NRFX_NVMC) || defined(CONFIG_SOC_FLASH_NRF_UICR)
 #define STATE_ENTERED 0x0000
 #define STATE_NOT_ENTERED 0xFFFF
-#elif defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#elif defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR) ||                     \
+	defined(CONFIG_NRFX_MRAMC)
 #define STATE_ENTERED 0x00000000
 #define STATE_NOT_ENTERED 0xFFFFFFFF
 #else
@@ -61,8 +77,13 @@ BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,
 void tfm_core_panic(void);
 #endif
 
-#if defined(CONFIG_NRFX_RRAMC) && !defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
-static bool rramc_configure(void)
+#if defined(BL_BACKEND_XRAMC)
+#if defined(CONFIG_NRFX_RRAMC)
+#define XRAMC_WORD_READ(address) nrfx_rramc_word_read(address)
+#define XRAMC_WORD_WRITABLE(address) nrfx_rramc_word_writable_check(address)
+#define XRAMC_WORD_WRITE(address, value) nrfx_rramc_word_write(address, value)
+
+static bool xramc_configure(void)
 {
 	nrfx_rramc_config_t config = NRFX_RRAMC_DEFAULT_CONFIG(0);
 
@@ -77,16 +98,29 @@ static bool rramc_configure(void)
 
 	return true;
 }
+#else /* CONFIG_NRFX_MRAMC */
+#define XRAMC_WORD_READ(address) nrfx_mramc_word_read(address)
+#define XRAMC_WORD_WRITABLE(address) nrfx_mramc_word_writable_check(address)
+#define XRAMC_WORD_WRITE(address, value) nrfx_mramc_word_write(address, value)
 
-static uint32_t index_from_address(uint32_t address)
+static bool xramc_configure(void)
 {
-	return ((address - (uint32_t)BL_STORAGE)/sizeof(uint32_t));
+	nrfx_mramc_config_t config = NRFX_MRAMC_DEFAULT_CONFIG();
+
+	int err = nrfx_mramc_init(&config, NULL);
+
+	if (err != 0 && err != -EALREADY) {
+		return false;
+	}
+
+	return true;
 }
-#endif
+#endif /* CONFIG_NRFX_RRAMC */
+#endif /* BL_BACKEND_XRAMC */
 
 static counter_t bl_storage_counter_get(uint32_t address)
 {
-#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#if defined(BL_BACKEND_FLASH_API)
 	counter_t value = 0;
 
 	if (device_is_ready(nvm_dev)) {
@@ -94,33 +128,32 @@ static counter_t bl_storage_counter_get(uint32_t address)
 	}
 
 	return ~value;
-#elif defined(CONFIG_NRFX_NVMC)
+#elif defined(BL_BACKEND_NVMC)
 	return ~nrfx_nvmc_otp_halfword_read(address);
-#elif defined(CONFIG_NRFX_RRAMC)
-	return ~nrfx_rramc_otp_word_read(index_from_address(address));
+#elif defined(BL_BACKEND_XRAMC)
+	return ~XRAMC_WORD_READ(address);
 #endif
 }
 
 static void bl_storage_counter_set(uint32_t address, counter_t value)
 {
-#if defined(CONFIG_SOC_FLASH_NRF_UICR) || \
-	defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#if defined(BL_BACKEND_FLASH_API)
 	if (device_is_ready(nvm_dev)) {
 		value = ~value;
 		flash_write(nvm_dev, address, &value, sizeof(value));
 	}
-#elif defined(CONFIG_NRFX_NVMC)
+#elif defined(BL_BACKEND_NVMC)
 	nrfx_nvmc_halfword_write((uint32_t)address, ~value);
-#elif defined(CONFIG_NRFX_RRAMC)
-	if (rramc_configure()) {
-		nrfx_rramc_otp_word_write(index_from_address((uint32_t)address), ~value);
+#elif defined(BL_BACKEND_XRAMC)
+	if (xramc_configure() && XRAMC_WORD_WRITABLE(address)) {
+		XRAMC_WORD_WRITE(address, ~value);
 	}
 #endif
 }
 
 static uint32_t bl_storage_word_read(uint32_t address)
 {
-#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#if defined(BL_BACKEND_FLASH_API)
 	uint32_t value = 0;
 
 	if (device_is_ready(nvm_dev)) {
@@ -128,35 +161,45 @@ static uint32_t bl_storage_word_read(uint32_t address)
 	}
 
 	return value;
-#elif defined(CONFIG_NRFX_NVMC)
+#elif defined(BL_BACKEND_NVMC)
 	return nrfx_nvmc_uicr_word_read((uint32_t *)address);
-#elif defined(CONFIG_NRFX_RRAMC)
-	return nrfx_rramc_word_read(address);
+#elif defined(BL_BACKEND_XRAMC)
+	return XRAMC_WORD_READ(address);
 #endif
 }
 
 static uint32_t bl_storage_word_write(uint32_t address, uint32_t value)
 {
-#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#if defined(BL_BACKEND_FLASH_API)
 	if (device_is_ready(nvm_dev)) {
 		flash_write(nvm_dev, address, &value, sizeof(value));
 	}
 	return 0;
-#elif defined(CONFIG_NRFX_NVMC)
+#elif defined(BL_BACKEND_NVMC)
 	nrfx_nvmc_word_write(address, value);
 	return 0;
-#elif defined(CONFIG_NRFX_RRAMC)
-	if (rramc_configure()) {
-		nrfx_rramc_word_write(address, value);
+#elif defined(BL_BACKEND_XRAMC)
+	if (xramc_configure()) {
+		XRAMC_WORD_WRITE(address, value);
 	}
 	return 0;
 #endif
 }
 
+#if !defined(BL_BACKEND_NVMC)
+static uint16_t halfword_from_word(uint32_t word, uint32_t address)
+{
+	if (!ALIGN_TO_WORD(address)) {
+		return (uint16_t)(word & 0x0000FFFF); /* C truncates the upper bits */
+	}
+
+	return (uint16_t)(word >> 16); /* Shift the upper half down */
+}
+#endif
+
 static uint16_t bl_storage_otp_halfword_read(uint32_t address)
 {
-	uint16_t halfword;
-#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#if defined(BL_BACKEND_FLASH_API)
 	uint32_t word = 0;
 
 	if (device_is_ready(nvm_dev)) {
@@ -164,23 +207,12 @@ static uint16_t bl_storage_otp_halfword_read(uint32_t address)
 			   sizeof(word));
 	}
 
-	if (!ALIGN_TO_WORD(address)) {
-		halfword = (uint16_t)(word & 0x0000FFFF); /* C truncates the upper bits */
-	} else {
-		halfword = (uint16_t)(word >> 16); /* Shift the upper half down */
-	}
-#elif defined(CONFIG_NRFX_NVMC)
-	halfword = nrfx_nvmc_otp_halfword_read(address);
-#elif defined(CONFIG_NRFX_RRAMC)
-	uint32_t word = nrfx_rramc_otp_word_read(index_from_address(address));
-
-	if (!ALIGN_TO_WORD(address)) {
-		halfword = (uint16_t)(word & 0x0000FFFF); /* C truncates the upper bits */
-	} else {
-		halfword = (uint16_t)(word >> 16); /* Shift the upper half down */
-	}
+	return halfword_from_word(word, address);
+#elif defined(BL_BACKEND_NVMC)
+	return nrfx_nvmc_otp_halfword_read(address);
+#elif defined(BL_BACKEND_XRAMC)
+	return halfword_from_word(XRAMC_WORD_READ(address & ~0x3U), address);
 #endif
-	return halfword;
 }
 
 /*
@@ -550,7 +582,7 @@ int is_monotonic_counter_update_possible(uint16_t counter_desc)
 
 static lcs_data_t bl_storage_lcs_get(uint32_t address)
 {
-#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#if defined(BL_BACKEND_FLASH_API)
 	lcs_data_t value = 0;
 
 	if (device_is_ready(nvm_dev)) {
@@ -558,20 +590,18 @@ static lcs_data_t bl_storage_lcs_get(uint32_t address)
 	}
 
 	return value;
-#elif defined(CONFIG_NRFX_NVMC)
+#elif defined(BL_BACKEND_NVMC)
 	return nrfx_nvmc_otp_halfword_read(address);
-#elif defined(CONFIG_NRFX_RRAMC)
-	return nrfx_rramc_otp_word_read(index_from_address(address));
+#elif defined(BL_BACKEND_XRAMC)
+	return XRAMC_WORD_READ(address);
 #endif
 }
 
 static int bl_storage_lcs_set(uint32_t address, lcs_data_t state)
 {
-#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
-	bl_storage_word_write(address, state);
-#elif defined(CONFIG_NRFX_NVMC)
+#if defined(BL_BACKEND_NVMC)
 	nrfx_nvmc_halfword_write(address, state);
-#elif defined(CONFIG_NRFX_RRAMC)
+#else
 	bl_storage_word_write(address, state);
 #endif
 	return 0;

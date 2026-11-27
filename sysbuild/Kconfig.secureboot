@@ -13,7 +13,7 @@ config SECURE_BOOT
 config SECURE_BOOT_OTP_WRITE_SIZE
 	int
 	depends on SECURE_BOOT || (MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION && !SOC_SERIES_NRF54H)
-	default 4 if SOC_SERIES_NRF54L
+	default 4 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	default 2
 	help
 	  The size of the write operation for the OTP area used to store
