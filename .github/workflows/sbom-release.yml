@@ -1,0 +1,161 @@
+name: NCS release SBOM
+
+on:
+  workflow_dispatch:
+    inputs:
+      ncs_ref:
+        description: 'Release to be scanned: main, a release branch or a tag, for example v3.4-branch'
+        required: true
+        type: string
+      spdx_version:
+        description: SPDX version of the report
+        type: choice
+        options:
+          - '2.3'
+          - '3.0'
+        default: '2.3'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.ncs_ref }}-${{ inputs.spdx_version }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  toolchain-image:
+    name: Check the setup and find the toolchain image
+    runs-on: ubuntu-24.04
+    environment: sbom-signing
+    timeout-minutes: 15
+    outputs:
+      commit: ${{ steps.find.outputs.commit }}
+      image: ${{ steps.find.outputs.image }}
+    steps:
+      - name: Check the signing setup
+        env:
+          HAS_SIGNING_KEY: ${{ secrets.SBOM_SIGNING_KEY != '' }}
+          SBOM_PUBLIC_KEY: ${{ vars.SBOM_PUBLIC_KEY }}
+        run: |
+          if [ "$HAS_SIGNING_KEY" != 'true' ]; then
+            echo "::error::The environment sbom-signing has no secret SBOM_SIGNING_KEY"
+            exit 1
+          fi
+          if ! printf '%s\n' "$SBOM_PUBLIC_KEY" | openssl pkey -pubin -noout; then
+            echo "::error::The variable SBOM_PUBLIC_KEY is missing or is not a PEM public key"
+            exit 1
+          fi
+
+      - name: Check that the release is a release branch or tag
+        id: release
+        env:
+          NCS_REF: ${{ inputs.ncs_ref }}
+        run: |
+          if [[ "$NCS_REF" =~ ^(main|v[0-9][A-Za-z0-9.-]*-branch)$ ]]; then
+            echo "ref=refs/heads/$NCS_REF" >> "$GITHUB_OUTPUT"
+          elif [[ "$NCS_REF" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]]; then
+            echo "ref=refs/tags/$NCS_REF" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::ncs_ref must be main, a release branch or a release tag"
+            exit 1
+          fi
+
+      - name: Check out the release
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ steps.release.outputs.ref }}
+          persist-credentials: false
+
+      # Fail here rather than after the whole release is fetched.
+      - name: Check that the release can sign reports
+        run: |
+          if ! grep -q -- '--sign-key' scripts/west_commands/sbom/args.py; then
+            echo "::error::The ncs-sbom tool of this release cannot sign reports"
+            exit 1
+          fi
+
+      - name: Find the image matching the toolchain of the release
+        id: find
+        run: |
+          image="ghcr.io/nrfconnect/sdk-nrf-toolchain:$(./scripts/print_toolchain_checksum.sh)"
+          docker manifest inspect "$image" > /dev/null
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  sbom:
+    name: Generate, sign and verify the SBOM
+    needs: toolchain-image
+    runs-on:
+      - runs-on=${{ github.run_id }}
+      - runner=16cpu-linux-x64
+      - volume=120gb
+      - family=c6id+m6id+r6id
+      - ram=64+128
+    container:
+      image: ${{ needs.toolchain-image.outputs.image }}
+    environment: sbom-signing
+    steps:
+      - name: Check out the release
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ needs.toolchain-image.outputs.commit }}
+          path: ncs/nrf
+          persist-credentials: false
+
+      - name: Fetch the repositories of the release
+        working-directory: ncs
+        run: |
+          west init -l nrf
+          west update --narrow -o=--depth=1
+
+      - name: Install the SBOM tool requirements
+        run: pip3 install -r ncs/nrf/scripts/requirements-west-ncs-sbom.txt
+
+      # The input is every file of the workspace, except the data of git and west. 
+      - name: Generate, sign and verify the SPDX report
+        id: report
+        working-directory: ncs
+        env:
+          NCS_REF: ${{ inputs.ncs_ref }}
+          SPDX_VERSION: ${{ inputs.spdx_version }}
+          SBOM_SIGNING_KEY: ${{ secrets.SBOM_SIGNING_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.SBOM_SIGNING_PASSWORD }}
+          SBOM_PUBLIC_KEY: ${{ vars.SBOM_PUBLIC_KEY }}
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          key="$RUNNER_TEMP/sbom-signing.key"
+          trap 'rm -f "$key"' EXIT
+          (umask 077 && printf '%s\n' "$SBOM_SIGNING_KEY" > "$key")
+          unset SBOM_SIGNING_KEY
+
+          if [ "$SPDX_VERSION" = '3.0' ]; then
+            name="ncs-sbom-$NCS_REF.jsonld"
+          else
+            name="ncs-sbom-$NCS_REF.spdx"
+          fi
+          mkdir -p "$GITHUB_WORKSPACE/sbom"
+          report="$GITHUB_WORKSPACE/sbom/$name"
+
+          west ncs-sbom \
+            --input-files '**/*' '!**/.git' '!**/.git/**/*' '!.west/**/*' \
+            --spdx-version "$SPDX_VERSION" \
+            --output-spdx "$report" \
+            --sign-key "$key"
+
+          printf '%s\n' "$SBOM_PUBLIC_KEY" > "$RUNNER_TEMP/sbom-signing.pub"
+          west ncs-sbom \
+            --verify-spdx "$report" \
+            --verify-key "$RUNNER_TEMP/sbom-signing.pub"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the signed report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ steps.report.outputs.name }}
+          path: sbom/
+          if-no-files-found: error
+          overwrite: true
