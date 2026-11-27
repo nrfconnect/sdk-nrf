@@ -30,13 +30,13 @@
 		/* firmware_loader */
 		slot1_partition: partition@6000 {
 			label = "image-1";
-			reg = <0x6000 DT_SIZE_K(116)>;
+			reg = <0x6000 DT_SIZE_K(164)>;
 		};
 
 		/* application */
-		slot0_partition: partition@23000 {
+		slot0_partition: partition@2f000 {
 			label = "image-0";
-			reg = <0x23000 DT_SIZE_K(1832)>;
+			reg = <0x2f000 DT_SIZE_K(1784)>;
 		};
 
 		storage_partition: partition@1ed000 {
