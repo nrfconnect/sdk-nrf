@@ -1065,6 +1065,7 @@
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/bluetooth/bsim/nrf_auraconfig/     @nrfconnect/ncs-audio
 /tests/bluetooth/bsim/custom_ltk/         @nrfconnect/ncs-ratatosk
+/tests/bluetooth/bsim/per_adv_restart/    @nrfconnect/ncs-dragoon
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/code_extender/                     @nrfconnect/ncs-eris
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
