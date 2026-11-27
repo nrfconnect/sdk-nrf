@@ -45,29 +45,6 @@ For more details, see the :file:`src/modules/Kconfig.hids` file.
    If the HID report configuration is identical to the default configuration of either nRF Desktop mouse or keyboard, you do not need to modify the |GATT_HID| configuration.
    Otherwise, see :ref:`hids_readme` documentation for configuration details.
 
-HID SCI support
----------------
-
-The :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` option selects :kconfig:option:`CONFIG_BT_HIDS_SCI` and the required Bluetooth LE Host and Controller features for support of shorter connection intervals.
-The option cannot be used together with :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM`.
-It depends on Bluetooth Controller support for shorter connection intervals (:kconfig:option:`CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS_SUPPORT`).
-The SoftDevice Link Layer (:kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`) is an example of a Bluetooth LE Link Layer with SCI support.
-
-By default, the GATT pool sizes defined in the :file:`Kconfig.ble` file and the maximum number of HIDS attributes defined in the :file:`src/modules/Kconfig.hids` file are automatically aligned to the needs of the nRF Desktop application, including HID SCI support.
-If you need adjustments, for example due to changing the set of supported HID reports, make sure that these values remain sufficient.
-
-The default HID SCI mode transport parameters for nRF Desktop peripherals are defined in the :file:`src/modules/Kconfig.sci.defaults.periph` file.
-
-.. note::
-   The default maximum peripheral latency for the FAST mode is ``99``.
-   If a lower first-packet latency is required, set :kconfig:option:`CONFIG_BT_HIDS_SCI_FAST_MAX_LATENCY` to ``0``.
-   On the nRF54L15 DK in the release configuration, this results in the first-packet latency being decreased by about 2 ms.
-   At the same time, the current consumption in Bluetooth LE connected idle state increases - for nRF54L15DK in the release configuration from around 250 µA to around 1 mA.
-   You can choose other maximum peripheral latency values to balance the first-packet latency and power consumption for your application.
-
-Mode change requests received through the HID control point characteristic are handled by the :ref:`nrf_desktop_ble_latency`.
-See the documentation page for implementation details.
-
 HID subscriber configuration
 ============================
 
@@ -133,25 +110,12 @@ The |GATT_HID| uses registered handlers to send the following information to the
 * Enabling or disabling a HID input report notification.
 * Incoming HID output or feature reports.
 * Switching between the boot mode and the report mode.
-* Writes to the HID control point characteristic.
 
 HID notifications
 =================
 
 The :c:struct:`hid_notification_event` is used to synchronize the information about enabling or disabling the HID notifications for the HID input report.
 The event is submitted when the |GATT_HID| calls a callback related to enabling or disabling the notifications and the event is received only by the HID Service application module.
-
-HID control point
-=================
-
-The connected Bluetooth host can write to the HID control point characteristic to inform about host suspend or exit suspend, or to request a HID SCI (Shorter Connection Intervals) mode change.
-The HID Service application module translates these writes into dedicated application events:
-
-* :c:struct:`hid_host_suspend_event` - Submitted when the host enters or exits suspend.
-  The :c:member:`hid_host_suspend_event.suspended` field indicates whether the host entered or exited suspend.
-* :c:struct:`hid_sci_mode_request_event` - Submitted when the host requests an SCI mode update.
-  The :c:member:`hid_sci_mode_request_event.mode` field contains the requested :c:enum:`bt_hids_sci_mode_value`.
-  This event is submitted only if the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option is enabled.
 
 Transport for configuration channel
 ===================================
