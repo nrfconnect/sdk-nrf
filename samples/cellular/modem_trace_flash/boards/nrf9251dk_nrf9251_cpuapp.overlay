@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Reduce size of application RAM to make room for trace. */
+&cpuapp_ram0x_sram {
+	reg = <0x2f000000 DT_SIZE_K(340)>;
+	ranges = <0x0 0x2f000000 0x55000>;
+};
+
+&cpuapp_cpucell_ram0x_region {
+	/* Modem trace memory */
+	cpucell_cpuapp_ipc_shm_trace: memory@5000 {
+		reg = <0x5000 DT_SIZE_K(16)>;
+	};
+};
+
+/* Enable uart132 at 1 megabaud for printing modem traces */
+&uart132 {
+	status = "okay";
+	current-speed = <1000000>;
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+/ {
+	aliases {
+		trace-dump-uart = &uart132;
+	};
+};
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&spi120 {
+	status = "okay";
+};
+
+&gpio5 {
+	status = "okay";
+};
+
+&gd25le255e {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		modem_trace: partition@0 {
+			label = "modem_trace";
+			reg = <0x00000000 0x400000>;
+		};
+	};
+};

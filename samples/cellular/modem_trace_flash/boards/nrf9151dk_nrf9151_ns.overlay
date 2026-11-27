@@ -45,6 +45,7 @@
 / {
 	aliases {
 		ext-flash = &gd25wb256;
+		trace-dump-uart = &uart1;
 	};
 };
 

@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <sys/errno.h>
-#include <debug/cpu_load.h>
+#include <zephyr/debug/cpu_load.h>
 #include <modem/trace_backend.h>
 
 #define PRINT_PERIOD_MSEC K_MSEC(CONFIG_CUSTOM_BACKEND_PRINT_PERIOD_MSEC)
@@ -36,11 +36,11 @@ static void print_stats(struct k_work *item)
 
 	printk("Traces received: %5.1fkB, %4.1fkB/s", num_bytes / 1000.0, throughput / 1000.0);
 
-	load = cpu_load_get();
+	/* CPU load is reported in per mille. */
+	load = cpu_load_get(true);
 	if (load >= 0) {
-		cpu_load_percent = load / 1000.0;
-		printk(", CPU-load: %5.2f%%\n", cpu_load_percent);
-		cpu_load_reset();
+		cpu_load_percent = load / 10.0;
+		printk(", CPU-load: %4.1f%%\n", cpu_load_percent);
 	} else {
 		printk("\n");
 	}
@@ -59,7 +59,7 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 
 	trace_processed_callback = trace_processed_cb;
 
-	cpu_load_reset();
+	(void)cpu_load_get(true);
 
 	num_bytes_prev = tot_bytes_rcvd;
 	uptime_prev = k_uptime_get_32();
