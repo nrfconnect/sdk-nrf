@@ -1779,6 +1779,16 @@ static void schedule_retx_in_timeslot(void)
 	}
 }
 
+/* A PRX copies the PID of the packet it answers into its ACK. */
+static bool verify_ack_pid(void)
+{
+	const struct esb_radio_pdu *rx_pdu = (const struct esb_radio_pdu *)rx_payload_buffer;
+	uint8_t pid = (esb_cfg.protocol == ESB_PROTOCOL_ESB) ? rx_pdu->type.fixed_pdu.pid
+							     : rx_pdu->type.dpl_pdu.pid;
+
+	return pid == current_payload->pid;
+}
+
 static void on_radio_disabled_tx_wait_for_ack(void)
 {
 	struct esb_radio_pdu *rx_pdu = (struct esb_radio_pdu *)rx_payload_buffer;
@@ -1793,9 +1803,9 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 	mpsl_fem_lna_configuration_clear();
 	mpsl_fem_disable();
 
-	/* If the radio has received a packet and the CRC status is OK */
+	/* If the radio has received the ACK of this packet and the CRC status is OK */
 	if (nrf_radio_event_check(NRF_RADIO, ESB_RADIO_EVENT_END) &&
-	    nrf_radio_crc_status_check(NRF_RADIO)) {
+	    nrf_radio_crc_status_check(NRF_RADIO) && verify_ack_pid()) {
 		atomic_set_bit(&interrupt_flags, ESB_EVENT_TX_SUCCESS);
 		last_tx_attempts = esb_cfg.retransmit_count - retransmits_remaining + 1;
 
@@ -2043,7 +2053,8 @@ static void prepare_ack_pdu_dpl(bool retransmit_payload, struct pipe_info *pipe_
 	}
 
 	tx_pdu->type.dpl_pdu.pid = rx_pdu->type.dpl_pdu.pid;
-	tx_pdu->type.dpl_pdu.ack = rx_pdu->type.dpl_pdu.ack;
+	/* An ACK never requests an ACK, so another PRX on the address ignores it. */
+	tx_pdu->type.dpl_pdu.ack = 0;
 }
 
 static void on_radio_disabled_rx(void)

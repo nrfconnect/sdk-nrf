@@ -361,7 +361,11 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Fixed:
+
+  * An issue where an ACK packet requested an ACK, causing a PRX that received the packet to respond with an ACK.
+  * An issue where a PTX accepted a received packet as its ACK without checking the packet ID.
+    The PTX could report a packet as sent even though the peer had not received it.
 
 Gazell
 ------
