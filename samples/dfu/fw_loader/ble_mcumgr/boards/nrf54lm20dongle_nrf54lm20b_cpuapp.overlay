@@ -16,9 +16,9 @@
 
 &cpuapp_rram {
 	partitions {
-		slot0_partition: partition@23000 {
+		slot0_partition: partition@2f000 {
 			label = "image-0";
-			reg = <0x23000 DT_SIZE_K(1896)>;
+			reg = <0x2f000 DT_SIZE_K(1848)>;
 		};
 	};
 };
