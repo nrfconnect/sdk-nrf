@@ -323,30 +323,136 @@ exit:
 	return status;
 }
 
-static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
-{
-	int sx_status = SX_ERR_UNINITIALIZED_OBJ;
+/* The hardware can't resume a ChaCha20 job on nRF54LM20, so each job starts from the
+ * block counter in operation->iv. Leftover keystream is kept in unprocessed_input.
+ */
 
-	switch (operation->alg) {
-	case PSA_ALG_STREAM_CIPHER:
-		if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)) {
-			sx_status = operation->dir == CRACEN_DECRYPT
-					    ? sx_blkcipher_create_chacha20_dec(
-						      &operation->cipher, &operation->keyref,
-						      &operation->iv[0], &operation->iv[4])
-					    : sx_blkcipher_create_chacha20_enc(
-						      &operation->cipher, &operation->keyref,
-						      &operation->iv[0], &operation->iv[4]);
-		}
-		break;
-	default:
-		sx_status = SX_ERR_INCOMPATIBLE_HW;
+/* The counter is the first 4 bytes of operation->iv, in big-endian */
+#define CHACHA20_NONCE_OFFSET 4
+
+/* unprocessed_input only holds a full ChaCha20 block when ChaCha20 is enabled */
+#if defined(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)
+
+/* Encrypt block_bytes of input and optionally make the next keystream block */
+static psa_status_t chacha20_job(cracen_cipher_operation_t *operation, const uint8_t *input,
+				 uint8_t *output, size_t block_bytes, bool make_keystream)
+{
+	size_t blocks = block_bytes / SX_BLKCIPHER_CHACHA20_BLK_SZ + (make_keystream ? 1 : 0);
+	uint32_t counter = cracen_get_be32(operation->iv);
+	int sx_status;
+
+	/* Don't let the counter wrap */
+	if (blocks > UINT32_MAX - counter) {
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	operation->initialized = true;
+	sx_status = sx_hw_reserve(&operation->cipher.dma, SX_HW_RESERVE_DEFAULT);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 
+	sx_status =
+		operation->dir == CRACEN_DECRYPT
+			? sx_blkcipher_create_chacha20_dec(&operation->cipher, &operation->keyref,
+							   operation->iv,
+							   &operation->iv[CHACHA20_NONCE_OFFSET])
+			: sx_blkcipher_create_chacha20_enc(&operation->cipher, &operation->keyref,
+							   operation->iv,
+							   &operation->iv[CHACHA20_NONCE_OFFSET]);
+
+	if (sx_status != SX_OK) {
+		goto exit;
+	}
+
+	if (block_bytes) {
+		sx_status = sx_blkcipher_crypt(&operation->cipher, input, block_bytes, output);
+		if (sx_status != SX_OK) {
+			goto exit;
+		}
+	}
+
+	if (make_keystream) {
+		/* Encrypting zeros gives the keystream */
+		memset(operation->unprocessed_input, 0, SX_BLKCIPHER_CHACHA20_BLK_SZ);
+		sx_status = sx_blkcipher_crypt(&operation->cipher, operation->unprocessed_input,
+					       SX_BLKCIPHER_CHACHA20_BLK_SZ,
+					       operation->unprocessed_input);
+		if (sx_status != SX_OK) {
+			goto exit;
+		}
+	}
+
+	sx_status = sx_blkcipher_run(&operation->cipher);
+	if (sx_status != SX_OK) {
+		goto exit;
+	}
+
+	sx_status = sx_blkcipher_wait(&operation->cipher);
+	if (sx_status != SX_OK) {
+		goto exit;
+	}
+
+	cracen_put_be32(counter + blocks, operation->iv);
+
+exit:
+	sx_hw_release(&operation->cipher.dma);
 	return silex_statuscodes_to_psa(sx_status);
 }
+
+/* XOR input with the unused keystream in unprocessed_input */
+static size_t chacha20_consume_keystream(cracen_cipher_operation_t *operation, const uint8_t *input,
+					 size_t input_length, uint8_t *output)
+{
+	size_t offset = SX_BLKCIPHER_CHACHA20_BLK_SZ - operation->unprocessed_input_bytes;
+	size_t length = MIN(input_length, operation->unprocessed_input_bytes);
+
+	for (size_t i = 0; i < length; i++) {
+		output[i] = input[i] ^ operation->unprocessed_input[offset + i];
+	}
+	operation->unprocessed_input_bytes -= length;
+
+	return length;
+}
+
+static psa_status_t chacha20_update(cracen_cipher_operation_t *operation, const uint8_t *input,
+				    size_t input_length, uint8_t *output, size_t output_size,
+				    size_t *output_length)
+{
+	size_t consumed;
+	size_t block_bytes;
+	size_t tail;
+	psa_status_t status;
+
+	if (output == NULL || output_size < input_length) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	consumed = chacha20_consume_keystream(operation, input, input_length, output);
+	input += consumed;
+	output += consumed;
+	input_length -= consumed;
+
+	block_bytes = ROUND_DOWN(input_length, SX_BLKCIPHER_CHACHA20_BLK_SZ);
+	tail = input_length - block_bytes;
+
+	if (block_bytes || tail) {
+		status = chacha20_job(operation, input, output, block_bytes, tail != 0);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+	}
+
+	if (tail) {
+		operation->unprocessed_input_bytes = SX_BLKCIPHER_CHACHA20_BLK_SZ;
+		chacha20_consume_keystream(operation, input + block_bytes, tail,
+					   output + block_bytes);
+	}
+
+	*output_length = consumed + input_length;
+	return PSA_SUCCESS;
+}
+
+#endif /* PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20 */
 
 psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 					 const psa_key_attributes_t *attributes,
@@ -435,16 +541,14 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
 	 * initialized with 0s we can just place the IV in the correct offset.
 	 */
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)) {
-		if (operation->alg == PSA_ALG_STREAM_CIPHER) {
-			if (iv_length == 12) {
-				memcpy(&operation->iv[4], iv, iv_length);
-				return PSA_SUCCESS;
-			} else {
-				return (iv_length == 8 || iv_length == 16)
-					       ? PSA_ERROR_NOT_SUPPORTED
-					       : PSA_ERROR_INVALID_ARGUMENT;
-			}
+	if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20) &&
+	    operation->alg == PSA_ALG_STREAM_CIPHER) {
+		if (iv_length == 12) {
+			memcpy(&operation->iv[CHACHA20_NONCE_OFFSET], iv, iv_length);
+			return PSA_SUCCESS;
+		} else {
+			return (iv_length == 8 || iv_length == 16) ? PSA_ERROR_NOT_SUPPORTED
+								   : PSA_ERROR_INVALID_ARGUMENT;
 		}
 	}
 
@@ -463,7 +567,6 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 	__ASSERT_NO_MSG(input != NULL || input_length == 0);
 	__ASSERT_NO_MSG(output_length != NULL);
 
-	int sx_status = SX_ERR_UNINITIALIZED_OBJ;
 	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
 	*output_length = 0;
 
@@ -476,13 +579,14 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 						output_length);
 	}
 
-	size_t required_output = input_length + operation->unprocessed_input_bytes;
-
+#if defined(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)
 	if (operation->alg == PSA_ALG_STREAM_CIPHER) {
-		required_output &= ~((uint32_t)operation->blk_size - 1);
+		return chacha20_update(operation, input, input_length, output, output_size,
+				       output_length);
 	}
+#endif
 
-	if ((output == NULL && required_output != 0) || output_size < required_output) {
+	if (output == NULL || output_size < input_length + operation->unprocessed_input_bytes) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
@@ -569,65 +673,6 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 					}
 				}
 			}
-
-		} else {
-			/* ChaCha20 path - acquire HW before operations */
-			sx_status = sx_hw_reserve(&operation->cipher.dma, SX_HW_RESERVE_DEFAULT);
-			if (sx_status != SX_OK) {
-				return silex_statuscodes_to_psa(sx_status);
-			}
-
-			if (operation->initialized) {
-				sx_status = sx_blkcipher_resume_state(&operation->cipher);
-				if (sx_status != SX_OK) {
-					sx_hw_release(&operation->cipher.dma);
-					return silex_statuscodes_to_psa(sx_status);
-				}
-			} else {
-				psa_status = initialize_cipher(operation);
-
-				if (psa_status != PSA_SUCCESS) {
-					sx_hw_release(&operation->cipher.dma);
-					return psa_status;
-				}
-			}
-
-			if (operation->unprocessed_input_bytes) {
-				__ASSERT_NO_MSG(operation->unprocessed_input_bytes ==
-						operation->blk_size);
-				sx_status = sx_blkcipher_crypt(
-					&operation->cipher, operation->unprocessed_input,
-					operation->unprocessed_input_bytes, output);
-				if (sx_status != SX_OK) {
-					sx_hw_release(&operation->cipher.dma);
-					return silex_statuscodes_to_psa(sx_status);
-				}
-
-				operation->unprocessed_input_bytes = 0;
-				/* Adjust output pointer. */
-				output += (uint32_t)operation->blk_size;
-			}
-
-			if (block_bytes) {
-				sx_status = sx_blkcipher_crypt(&operation->cipher, input,
-							       block_bytes, output);
-				if (sx_status != SX_OK) {
-					sx_hw_release(&operation->cipher.dma);
-					return silex_statuscodes_to_psa(sx_status);
-				}
-			}
-
-			sx_status = sx_blkcipher_save_state(&operation->cipher);
-			if (sx_status != SX_OK) {
-				sx_hw_release(&operation->cipher.dma);
-				return silex_statuscodes_to_psa(sx_status);
-			}
-
-			sx_status = sx_blkcipher_wait(&operation->cipher);
-			sx_hw_release(&operation->cipher.dma);
-			if (sx_status != SX_OK) {
-				return silex_statuscodes_to_psa(sx_status);
-			}
 		}
 
 		*output_length += total_output;
@@ -652,13 +697,18 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 {
 	__ASSERT_NO_MSG(output_length != NULL);
 
-	int sx_status;
-	psa_status_t psa_status;
-
 	*output_length = 0;
 
 	if (is_ctr_based(operation->alg)) {
 		return cracen_sw_aes_ctr_finish(operation, output_length);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20) &&
+	    operation->alg == PSA_ALG_STREAM_CIPHER) {
+		/* All data was returned by update, so just clear the keystream */
+		safe_memzero(operation->unprocessed_input, sizeof(operation->unprocessed_input));
+		operation->unprocessed_input_bytes = 0;
+		return PSA_SUCCESS;
 	}
 
 	if (operation->unprocessed_input_bytes == 0 && operation->alg != PSA_ALG_CBC_PKCS7) {
@@ -679,8 +729,6 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	if (operation->unprocessed_input_bytes == 0) {
 		return PSA_SUCCESS;
 	}
-
-	sx_status = SX_ERR_UNINITIALIZED_OBJ;
 
 	/* sxsymcrypt doesn't support context saving for ECB, as each encrypted block is
 	 * independent from the previous one we just encrypt the so far available full
@@ -706,54 +754,8 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 		}
 	}
 
-	/* ChaCha20 path - acquire HW before operations */
-	sx_status = sx_hw_reserve(&operation->cipher.dma, SX_HW_RESERVE_DEFAULT);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	if (operation->initialized) {
-		sx_status = sx_blkcipher_resume_state(&operation->cipher);
-		if (sx_status != SX_OK) {
-			sx_hw_release(&operation->cipher.dma);
-			return silex_statuscodes_to_psa(sx_status);
-		}
-	} else {
-		psa_status = initialize_cipher(operation);
-
-		if (psa_status != PSA_SUCCESS) {
-			sx_hw_release(&operation->cipher.dma);
-			return psa_status;
-		}
-	}
-
-	*output_length = operation->unprocessed_input_bytes;
-	if (*output_length > output_size) {
-		*output_length = 0;
-		sx_hw_release(&operation->cipher.dma);
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-
-	sx_status = sx_blkcipher_crypt(&operation->cipher, operation->unprocessed_input,
-				       operation->unprocessed_input_bytes, output);
-	if (sx_status != SX_OK) {
-		sx_hw_release(&operation->cipher.dma);
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_blkcipher_run(&operation->cipher);
-	if (sx_status != SX_OK) {
-		sx_hw_release(&operation->cipher.dma);
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_blkcipher_wait(&operation->cipher);
-	sx_hw_release(&operation->cipher.dma);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	return PSA_SUCCESS;
+	/* All supported algorithms are handled above */
+	return PSA_ERROR_BAD_STATE;
 }
 
 psa_status_t cracen_cipher_abort(cracen_cipher_operation_t *operation)

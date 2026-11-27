@@ -210,6 +210,54 @@ static inline uint32_t cracen_get_le32(const uint8_t src[4])
 }
 
 /**
+ *  @brief Put a 16-bit integer as big-endian to arbitrary location.
+ *
+ *  @param val 16-bit integer.
+ *  @param dst Destination memory address to store the result.
+ */
+static inline void cracen_put_be16(uint16_t val, uint8_t *dst)
+{
+	dst[0] = val >> 8;
+	dst[1] = val;
+}
+
+/**
+ *  @brief Get a 16-bit integer stored in big-endian format.
+ *
+ *  @param src Location of the big-endian 16-bit integer to get.
+ *
+ *  @return 16-bit integer in big endian.
+ */
+static inline uint16_t cracen_get_be16(const uint8_t *src)
+{
+	return ((uint16_t)src[0] << 8) | src[1];
+}
+
+/**
+ *  @brief Put a 32-bit integer as big-endian to arbitrary location.
+ *
+ *  @param val 32-bit integer.
+ *  @param dst Destination memory address to store the result.
+ */
+static inline void cracen_put_be32(uint32_t val, uint8_t *dst)
+{
+	cracen_put_be16(val >> 16, dst);
+	cracen_put_be16(val, &dst[2]);
+}
+
+/**
+ *  @brief Get a 32-bit integer stored in big-endian format.
+ *
+ *  @param src Location of the big-endian 32-bit integer to get.
+ *
+ *  @return 32-bit integer in big endian.
+ */
+static inline uint32_t cracen_get_be32(const uint8_t src[4])
+{
+	return ((uint32_t)cracen_get_be16(&src[0]) << 16) | cracen_get_be16(&src[2]);
+}
+
+/**
  * @brief Hash several elements at different locations in memory with a previously created hash
  * context(sxhash)
  *
