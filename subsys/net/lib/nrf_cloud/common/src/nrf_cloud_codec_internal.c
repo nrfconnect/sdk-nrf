@@ -1076,11 +1076,34 @@ static int encode_modem_info_json_object(struct modem_param_info *modem, cJSON *
 	return 0;
 }
 
+/* Data is only needed from the modem when at least one section is to be set. Clearing a
+ * section does not require any data from the modem.
+ */
+static bool modem_info_query_needed(const struct nrf_cloud_modem_info *const mod_inf)
+{
+	return (mod_inf->device == NRF_CLOUD_INFO_SET) ||
+	       (mod_inf->network == NRF_CLOUD_INFO_SET) ||
+	       (mod_inf->sim == NRF_CLOUD_INFO_SET);
+}
+
+/* Nothing to encode if every section is left unchanged. */
+static bool modem_info_all_unchanged(const struct nrf_cloud_modem_info *const mod_inf)
+{
+	return (mod_inf->device == NRF_CLOUD_INFO_NO_CHANGE) &&
+	       (mod_inf->network == NRF_CLOUD_INFO_NO_CHANGE) &&
+	       (mod_inf->sim == NRF_CLOUD_INFO_NO_CHANGE);
+}
+
 int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info *const mod_inf,
 				     cJSON *const mod_inf_obj)
 {
 	if (!mod_inf_obj || !mod_inf) {
 		return -EINVAL;
+	}
+
+	if (modem_info_all_unchanged(mod_inf)) {
+		/* Nothing to set or clear; do not query the modem. */
+		return 0;
 	}
 
 	if ((!IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE)) &&
@@ -1106,26 +1129,28 @@ int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info *const mo
 		goto cleanup;
 	}
 
-	struct modem_param_info *mpi = (struct modem_param_info *)mod_inf->mpi;
+	if (modem_info_query_needed(mod_inf)) {
+		struct modem_param_info *mpi = (struct modem_param_info *)mod_inf->mpi;
 
-	if (!mpi) {
-		/* No modem info provided, use local */
-		err = get_modem_info();
-		if (err < 0) {
-			LOG_ERR("get_modem_info() failed: %d", err);
+		if (!mpi) {
+			/* No modem info provided, use local */
+			err = get_modem_info();
+			if (err < 0) {
+				LOG_ERR("get_modem_info() failed: %d", err);
+				goto cleanup;
+			}
+			locked = (k_mutex_lock(&modem_inf_mutex, K_FOREVER) == 0);
+			mpi = &modem_inf;
+		}
+
+		err = encode_modem_info_json_object(mpi, tmp, mod_inf->application_version);
+		if (locked) {
+			(void)k_mutex_unlock(&modem_inf_mutex);
+		}
+		if (err) {
+			LOG_ERR("Failed to encode modem info: %d", err);
 			goto cleanup;
 		}
-		locked = (k_mutex_lock(&modem_inf_mutex, K_FOREVER) == 0);
-		mpi = &modem_inf;
-	}
-
-	err = encode_modem_info_json_object(mpi, tmp, mod_inf->application_version);
-	if (locked) {
-		(void)k_mutex_unlock(&modem_inf_mutex);
-	}
-	if (err) {
-		LOG_ERR("Failed to encode modem info: %d", err);
-		goto cleanup;
 	}
 
 	if (encode_info_item_cs(mod_inf->device, NRF_CLOUD_DEVICE_JSON_KEY_DEV_INF, tmp,
