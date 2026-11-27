@@ -1145,7 +1145,9 @@ SDFW samples
 Sensor samples
 --------------
 
-|no_changes_yet_note|
+* Added support for the Thingy:91 X in the :ref:`bme68x` sample.
+
+* Removed support for the Thingy:91 in the :ref:`bme68x` sample.
 
 SUIT samples
 ------------

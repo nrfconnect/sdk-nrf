@@ -6,11 +6,11 @@ tests:
     depends_on: i2c
     harness: sensor
     integration_platforms:
-      - thingy91/nrf9160
-      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151
+      - thingy91x/nrf9151/ns
     platform_allow:
-      - thingy91/nrf9160
-      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151
+      - thingy91x/nrf9151/ns
     tags:
       - sensors
       - sysbuild
@@ -19,12 +19,12 @@ tests:
     sysbuild: true
     depends_on: i2c
     integration_platforms:
-      - thingy91/nrf9160
-      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151
+      - thingy91x/nrf9151/ns
     extra_args: CONFIG_APP_TRIGGER=n
     platform_allow:
-      - thingy91/nrf9160
-      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151
+      - thingy91x/nrf9151/ns
     tags:
       - sensors
       - sysbuild
@@ -36,13 +36,3 @@ tests:
       regex:
         - "(\\d+\\.\\d+); press: (\\d+\\.\\d+); humidity: (\\d+\\.\\d+); iaq: (\\\
         d+)"
-  sample.sensor.bme68x.spi:
-    sysbuild: true
-    depends_on: spi
-    harness: sensor
-    platform_allow: >-
-      nrf9160dk/nrf9160/ns
-    tags:
-      - sensors
-      - sysbuild
-      - ci_samples_sensor
