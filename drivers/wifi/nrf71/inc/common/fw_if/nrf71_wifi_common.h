@@ -244,6 +244,8 @@ enum nrf_wifi_sys_commands {
 	NRF_WIFI_CMD_LMAC_TUNING_PARAMS,
 	/** Radio test: push full @ref rpu_conf_params (MAC/PHY update) to LMAC/PHY */
 	NRF_WIFI_CMD_MAC_PARAM_UPDATE,
+	/** Ignore/honor the broadcast TIM, @ref nrf_wifi_cmd_bcast_rx_config */
+	NRF_WIFI_CMD_BCAST_RX_CONFIG,
 };
 
 /**
@@ -909,6 +911,24 @@ struct nrf_wifi_cmd_mac_param_update {
 	struct nrf_wifi_sys_head sys_head;
 	/** Full radio-test configuration @ref rpu_conf_params */
 	struct rpu_conf_params conf;
+} __NRF_WIFI_PKD;
+
+/**
+ * @brief Ignore or honor the broadcast TIM in power save.
+ *
+ *  With @p enable 0 the firmware ignores a broadcast TIM in the BET and in the
+ *  normal beacon path (no wake-up or wait for buffered broadcast, no switch to
+ *  TRX), so the station goes back to sleep as soon as possible.
+ *  Broadcast/multicast frames received while it is awake for another reason
+ *  still go to the host. 1 (default) honors the broadcast TIM. Needs a
+ *  firmware patch that supports it; the setting goes back to the default on
+ *  firmware init.
+ */
+struct nrf_wifi_cmd_bcast_rx_config {
+	/** UMAC header, @ref nrf_wifi_sys_head */
+	struct nrf_wifi_sys_head sys_head;
+	/** 1: honor the broadcast TIM, 0: ignore it */
+	unsigned int enable;
 } __NRF_WIFI_PKD;
 
 /**
@@ -2283,8 +2303,19 @@ struct lmac_tuning_params {
 	int tod_offset;
 	int toa_offset;
 	unsigned int clock_mode;
+	/* Receive buffered broadcast/multicast in LP RX instead of switching to TRX (patch). Disabled
+	 * until the host sets it
+	 */
+	unsigned int lp_rx_bcast_enable;
+	/* Highest broadcast/multicast rate received in LP RX, encoded like a TX rate: DSSS/CCK and
+	 * legacy OFDM in 500 kbps units (4 = 2 Mbps, 18 = 9 Mbps), HT/VHT/HE as 0x80 + MCS (0x82 = MCS2).
+	 * These four fields take the place of reserved[0..3], so the layout is unchanged.
+	 */
+	unsigned int lp_rx_max_dsss_rate;
+	unsigned int lp_rx_max_ofdm_rate;
+	unsigned int lp_rx_max_mcs;
 	/* reserved for patching */
-	unsigned int reserved[16];
+	unsigned int reserved[12];
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_vtf_params {

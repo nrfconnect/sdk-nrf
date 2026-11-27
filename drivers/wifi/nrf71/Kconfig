@@ -177,6 +177,38 @@ config NRF_WIFI_LP_RX
 	help
 	  Enable low power RX in the LMAC tuning parameters sent to the RPU.
 
+config NRF_WIFI_LP_RX_BCAST
+	bool "Receive buffered broadcast/multicast in low power RX mode"
+	depends on NRF_WIFI_LP_RX
+	default y
+	help
+	  Stay in low power RX instead of switching to normal RX when the beacon
+	  indicates buffered broadcast/multicast and no buffered unicast. The
+	  limits below apply to the rate of the AP's broadcast/multicast frames;
+	  a higher or unknown rate still switches to normal RX. Requires an RPU
+	  firmware patch that implements it, otherwise this has no effect.
+
+config NRF_WIFI_LP_RX_BCAST_MAX_DSSS_RATE
+	int "Highest DSSS/CCK broadcast rate received in LP RX (500 kbps units)"
+	depends on NRF_WIFI_LP_RX_BCAST
+	default 4
+	help
+	  4 = 2 Mbps. Frames at 1 Mbps and 2 Mbps are received in LP RX.
+
+config NRF_WIFI_LP_RX_BCAST_MAX_OFDM_RATE
+	int "Highest legacy OFDM broadcast rate received in LP RX (500 kbps units)"
+	depends on NRF_WIFI_LP_RX_BCAST
+	default 18
+	help
+	  18 = 9 Mbps. Frames at 6 Mbps and 9 Mbps are received in LP RX.
+
+config NRF_WIFI_LP_RX_BCAST_MAX_MCS
+	hex "Highest HT/VHT/HE broadcast rate received in LP RX (0x80 + MCS)"
+	depends on NRF_WIFI_LP_RX_BCAST
+	default 0x82
+	help
+	  0x82 = MCS2. Encoded like a TX rate: 0x80 plus the MCS index.
+
 config NRF_WIFI_BET
 	bool "Beacon early termination (BET) in nRF Wi-Fi chipsets"
 	depends on NRF_WIFI_LOW_POWER

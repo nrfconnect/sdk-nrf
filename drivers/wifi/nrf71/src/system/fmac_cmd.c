@@ -370,6 +370,35 @@ out:
 	return status;
 }
 
+enum nrf_wifi_status umac_cmd_sys_bcast_rx_config(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	unsigned char enable)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct host_rpu_msg *umac_cmd = NULL;
+	struct nrf_wifi_cmd_bcast_rx_config *umac_cmd_data = NULL;
+	unsigned int len = sizeof(*umac_cmd_data);
+
+	umac_cmd = umac_cmd_alloc(fmac_dev_ctx,
+				  NRF_WIFI_HOST_RPU_MSG_TYPE_SYSTEM,
+				  len);
+	if (!umac_cmd) {
+		LOG_ERR("%s: umac_cmd_alloc failed", __func__);
+		goto out;
+	}
+
+	umac_cmd_data = (struct nrf_wifi_cmd_bcast_rx_config *)(umac_cmd->msg);
+	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_BCAST_RX_CONFIG;
+	umac_cmd_data->sys_head.len = len;
+	umac_cmd_data->enable = enable ? 1 : 0;
+
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
+out:
+	return status;
+}
+
 enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
@@ -418,6 +447,16 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 #else
 	umac_cmd_data->params.lp_rx_enable = 0;
 #endif /* CONFIG_NRF_WIFI_LP_RX */
+
+#ifdef CONFIG_NRF_WIFI_LP_RX_BCAST
+	/* Stay in LP RX for buffered broadcast/multicast up to these rates */
+	umac_cmd_data->params.lp_rx_bcast_enable = 1;
+	umac_cmd_data->params.lp_rx_max_dsss_rate = CONFIG_NRF_WIFI_LP_RX_BCAST_MAX_DSSS_RATE;
+	umac_cmd_data->params.lp_rx_max_ofdm_rate = CONFIG_NRF_WIFI_LP_RX_BCAST_MAX_OFDM_RATE;
+	umac_cmd_data->params.lp_rx_max_mcs = CONFIG_NRF_WIFI_LP_RX_BCAST_MAX_MCS;
+#else
+	umac_cmd_data->params.lp_rx_bcast_enable = 0;
+#endif /* CONFIG_NRF_WIFI_LP_RX_BCAST */
 
 	/* Internal tuning parameter for ACK timeout in the firmware. Accounts for
 	 * internal hardware latencies and is calibrated in the lab. Changing

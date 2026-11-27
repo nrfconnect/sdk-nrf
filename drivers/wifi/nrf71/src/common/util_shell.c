@@ -1026,6 +1026,66 @@ unlock_sleep:
 	return ret;
 }
 
+static int nrf_wifi_util_bcast_tim(const struct shell *sh,
+				   size_t argc,
+				   const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	bool enable;
+	int ret = 0;
+
+	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
+	if (!ctx->rpu_ctx) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "RPU context not initialized\n");
+		ret = -ENOEXEC;
+		goto unlock;
+	}
+
+	if (argc == 1) {
+		shell_fprintf(sh,
+			      SHELL_INFO,
+			      "Broadcast TIM: %s\n",
+			      nrf_wifi_sys_fmac_get_bcast_rx(ctx->rpu_ctx) ?
+			      "honored" : "ignored");
+		goto unlock;
+	}
+
+	if (!strcmp(argv[1], "1") || !strcmp(argv[1], "enable")) {
+		enable = true;
+	} else if (!strcmp(argv[1], "0") || !strcmp(argv[1], "disable")) {
+		enable = false;
+	} else {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Invalid value(%s).\n",
+			      argv[1]);
+		shell_help(sh);
+		ret = -ENOEXEC;
+		goto unlock;
+	}
+
+	status = nrf_wifi_sys_fmac_set_bcast_rx(ctx->rpu_ctx, enable);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Programming bcast_tim failed\n");
+		ret = -ENOEXEC;
+		goto unlock;
+	}
+
+	shell_fprintf(sh,
+		      SHELL_INFO,
+		      "Broadcast TIM %s\n",
+		      enable ? "honored" : "ignored");
+
+unlock:
+	k_mutex_unlock(&ctx->rpu_lock);
+	return ret;
+}
+
 static void nrf_wifi_util_dump_mac_addr_slots(const struct shell *sh, bool uicr)
 {
 	const char *block = uicr ? "UICR" : "FICR";
@@ -1197,6 +1257,19 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_req_extended_sleep,
 		      2,
 		      0),
+	SHELL_CMD_ARG(bcast_tim,
+		      NULL,
+		      "[<0|1>] - Ignore (0) or honor (1) the broadcast TIM in power save.\n"
+		      "0: the device does not wake up or stay awake for buffered\n"
+		      "broadcast/multicast, so it goes back to sleep as soon as possible.\n"
+		      "Broadcast/multicast received while awake for another reason still\n"
+		      "goes to the host.\n"
+		      "1 (default): the broadcast TIM is honored.\n"
+		      "A disconnect sets it back to 1.\n"
+		      "Without an argument, shows the current setting.",
+		      nrf_wifi_util_bcast_tim,
+		      1,
+		      1),
 	SHELL_CMD_ARG(mac_addr,
 		      NULL,
 		      "Dump the MAC addresses programmed in the xICR registers\n"

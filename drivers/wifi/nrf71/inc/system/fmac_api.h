@@ -1173,6 +1173,38 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 enum nrf_wifi_status nrf_wifi_fmac_req_extended_sleep(void *fmac_dev_ctx,
 						      unsigned char if_idx,
 						      unsigned int duration_sec);
+
+/**
+ * @brief Ignore or honor the broadcast TIM in power save.
+ * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
+ * @param enable true to honor the broadcast TIM (default), false to ignore
+ *               it.
+ *
+ * With @p enable false the firmware ignores a broadcast TIM in the BET and in
+ * the normal beacon path (no wake-up or wait for buffered broadcast, no switch
+ * to TRX), so the station goes back to sleep as soon as possible.
+ * Broadcast/multicast frames received while it is awake for another reason
+ * still go to the host.
+ *
+ * This function sends %NRF_WIFI_CMD_BCAST_RX_CONFIG to the RPU firmware (UMAC
+ * forwards it to LMAC) and needs a firmware patch that supports it. The
+ * setting applies until the next disconnect (deauthentication or
+ * disassociation), after which the broadcast TIM is honored again; the host
+ * also sends it again after a firmware re-init.
+ *
+ * @retval NRF_WIFI_STATUS_SUCCESS On success.
+ * @retval NRF_WIFI_STATUS_FAIL On failure to execute command.
+ */
+enum nrf_wifi_status nrf_wifi_sys_fmac_set_bcast_rx(void *fmac_dev_ctx,
+						    bool enable);
+
+/**
+ * @brief Get whether broadcast/multicast reception is enabled.
+ * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
+ *
+ * @return true if broadcast/multicast frames are received.
+ */
+bool nrf_wifi_sys_fmac_get_bcast_rx(void *fmac_dev_ctx);
 #endif /* CONFIG_NRF71_UTIL */
 
 /**

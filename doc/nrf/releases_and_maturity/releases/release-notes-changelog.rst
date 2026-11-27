@@ -1319,7 +1319,13 @@ SPI drivers
 Wi-Fi drivers
 -------------
 
-* Added the :ref:`nRF71 Series Wi-Fi driver <nrf71_wifi_fw_if>` page documenting its firmware interface.
+* Added:
+
+  * The :ref:`nRF71 Series Wi-Fi driver <nrf71_wifi_fw_if>` page documenting its firmware interface.
+  * Support for receiving buffered broadcast and multicast frames in low-power RX on the nRF71 Series, without switching to normal RX.
+    It is controlled by the :kconfig:option:`CONFIG_NRF_WIFI_LP_RX_BCAST` Kconfig option, which is enabled by default when :kconfig:option:`CONFIG_NRF_WIFI_LP_RX` is enabled.
+  * The ``nrf71 util bcast_tim`` shell command to ignore the broadcast TIM in power save on the nRF71 Series.
+    The setting applies to the current connection and is reset on disconnect.
 
 * Updated:
 
