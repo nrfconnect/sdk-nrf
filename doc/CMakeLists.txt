@@ -20,7 +20,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS doc)
 #-------------------------------------------------------------------------------
 # Options
 
-set(SPHINXOPTS "-j auto -W --keep-going -T" CACHE STRING "Default Sphinx Options")
+set(SPHINXOPTS "-j auto -W -T" CACHE STRING "Default Sphinx Options")
 set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
 set(DTS_BINDINGS OFF CACHE BOOL "Generate dts bindings documentation")
 set(HW_FEATURES OFF CACHE BOOL "Generate hardware features")
@@ -144,7 +144,7 @@ function(add_docset name version)
   set(DOCSET_ENV DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE};DOCSET_VERSION=${version};DOCS_HTML_DIR=${DOCSET_HTML_DIR})
 
   if(${DOCSET_DODGY})
-    list(REMOVE_ITEM SPHINXOPTS "-W" "--keep-going")
+    list(REMOVE_ITEM SPHINXOPTS "-W")
   endif()
 
   add_doc_target(
@@ -340,7 +340,7 @@ add_docset(mcuboot "3.4.0")
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
-add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
+add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "4.7.1" STANDALONE)
 
 #-------------------------------------------------------------------------------
 # docset: tfm
