@@ -10,6 +10,10 @@
  * They are organized hierarchically into logical groups based on their purpose
  * and visibility.
  *
+ * @note Headers under cracenpsa/src/internal/ are not included in the nRF Connect
+ *       SDK API reference. Applications must use the PSA Crypto API
+ *       (@c psa_* functions), not those implementation headers.
+ *
  * @{
  */
 

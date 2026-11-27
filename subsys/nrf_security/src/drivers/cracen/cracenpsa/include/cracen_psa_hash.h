@@ -52,7 +52,8 @@ psa_status_t cracen_hash_setup(cracen_hash_operation_t *operation, psa_algorithm
  * @param[in] source_operation Source hash operation context.
  * @param[out] target_operation Target hash operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been cloned successfully.
+ *
  */
 static inline psa_status_t cracen_hash_clone(const cracen_hash_operation_t *source_operation,
 					     cracen_hash_operation_t *target_operation)
@@ -72,7 +73,7 @@ static inline psa_status_t cracen_hash_clone(const cracen_hash_operation_t *sour
  * @param[in] input_length   Length of the message fragment in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  */
 psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_t *input,
 				const size_t input_length);
@@ -85,7 +86,7 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
  * @param[out] hash_length   Length of the generated hash in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The hash buffer is too small.
  */
 psa_status_t cracen_hash_finish(cracen_hash_operation_t *operation, uint8_t *hash, size_t hash_size,
@@ -95,7 +96,8 @@ psa_status_t cracen_hash_finish(cracen_hash_operation_t *operation, uint8_t *has
  *
  * @param[in,out] operation Hash operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 static inline psa_status_t cracen_hash_abort(cracen_hash_operation_t *operation)
 {

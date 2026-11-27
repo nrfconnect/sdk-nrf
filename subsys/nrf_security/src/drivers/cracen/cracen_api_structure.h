@@ -10,7 +10,9 @@
  *
  * The CRACEN driver APIs are organized into the following sub-modules:
  *
- * - **PSA driver APIs** — the public and internal PSA Crypto driver interface.
+ * - **PSA driver APIs** — the public PSA Crypto driver interface documented under
+ *   cracenpsa/include/. Implementation headers under cracenpsa/src/internal/ are
+ *   not part of the API reference.
  *   See cracenpsa/include/cracen_psa_api_structure.h for the full hierarchy.
  *
  * - **Software implementation APIs** — pure-software fallback implementations
@@ -26,7 +28,7 @@
 
 /**
  * @defgroup cracen_psa_driver_apis CRACEN PSA Driver APIs
- * @brief Public and internal PSA Crypto driver interface for CRACEN
+ * @brief Public PSA Crypto driver interface for CRACEN
  */
 
 /**

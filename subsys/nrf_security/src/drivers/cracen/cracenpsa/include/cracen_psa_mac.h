@@ -31,10 +31,14 @@
  * @param[in] mac_size       Size of the MAC buffer in bytes.
  * @param[out] mac_length    Length of the generated MAC in bytes.
  *
- * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
- * @retval PSA_ERROR_NOT_SUPPORTED  The algorithm is not supported.
+ * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The MAC buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p mac is NULL, the CMAC length is larger than the AES block
+ *     size, the CMAC key is larger than the operation key buffer, or the CMAC key is shorter than
+ *     the AES block size and is not in the CRACEN key store.
+ *
  */
 psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *input,
@@ -49,8 +53,11 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
  * @param[in] key_buffer_size   Size of the key buffer in bytes.
  * @param[in] alg               MAC algorithm.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The CMAC key is larger than the operation key buffer, or it
+ *     is shorter than the AES block size and is not in the CRACEN key store.
+ *
  */
 psa_status_t cracen_mac_sign_setup(cracen_mac_operation_t *operation,
 				   const psa_key_attributes_t *attributes,
@@ -65,8 +72,11 @@ psa_status_t cracen_mac_sign_setup(cracen_mac_operation_t *operation,
  * @param[in] key_buffer_size   Size of the key buffer in bytes.
  * @param[in] alg               MAC algorithm.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The CMAC key is larger than the operation key buffer, or it
+ *     is shorter than the AES block size and is not in the CRACEN key store.
+ *
  */
 psa_status_t cracen_mac_verify_setup(cracen_mac_operation_t *operation,
 				     const psa_key_attributes_t *attributes,
@@ -80,7 +90,7 @@ psa_status_t cracen_mac_verify_setup(cracen_mac_operation_t *operation,
  * @param[in] input_length   Length of the input data in bytes.
  *
  * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  */
 psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t *input,
 			       size_t input_length);
@@ -92,9 +102,12 @@ psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t 
  * @param[in] mac_size      Size of the MAC buffer in bytes.
  * @param[out] mac_length   Length of the generated MAC in bytes.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The MAC buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p mac is NULL, or the CMAC length is larger than the AES
+ *     block size.
+ *
  */
 psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *mac,
 				    size_t mac_size, size_t *mac_length);
@@ -105,9 +118,12 @@ psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *
  * @param[in] mac           MAC to verify.
  * @param[in] mac_length    Length of the MAC in bytes.
  *
- * @retval PSA_SUCCESS              The MAC is valid.
+ * @retval PSA_SUCCESS The MAC is valid.
  * @retval PSA_ERROR_INVALID_SIGNATURE The MAC is invalid.
- * @retval PSA_ERROR_BAD_STATE      The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p mac is NULL, or the CMAC length is larger than the AES
+ *     block size.
+ *
  */
 psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const uint8_t *mac,
 				      size_t mac_length);
@@ -116,7 +132,8 @@ psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const u
  *
  * @param[in,out] operation MAC operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_mac_abort(cracen_mac_operation_t *operation);
 

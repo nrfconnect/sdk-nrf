@@ -71,6 +71,12 @@ int cracen_kmu_clean_key(const uint8_t *user_data);
  *
  * If the key is available the key_buffer will be filled with a valid
  * instance of @ref kmu_opaque_key_buffer.
+ *
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p slot_number is a protected RAM invalidation slot, or
+ *     @p attributes is NULL.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
+ *
  */
 psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 					psa_key_attributes_t *attributes, uint8_t *key_buffer,
@@ -81,17 +87,33 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
  *
  * If the key exists, the count is determined from the metadata in its primary slot. Otherwise
  * it is determined from @p key_attr, which must then be complete (type, bits, algorithm).
+ *
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key does not exist and @p key_attr has an unknown key
+ *     usage scheme or persistence, or requests export or copy for a protected key.
+ *
  */
 psa_status_t cracen_kmu_get_slot_count(const psa_key_attributes_t *key_attr,
 				       unsigned int *slot_count);
 
 /**
  * @brief Check that the key attributes are valid for a KMU key.
+ *
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key usage scheme or persistence is unknown, or a
+ *     protected key requests export or copy.
+ *
  */
 psa_status_t cracen_kmu_check_attributes(const psa_key_attributes_t *key_attr);
 
 /**
  * @brief Provision a key in the KMU.
+ *
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key usage scheme or persistence is unknown, a protected
+ *     key requests export or copy, @p key_buffer_size is not valid for the key usage scheme, or
+ *     the key does not fit the number of slots declared in the key metadata.
+ *
  */
 psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot_id,
 				  const uint8_t *key_buffer, size_t key_buffer_size);

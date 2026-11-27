@@ -33,10 +33,14 @@
  * @param[in] output_size     Size of the output buffer in bytes.
  * @param[out] output_length  Length of the generated ciphertext in bytes.
  *
- * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key is too large for the operation key buffer, the IV
+ *     length is invalid for the algorithm, or @p input_length is not a multiple of the block size
+ *     for CBC without padding.
+ *
  */
 psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 				   const uint8_t *key_buffer, size_t key_buffer_size,
@@ -56,10 +60,14 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
  * @param[in] output_size     Size of the output buffer in bytes.
  * @param[out] output_length  Length of the decrypted plaintext in bytes.
  *
- * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key is too large for the operation key buffer,
+ *     @p input_length is shorter than the IV, or the ciphertext length is not a multiple of the
+ *     block size for CBC without padding.
+ *
  */
 psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 				   const uint8_t *key_buffer, size_t key_buffer_size,
@@ -74,8 +82,10 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
  * @param[in] key_buffer_size    Size of the key buffer in bytes.
  * @param[in] alg                Cipher algorithm.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key is too large for the operation key buffer.
+ *
  */
 psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 					 const psa_key_attributes_t *attributes,
@@ -90,8 +100,10 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
  * @param[in] key_buffer_size    Size of the key buffer in bytes.
  * @param[in] alg                Cipher algorithm.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key is too large for the operation key buffer.
+ *
  */
 psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 					 const psa_key_attributes_t *attributes,
@@ -104,8 +116,11 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
  * @param[in] iv            Initialization vector.
  * @param[in] iv_length     Length of the IV in bytes.
  *
- * @retval PSA_SUCCESS         The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The IV length is invalid for the algorithm.
+ * @retval PSA_ERROR_NOT_SUPPORTED The ChaCha20 nonce length is 8 or 16 bytes instead of 12.
+ *
  */
 psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const uint8_t *iv,
 				  size_t iv_length);
@@ -120,7 +135,7 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
  * @param[out] output_length  Length of the generated output in bytes.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_ERROR_BAD_STATE     The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
  */
 psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const uint8_t *input,
@@ -134,9 +149,13 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
  * @param[in] output_size     Size of the output buffer in bytes.
  * @param[out] output_length  Length of the generated output in bytes.
  *
- * @retval PSA_SUCCESS             The operation completed successfully.
- * @retval PSA_ERROR_BAD_STATE     The operation is not in a valid state.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BAD_STATE The operation is not initialized.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The buffered input is not a whole block for CBC decryption
+ *     with PKCS#7 padding, or the total input is not a multiple of the block size for CBC
+ *     without padding.
+ *
  */
 psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t *output,
 				  size_t output_size, size_t *output_length);
@@ -145,7 +164,8 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
  *
  * @param[in,out] operation Cipher operation context.
  *
- * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_SUCCESS The operation has been aborted successfully.
+ *
  */
 psa_status_t cracen_cipher_abort(cracen_cipher_operation_t *operation);
 

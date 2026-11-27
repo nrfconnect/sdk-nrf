@@ -42,7 +42,11 @@
  * @param output_size Size of the output buffer.
  * @param output_length Pointer where to store the actual output length.
  *
- * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p input_length is not a multiple of the block size.
+ * @retval PSA_ERROR_HARDWARE_FAILURE The CRACEN hardware operation failed.
+ *
  */
 psa_status_t cracen_sw_aes_ecb_encrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
 				       const uint8_t *input, size_t input_length, uint8_t *output,
@@ -61,7 +65,11 @@ psa_status_t cracen_sw_aes_ecb_encrypt(struct sxblkcipher *blkciph, const struct
  * @param output_size Size of the output buffer.
  * @param output_length Pointer where to store the actual output length.
  *
- * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p input_length is not a multiple of the block size.
+ * @retval PSA_ERROR_HARDWARE_FAILURE The CRACEN hardware operation failed.
+ *
  */
 psa_status_t cracen_sw_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
 				       const uint8_t *input, size_t input_length, uint8_t *output,
@@ -79,7 +87,9 @@ psa_status_t cracen_sw_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct
  * @param input Pointer to the input block.
  * @param output Pointer to a 16-byte output buffer.
  *
- * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_HARDWARE_FAILURE The CRACEN hardware operation failed.
+ *
  */
 psa_status_t cracen_sw_aes_primitive(struct sxblkcipher *blkciph, const struct sxkeyref *key,
 				     const uint8_t *input, uint8_t *output);
@@ -102,7 +112,9 @@ psa_status_t cracen_sw_aes_primitive(struct sxblkcipher *blkciph, const struct s
  * @param output Output, may be the same as @p input.
  * @param length Number of bytes.
  *
- * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_HARDWARE_FAILURE The CRACEN hardware operation failed.
+ *
  */
 psa_status_t cracen_sw_ctr_xor(struct sxblkcipher *blkciph, const struct sxkeyref *key,
 			       uint8_t *counter, size_t counter_start_pos, uint8_t *keystream,
@@ -126,7 +138,9 @@ psa_status_t cracen_sw_ctr_xor(struct sxblkcipher *blkciph, const struct sxkeyre
  * @param keep_last Keep the last block buffered even when it is full, until more
  *                  input follows (for CMAC, which treats the last block apart).
  *
- * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_HARDWARE_FAILURE The CRACEN hardware operation failed.
+ *
  */
 psa_status_t cracen_sw_cbc_mac_update(struct sxblkcipher *blkciph, const struct sxkeyref *key,
 				      uint8_t *mac_state, uint8_t *partial, size_t *partial_len,

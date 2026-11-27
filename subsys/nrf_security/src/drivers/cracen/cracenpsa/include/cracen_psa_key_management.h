@@ -28,9 +28,11 @@
  * @param[in] data_size       Size of the data buffer in bytes.
  * @param[out] data_length    Length of the exported public key in bytes.
  *
- * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_SUCCESS The operation completed successfully.
  * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The data buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p data_size is zero.
+ *
  */
 psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 				      const uint8_t *key_buffer, size_t key_buffer_size,
@@ -46,9 +48,10 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
  * @param[out] key_buffer_length  Length of key buffer for the imported key in bytes.
  * @param[out] key_bits           Size of the key in bits.
  *
- * @retval PSA_SUCCESS              The operation completed successfully.
- * @retval PSA_ERROR_INVALID_ARGUMENT The key data is invalid.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key data is invalid, or @p key_buffer_size is zero.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
+ *
  */
 psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uint8_t *data,
 			       size_t data_length, uint8_t *key_buffer, size_t key_buffer_size,
@@ -61,9 +64,11 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
  * @param[in] key_buffer_size     Size of the key buffer in bytes.
  * @param[out] key_buffer_length  Length of key buffer for the generated key in bytes.
  *
- * @retval PSA_SUCCESS              The operation completed successfully.
- * @retval PSA_ERROR_NOT_SUPPORTED  The key type or size is not supported.
+ * @retval PSA_SUCCESS The operation completed successfully.
+ * @retval PSA_ERROR_NOT_SUPPORTED The key type or size is not supported.
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
+ * @retval PSA_ERROR_INVALID_ARGUMENT @p key_buffer_size is zero for a key stored locally.
+ *
  */
 psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
 				 size_t key_buffer_size, size_t *key_buffer_length);
