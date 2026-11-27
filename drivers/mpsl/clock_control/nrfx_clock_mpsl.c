@@ -102,7 +102,7 @@ static void mpsl_hfclk_src_callback(mpsl_clock_evt_type_t evt_type)
  *
  * Short turnaround: nrfx_clock_lfclk_start() does not start HW, wait for an IRQ, or
  * poll LFSTAT. LF is started by mpsl_init() (step 2). We only synchronously deliver
- * LFCLK_STARTED so the Zephyr onoff manager can leave STARTING (common_clkstarted_handle).
+ * LFCLK_STARTED so the Zephyr onoff manager can leave STARTING (common_clk_ready_handle).
  *
  * Do not block here waiting for LF: this path can run from another driver's init
  * before mpsl_init(), while LF HW is still off. Blocking would stall that init (and
