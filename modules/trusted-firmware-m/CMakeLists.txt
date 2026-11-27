@@ -32,17 +32,23 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   set(mcuboot_single_slot)
   mcuboot_single_check(mcuboot_single_slot)
 
-  if(${mcuboot_single_slot})
-    set_property(TARGET zephyr_property_target
-      APPEND PROPERTY TFM_CMAKE_OPTIONS
-      -DNRF_NS_SECONDARY=n
-    )
-  else()
-    set_property(TARGET zephyr_property_target
-      APPEND PROPERTY TFM_CMAKE_OPTIONS
-      -DNRF_NS_SECONDARY=y
-    )
+  # Only open the secondary slot to non-secure if it is in internal flash
+  set(ns_secondary n)
+  if(NOT mcuboot_single_slot)
+    dt_nodelabel(slot1_path NODELABEL slot1_partition)
+    dt_chosen(flash_path PROPERTY zephyr,flash)
+    if(slot1_path AND flash_path)
+      string(FIND "${slot1_path}" "${flash_path}/" slot1_in_flash)
+      if(slot1_in_flash EQUAL 0)
+        set(ns_secondary y)
+      endif()
+    endif()
   endif()
+
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DNRF_NS_SECONDARY=${ns_secondary}
+  )
 endif()
 
 if(CONFIG_TFM_HW_INIT_RESET_ON_BOOT AND CONFIG_TFM_HW_INIT_NRF_PERIPHERALS)

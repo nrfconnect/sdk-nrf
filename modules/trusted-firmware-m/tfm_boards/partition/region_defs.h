@@ -122,6 +122,13 @@
  * Only available when NRF_NS_SECONDARY is defined (MCUboot with secondary slot).
  */
 #ifdef NRF_NS_SECONDARY
+/* slot1_partition must have zephyr,flash as an ancestor */
+#define NRF_IS_ZEPHYR_FLASH(node_id) || (TFM_DT_ORD(node_id) == TFM_DT_ORD(DT_CHOSEN_zephyr_flash))
+#if !TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot1_partition))
+#error "NRF_NS_SECONDARY requires slot1_partition in the internal flash"
+#elif !(0 TFM_DT_FOREACH_ANCESTOR(TFM_DT_NODELABEL(slot1_partition), NRF_IS_ZEPHYR_FLASH))
+#error "NRF_NS_SECONDARY requires slot1_partition in the internal flash"
+#endif
 #define SECONDARY_PARTITION_START (S_IMAGE_SECONDARY_PARTITION_OFFSET)
 #define SECONDARY_PARTITION_SIZE  (FLASH_S_PARTITION_SIZE + FLASH_NS_PARTITION_SIZE)
 #endif
