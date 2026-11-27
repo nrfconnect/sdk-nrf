@@ -1,0 +1,77 @@
+name: Toolchain bundle
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [linux, windows, macos]
+        include:
+          - os: linux
+            runner: ubuntu-24.04
+            container:
+              image: ubuntu:20.04
+              options: --privileged
+          - os: windows
+            runner: windows-latest
+          - os: macos
+            runner: macos-26
+    runs-on: ${{ matrix.runner }}
+    container: ${{ matrix.container }}
+    timeout-minutes: 30
+    steps:
+      - name: Install Linux build dependencies
+        if: matrix.os == 'linux'
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            git ca-certificates coreutils curl debootstrap fakechroot fakeroot
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Build toolchain bundle
+        id: build
+        shell: bash
+        env:
+          CI_FILES_NORDICSEMI_USER: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
+          CI_FILES_NORDICSEMI_TOKEN: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+        run: ./scripts/ci/create_toolchain_bundle.sh
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ncs-toolchain-${{ matrix.os }}
+          path: output/*.tar.gz
+          if-no-files-found: ignore
+
+  publish:
+    needs: bundle
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: toolchain-bundle-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: ncs-toolchain-*
+          merge-multiple: true
+          path: bundles
+
+      - name: Publish to Artifactory
+        env:
+          CI_FILES_NORDICSEMI_USER: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
+          CI_FILES_NORDICSEMI_TOKEN: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+        run: |
+          pip install jsonschema
+          shopt -s nullglob
+          for bundle in bundles/*.tar.gz; do
+            ./scripts/ci/publish_toolchain_bundle.sh "$bundle"
+          done
