@@ -42,12 +42,12 @@ struct model_data {
 	const struct bt_mesh_model *model;
 	uint16_t addr;
 	uint16_t appkey_idx;
+	/* NetKey Index the AppKey is bound to.
+	 * Messages are encrypted with the AppKey, so they must be sent on this
+	 * NetKey's SubNet.
+	 */
+	uint16_t net_idx;
 };
-
-/* Model send data */
-#define MODEL_BOUNDS_MAX 100
-
-extern struct model_data model_bound[MODEL_BOUNDS_MAX];
 
 struct net_ctx {
 	uint16_t local;
@@ -56,7 +56,12 @@ struct net_ctx {
 };
 
 extern struct net_ctx net;
+extern uint16_t tester_pts_addr;
+
 void sensor_data_set(uint8_t *data, uint16_t len);
+
+bool tester_mesh_get_net_idx_from_appkey_idx(uint16_t akey_idx, uint16_t *nkey_idx);
+void tester_mesh_set_state_reset_request(void);
 
 #ifdef __cplusplus
 }

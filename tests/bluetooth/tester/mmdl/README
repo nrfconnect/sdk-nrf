@@ -18,6 +18,72 @@ by Bluetooth SIG.
 Supported Profiles:
 
 MMDL
+
+--------------------------------------------------------------------------------
+
+MMDL Retained mode:
+
+The Tester keeps the Node provisioned between the MMDL Test Cases. When the MMDL
+BTP Service is registered, the next MESH_START clears the test state of the
+previous Test Case. This reduces the MMDL Test Suite run time significantly:
+during tests, captured a reduced completion of the MMDL Test Suite by about 45%.
+
+On `MESH_START`, before settings are loaded, the Tester deletes the test state of
+the previous Test Case from the settings: Model states, publications,
+subscriptions, label UUIDs, Configuration Server state and Heartbeat
+publication. The network data, NetKeys, AppKeys, IV Index, SEQ number, RPL and
+AppKey bindings are kept. The Tester also keeps the address of the Node that
+bound the AppKeys.
+
+The test state is cleared only when the MMDL BTP Service is registered, which
+AutoPTS does in the Test Case pre-conditions. A reset of the IUT inside a Test
+Case does not register the MMDL BTP Service again, so the states stored before
+such a reset are kept, as the Test Case expects.
+
+If the Node is already provisioned on `MESH_START`, the Tester does not open
+the PB-ADV again. It restores the network context and sends `MESH_EV_PROVISIONED`
+to AutoPTS Client.
+
+Client Models send messages to the publication address configured by the
+current Test Case. If there is no publication, they send messages to PTS, with
+the lowest AppKey Index bound to the Model, on the subnet of that AppKey.
+
+Mode Requirements:
+
+- The IUT must be reset (without erasing flash) before each Test Case.
+  The provisioning data stays in the settings, and only the test state is
+  cleared on `MESH_START`.
+  If the Node is already running when `MESH_START` is received, the command
+  fails and the Tester logs "Test state clear requested on a running node: IUT
+  was not reset before the Test Case.".
+- AutoPTS must include the MMDL retained mode support. It sends
+  `MESH_CONFIG_PROVISIONING` and `MESH_START` in the Test Case pre-conditions
+  and sets the `TSPX_delete_link_key` and `TSPX_delete_ltk` PIXITs to FALSE.
+  Retained mode is enabled by default. To provision the IUT in every Test Case
+  instead, set the environment variable `AUTOPTS_MMDL_SECURITY_INFORMATION=0`
+  before running AutoPTS.
+- With RTT logging enabled, run AutoPTS with `--pylink_reset`. nrfutil may fail
+  to reset the IUT while the RTT logger holds the J-Link connection, and the
+  IUT is then not reset when PTS requests it.
+
+IUT Recovery:
+
+If PTS has no security information but the IUT is still provisioned, PTS asks
+to remove the security information (WID 13). AutoPTS then sends `MESH_RESET`
+automatically, and PTS provisions the IUT again. No manual action is needed.
+
+If PTS and the IUT both hold security information but the keys do not match (for
+example, the IUT has been provisioned with another PTS workspace), PTS does not
+ask for WID 13 and the Test Cases time out. In this case, erase the IUT flash
+or send `MESH_RESET` to the IUT before the next run.
+
+After programming firmware with a different Composition Data content (e.g.
+different set of Elements and/or Models), erase the IUT flash. The AppKey
+bindings are stored per Model index, so the stored bindings would not match the
+new Composition Data.
+After the flash is erased, PTS provisions and configures the IUT again in the
+first Test Case.
+
 --------------------------------------------------------------------------------
 
 Building and running on QEMU:
