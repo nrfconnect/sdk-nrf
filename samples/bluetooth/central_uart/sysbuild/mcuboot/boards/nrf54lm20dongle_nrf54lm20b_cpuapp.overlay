@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
+
+/* nRF54LM20 Dongle: MCUboot / firmware-loader partition view (slot0 spans to end of RRAM). */
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	partitions {
+		slot0_partition: partition@23000 {
+			label = "image-0";
+			reg = <0x23000 DT_SIZE_K(1896)>;
+		};
+	};
+};
