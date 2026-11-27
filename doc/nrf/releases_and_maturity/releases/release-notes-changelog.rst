@@ -305,6 +305,8 @@ Bluetooth® LE
     The size of the UTP OTA buffers is set by the :kconfig:option:`CONFIG_BT_CTLR_SDC_UTP_OTA_BUFFER_SIZE` Kconfig option.
   * Support for the Nordic vendor-specific UTP additions in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_SDC_UTP_VS_NORDIC` Kconfig option.
 
+* Updated the LE Flushable ACL Data feature, enabled with the :kconfig:option:`CONFIG_BT_CTLR_LE_FLUSHABLE_ACL_DATA` Kconfig option, to :ref:`supported <software_maturity>` from experimental.
+
 * Fixed an issue where including the :file:`include/bluetooth/hci_vs_sdc.h` header in C++ source files caused a build error.
 
 Bluetooth Mesh
