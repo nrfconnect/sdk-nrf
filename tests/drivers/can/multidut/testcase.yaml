@@ -1,0 +1,34 @@
+common:
+  tags:
+    - drivers
+    - can
+    - ci_tests_drivers_can
+  timeout: 7200
+
+tests:
+  drivers.can.multidut.peer:
+    build_only: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  drivers.can.multidut.classic:
+    harness: pytest
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      pytest_dut_scope: session
+      fixture:
+        - can
+        - scan
+      required_devices:
+        - application: drivers.can.multidut.peer
+          path: $ZEPHYR_NRF_MODULE_DIR/tests/drivers/can/multidut
+          platform: nrf54h20dk/nrf54h20/cpuapp
+          fixture:
+            - can
+            - mcan
+
