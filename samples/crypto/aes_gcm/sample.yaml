@@ -37,19 +37,11 @@ tests:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf9161dk/nrf9161
-      - nrf9161dk/nrf9161/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9160dk/nrf9160
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf9160dk/nrf9160/ns
-      - nrf9160dk/nrf9160
-      - nrf9161dk/nrf9161
-      - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
   sample.aes_gcm.cracen:
