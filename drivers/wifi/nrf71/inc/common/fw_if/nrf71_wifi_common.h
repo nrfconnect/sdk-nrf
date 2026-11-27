@@ -874,6 +874,8 @@ struct nrf_wifi_radio_test_init_info {
 	unsigned char rx_bss_color;
 	/** Receive station ID value (1 to 2047) */
 	unsigned short rx_station_id;
+	/** BSS check in RX filter: 0=disable, 1=enable */
+	unsigned char bss_check_enable;
 } __NRF_WIFI_PKD;
 
 /**
