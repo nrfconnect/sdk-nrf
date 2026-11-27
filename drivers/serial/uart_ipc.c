@@ -51,8 +51,7 @@ static void ipc_send_work_handler(struct k_work *work)
 
 	dev_data = CONTAINER_OF(work, struct uart_ipc_data, ipc_send_work.work);
 
-	data_size = ring_buf_get_claim(dev_data->tx_ringbuf, &data,
-				       ring_buf_size_get(dev_data->tx_ringbuf));
+	data_size = ring_buf_get_ptr(dev_data->tx_ringbuf, &data, 0);
 	if (data_size == 0) {
 		/* Nothing to send. */
 		return;
@@ -60,19 +59,17 @@ static void ipc_send_work_handler(struct k_work *work)
 
 	ret = ipc_service_send(&dev_data->ept, data, data_size);
 	if (ret == -ENOMEM) {
+		/* Nothing was sent, the data stays in the ring buffer for the next attempt. */
 		k_work_reschedule(&dev_data->ipc_send_work, K_MSEC(IPC_RESEND_DELAY));
-	} else if (ret < 0) {
-		__ASSERT(false, "Failed to send data over ipc, ret: %d", ret);
-		ret = 0;
-	} else {
-		/* Do nothing */
+		return;
 	}
 
-	ret = ring_buf_get_finish(dev_data->tx_ringbuf, ret);
-	if (ret) {
-		/* Should not happen. */
-		__ASSERT_NO_MSG(false);
+	if (ret < 0) {
+		__ASSERT(false, "Failed to send data over ipc, ret: %d", ret);
+		return;
 	}
+
+	ring_buf_consume(dev_data->tx_ringbuf, ret);
 }
 
 static void ipc_ept_bound(void *priv)

@@ -23,7 +23,7 @@ BUILD_ASSERT(DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(cpuflpr_vpr)),
 #define SPI_CPHA ((CONFIG_TEST_SPI_MODE & 0x1) ? SPI_MODE_CPHA : 0)
 
 #define SPI_OPERATION                                                                              \
-	(SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_TRANSFER_MSB | SPI_CPOL | SPI_CPHA)
+	(SPI_OP_MODE_CONTROLLER | SPI_WORD_SET(8) | SPI_TRANSFER_MSB | SPI_CPOL | SPI_CPHA)
 
 #define TEST_BYTE 0x66
 

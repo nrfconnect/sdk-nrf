@@ -84,7 +84,7 @@ int main(void)
 	/* Change the random static address */
 	bt_addr_le_t addr;
 	/* Defining address and buffer location */
-	err = bt_addr_le_from_str("FF:EE:DD:CC:BB:AA", "random", &addr);
+	err = bt_addr_le_from_str("R:FF:EE:DD:CC:BB:AA", &addr);
 	if (err < 0) {
 		LOG_ERR("Invalid BT address (err: %d)", err);
 	}

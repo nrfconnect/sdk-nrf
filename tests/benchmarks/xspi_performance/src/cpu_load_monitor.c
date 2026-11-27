@@ -6,7 +6,7 @@
 
 #include "cpu_load_monitor.h"
 #include <zephyr/kernel.h>
-#include <zephyr/debug/cpu_load.h>
+#include <zephyr/sys/cpu_load.h>
 
 typedef enum {
 	WAIT_FOR_TRIGGER = 0,

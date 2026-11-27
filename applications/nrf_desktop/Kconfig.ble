@@ -76,11 +76,8 @@ config BT_DATA_LEN_UPDATE
 	  procedure as it expects this procedure to be initiated by the
 	  the central.
 
-config BT_AUTO_PHY_UPDATE
-	default n
-	help
-	  nRF Desktop peripherals disable the automatic PHY Update procedure
-	  as it expects this procedure to be initiated by the central.
+# nRF Desktop peripherals do not initiate the automatic PHY Update procedure as it is expected to
+# be initiated by the central. BT_AUTO_PHY_PERIPHERAL_NONE is the default for the peripheral role.
 
 config BT_PERIPHERAL_PREF_MIN_INT
 	default 6

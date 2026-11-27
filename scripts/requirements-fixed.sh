@@ -77,7 +77,7 @@ exec docker run "${DOCKER_ARGS[@]}" "$IMAGE" -lc '
 
   python -m pip install -U pip setuptools wheel
   pip install --index-url "$INDEX_URL" \
-    "pip-compile-cross-platform==1.4.2+nordic.3" --upgrade
+    "pip-compile-cross-platform==1.4.2+nordic.4" --upgrade
 
   if [[ "$INTERACTIVE" == 1 ]]; then
     cat <<EOF

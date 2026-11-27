@@ -21,7 +21,6 @@ tests:
 
   sample.dfu.ab.s2ram:
     extra_args:
-      - mcuboot_CONFIG_SOC_EARLY_RESET_HOOK=y
       - CONFIG_PM=y
       - CONFIG_PM_DEVICE=y
       - CONFIG_PM_DEVICE_RUNTIME=y

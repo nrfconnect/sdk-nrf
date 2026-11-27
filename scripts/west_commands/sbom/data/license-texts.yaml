@@ -498,3 +498,8 @@
   text: |
    "ipref" code is distributed under a BSD style license, see the LICENSE
    file for complete information.
+
+- id: BSD-3-Clause
+  text: |
+    This software may be distributed under the terms of the BSD license.
+    See README for more details.

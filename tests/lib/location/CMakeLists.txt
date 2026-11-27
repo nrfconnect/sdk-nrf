@@ -61,6 +61,7 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/net_mgmt.h
   FUNC_EXCLUDE ".*net_mgmt_event_notify_with_info"
   FUNC_EXCLUDE ".*net_mgmt_event_wait_on_iface"
   WORD_EXCLUDE ".*struct net_if.*"
+  WORD_EXCLUDE ".*net_mgmt_event_notify.*"
 )
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/wifi_mgmt.h
   FUNC_EXCLUDE "NET_MGMT_DEFINE_REQUEST_HANDLER"

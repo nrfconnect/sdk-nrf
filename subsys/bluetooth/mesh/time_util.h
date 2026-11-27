@@ -8,7 +8,7 @@
 #define BT_MESH_TIME_UTIL
 
 #include <zephyr/types.h>
-#include <zephyr/sys_clock.h>
+#include <zephyr/sys/clock.h>
 
 #ifdef __cplusplus
 extern "C" {

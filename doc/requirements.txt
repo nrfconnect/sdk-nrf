@@ -20,6 +20,7 @@ snowballstemmer<3.0.0           # https://github.com/snowballstem/snowball/issue
 sphinx>=9.1,<9.2                # |  X  |    X    |   X     |    X    |   X   |   X   |
 sphinx-autobuild                # |  X  |    X    |   X     |    X    |   X   |   X   |
 sphinx-copybutton               # |  X  |         |         |         |       |   X   |
+sphinx-design                   # |     |         |         |         |       |   X   |
 sphinx-ncs-theme<2.1            # |  X  |         |         |         |       |       |
 sphinx-notfound-page>=1.0.0     # |  X  |         |         |         |       |   X   |
 sphinx-sitemap                  # |  X  |    X    |   X     |    X    |   X   |   X   |

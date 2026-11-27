@@ -165,6 +165,12 @@ static int direct_adv_create(uint8_t ext_adv_index, bt_addr_le_t addr)
 	}
 
 	ret = bt_le_ext_adv_update_param(ext_adv[ext_adv_index], &ext_adv_param);
+	if (ret == -ENOTSUP) {
+		/* Peer cannot resolve an RPA, direct to its identity address. */
+		ext_adv_param.options &= ~BT_LE_ADV_OPT_DIR_ADDR_RPA;
+		ret = bt_le_ext_adv_update_param(ext_adv[ext_adv_index], &ext_adv_param);
+	}
+
 	if (ret) {
 		LOG_ERR("Failed to update ext_adv set %d to directed advertising. Err = %d",
 			ext_adv_index, ret);

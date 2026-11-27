@@ -305,6 +305,20 @@ add_custom_target(
   COMMENT "Generating Devicetree bindings documentation..."
 )
 
+# The Zephyr documentation includes the requirements catalog, which is
+# generated from the reqmgmt module. The module is not part of the NCS
+# workspace, so generate only the placeholder, as upstream does without it.
+add_custom_target(
+  zephyr-requirements
+  COMMAND ${PYTHON_EXECUTABLE}
+    ${ZEPHYR_BASE}/doc/_scripts/gen_requirements.py
+    --rst-out ${ZEPHYR_BINARY_DIR}/src/build/requirements
+    --dox-out ${CMAKE_BINARY_DIR}/requirements/dox
+    --module-present 0
+  VERBATIM
+  COMMENT "Generating placeholder requirements documentation..."
+)
+
 if(NOT HW_FEATURES)
   set(ZEPHYR_SPHINXOPTS -t hw_features_turbo)
 endif()
@@ -313,8 +327,8 @@ add_docset(zephyr ${Zephyr_VERSION} SPHINXOPTS ${ZEPHYR_SPHINXOPTS})
 configure_file(${ZEPHYR_BASE}/doc/zephyr.doxyfile.in ${CMAKE_BINARY_DIR}/upstream.doxyfile)
 file(READ ${CMAKE_BINARY_DIR}/upstream.doxyfile ZEPHYR_UPSTREAM_DOXYFILE)
 add_doxygen_docset(zephyr ${ZEPHYR_BASE} ${Zephyr_VERSION})
-add_dependencies(zephyr zephyr-devicetree)
-add_dependencies(zephyr-all zephyr-devicetree)
+add_dependencies(zephyr zephyr-devicetree zephyr-requirements)
+add_dependencies(zephyr-all zephyr-devicetree zephyr-requirements)
 
 #-------------------------------------------------------------------------------
 # docset: nrf

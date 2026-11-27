@@ -73,6 +73,7 @@ tests:
 
   benchmarks.multicore.idle_ppr.s2ram.mcuboot:
     tags: ppk_power_measure
+    extra_args:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_ppr/boards/nrf54h20dk_mcuboot.overlay"
     harness: pytest
