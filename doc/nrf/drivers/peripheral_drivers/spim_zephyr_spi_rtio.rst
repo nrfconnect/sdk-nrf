@@ -179,7 +179,8 @@ Multi-part (transaction) transfer
 =================================
 
 A single logical transfer can be split across multiple buffers by chaining SQEs with the :c:macro:`RTIO_SQE_TRANSACTION` flag.
-All SQEs in a transaction are executed against the same iodev without interruption, so the chip select stays asserted for the whole sequence, and the transaction produces a single CQE.
+All SQEs in a transaction are executed against the same iodev without interruption, so the chip select stays asserted for the whole sequence.
+The transaction produces a single CQE for every acquired SQE.
 This replaces the multi-buffer :c:struct:`spi_buf_set` scatter-gather model of the traditional API.
 
 The following sends a two-part transmit buffer (header followed by payload) without copying into a single contiguous region:
@@ -204,13 +205,57 @@ The following sends a two-part transmit buffer (header followed by payload) with
    rtio_sqe_prep_write(sqe, &spi_iodev, RTIO_PRIO_NORM,
                        payload, sizeof(payload), NULL);
 
-   rtio_submit(&spi_rtio_ctx, 1);
+   rtio_submit(&spi_rtio_ctx, 2);
 
+   /* Result of first write SQE. */
    cqe = rtio_cqe_consume(&spi_rtio_ctx);
-   err = cqe->result;
+   if (cqe->result) {
+      /* Transfer failed */
+   }
+   rtio_cqe_release(&spi_rtio_ctx, cqe);
+
+   /* Result of second write SQE. */
+   cqe = rtio_cqe_consume(&spi_rtio_ctx);
+   if (cqe->result) {
+      /* Transfer failed */
+   }
    rtio_cqe_release(&spi_rtio_ctx, cqe);
 
 Set the :c:macro:`RTIO_SQE_TRANSACTION` flag on every SQE in the sequence except the last one.
+
+Alternative approach is to set the :c:macro:`RTIO_SQE_NO_RESPONSE` flag on an SQE to prevent from producing a CQE:
+
+.. code-block:: c
+
+   static uint8_t header[2]   = { 0xAB, 0x01 };
+   static uint8_t payload[16] = { ... };
+
+   struct rtio_sqe *sqe;
+   struct rtio_cqe *cqe;
+   int err;
+
+   /* First part: mark it as part of a transaction */
+   sqe = rtio_sqe_acquire(&spi_rtio_ctx);
+   rtio_sqe_prep_write(sqe, &spi_iodev, RTIO_PRIO_NORM,
+                       header, sizeof(header), NULL);
+
+   /* Preventing CQE from producing. */
+   sqe->flags |= RTIO_SQE_TRANSACTION | RTIO_SQE_NO_RESPONSE ;
+
+   /* Second (final) part of the transaction */
+   sqe = rtio_sqe_acquire(&spi_rtio_ctx);
+   rtio_sqe_prep_write(sqe, &spi_iodev, RTIO_PRIO_NORM,
+                       payload, sizeof(payload), NULL);
+
+   /* Decreasing the `wait_count` parameter to match produced CQEs. */
+   rtio_submit(&spi_rtio_ctx, 1);
+
+   /* Result of second write SQE. */
+   cqe = rtio_cqe_consume(&spi_rtio_ctx);
+   if (cqe->result) {
+      /* Transfer failed */
+   }
+   rtio_cqe_release(&spi_rtio_ctx, cqe);
 
 Asynchronous (non-blocking) transfer
 =====================================
@@ -314,6 +359,7 @@ How buffers outside the EasyDMA-accessible region are handled depends on the SoC
   Setting this option to ``0`` disables bounce buffering, in which case the application must ensure that every buffer is directly accessible by EasyDMA, otherwise the transfer fails.
 
 * On SoCs with Device Memory Management (DMM), the driver allocates the buffers from the DMM memory region and splits transfers into chunks limited by ``CONFIG_SPI_NRFX_DMM_BUFFER_SIZE`` (default ``256`` bytes). For a full-duplex transfer, twice the chunk size is allocated.
+  See `Nordic DMM API`_ for more details.
 
 Bounce buffering and DMM re-allocation add a data copy on every affected transfer.
 For the best performance, statically place the transmit and receive buffers in the memory region that EasyDMA can access for the given SPI controller, with the alignment required by the underlying DMA hardware.

@@ -264,6 +264,7 @@ How buffers outside the EasyDMA-accessible region are handled depends on the SoC
   Setting this option to ``0`` disables bounce buffering, in which case the application must ensure that every buffer is directly accessible by EasyDMA, otherwise the transfer fails.
 
 * On SoCs with Device Memory Management (DMM), the driver allocates the buffers from the DMM memory region and splits transfers into chunks limited by ``CONFIG_SPI_NRFX_DMM_BUFFER_SIZE`` (default ``256`` bytes). For a full-duplex transfer, twice the chunk size is allocated.
+  See `Nordic DMM API`_ for more details.
 
 Bounce buffering and DMM re-allocation add a data copy on every affected transfer.
 For the best performance, statically place the transmit and receive buffers in the memory region that EasyDMA can access for the given SPI controller, with the alignment required by the underlying DMA hardware.
