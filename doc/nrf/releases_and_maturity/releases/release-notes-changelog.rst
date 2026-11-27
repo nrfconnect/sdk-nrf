@@ -1387,6 +1387,11 @@ Bluetooth libraries and services
 Common Application Framework
 ----------------------------
 
+* :ref:`caf_ble_adv`:
+
+  * Added support for Bluetooth LE Extended Advertising for undirected advertising through the :kconfig:option:`CONFIG_CAF_BLE_ADV_EXT_ADV` Kconfig option.
+    For details, see :ref:`caf_ble_adv_extended_advertising`.
+
 * :ref:`caf_ble_state`:
 
   * Added:
