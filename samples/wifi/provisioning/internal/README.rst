@@ -244,6 +244,14 @@ To build and run the sample, complete the following steps:
 
        west build -b nrf7002dk/nrf5340/cpuapp samples/wifi/provisioning/internal
 
+   To provision enterprise networks, build with the ``nordic-wifi-enterprise`` snippet.
+   The snippet increases the RAM and flash usage of the sample.
+
+   .. code-block:: bash
+
+       west build -b nrf7002dk/nrf5340/cpuapp -S nordic-wifi-enterprise \
+           samples/wifi/provisioning/internal
+
 #. Flash the device:
 
    .. code-block:: bash
