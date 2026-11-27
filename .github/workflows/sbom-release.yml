@@ -1,0 +1,35 @@
+name: NCS release SBOM
+
+on:
+  workflow_dispatch:
+    inputs:
+      ncs_ref:
+        description: 'Release tag to be scanned, for example v3.4.3'
+        required: true
+        type: string
+      spdx_version:
+        description: SPDX version of the report
+        type: choice
+        options:
+          - '2.3'
+          - '3.0'
+        default: '2.3'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.ncs_ref }}-${{ inputs.spdx_version }}
+  cancel-in-progress: false
+
+jobs:
+  sbom:
+    name: Signed SBOM
+    uses: nrfconnect/action-sbom-upload/.github/workflows/action.yml@main
+    with:
+      ncs_ref: ${{ inputs.ncs_ref }}
+      spdx_version: ${{ inputs.spdx_version }}
+
+    secrets:
+      SBOM_SIGNING_KEY: ${{ secrets.SBOM_SIGNING_KEY }}
+      SBOM_SIGNING_PASSWORD: ${{ secrets.SBOM_SIGNING_PASSWORD }}
