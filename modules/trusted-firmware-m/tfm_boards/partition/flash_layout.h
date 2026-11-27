@@ -29,6 +29,8 @@
 #define TFM_DT_REG_ADDR(node_id) TFM_DT_CAT4(node_id, _REG_IDX_, 0, _VAL_ADDRESS)
 #define TFM_DT_REG_SIZE(node_id) TFM_DT_CAT4(node_id, _REG_IDX_, 0, _VAL_SIZE)
 #define TFM_DT_NODE_EXISTS(node_id) TFM_DT_CAT(node_id, _EXISTS)
+#define TFM_DT_ORD(node_id) TFM_DT_CAT(node_id, _ORD)
+#define TFM_DT_FOREACH_ANCESTOR(node_id, fn) TFM_DT_CAT(node_id, _FOREACH_ANCESTOR)(fn)
 
 /* This header file is included from linker scatter file as well, where only a
  * limited C constructs are allowed. Therefore it is not possible to include
