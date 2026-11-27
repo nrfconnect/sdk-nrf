@@ -1041,7 +1041,7 @@ Documentation
   * Section describing how to enable Amazon Frustration-Free Setup (FFS) support in Matter Configuring Device Identification page.
   * Notes to the :ref:`bluetooth_central_dfu_smp` sample document specifying the intended use of the sample.
   * DevAcademy links to the :ref:`index` and :ref:`getting_started` pages.
-  * Additional user guidance to the :ref:`Getting started with nRF9160 DK <gsg_guides>` and :ref:`Getting started with Thingy:91 <gsg_guides>` pages and the corresponding Developing with pages.
+  * Additional user guidance to the Getting started with nRF9160 DK and Getting started with Thingy:91 pages and the corresponding Developing with pages.
   * A page on :ref:`software_maturity` listing the different software maturity levels for the available features.
   * A page on :ref:`ug_pinctrl`.
   * Documentation for :ref:`Getting started with Thingy:53 <gsg_guides>`.
@@ -1088,6 +1088,6 @@ Documentation
   * Added |VSC| instructions on the following documentation:
 
     * :ref:`gs_modifying`
-    * :ref:`ug_thingy91`
+    * Developing with Thingy:91
     * :ref:`ug_nrf5340`
     * :ref:`bootloader`

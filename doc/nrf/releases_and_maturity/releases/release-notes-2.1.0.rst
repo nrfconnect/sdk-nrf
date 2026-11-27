@@ -26,7 +26,7 @@ The following list includes the summary of the most relevant changes introduced 
 * Added experimental support for setting the TX power envelope with FEM power control for Bluetooth® LE and 802.15.4.
 * Added experimental support for Microsoft Azure Embedded C SDK for the nRF91 Series.
 * Added :ref:`support <software_maturity>` for enhanced power optimized device management and nRF Cloud Location Services through LwM2M/CoAP with AVSystem for the nRF91 Series.
-* Added support for :ref:`nRF Cloud full modem FOTA <nrf9160_fota>` for the nRF91 Series.
+* Added support for nRF Cloud full modem FOTA for the nRF91 Series.
 * Added experimental support for the Nordic Distance Toolbox (NDT) on the nRF5340 SoC with samples.
 * Added Find My support for the nRF5340 SoC.
 * Updated Trusted Firmware-M to v1.6, with additional RAM overhead optimizations.
@@ -1085,10 +1085,10 @@ Documentation
   * :ref:`ug_nrf91` with the following changes:
 
     * In the :ref:`ug_nrf91_features` page, added a section about :ref:`modem_trace`.
-    * In the :ref:`Getting started with nRF9160 DK <gsg_guides>` guide, Updating the modem firmware section is now moved before Updating the application firmware because updating modem firmware erases application firmware.
-    * In the :ref:`ug_nrf9160` guide, the :ref:`build_pgm_nrf9160` section now mentions |VSC| and command-line instructions.
-    * In the :ref:`Getting started with Thingy:91 <gsg_guides>` guide, Programming firmware and :ref:`connect_nRF_cloud` sections now have different structure.
-    * The instructions and images in the :ref:`Getting started with Thingy:91 <gsg_guides>` and :ref:`Getting started with nRF9160 DK <gsg_guides>` guides now also mention accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
+    * In the Getting started with nRF9160 DK guide, Updating the modem firmware section is now moved before Updating the application firmware because updating modem firmware erases application firmware.
+    * In the Developing with nRF91 Series guide, the Programming onto nRF91 Series devices section now mentions |VSC| and command-line instructions.
+    * In the Getting started with Thingy:91 guide, Programming firmware and Connecting the Thingy:91 to nRF Cloud sections now have different structure.
+    * The instructions and images in the Getting started with Thingy:91 and Getting started with nRF9160 DK guides now also mention accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
 
   * :ref:`ug_thread_configuring` page to better indicate what is required and what is optional.
     Also added further clarifications to the page to make everything clearer.

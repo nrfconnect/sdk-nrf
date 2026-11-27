@@ -565,7 +565,7 @@ In addition to documentation related to the changes listed above, the following 
 nRF9160
 -------
 
-* :ref:`ug_nrf9160` - updated the :ref:`nrf9160_ug_band_lock` section; also updated with information about certification of different modem firmware versions and added a link to nRF9160 compatibility matrix
+* Developing with nRF91 Series - updated the Band lock section; also updated with information about certification of different modem firmware versions and added a link to nRF9160 compatibility matrix
 * Serial LTE modem - updated and extended with testing instructions and AT command reference
 * LTE Sensor Gateway - updated with information about how to use low power UART for communicating with the controller
 * nRF9160: Asset Tracker - added a note about external antenna performance and updated the dependencies section with the listing of modules abstracted using LwM2M carrier OS abstraction layer

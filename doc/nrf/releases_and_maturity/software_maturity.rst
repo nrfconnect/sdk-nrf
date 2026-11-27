@@ -491,64 +491,28 @@ The following table indicates the software maturity levels of the support for ea
             :header-rows: 1
 
             * -
-              - nRF9131
               - nRF9151
-              - nRF9160
-              - nRF9161
             * - **Bluetooth®**
-              - --
-              - --
-              - --
               - --
             * - **Bluetooth Mesh**
               - --
-              - --
-              - --
-              - --
             * - **DECT NR+ PHY**
-              - Experimental
-              - Experimental
-              - --
               - Experimental
             * - **ESB**
               - --
-              - --
-              - --
-              - --
             * - **LTE**
-              - Supported
-              - Supported
-              - Supported
               - Supported
             * - **Matter**
               - --\ :sup:`8`
-              - --\ :sup:`8`
-              - --\ :sup:`8`
-              - --\ :sup:`8`
             * - **NFC**
-              - --
-              - --
-              - --
               - --
             * - **Amazon Sidewalk**
               - --\ :sup:`4`
-              - --\ :sup:`4`
-              - --\ :sup:`4`
-              - --\ :sup:`4`
             * - **Thread**
               - --
-              - --
-              - --
-              - --
             * - **Wi-Fi®**
-              - --
-              - Supported\ :sup:`1`
-              - Supported\ :sup:`1`
               - Supported\ :sup:`1`
             * - **Zigbee**
-              - --\ :sup:`5`
-              - --\ :sup:`5`
-              - --\ :sup:`5`
               - --\ :sup:`5`
 
 | [1]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
@@ -1832,54 +1796,24 @@ The following table indicates the software maturity levels of the support for ea
             :header-rows: 1
 
             * - Feature
-              - nRF9131
               - nRF9151
-              - nRF9160
-              - nRF9161
             * - **Bluetooth LE Coexistence**
-              - --
-              - --
-              - --
               - --
             * - **Monitor Mode**
               - --
-              - --
-              - --
-              - --
             * - **Promiscuous Mode**
-              - --
-              - --
-              - --
               - --
             * - **STA Mode**
               - --
-              - --
-              - --
-              - --
             * - **Scan only (for location accuracy)**
-              - --
-              - Supported\ :sup:`5`
-              - Supported\ :sup:`5`
               - Supported\ :sup:`5`
             * - **SoftAP Mode (for Wi-Fi provisioning)**
               - --
-              - --
-              - --
-              - --
             * - **TX injection Mode**
-              - --
-              - --
-              - --
               - --
             * - **Thread Coexistence**
               - --
-              - --
-              - --
-              - --
             * - **Wi-Fi Direct (P2P)**
-              - --
-              - --
-              - --
               - --
 
    | [1]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode, nRF7002 EB, nRF7002 EK or nRF7002 EK in nRF7001 emulation mode
@@ -2404,19 +2338,10 @@ Trusted Firmware-M support
             :widths: auto
 
             * - TF-M profile
-              - nRF9131
               - nRF9151
-              - nRF9160
-              - nRF9161
             * - :ref:`Configurable <ug_tfm_supported_services_profiles_configurable>`
-              - --
-              - Experimental
-              - Experimental
               - Experimental
             * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
-              - Experimental
-              - Supported
-              - Supported
               - Supported
 
    .. tfm_ncs_profiles_support_table_end
@@ -2613,34 +2538,16 @@ The lists are organized by device Series and implementation.
             :widths: auto
 
             * - Implementation
-              - nRF9131
               - nRF9151
-              - nRF9160
-              - nRF9161
             * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
-              - Experimental
-              - Supported
-              - Supported
               - Supported
             * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
               - --
-              - --
-              - --
-              - --
             * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
-              - Supported
-              - Supported
-              - Supported
               - Supported
             * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
               - Experimental
-              - Experimental
-              - Experimental
-              - Experimental
             * - :ref:`IronSide Secure Enclave <ug_crypto_architecture_implementation_standards_ironside>`
-              - --
-              - --
-              - --
               - --
 
 .. crypto_support_table_end
@@ -2731,14 +2638,8 @@ The lists are organized by device Series and implementation.
            :widths: auto
 
            * - Feature
-             - nRF9131
              - nRF9151
-             - nRF9160
-             - nRF9161
            * - **Immutable Bootloader as part of build**
-             - --
-             - Supported
-             - Supported
              - Supported
 
 .. _software_maturity_security_features_huk:
@@ -2827,14 +2728,8 @@ Hardware Unique Key
            :widths: auto
 
            * - Feature
-             - nRF9131
              - nRF9151
-             - nRF9160
-             - nRF9161
            * - **Key Derivation from Hardware Unique Key**
-             - --
-             - Supported
-             - Supported
              - Supported
 
 .. _software_maturity_security_features_ts:
@@ -2925,14 +2820,8 @@ The Secure Storage subsystem implements the PSA Certified Secure Storage API wit
             :widths: auto
 
             * - Feature
-              - nRF9131
               - nRF9151
-              - nRF9160
-              - nRF9161
             * - **Secure Storage**
-              - Supported
-              - Supported
-              - Supported
               - Supported
 
 MCUboot bootloader
@@ -3126,39 +3015,18 @@ The following table indicates the software maturity levels of the support for ea
             :widths: auto
 
             * - Feature
-              - nRF9131
               - nRF9151
-              - nRF9160
-              - nRF9161
             * - **Immutable MCUboot as part of build**
-              - --
-              - Supported
-              - Supported
               - Supported
             * - **Updatable MCUboot as part of build**
-              - --
-              - Supported
-              - Supported
               - Supported
             * - **Application image compression**
-              - --
-              - Supported
-              - Supported
               - Supported
             * - **Hardware cryptography acceleration**
-              - --
-              - Supported
-              - Supported
               - Supported
             * - **Multiple signature keys**
               - --
-              - --
-              - --
-              - --
             * - **Image encryption**
-              - --
-              - Experimental
-              - Experimental
               - Experimental
 
 Power management device support
@@ -3321,30 +3189,15 @@ The following table indicates the software maturity levels of the support for ea
             :widths: auto
 
             * - Module
-              - nRF9131
               - nRF9151
-              - nRF9160
-              - nRF9161
             * - **nPM1100**
               - --
-              - --
-              - --
-              - --
             * - **nPM1300**
-              - Experimental
               - Supported
-              - Supported
-              - --
             * - **nPM2100**
               - --
-              - --
-              - --
-              - --
             * - **nPM6001**
-              - --
               - Supported
-              - --
-              - --
 
 Front-End Modules support
 *************************
@@ -3529,33 +3382,18 @@ The following table indicates the software maturity levels of the support for Fr
 
           * - FEM device
             - Implementation
-            - nRF9131
             - nRF9151
-            - nRF9160
-            - nRF9161
           * - nRF21540
             - nRF21540 GPIO
-            - --
-            - --
-            - --
             - --
           * - nRF21540
             - nRF21540 GPIO+SPI
             - --
-            - --
-            - --
-            - --
           * - SKY66112-11
             - Simple GPIO
             - --
-            - --
-            - --
-            - --
           * - nRF2240
             - nRF2240
-            - --
-            - --
-            - --
             - --
 
   .. software_maturity_fem_support_table_end

@@ -187,16 +187,16 @@ Working with nRF91 Series
 * Added:
 
   * New partition layout configuration options for Thingy:91.
-    See :ref:`thingy91_partition_layout` for more details.
+    See Partition layout for more details.
   * Developing with nRF9161 DK user guide.
   * A section on :ref:`tfm_enable_share_uart` in the developing with nRF9161 DK user guide.
 
 * Updated:
 
-  * The :ref:`Getting started with nRF9160 DK <gsg_guides>` and :ref:`Getting started with Thingy:91 <gsg_guides>` pages so that instructions in the :ref:`nrf91_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
-  * The :ref:`Getting started with nRF9160 DK <gsg_guides>` by replacing the Updating the DK firmware section with a new Getting started using the Quick Start app section.
+  * The Getting started with nRF9160 DK and Getting started with Thingy:91 pages so that instructions in the :ref:`nrf91_gs_connecting_dk_to_cloud` and Connecting the Thingy:91 to nRF Cloud sections, respectively, match the updated nRF Cloud workflow.
+  * The Getting started with nRF9160 DK by replacing the Updating the DK firmware section with a new Getting started using the Quick Start app section.
     This new section includes steps for using the `Quick Start app`_, a new application in `nRF Connect for Desktop`_ that streamlines the getting started process with the nRF91 Series DKs.
-  * :ref:`ug_nrf9160` user guide by separating the information about snippets into its own page, :ref:`ug_nrf91_snippet`.
+  * Developing with nRF91 Series user guide by separating the information about snippets into its own page, :ref:`ug_nrf91_snippet`.
 
 Working with nRF70 Series
 =========================

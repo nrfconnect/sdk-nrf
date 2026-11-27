@@ -15,10 +15,6 @@ The application uses Nordic Semiconductor tools and precompiled binaries and doe
 +======================+====================================================================+=======================================+
 | Nordic Thingy:91 X   |                                                                    | `Nordic Thingy:91 X User Guide`_      |
 +----------------------+                                                                    +---------------------------------------+
-| nRF9161 DK           |                                                                    | `nRF9161 DK Hardware`_                |
-+----------------------+                                                                    +---------------------------------------+
-| nRF9160 DK           |                                                                    | `nRF9160 DK Hardware`_                |
-+----------------------+                                                                    +---------------------------------------+
 | nRF9151 DK           |                                                                    | `nRF9151 DK Hardware`_                |
 +----------------------+                                                                    +---------------------------------------+
 | nRF9151 SMA DK       |                                                                    | `nRF9151 SMA DK Hardware`_            |
@@ -46,8 +42,6 @@ The application uses Nordic Semiconductor tools and precompiled binaries and doe
 | nRF54H20 DK          | :ref:`ug_nrf54h20_gs`                                              | *Not yet available*                   |
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
 | nRF7002 EB           | `Get started <nRF7002 EB get started_>`_ on the product page       | `nRF7002 EB User Guide`_              |
-+----------------------+--------------------------------------------------------------------+---------------------------------------+
-| Thingy:91            | `Get started <Nordic Thingy:91 get started_>`_ on the product page | `Nordic Thingy:91 User Guide`_        |
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
 | Thingy:53            | `Get started <Nordic Thingy:53 get started_>`_ on the product page | `Nordic Thingy:53 Hardware`_          |
 +----------------------+--------------------------------------------------------------------+---------------------------------------+

@@ -145,7 +145,7 @@ Device support
 KMU is available on the following devices:
 
 * `nRF5340 <nRF5340 Key management unit_>`_
-* nRF91 Series devices, such as `nRF9160 <nRF9160 Key management unit_>`_ or `nRF9151 <nRF9151 Key management unit_>`_
+* nRF91 Series devices, such as `nRF9151 <nRF9151 Key management unit_>`_
 * Most nRF54L Series devices, such as `nRF54L15 <nRF54L15 Key management unit_>`_
 
   .. note::
@@ -207,7 +207,7 @@ Device support
 
 Not all nRF devices have OTP peripherals.
 Check device-specific documentation for more information.
-For example, `nRF5340 OTP <nRF5340 OTP_>`_ and `nRF9160 OTP <nRF9160 OTP_>`_.
+For example, see `nRF5340 OTP <nRF5340 OTP_>`_.
 
 Usage
 -----

@@ -601,6 +601,9 @@ The ``sysbuild`` folder must be created in the application's folder:
 | :file:`sysbuild/mcuboot/boards/nrf9160dk_nrf9160_0_14_0.overlay` | DTS overlay for the ``nrf9160dk@0.14.0/nrf9160`` board target, note: used **instead** of app.overlay, not with as child/parent used to do |
 +------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
 
+.. note::
+   Starting with the |NCS| release v3.5.0, the nRF9160 DK is no longer supported in the |NCS|.
+
 .. _child_parent_to_sysbuild_migration_scope_changes:
 
 Scope changes

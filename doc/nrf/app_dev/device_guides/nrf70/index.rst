@@ -52,20 +52,6 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - | `Product Specification <nRF9151 Product Specification_>`_
        | `Quick Start app`_
        | `User Guide <nRF9151 DK Hardware_>`_
-   * - :zephyr:board:`nrf9161dk`
-     - nRF7002 EK
-     - PCA10153
-     - ``nrf9161dk/nrf9161/ns``
-     - | `Product Specification <nRF9161 Product Specification_>`_
-       | `Quick Start app`_
-       | `User Guide <nRF9161 DK Hardware_>`_
-   * - :ref:`zephyr:nrf9160dk_nrf9160`
-     - nRF7002 EK
-     - PCA10090
-     - ``nrf9160dk/nrf9160/ns``
-     - | `Product Specification <nRF9160 Product Specification_>`_
-       | :ref:`Getting started <gsg_guides>`
-       | `User Guide <nRF9160 DK Hardware_>`_
    * - :zephyr:board:`thingy53`
      - nRF7002 EB
      - PCA20053

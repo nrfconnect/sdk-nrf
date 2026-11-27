@@ -29,7 +29,7 @@ With security by separation in use, the two separated sides are often referred t
 Case study of secure and non-secure images
 ******************************************
 
-The following case study illustrates the concept of security by separation in the context of a simple application running on an nRF5340 or an nRF9160 device.
+The following case study illustrates the concept of security by separation in the context of a simple application running on an nRF5340 or an nRF91 Series device.
 
 Application with no security by separation
 ==========================================
@@ -112,7 +112,7 @@ The application is built as a non-secure image and TF-M is built as the secure i
 The build system merges both images to form a combined image that will be used for programming or updating the device.
 
 .. note::
-   A common misunderstanding comes from the naming of the builds: because "ns" is short for "non-secure," it is easy to think that building for ``nrfd9160dk/nrf9160/ns`` is less secure.
+   A common misunderstanding comes from the naming of the builds: because "ns" is short for "non-secure," it is easy to think that building for ``nrf9151dk/nrf9151/ns`` is less secure.
    But it is indeed the other way around!
 
 TF-M enables hardware-supported separation of firmware.

@@ -9,29 +9,7 @@ Configuring and building with nRF91 Series
 
 Configuring and building application for the nRF91 Series devices follows the processes described in the :ref:`building` section, with several exceptions specific to the nRF91 Series that are listed below.
 
-.. _nrf9160_board_revisions:
-
-nRF9160 DK board revisions
-**************************
-
-nRF9160 DK v0.13.0 and earlier are missing the following hardware features that are available on later versions of the DK:
-
-* External flash memory
-* I/O expander
-
-To build without these features, specify the board revision when building your application.
-
-.. note::
-   If you do not specify a board revision, the firmware is built for the default revision (v0.14.0).
-
-To specify the board revision, append it to the board argument when building.
-The board revision is printed on the label of your DK, just below the PCA number.
-For example, when building a non-secure application for nRF9160 DK v0.9.0, use ``nrf9160dk@0.9.0/nrf9160/ns`` as build target.
-
-See Zephyr's :ref:`zephyr:application_board_version` and :ref:`zephyr:nrf9160dk_additional_hardware` pages for more information.
-
 .. _nrf91_fota:
-.. _nrf9160_fota:
 
 FOTA updates
 ************
@@ -61,7 +39,7 @@ To perform a FOTA update, complete the following steps:
 
    .. note::
       This step does not apply for updates of the modem firmware.
-      You can download delta patches and full binaries of the modem firmware from the `nRF9151 product website (compatible downloads)`_, `nRF9161 product website (compatible downloads)`_, or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
+      You can download delta patches and full binaries of the modem firmware from the `nRF9151 product website (compatible downloads)`_.
 
    To create a binary file for an application update, build the application with the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` option enabled.
    The :file:`build/<app_name>/zephyr/zephyr.signed.bin` file must be uploaded to the server.

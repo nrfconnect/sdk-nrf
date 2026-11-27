@@ -142,7 +142,7 @@ Supported modem firmware
 See the following documentation for an overview of which modem firmware versions have been tested with this version of the |NCS|:
 
 * `Modem firmware compatibility matrix for the nRF9151 SoC`_
-* `Modem firmware compatibility matrix for the nRF9160 SoC`_
+* Modem firmware compatibility matrix for the nRF9160 SoC
 
 Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
 See `Programming nRF91 Series DK firmware`_ for instructions.
@@ -242,11 +242,11 @@ Developing with nRF54H Series
 Developing with Thingy:91
 =========================
 
-* Updated the title of the page about updating the Thingy:91 firmware using the Cellular Monitor app to :ref:`thingy91_update_firmware`.
+* Updated the title of the page about updating the Thingy:91 firmware using the Cellular Monitor app to Updating the Thingy:91 firmware using nRF Connect for Desktop apps.
 
 * Removed the page about updating the Thingy:91 firmware using the Programmer app and Cellular Monitor app.
-  Contents are now available in the app documentation on the `Programming Nordic Thingy prototyping platforms`_ and `Programming Nordic Thingy:91 firmware`_ pages, respectively.
-  The :ref:`thingy91_partition_layout` section has been moved to the :ref:`thingy91_update_firmware` page.
+  Contents are now available in the app documentation on the `Programming Nordic Thingy prototyping platforms`_ and Programming Nordic Thingy:91 firmware pages, respectively.
+  The Partition layout section has been moved to the Updating the Thingy:91 firmware using nRF Connect for Desktop apps page.
 
 Security
 ========

@@ -1136,7 +1136,7 @@ Documentation
     The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programming Nordic Thingy:53 <Programming Nordic Thingy53_>`_ section in the Programmer app documentation.
   * The standalone page for getting started with Nordic Thingy:91.
     The contents of this page are covered by the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
-    The part about connecting the prototyping platform to nRF Cloud is now a standalone :ref:`thingy91_connect_to_cloud` page in the :ref:`thingy91_ug_intro` section.
+    The part about connecting the prototyping platform to nRF Cloud is now a standalone Connecting the Thingy:91 to nRF Cloud page in the Developing with Thingy:91 section.
   * The standalone page for getting started with the nRF9160 DK.
     This page has been replaced by the `Quick Start app`_ that supports the nRF9160 DK.
-    The content about connecting the DK to nRF Cloud is now a standalone :ref:`nrf91_gs_connecting_dk_to_cloud` page in the :ref:`ug_nrf9160` section.
+    The content about connecting the DK to nRF Cloud is now a standalone :ref:`nrf91_gs_connecting_dk_to_cloud` page in the Developing with nRF91 Series section.

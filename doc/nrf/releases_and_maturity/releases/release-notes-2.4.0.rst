@@ -953,7 +953,7 @@ Documentation
   * The :ref:`software_maturity` page with details about Bluetooth feature support.
   * The :ref:`Getting started with nRF5340 DK <gsg_guides>`, :ref:`Getting started with Thingy:53 <gsg_guides>`, :ref:`Getting started with nRF52 Series <gsg_guides>`, and :ref:`ug_ble_controller` guides by adding a link to the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
   * The Zigbee weather station application documentation to match the application template.
-  * The :ref:`ug_nrf9160` guide, relevant application and sample documentation with a section about :ref:`external flash <nrf9160_external_flash>`.
+  * The Developing with nRF91 Series guide, relevant application and sample documentation with a section about external flash.
   * The :ref:`nrf_modem_lib_readme` library documentation with a section about :ref:`modem trace flash backend <modem_trace_flash_backend>`.
   * The :ref:`mod_memfault` library documentation has been moved from :ref:`lib_others` to :ref:`lib_debug`.
   * The :ref:`mqtt_sample` sample documentation has been moved from nRF9160 samples to :ref:`networking_samples`.

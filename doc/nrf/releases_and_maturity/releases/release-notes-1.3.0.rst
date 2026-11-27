@@ -428,10 +428,10 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`gs_testing` - added How to connect with LTE Link Monitor
 * :ref:`gs_modifying`  - added :ref:`gs_modifying_build_types`
 * :ref:`app_build_system` - updated |NCS| additions
-* :ref:`ug_nrf9160` - added :ref:`Concurrent GPS and LTE <nrf9160_gps_lte>`
+* Developing with nRF91 Series - added Concurrent GPS and LTE
 * :ref:`ug_nrf5340` - updated
 * :ref:`ug_nrf52` - added
-* :ref:`ug_thingy91` - added :ref:`thingy91_serialports`
+* Developing with Thingy:91 - added Connecting to Thingy:91
 * :ref:`ug_nfc` - added
 * :ref:`ug_bootloader` - added upgradeable bootloader
 * Cloud client - updated

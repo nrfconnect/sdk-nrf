@@ -336,15 +336,7 @@
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
 .. _`nRF Connect SDK`: https://www.nordicsemi.com/Products/Development-software/nRF-Connect-SDK
 
-.. _`Nordic nRF9161 DK`:
-.. _`nRF9161 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK
-.. _`nRF9161 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK/Download?lang=en#infotabs
-.. _`nRF9161 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK/Download?lang=en#B73EF1B2F2A34F50A40DC90199A1DAE2
 
-.. _`Nordic nRF9160 DK`:
-.. _`nRF9160 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nrf9160-dk/
-.. _`nRF9160 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download#infotabs
-.. _`nRF9160 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download?lang=en#B460A4E1F91A40B99C6432AD8CEC767C
 .. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
 
 .. _`Nordic nRF9151 DK`:
@@ -358,16 +350,9 @@
 .. _`nRF93M1 module product page`: https://www.nordicsemi.com/Products/nRF93M1
 
 .. _`nRF9151 product website`: https://www.nordicsemi.com/Products/nRF9151
-.. _`nRF9161 product website`: https://www.nordicsemi.com/Products/nRF9161
-.. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
-.. _`nRF9131 product website`: https://www.nordicsemi.com/Products/nRF9131
 
-.. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
-.. _`nRF9161 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9161/Download#infotabs
 .. _`nRF9151 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9151/Download#infotabs
 
-.. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
-.. _`nRF9161 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9161-Global-and-regulatory?lang=en#infotabs
 .. _`nRF9151 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9151-Global-and-regulatory?lang=en#infotabs
 .. _`nRF91 Series certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications?lang=en#infotabs
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
@@ -414,11 +399,6 @@
 .. _`Nordic Thingy:53 get started`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-53/GetStarted?lang=en#infotabs
 
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
-.. _`Nordic Thingy:91`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91
-.. _`Thingy:91 product page`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-91
-.. _`Thingy:91 Downloads`:
-.. _`Thingy:91 product website (downloads)`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91/Download#infotabs
-.. _`Nordic Thingy:91 get started`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-91/GetStarted?lang=en#infotabs
 .. _`Thingy:91 X product page`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-91-X
 
 .. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
@@ -525,7 +505,6 @@
 
 .. _`Cellular Monitor app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-cellularmonitor/index.html
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-cellularmonitor/managing_credentials.html
-.. _`Programming Nordic Thingy:91 firmware`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-cellularmonitor/programming_thingy91.html
 
 .. _`Matter Quick Start app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-matter-quickstart/index.html
 .. _`Matter Cluster Editor app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-matter-cluster-editor/index.html
@@ -561,34 +540,6 @@
 .. _`Amazon Sidewalk documentation`: https://nrfconnectdocs.nordicsemi.com/addons/addon-sidewalk/latest/index.html
 .. _`Setting up the SDK for Amazon Sidewalk`: https://nrfconnectdocs.nordicsemi.com/addons/addon-sidewalk/latest/setting_up_sidewalk_environment/setting_up_sdk.html
 
-.. _`nRF9160 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/nRF9160_html5_keyfeatures.html
-.. _`nRF9160 DK GPS`:
-.. _`nRF9160 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
-.. _`nRF9160 System Protection Unit`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/spu.html
-.. _`nRF9160 flash access control`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/spu.html#ariaid-title4
-.. _`nRF9160 SiP pin configuration`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
-.. _`nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/cryptocell.html
-.. _`nRF9160 Key management unit`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/kmu.html
-.. _`nRF9160 OTP`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/kmu.html#kmu_otp
-.. _`nRF9160 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/spim.html
-
-.. _`nRF9160 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/intro.html
-.. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/nrf9160_board_controller.html
-.. _`Measuring current on nRF9160 DK`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/measuring_current/hw_measure_current.html
-.. _`External memory section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/external_memory.html
-.. _`VDD supply rail section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/power_sources_vdd.html
-.. _`nRF9160 RESETREAS`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/power.html#ariaid-title16
-
-.. _`nRF9161 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/nRF9161_html5_keyfeatures.html
-.. _`nRF9161 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/gps.html
-.. _`nRF9161 DECT NR+ specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dect.html
-.. _`nRF9161 System Protection Unit`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/spu.html
-.. _`nRF9161 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/spim.html
-
-.. _`nRF9161 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/intro.html
-.. _`nRF9161 DK board control section in the nRF9161 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
-.. _`Measuring current on nRF9161 DK`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/measuring_current/hw_measure_current.html
-
 .. _`nRF9151 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/nRF9151_html5_keyfeatures.html
 .. _`nRF9151 DECT NR+ specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dect.html
 .. _`nRF9151 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/gps.html
@@ -607,12 +558,8 @@
 .. _`nRF93M1 DK Hardware User Guide`: https://docs.nordicsemi.com/r/bundle/ug_nrf93m1_dk/page/ug/nrf93m1_dk/intro/intro.html
 .. _`nRF93M1 Hardware Design Guidelines`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/Product-Briefs/ngl_005_1427.pdf
 
-.. _`AT Commands Reference Guide`:
-.. _`nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/intro_nrf9160.html
-.. _`band lock section in the AT Commands reference document`:
-.. _`band lock section in the nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
-.. _`system mode section in the AT Commands reference document`:
 .. _`system mode section in the nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
+.. _`AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/intro_nrf91x1.html
 .. _`Credential storage management %CMNG`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/security/cmng.html
 .. _`Packet Domain AT commands`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/packet_domain/packet_domain.html
 .. _`3GPP Release 14 features AT command`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/nw_service/rel14feat.html
@@ -775,8 +722,6 @@
 .. _`Nordic Thingy:53 Hardware`: https://docs.nordicsemi.com/bundle/ug_thingy53/page/UG/thingy53/intro/frontpage.html
 .. _`Nordic Thingy:53 Regulatory notices`: https://docs.nordicsemi.com/bundle/ug_thingy53/page/UG/thingy53/regulatory/regulatory_notices.html
 
-.. _`Nordic Thingy:91 User Guide`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/intro/frontpage.html
-.. _`Measuring Current on Thingy:91`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/hw_power_current_measurement.html
 
 .. _`Nordic Thingy:91 X User Guide`: https://docs.nordicsemi.com/bundle/ug_thingy91x/page/UG/thingy91x/intro/frontpage.html
 
@@ -798,8 +743,6 @@
 .. _`nRF21540 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_ek/page/UG/nrf21540_DK/intro.html
 
 .. _`AP-Protect for nRF9151`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dif.html#ariaid-title3
-.. _`AP-Protect for nRF9161`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dif.html#ariaid-title3
-.. _`Debugger access protection for nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/dif.html#ariaid-title2
 .. _`AP-Protect for nRF54LV10A`: https://docs.nordicsemi.com/bundle/ps_nrf54LV10A/page/ctrl-ap.html
 .. _`AP-Protect for nRF54LM20A`: https://docs.nordicsemi.com/bundle/ps_nrf54LM20A/page/ctrl-ap.html
 .. _`AP-Protect for nRF54L15`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/ctrl-ap.html
@@ -833,12 +776,9 @@
 .. _`nRF9160 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`nRF9161 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_operator_certifications.html
 .. _`nRF9151 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9151/page/COMP/nrf9151/nrf9151_operator_certifications.html
-.. _`Modem firmware compatibility matrix`:
-.. _`Modem firmware compatibility matrix for the nRF9160 SoC`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_modem_fw.html
-.. _`Modem firmware compatibility matrix for the nRF9161 SoC`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_modem_fw.html
+.. _`Modem firmware compatibility matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9151/page/COMP/nrf9151/nrf9151_modem_fw.html
 .. _`Modem firmware compatibility matrix for the nRF9151 SoC`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9151/page/COMP/nrf9151/nrf9151_modem_fw.html
 
-.. _`Electrical specification of nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/_tmp/alta.nRF9160/autodita/APPLICATION.CURRENT/parameters.frontpage.html
 
 .. _`nAN34`: https://docs.nordicsemi.com/bundle/zip/resource/nAN34_v1.01.zip
 
@@ -869,9 +809,7 @@
 .. _`nRF5 SDK Bootloader`: https://docs.nordicsemi.com/bundle/sdk_nrf5_v17.0.2/page/lib_bootloader.html
 .. _`nRF5 Bootloader DFU Mode`: https://docs.nordicsemi.com/bundle/sdk_nrf5_v17.0.2/page/lib_bootloader.html#lib_bootloader_dfu_mode
 
-.. _`nRF9160 Hardware Verification Guidelines - UART interface`: https://docs.nordicsemi.com/bundle/nwp_034/page/WP/nwp_034/uart_if.html
 .. _`nRF9151 Hardware Verification Guidelines - UART interface`: https://docs.nordicsemi.com/bundle/nwp_055/page/wp/nwp_034/uart_if.html
-.. _`nRF9160 Antenna and RF Interface Guidelines`: https://docs.nordicsemi.com/bundle/nwp_033/page/WP/nwp_033/nwp_033_intro.html
 .. _`GPS interface and antenna`: https://docs.nordicsemi.com/bundle/nwp_033/page/WP/nwp_033/nwp_033_gps.html
 .. _`Security protocol for cellular IoT`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/security_protocols.html
 .. _`Wi-Fi Alliance Certification for nRF70 Series`: https://docs.nordicsemi.com/bundle/nwp_045/page/WP/nwp_045/intro.html
@@ -880,13 +818,9 @@
 .. _`nWP044 - Best practices for cellular IoT development LTE technology`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/lte_technology.html
 .. _`nWP044 - Best practices for cellular IoT development`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/intro.html
 
-.. _`nRF9160 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_ic_revision_overview.html
-.. _`nRF9161 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_ic_revision_overview.html
 .. _`nRF9151 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9151/page/COMP/nrf9151/nrf9151_ic_revision_overview.html
 
-.. _`SWD Select`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/programming_debugging_interface.html
 
-.. _`Errata 36`: https://docs.nordicsemi.com/bundle/errata_nRF9161_Rev1/page/ERR/nRF9161/Rev1/latest/anomaly_161_36.html
 .. _`Errata 254`: https://docs.nordicsemi.com/bundle/errata_nRF52840_Rev3/page/ERR/nRF52840/Rev3/latest/config_840_254.html
 .. _`Errata 255`: https://docs.nordicsemi.com/bundle/errata_nRF52833_Rev2/page/ERR/nRF52833/Rev2/latest/config_833_255.html
 .. _`Errata 256`: https://docs.nordicsemi.com/bundle/errata_nRF52820_Rev3/page/ERR/nRF52820/Rev3/latest/config_820_256.html
@@ -1284,7 +1218,6 @@
 .. _`System Power Off`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/zephyr/doxygen/html/group__sys__poweroff.html
 .. _`System Power Management`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/zephyr/services/pm/system.html
 
-.. _`nRF9160: GPS with SUPL client library`: https://nrfconnectdocs.nordicsemi.com/ncs/1.2.0/nrf/samples/nrf9160/gps/README.html
 
 .. _`previous method to define a board (hardware model)`: https://nrfconnectdocs.nordicsemi.com/ncs/2.6.1/zephyr/hardware/porting/board_porting.html
 
@@ -1925,8 +1858,6 @@
 .. _`Coiote Device Management`: https://www.avsystem.com/products/coiote-iot-device-management-platform/
 .. _`Coiote Device Management server`: https://eu.iot.avsystem.cloud/
 .. _`Viewing device location in Coiote Device Management`: https://iotdevzone.avsystem.com/docs/Coiote_IoT_DM/Cloud_integrations/cloud-integrations/#nrf-cloud-location-services
-.. _`nRF9160 Anjay integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/nRF9160DK/
-.. _`Thingy:91 integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/Thingy91/#thingy91
 
 .. ### Source: mosquitto
 
@@ -1947,7 +1878,6 @@
 .. ### Source: youtube.com
 
 .. _`Accelerate cellular product development`: https://youtu.be/b1YW1J4aUps
-.. _`How nRF9160 enables cellular IoT asset tracking`: https://webinars.nordicsemi.com/events/12113311018?n=How+nRF9160+enables+cellular+IoT+asset+tracking&event_id=12113311018
 
 .. ### Source: onomondo.com
 
