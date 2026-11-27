@@ -7,6 +7,7 @@ common:
   timeout: 900
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dongle/nrf54lm20b/cpuapp
   tags:
     - ci_samples_dfu
     - mcuboot
@@ -24,6 +25,7 @@ tests:
         - "smp_sample: build time"
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
 
   sample.dfu.mcuboot_serial_recovery.no_application:
     slow: true
