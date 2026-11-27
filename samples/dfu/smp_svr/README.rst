@@ -54,6 +54,10 @@ The following table describes the available configurations.
      - UART
      - Swap
      -
+   * - sample.dfu.smp_svr.serial.nrf7120dk.ext_flash
+     - UART
+     - Swap
+     - External flash (secondary slot in the MSPI flash)
    * - sample.dfu.smp_svr.bt
      - Bluetooth LE
      - Swap

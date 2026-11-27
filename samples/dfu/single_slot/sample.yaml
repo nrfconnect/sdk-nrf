@@ -44,8 +44,11 @@ tests:
       - bluetooth
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     extra_args:
       - FILE_SUFFIX=ble_enter
     harness_config:
@@ -60,9 +63,12 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     extra_args:
       - FILE_SUFFIX=usb
   sample.dfu.single_slot.usb_enter:
@@ -72,9 +78,12 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     extra_args:
       - FILE_SUFFIX=usb_enter
     harness_config:
@@ -103,6 +112,18 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+  sample.dfu.single_slot.fw_loader_update.nrf7120:
+    extra_args:
+      - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
+      - installer_CONFIG_REBOOT=y
+    tags:
+      - dfu_single_slot
+      - ci_samples_dfu
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
   sample.dfu.single_slot.fw_loader_update.nrf54lv10:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
@@ -140,11 +161,14 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   sample.dfu.single_slot.fw_loader_update.fw_loader_entrance_boot_mode.nrf54l15:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
@@ -164,6 +188,27 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+  sample.dfu.single_slot.fw_loader_update.fw_loader_entrance_boot_mode.nrf7120:
+    extra_args:
+      - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
+      - FILE_SUFFIX=boot_mode
+      - installer_CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_MODE=y
+      - installer_CONFIG_RETAINED_MEM=y
+      - installer_CONFIG_RETENTION=y
+      - installer_CONFIG_RETENTION_BOOT_MODE=y
+      - installer_CONFIG_REBOOT=y
+      - mcuboot_CONFIG_RETAINED_MEM=y
+      - mcuboot_CONFIG_RETENTION=y
+      - mcuboot_CONFIG_RETENTION_BOOT_MODE=y
+      - mcuboot_CONFIG_BOOT_FIRMWARE_LOADER_BOOT_MODE=y
+    tags:
+      - dfu_single_slot
+      - ci_samples_dfu
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
   sample.dfu.single_slot.fw_loader_update.fw_loader_entrance_boot_req.nrf54l15:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
@@ -182,6 +227,24 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+  sample.dfu.single_slot.fw_loader_update.fw_loader_entrance_boot_req.nrf7120:
+    extra_args:
+      - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
+      - FILE_SUFFIX=boot_req
+      - installer_CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_REQ=y
+      - installer_CONFIG_RETAINED_MEM=y
+      - installer_CONFIG_RETENTION=y
+      - installer_CONFIG_NRF_MCUBOOT_BOOT_REQUEST=y
+      - installer_CONFIG_IMG_MANAGER=y
+      - installer_CONFIG_REBOOT=y
+    tags:
+      - dfu_single_slot
+      - ci_samples_dfu
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
   sample.dfu.single_slot.fw_loader_update.fw_loader_entrance_boot_req.nrf54h20:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y

@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf7120dk_nrf7120_cpuapp_boot_mode.overlay"
+
+/ {
+	chosen {
+		zephyr,uart-mcumgr = &cdc_acm_uart0;
+	};
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "nRF7120 DK MCUmgr";
+	};
+};
