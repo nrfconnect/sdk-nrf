@@ -4,13 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&timer131 {
-	status = "reserved";
-};
-
-&gpio0 {
-	status = "okay";
-};
+/*
+ * Test requires Loopback between:
+ *  - PWM130 OUT[0] at P0.03 <-> GPIO input at P0.05
+ *  - PWM130 OUT[1] at P0.06 <-> GPIO input at P0.07
+ */
 
 &pinctrl {
 	pwm130_default: pwm130_default {
@@ -29,13 +27,6 @@
 	};
 };
 
-tester_pwm: &pwm130 {
-	status = "reserved";
-	pinctrl-0 = <&pwm130_default>;
-	pinctrl-1 = <&pwm130_sleep>;
-	pinctrl-names = "default", "sleep";
-};
-
 / {
 	pulse_meas: pulse-meas {
 		compatible = "nordic,pulse-meas";
@@ -44,4 +35,19 @@ tester_pwm: &pwm130 {
 		assert-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
 		deassert-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
 	};
+};
+
+&timer131 {
+	status = "reserved";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+tester_pwm: &pwm130 {
+	status = "reserved";
+	pinctrl-0 = <&pwm130_default>;
+	pinctrl-1 = <&pwm130_sleep>;
+	pinctrl-names = "default", "sleep";
 };
