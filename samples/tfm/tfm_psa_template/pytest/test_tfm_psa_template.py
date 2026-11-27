@@ -49,7 +49,7 @@ def _west_flash(build_dir: Path, dev_id: str, extra_args: list[str] | None = Non
 
 
 def _secure_board(dut: DeviceAdapter) -> str:
-    """Return the secure board target, for example nrf9160dk@0.14.0/nrf9160."""
+    """Return the secure board target, for example nrf9151dk/nrf9151."""
     board = dut.device_config.platform
     if not board.endswith("/ns"):
         pytest.fail(f"Expected a non-secure board target, got: {board}")

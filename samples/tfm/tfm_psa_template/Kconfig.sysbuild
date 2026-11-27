@@ -46,7 +46,7 @@ config SECURE_BOOT_SIGNING_KEY_FILE
 
 # Placeholder PSA certificate reference. nRF54L does not have a real
 # PSA-certified value yet, and Kconfig.tfm only auto-defaults the string for
-# nRF9160 and nRF5340. Replace for production use.
+# nRF91 Series devices and nRF5340. Replace for production use.
 config TFM_PSA_CERTIFICATE_REFERENCE_VALUE
 	default "0000000000000-00000"
 

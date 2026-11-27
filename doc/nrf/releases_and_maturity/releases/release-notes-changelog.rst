@@ -1160,6 +1160,9 @@ Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
 * Added support for the nRF54LC10A SoC in the TF-M samples.
+
+* Removed support for the nRF9160 DK and the nRF9161 DK in the TF-M samples.
+
 * :ref:`tfm_psa_template` sample:
 
   * Added support for nRF54L Series devices.
