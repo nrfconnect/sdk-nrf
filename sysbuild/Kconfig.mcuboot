@@ -245,8 +245,7 @@ config BOOT_SIGNATURE_TYPE_PURE
 
 config BOOT_IMG_HASH_ALG_SHA512
 	bool "Use SHA512 for image hash calculation"
-	depends on BOOT_SIGNATURE_TYPE_ED25519
-	default y if SOC_SERIES_NRF54L || SOC_SERIES_NRF54H || SOC_SERIES_NRF71 || SOC_SERIES_NRF92
+	default y if BOOT_SIGNATURE_TYPE_ED25519 && (SOC_SERIES_NRF54L || SOC_SERIES_NRF54H || SOC_SERIES_NRF71 || SOC_SERIES_NRF92)
 	help
 	  The image hash will be calculated using SHA512 algorithm.
 
