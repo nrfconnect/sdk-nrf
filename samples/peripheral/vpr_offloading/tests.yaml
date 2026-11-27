@@ -19,6 +19,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
@@ -46,8 +47,21 @@ tests:
       - vpr_offloading_SNIPPET=nordic-ppr
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+
+  # nRF9251 has both FLPR and PPR, so the remote core must be selected explicitly.
+  sample.vpr_offloading.flpr.nrf9251:
+    extra_args:
+      - vpr_offloading_SNIPPET=nordic-flpr
+      - vpr_offloading_EXTRA_DTC_OVERLAY_FILE=boards/nrf9251dk_nrf9251_cpuapp_flpr.overlay
+      - SB_CONFIG_PPRCORE_NONE=y
+      - SB_CONFIG_FLPRCORE_REMOTE=y
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
 
   sample.vpr_offloading.local.current_measurement:
     tags:
