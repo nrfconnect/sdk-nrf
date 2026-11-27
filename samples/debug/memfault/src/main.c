@@ -42,11 +42,11 @@ static int fib(int n)
 
 /* Handle button presses and trigger faults that can be captured and sent to
  * the Memfault cloud for inspection after rebooting:
- * Only button 1 is available on Thingy:91, the rest are available on nRF9160 DK.
+ * Only button 1 is available on Thingy:91 X, the rest are available on nRF91 Series DKs.
  *	Button 1: Trigger stack overflow.
  *	Button 2: Trigger NULL-pointer dereference.
- *	Switch 1: Increment switch_1_toggle_count metric by one.
- *	Switch 2: Trace switch_2_toggled event, along with switch state.
+ *	Button 3: Increment button_3_press_count metric by one.
+ *	Button 4: Trace button_4_pressed event, along with press state.
  */
 static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
@@ -65,18 +65,18 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 #pragma GCC diagnostic pop
 		ARG_UNUSED(i);
 	} else if (has_changed & DK_BTN3_MSK) {
-		/* DK_BTN3_MSK is Switch 1 on nRF9160 DK. */
-		int err = MEMFAULT_METRIC_ADD(switch_1_toggle_count, 1);
+		/* DK_BTN3_MSK is Button 3 on nRF9151 DK. */
+		int err = MEMFAULT_METRIC_ADD(button_3_press_count, 1);
 		if (err) {
-			LOG_ERR("Failed to increment switch_1_toggle_count");
+			LOG_ERR("Failed to increment button_3_press_count");
 		} else {
-			LOG_INF("switch_1_toggle_count incremented");
+			LOG_INF("button_3_press_count incremented");
 		}
 	} else if (has_changed & DK_BTN4_MSK) {
-		/* DK_BTN4_MSK is Switch 2 on nRF9160 DK. */
-		MEMFAULT_TRACE_EVENT_WITH_LOG(switch_2_toggled, "Switch state: %d",
+		/* DK_BTN4_MSK is Button 4 on nRF9151 DK. */
+		MEMFAULT_TRACE_EVENT_WITH_LOG(button_4_pressed, "Button state: %d",
 					      buttons_pressed & DK_BTN4_MSK ? 1 : 0);
-		LOG_INF("switch_2_toggled event has been traced, button state: %d",
+		LOG_INF("button_4_pressed event has been traced, button state: %d",
 			buttons_pressed & DK_BTN4_MSK ? 1 : 0);
 	}
 }

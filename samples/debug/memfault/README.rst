@@ -4,7 +4,7 @@
    :title: Memfault
 
    The Memfault sample shows how to use the `Memfault SDK`_ in an |NCS| application to collect coredumps and metrics.
-   The sample connects to an LTE network using an nRF91 Series DK, a Thingy:91, or a Thingy:91 X, or to Wi-Fi®  using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
+   The sample connects to an LTE network using an nRF91 Series DK, a Thingy:91 X, or to Wi-Fi® using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
 
    .. |wifi| replace:: Wi-Fi
 
@@ -54,14 +54,14 @@ There are also some metrics, which are specific to |NCS| that are enabled by def
 In addition to showing the capturing of metrics provided by the Memfault SDK integration layer in |NCS|, the sample also shows how to capture an application-specific metric.
 This metric is defined in :ncs-file:`/samples/debug/memfault/config/memfault_metrics_heartbeat_config.def`:
 
-*  ``switch_1_toggle_count`` - The number of times **Switch 1** has been toggled on an nRF9160 DK.
+*  ``button_3_press_count`` - The number of times **Button 3** has been pressed on an nRF9151 DK.
 
 Error tracking with trace events
 ================================
 
 The sample implements a user-defined trace reason for demonstration purposes.
-The trace reason is called ``switch_2_toggled``, and is collected every time **Switch 2** is toggled on an nRF9160 DK.
-In addition to detection of the event, the trace includes the current switch state.
+The trace reason is called ``button_4_pressed``, and is collected every time **Button 4** is pressed on an nRF9151 DK.
+In addition to detection of the event, the trace includes the current button state.
 See `Memfault: Error Tracking with Trace Events`_ for information on how to configure and use trace events.
 
 Coredumps

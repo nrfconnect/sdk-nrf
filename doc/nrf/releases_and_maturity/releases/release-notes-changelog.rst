@@ -793,7 +793,11 @@ Cryptography samples
 Debug samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`memfault_sample`:
+
+  * Updated the sample to use buttons instead of switches as the nRF9151 DK only has buttons.
+
+  * Removed support for the nRF9160 DK, the nRF9161 DK, and the Thingy:91.
 
 DFU samples
 -----------
