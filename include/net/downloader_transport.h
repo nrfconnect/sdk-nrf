@@ -48,6 +48,19 @@ struct dl_transport {
 	 */
 	bool (*proto_supported)(struct downloader *dl, const char *uri);
 	/**
+	 * Validate the parsed URL of a new download (optional)
+	 *
+	 * Called on every start, also when the connection to the host is reused and @c init is
+	 * not called. Nothing of the new request is stored in @p dl yet, so a failure leaves a
+	 * retained connection as it was.
+	 *
+	 * @param dl Downloader instance.
+	 * @param file File of the new download, without protocol, host and port.
+	 *
+	 * @returns 0 if the URL can be downloaded, negative error otherwise.
+	 */
+	int (*validate)(struct downloader *dl, const char *file);
+	/**
 	 * Initialize DL transport
 	 *
 	 * @param dl Downloader instance.

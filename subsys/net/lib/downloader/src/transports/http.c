@@ -193,9 +193,10 @@ static int http_get_request_send(struct downloader *dl)
 	}
 
 send:
-	if (len < 0 || len > dl->cfg.buf_size) {
+	/* snprintf() returns the length without the terminating NUL, which must fit as well. */
+	if (len < 0 || len >= dl->cfg.buf_size) {
 		LOG_ERR("Cannot create GET request, buffer too small");
-		return -ENOMEM;
+		return -E2BIG;
 	}
 
 	if (IS_ENABLED(CONFIG_DOWNLOADER_LOG_HEADERS)) {
@@ -617,6 +618,10 @@ static int dl_http_download(struct downloader *dl)
 		/* Request next fragment */
 		dl->buf_offset = 0;
 		ret = http_get_request_send(dl);
+		if (ret == -E2BIG) {
+			/* A new connection does not make the request fit. */
+			return ret;
+		}
 		if (ret) {
 			LOG_DBG("data_req failed, err %d", ret);
 			/** Attempt reconnection. */
