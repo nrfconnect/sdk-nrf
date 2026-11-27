@@ -28,8 +28,6 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
   boot_chains.secure_boot_and_bootloader_mcuboot:
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
@@ -39,8 +37,6 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
   boot_chains.bootloader_mcuboot_and_nv_counters:
     extra_args:
       - FILE_SUFFIX=mcuboot
