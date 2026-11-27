@@ -532,6 +532,8 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	int indx = 0;
 	int ret = -1;
 	int num_freqs = 0;
+	unsigned int db_held;
+	unsigned int scan_done_snapshot;
 
 	if (!if_priv || !params) {
 		LOG_ERR("%s: Invalid params", __func__);
@@ -553,6 +555,14 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 
 	if (vif_ctx_zep->scan_in_progress) {
 		LOG_ERR("%s: Scan already in progress", __func__);
+		ret = -EBUSY;
+		goto out;
+	}
+
+	db_held = nrf_wifi_scan_db_held(vif_ctx_zep);
+	if (db_held) {
+		LOG_WRN("%s: previous scan never completed, its DB 0x%x is still held by the RPU",
+			__func__, db_held);
 		ret = -EBUSY;
 		goto out;
 	}
@@ -634,6 +644,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 		goto out;
 	}
 
+	scan_done_snapshot = nrf_wifi_scan_db_snapshot(vif_ctx_zep);
 	status = nrf_wifi_sys_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, scan_info);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -641,6 +652,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 		goto out;
 	}
 
+	nrf_wifi_scan_db_record(vif_ctx_zep, scan_info->scan_db_addr, scan_done_snapshot);
 	vif_ctx_zep->scan_type = SCAN_CONNECT;
 	vif_ctx_zep->scan_in_progress = true;
 

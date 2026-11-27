@@ -58,6 +58,8 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	uint16_t num_scan_channels = 0;
 	int ret = -1;
 	uint16_t max_bss_cnt = 0;
+	unsigned int db_held;
+	unsigned int scan_done_snapshot;
 
 	vif_ctx_zep = dev->data;
 
@@ -88,6 +90,14 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 
 	if (vif_ctx_zep->scan_in_progress) {
 		LOG_INF("%s: Scan already in progress", __func__);
+		ret = -EBUSY;
+		goto out;
+	}
+
+	db_held = nrf_wifi_scan_db_held(vif_ctx_zep);
+	if (db_held) {
+		LOG_WRN("%s: previous scan never completed, its DB 0x%x is still held by the RPU",
+			__func__, db_held);
 		ret = -EBUSY;
 		goto out;
 	}
@@ -218,6 +228,9 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	scan_info->scan_params.passive_scan = 1;
 #endif /* CONFIG_NRF71_PASSIVE_SCAN */
 
+	nrf_wifi_mem_log_ctrl_stats("disp scan start");
+
+	scan_done_snapshot = nrf_wifi_scan_db_snapshot(vif_ctx_zep);
 	status = nrf_wifi_sys_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, scan_info);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -225,6 +238,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 		goto out;
 	}
 
+	nrf_wifi_scan_db_record(vif_ctx_zep, scan_info->scan_db_addr, scan_done_snapshot);
 	vif_ctx_zep->scan_type = SCAN_DISPLAY;
 	vif_ctx_zep->scan_in_progress = true;
 

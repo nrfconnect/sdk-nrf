@@ -47,6 +47,13 @@ void nrf_wifi_mem_get_heaps(struct k_heap **ctrl, struct k_heap **data);
 void *nrf_wifi_mem_alloc(enum nrf_wifi_mem_pool_type pool_type, size_t size);
 
 /**
+ * @brief Log the control pool usage (free, allocated, peak) at INF level.
+ *
+ * @param where Short label identifying the call site.
+ */
+void nrf_wifi_mem_log_ctrl_stats(const char *where);
+
+/**
  * @brief Allocate zero-initialized memory from a driver heap pool.
  *
  * @param pool_type Pool to allocate from.
