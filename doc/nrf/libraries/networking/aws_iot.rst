@@ -502,6 +502,30 @@ The following code example shows how to publish to non-AWS specific topics:
 		return err;
 	}
 
+.. _lib_aws_iot_direct_messages:
+
+Receiving direct messages
+=========================
+
+AWS IoT Core can send a message to one connected device by its client ID, using the ``SendDirectMessage`` API.
+For details, see `AWS IoT Direct Messaging`_.
+The device does not need to subscribe to the topic of a direct message.
+
+The library does not need any special configuration to receive direct messages.
+It handles them in the same way as any other incoming message:
+
+* The library passes the message to the application with the :c:enumerator:`AWS_IOT_EVT_DATA_RECEIVED` event.
+  The topic type in the event is :c:enumerator:`AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC`.
+  The library cannot tell a direct message from a message on a topic that the application subscribed to.
+  A message on a topic that does not match any topic the application subscribed to is a direct message.
+* If AWS IoT Core delivers the message with QoS 1, the library sends the MQTT PUBACK before it passes the message to the application.
+  The PUBACK confirms that the library received the message, not that the application handled it.
+* The topic and the payload pointers in the event are valid only during the event handler.
+  Copy the data if the application needs it later.
+* If the payload is larger than the value of the :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN` Kconfig option, the library drops the message and does not send the PUBACK.
+  The library reports the error with the :c:enumerator:`AWS_IOT_EVT_ERROR` event.
+  The sender then gets an HTTP 504 error when it requests a confirmation.
+
 .. _lib_set_client_id:
 
 Setting client ID at run-time

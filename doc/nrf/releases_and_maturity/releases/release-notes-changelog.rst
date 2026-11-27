@@ -962,6 +962,7 @@ Networking samples
 
     * Support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
     * Steps for testing a FOTA update in the :ref:`aws_iot_sample_testing_fota` section of the sample documentation.
+    * Documentation explaining that the sample logs direct messages received through the AWS IoT Core ``SendDirectMessage`` API.
 
   * Updated the Wi-Fi configuration to generate the private key on the device with the experimental :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option.
     In Wi-Fi builds, the sample no longer reads the credentials from the :file:`certs/` folder.
@@ -1588,16 +1589,24 @@ Libraries for networking
 
 * :ref:`lib_mqtt_helper` library:
 
-  * Added the experimental :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option to use a private key that is generated on the device.
-    The key is generated with the TLS credentials key generation of Zephyr (:kconfig:option:`CONFIG_TLS_CREDENTIALS_KEYGEN`).
-    The option and the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option exclude each other.
-    The :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option remains the default.
-  * Added the :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_NONE` Kconfig option for applications that install the TLS credentials themselves.
-    It replaces disabling the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option.
-    See the :ref:`lib_aws_iot` and :ref:`lib_azure_iot_hub` libraries for how to generate the key and obtain the device certificate.
-  * Fixed an issue where the library could stop after one resolved broker address.
-    The library now iterates all resolved IPv4/IPv6 addresses.
-    In dual-stack builds, the library resolves the broker only for the address families that the Connection Manager reports as ready.
+  * Added:
+
+    * The experimental :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option to use a private key that is generated on the device.
+      The key is generated with the TLS credentials key generation of Zephyr (:kconfig:option:`CONFIG_TLS_CREDENTIALS_KEYGEN`).
+      The option and the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option exclude each other.
+      The :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option remains the default.
+    * The :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_NONE` Kconfig option for applications that install the TLS credentials themselves.
+      It replaces disabling the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option.
+      See the :ref:`lib_aws_iot` and :ref:`lib_azure_iot_hub` libraries for how to generate the key and obtain the device certificate.
+
+  * Fixed:
+
+    * An issue where the library could stop after one resolved broker address.
+      The library now iterates all resolved IPv4/IPv6 addresses.
+      In dual-stack builds, the library resolves the broker only for the address families that the Connection Manager reports as ready.
+    * An issue where the library did not read a received message from the socket when the message was larger than the value of the :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN` Kconfig option.
+      The next read from the MQTT connection failed.
+      The library now drops the payload of such a message, keeps the connection and reports the :c:enumerator:`MQTT_HELPER_ERROR_MSG_SIZE` error.
 
 * :ref:`lib_downloader` library:
 
@@ -1648,19 +1657,28 @@ Libraries for networking
 
 * :ref:`lib_aws_iot` library:
 
+  * Added documentation describing how the library receives direct messages sent with the AWS IoT Core ``SendDirectMessage`` API.
+
   * Updated:
 
     * The :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
       Previously, the event carried no payload.
     * The library to enable the TLS Server Name Indication (SNI) extension (:kconfig:option:`CONFIG_MBEDTLS_SSL_SERVER_NAME_INDICATION`) by default when Mbed TLS is used.
       AWS IoT Core rejects TLS connections without SNI, so the TLS handshake failed for applications that did not enable the option.
+    * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
+      Previously, the event carried no payload.
 
 * :ref:`lib_azure_iot_hub` library:
 
   * Updated the API documentation of the :c:func:`azure_iot_hub_connect` and :c:func:`azure_iot_hub_dps_start` functions to describe the positive error code that they return when the host name cannot be resolved.
 
-  * Fixed an issue where the device did not load the stored DPS assignment after a reboot when the NVS settings backend was used.
-    The device then ran the DPS registration again.
+  * Fixed:
+
+    * An issue where a non-shadow topic containing a Device Shadow operation name, such as ``update/delta``, was reported as a shadow topic.
+    * An issue where named shadow topics and other AWS reserved topics were reported as classic shadow topics.
+      This happened when the topic ended with a classic shadow operation.
+    * An issue where the device did not load the stored DPS assignment after a reboot when the NVS settings backend was used.
+      The device then ran the DPS registration again.
 
 Libraries for NFC
 -----------------
