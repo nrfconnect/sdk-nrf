@@ -9,176 +9,173 @@
 #include <zephyr/toolchain.h>
 #include <zephyr/sys/util.h>
 
-#if !defined(CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND)
+/* PK memory only allows naturally aligned accesses (54LM20A: aligned words only).
+ * memcpy()/memset() don't guarantee their access sizes, so PK memory is accessed
+ * as [head bytes][aligned words][tail bytes] with volatile accesses only.
+ */
 
-#define PTR_ALIGNMENT(ptr, type)	(((uintptr_t)ptr) & (sizeof(type) - 1))
-#define IS_NATURAL_ALIGNED(ptr, type)	!PTR_ALIGNMENT(ptr, type)
+#define WORD_SIZE sizeof(uint32_t)
 
-void sx_clrpkmem(void *dst, size_t sz)
+/* Byte position of addr within its word (0-3). */
+static inline size_t offset_in_word(const void *addr)
 {
-	uint8_t *dst_ptr = (uint8_t *)dst;
-
-	/* Align start address since PK memory is device memory */
-	while (sz && !IS_NATURAL_ALIGNED(dst_ptr, uint32_t)) {
-		*(volatile uint8_t *)dst_ptr = 0;
-		dst_ptr++;
-		sz--;
-	}
-
-	memset(dst_ptr, 0, sz);
+	return (uintptr_t)addr % WORD_SIZE;
 }
 
-void sx_wrpkmem(void *dst, const void *src, size_t sz)
+/* Address of the word that contains addr. */
+static inline uintptr_t word_start(const void *addr)
 {
-	uint8_t *dst_ptr = (uint8_t *)dst;
-	const uint8_t *src_ptr = (const uint8_t *)src;
-
-	/* Align start address since PK memory is device memory */
-	while (sz && !IS_NATURAL_ALIGNED(dst_ptr, uint32_t)) {
-		*(volatile uint8_t *)dst_ptr = *src_ptr;
-		dst_ptr++;
-		src_ptr++;
-		sz--;
-	}
-
-	memcpy(dst_ptr, src_ptr, sz);
+	return (uintptr_t)addr - offset_in_word(addr);
 }
 
-void sx_rdpkmem(void *dst, const void *src, size_t sz)
+/* Bytes before the first word-aligned address, at most sz. */
+static inline size_t head_length(const void *pk, size_t sz)
 {
-	uint8_t *dst_ptr = (uint8_t *)dst;
-	const uint8_t *src_ptr = (const uint8_t *)src;
+	size_t offset = offset_in_word(pk);
 
-	/* Align start address since PK memory is device memory */
-	while (sz && !IS_NATURAL_ALIGNED(src_ptr, uint32_t)) {
-		*dst_ptr = *(const volatile uint8_t *)src_ptr;
-		dst_ptr++;
-		src_ptr++;
-		sz--;
-	}
-
-	memcpy(dst_ptr, src_ptr, sz);
+	return MIN(offset ? WORD_SIZE - offset : 0, sz);
 }
 
-#else /* 54LM20A requires word-aligned, word-sized memory accesses */
-
-static void write_incomplete_word(uint32_t *dst, const uint8_t *bytes,
-				  size_t first_byte_pos, size_t num_bytes)
+/* Write len bytes from src to pk. The bytes must be in one word. */
+static inline void write_bytes(uint8_t *pk, const uint8_t *src, size_t len)
 {
-	uint32_t word = *dst;
+#if defined(CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND)
+	/* One read-modify-write of the word (little-endian). */
+	volatile uint32_t *pk_word = (volatile uint32_t *)word_start(pk);
+	uint32_t shift = 8 * offset_in_word(pk);
+	uint32_t word = *pk_word;
 
-	for (size_t i = 0; i != num_bytes; ++i) {
-		((uint8_t *)&word)[first_byte_pos + i] = bytes[i];
+	for (size_t i = 0; i < len; i++, shift += 8) {
+		word = (word & ~(0xFFu << shift)) | ((uint32_t)src[i] << shift);
 	}
-
-#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("write_incomplete_word(%p, 0x%x, %zu, %zu): 0x%x to 0x%x\r\n",
-		dst, UNALIGNED_GET((const uint32_t *)bytes), first_byte_pos, num_bytes, *dst, word);
+	*pk_word = word;
+#else
+	for (size_t i = 0; i < len; i++) {
+		((volatile uint8_t *)pk)[i] = src[i];
+	}
 #endif
-	if ((uintptr_t)dst % 4) {
-		SX_WARN_UNALIGNED_ADDR(dst);
-	}
+}
 
-	*dst = word;
+/* Read len bytes from pk into dst. The bytes must be in one word. */
+static inline void read_bytes(uint8_t *dst, const uint8_t *pk, size_t len)
+{
+#if defined(CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND)
+	/* One read of the word (little-endian). */
+	uint32_t word = *(const volatile uint32_t *)word_start(pk);
+	uint32_t shift = 8 * offset_in_word(pk);
+
+	for (size_t i = 0; i < len; i++, shift += 8) {
+		dst[i] = (uint8_t)(word >> shift);
+	}
+#else
+	for (size_t i = 0; i < len; i++) {
+		dst[i] = ((const volatile uint8_t *)pk)[i];
+	}
+#endif
 }
 
 void sx_clrpkmem(void *dst, size_t sz)
 {
-	if (sz == 0) {
-		return;
-	}
+	static const uint8_t zeros[WORD_SIZE - 1];
+	uint8_t *pk = dst;
+	size_t head_len = head_length(pk, sz);
+	size_t word_count = (sz - head_len) / WORD_SIZE;
+	size_t tail_len = (sz - head_len) % WORD_SIZE;
+	volatile uint32_t *pk_words;
+
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
 	printk("sx_clrpkmem(%p, %zu)\r\n", dst, sz);
 #endif
 
-	const uint8_t zero[4] = {};
-	const uintptr_t dst_addr = (uintptr_t)dst;
-
-	if (dst_addr % 4) {
-		const size_t first_byte_pos = dst_addr % 4;
-		const size_t byte_count = MIN(4 - first_byte_pos, sz);
-
-		write_incomplete_word((uint32_t *)(dst_addr & ~3), zero,
-				      first_byte_pos, byte_count);
-		dst = (void *)(dst_addr + byte_count);
-		sz -= byte_count;
+	if (head_len > 0) {
+		write_bytes(pk, zeros, head_len);
+		pk += head_len;
 	}
-	uint32_t *word_dst = (uint32_t *)dst;
 
-	for (size_t i = 0; i != sz / 4; ++i) {
-		word_dst[i] = 0;
+	pk_words = (volatile uint32_t *)pk;
+	for (size_t i = 0; i < word_count; i++) {
+		pk_words[i] = 0;
 	}
-	if (sz % 4) {
-		write_incomplete_word(&word_dst[sz / 4], zero, 0, sz % 4);
+	pk += word_count * WORD_SIZE;
+
+	if (tail_len > 0) {
+		write_bytes(pk, zeros, tail_len);
 	}
 }
 
 void sx_wrpkmem(void *dst, const void *src, size_t sz)
 {
-	if (sz == 0) {
-		return;
-	}
+	uint8_t *pk = dst;
+	const uint8_t *ram = src;
+	size_t head_len = head_length(pk, sz);
+	size_t word_count = (sz - head_len) / WORD_SIZE;
+	size_t tail_len = (sz - head_len) % WORD_SIZE;
+	volatile uint32_t *pk_words;
+
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
 	printk("sx_wrpkmem(%p, %p, %zu)\r\n", dst, src, sz);
 #endif
 
-	if ((uintptr_t)dst % 4) {
-		const uintptr_t dst_addr = (uintptr_t)dst;
-		const size_t first_byte_pos = dst_addr % 4;
-		const size_t byte_count = MIN(4 - first_byte_pos, sz);
-
-		write_incomplete_word((uint32_t *)(dst_addr & ~3), src, first_byte_pos, byte_count);
-		dst = (uint8_t *)dst + byte_count;
-		src = (const uint8_t *)src + byte_count;
-		sz -= byte_count;
+	if (head_len > 0) {
+		write_bytes(pk, ram, head_len);
+		pk += head_len;
+		ram += head_len;
 	}
 
-	/* dst is guaranteed to be 4-byte aligned at this point.
-	 * Use UNALIGNED_GET to read from src since it may be unaligned.
-	 */
-	for (size_t i = 0; i != sz / 4; ++i) {
-		((uint32_t *)dst)[i] = UNALIGNED_GET((uint32_t *)((const uint8_t *)src + i * 4));
+	/* ram may be unaligned. */
+	pk_words = (volatile uint32_t *)pk;
+	for (size_t i = 0; i < word_count; i++) {
+		pk_words[i] = UNALIGNED_GET((const uint32_t *)&ram[i * WORD_SIZE]);
+	}
+	pk += word_count * WORD_SIZE;
+	ram += word_count * WORD_SIZE;
+
+	if (tail_len > 0) {
+		write_bytes(pk, ram, tail_len);
+	}
+}
+
+void sx_rdpkmem(void *dst, const void *src, size_t sz)
+{
+	uint8_t *ram = dst;
+	const uint8_t *pk = src;
+	size_t head_len = head_length(pk, sz);
+	size_t word_count = (sz - head_len) / WORD_SIZE;
+	size_t tail_len = (sz - head_len) % WORD_SIZE;
+	const volatile uint32_t *pk_words;
+
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_rdpkmem(%p, %p, %zu)\r\n", dst, src, sz);
+#endif
+
+	if (head_len > 0) {
+		read_bytes(ram, pk, head_len);
+		pk += head_len;
+		ram += head_len;
 	}
 
-	if (sz % 4) {
-		write_incomplete_word((uint32_t *)((uint8_t *)dst + (sz & ~3)),
-				      (const uint8_t *)src + (sz & ~3), 0, sz % 4);
+	/* ram may be unaligned. */
+	pk_words = (const volatile uint32_t *)pk;
+	for (size_t i = 0; i < word_count; i++) {
+		UNALIGNED_PUT(pk_words[i], (uint32_t *)&ram[i * WORD_SIZE]);
+	}
+	pk += word_count * WORD_SIZE;
+	ram += word_count * WORD_SIZE;
+
+	if (tail_len > 0) {
+		read_bytes(ram, pk, tail_len);
 	}
 }
 
 void sx_wrpkmem_byte(void *dst, uint8_t input_byte)
 {
-	uintptr_t dst_addr = (uintptr_t)dst;
-	uint32_t *word_dst = (uint32_t *)(dst_addr & ~3);
-	uint32_t word = *word_dst;
-	size_t byte_index = dst_addr % 4;
-
-	((uint8_t *)&word)[byte_index] = input_byte;
-	*word_dst = word;
+	write_bytes(dst, &input_byte, 1);
 }
 
-void sx_rdpkmem(void *dst, const void *src, size_t sz)
+uint8_t sx_rdpkmem_byte(const void *src)
 {
-#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_rdpkmem(%p, %p, %zu)\r\n", dst, src, sz);
-#endif
+	uint8_t value;
 
-	uint8_t *d = dst;
-	uintptr_t s = (uintptr_t)src;
-
-	/* Always read aligned words from CRACEN, write bytes to dst */
-	while (sz > 0) {
-		uint32_t word = *(const uint32_t *)(s & ~3);
-		size_t offset = s % 4;
-		size_t count = MIN(4 - offset, sz);
-
-		for (size_t i = 0; i < count; ++i) {
-			d[i] = ((const uint8_t *)&word)[offset + i];
-		}
-		d += count;
-		s += count;
-		sz -= count;
-	}
+	read_bytes(&value, src, 1);
+	return value;
 }
-
-#endif
