@@ -793,7 +793,10 @@ Cryptography samples
 Debug samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`ppi_trace_sample`:
+
+  * Added support for the nRF9151 DK.
+  * Removed support for the nRF9160 DK.
 
 DFU samples
 -----------
