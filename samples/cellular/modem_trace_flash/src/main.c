@@ -19,11 +19,11 @@
 
 LOG_MODULE_REGISTER(modem_trace_flash_sample, CONFIG_MODEM_TRACE_FLASH_SAMPLE_LOG_LEVEL);
 
-#define UART1_DT_NODE DT_NODELABEL(uart1)
+#define TRACE_DUMP_UART_DT_NODE DT_ALIAS(trace_dump_uart)
 
 #define READ_BUF_SIZE CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE
 
-static const struct device *const uart_dev = DEVICE_DT_GET(UART1_DT_NODE);
+static const struct device *const uart_dev = DEVICE_DT_GET(TRACE_DUMP_UART_DT_NODE);
 
 NRF_MODEM_LIB_ON_CFUN(cfun_hook, on_cfun, NULL);
 
@@ -33,10 +33,10 @@ static void on_cfun(int mode, void *context)
 	LOG_INF("LTE mode changed to %d\n", mode);
 }
 
-static void print_uart1(char *buf, int len)
+static void print_uart(char *buf, int len)
 {
 	if (!device_is_ready(uart_dev)) {
-		LOG_ERR("uart1 device not found/ready!");
+		LOG_ERR("Trace dump UART device not found/ready!");
 		return;
 	}
 	for (int i = 0; i < len; i++) {
@@ -69,7 +69,7 @@ static void print_traces(void)
 		}
 
 		read_offset += ret;
-		print_uart1(read_buf, ret);
+		print_uart(read_buf, ret);
 	}
 	LOG_INF("Total trace bytes read from flash: %d", read_offset);
 }
@@ -77,7 +77,7 @@ static void print_traces(void)
 static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if (has_changed & button_states & DK_BTN1_MSK) {
-		printk("Button 1 pressed - dumping traces to uart1\n");
+		printk("Button 1 pressed - dumping traces to UART\n");
 		print_traces();
 	}
 
@@ -111,7 +111,7 @@ int main(void)
 	}
 
 	if (!device_is_ready(uart_dev)) {
-		LOG_ERR("uart1 device not found/ready!");
+		LOG_ERR("Trace dump UART device not found/ready!");
 	}
 
 	nrf_modem_lib_init();

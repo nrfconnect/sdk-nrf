@@ -18,8 +18,9 @@ Overview
 ********
 
 You can use this sample to implement storing and reading of modem traces on an external flash device.
-The sample contains an implementation of a custom trace backend that writes modem traces on the external flash chip of the nRF91 Series DK.
-In addition, it reads out the traces from the external flash and writes them out to UART1 on a button press.
+The sample contains an implementation of a custom trace backend that writes modem traces on the external flash chip of the DK.
+In addition, it reads out the traces from the external flash and writes them out to a separate UART on a button press.
+The sample uses UART1 on the nRF91 Series DKs and UART132 on the nRF9251 DK.
 
 You can use the sample for creating a trace backend for your own flash device.
 You can store a reduced set of modem traces using the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_CHOICE` option.
@@ -37,22 +38,22 @@ The use of :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME` option to enable deep-powe
 However, it adds overhead to SPI instructions, which causes a reduction in write performance.
 
 The sample uses the :ref:`nrfxlib:nrf_modem` to turn on and off the modem traces and also enable and disable the modem.
-In addition, it uses the :ref:`zephyr:uart_api` to send modem traces over UART1.
+In addition, it uses the :ref:`zephyr:uart_api` to send modem traces over UART.
 
 Flash space
 ===========
 
-The sample uses 1 MB (out of 8 MB) of the external flash.
+The sample uses 1 MB of the external flash.
 This is sufficient for the modem traces that are handled by this sample.
 Since the external flash area is erased during startup, the size of the flash used affects the startup time.
-Erasing 1 MB takes approximately 8 seconds in high performance mode.
+On the nRF91 Series DK, erasing 1 MB takes approximately 8 seconds in high performance mode.
 Erasing the whole flash (8 MB) takes approximately 1 minute in high performance mode.
 
 User interface
 ***************
 
 Button 1:
-   Reads out the modem traces from external flash and sends it on UART 1.
+   Reads out the modem traces from external flash and sends it on the trace dump UART.
 
 
 Building and running
