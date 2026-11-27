@@ -85,9 +85,48 @@ int nrf_modem_lib_bootloader_init(void);
  *
  * @note The modem must be put in minimal function mode before being shut down.
  *
+ * On nRF92 Series devices , the cellcore is reset,
+ * and the function returns when IronSide SE has reported the cellcore reset.
+ *
  * @return int Zero on success, non-zero otherwise.
  */
 int nrf_modem_lib_shutdown(void);
+
+#if defined(CONFIG_NRF_MODEM_SOC_SERIES_NRF92X) || defined(__DOXYGEN__)
+/**
+ * @brief Request the modem to enter system off and shutdown the Modem library.
+ *
+ * Unlike @ref nrf_modem_lib_shutdown(), the modem enters system off instead of the cellcore
+ * being reset.
+ * The callbacks defined with @ref NRF_MODEM_LIB_ON_SHUTDOWN are invoked before the request.
+ * Re-initialize the Modem library with @ref nrf_modem_lib_init() after the system off.
+ *
+ * @note The modem must be put in minimal function mode before requesting system off.
+ *
+ * Returns when the modem has signaled system off. On errors, the Modem library is
+ * shutdown regardless.
+ *
+ * @retval Zero on success.
+ * @retval -NRF_EPERM The Modem library is not initialized in normal mode.
+ * @retval -NRF_ETIMEDOUT The modem did not signal system off in time.
+ * @retval -NRF_EIO The modem faulted.
+ */
+int nrf_modem_lib_systemoff(void);
+#endif
+
+#if defined(CONFIG_NRF_MODEM_LIB_CELL_EVENT_FORWARD) || defined(__DOXYGEN__)
+/**
+ * @brief Forward an IronSide SE CELL event notification to the Modem library.
+ *
+ * Call this from the callback of the application bellboard channel of the CELL event report,
+ * before handling the event report. The Modem library consumes the cellcore reset event only
+ * while a shutdown with @ref nrf_modem_lib_shutdown() is in progress, and leaves any other
+ * events in the event report for the application.
+ *
+ * Can be called from an interrupt context.
+ */
+void nrf_modem_lib_cell_event_notify(void);
+#endif
 
 /**
  * @brief Modem library dfu callback struct.
