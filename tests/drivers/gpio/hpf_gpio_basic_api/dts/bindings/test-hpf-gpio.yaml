@@ -15,13 +15,15 @@ properties:
     type: phandle-array
     required: true
     description: |
-      Identity of an HPF GPIO that will be configured as an output.
-      This must be on the GPIO instance to which FLPR has access,
-      and physically connected to in-gpios.
+      Identity of HPF GPIOs that will be configured as outputs.
+      These must be on GPIO instances to which FLPR has access.
+      Each entry must be physically connected to the in-gpios entry
+      at the same index.
 
   in-gpios:
     type: phandle-array
     required: true
     description: |
-      Identity of a hardware GPIO that will be configured as an input.
-      This must be physically connected to out-gpios.
+      Identity of hardware GPIOs that will be configured as inputs.
+      Each entry must be physically connected to the out-gpios entry
+      at the same index.

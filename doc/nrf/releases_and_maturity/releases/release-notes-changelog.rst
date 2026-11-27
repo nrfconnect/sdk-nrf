@@ -433,6 +433,8 @@ High-Performance Framework (HPF)
   * The :kconfig:option:`SB_CONFIG_HPF_MSPI_IPC_NO_COPY` sysbuild Kconfig option that sets the same IPC data passing mode for both the application image and the HPF MSPI image.
   * Validation of the length of the received IPC message in the HPF MSPI application.
 
+* Updated the :ref:`hpf_gpio_example` application to support GPIO pins on multiple ports.
+
 IPC radio firmware
 ------------------
 
