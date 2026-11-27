@@ -11,7 +11,9 @@
 #include <string.h>
 
 #include <zephyr/kernel.h>
+#include <zephyr/init.h>
 #include <zephyr/devicetree.h>
+#include <zephyr/linker/linker-defs.h>
 #include <zephyr/logging/log.h>
 
 #include <common/mem_mgmt.h>
@@ -286,6 +288,329 @@ static enum nrf_wifi_status rf_params_apply_board_values(void)
  * rf_params[].bytes only has to happen once: repeating it on every radio
  * test init would leak the previous allocation from the CTRL pool.
  */
+/* DEBUG: RF parameter table corruption diagnostics. Snapshots are taken at
+ * several boot stages and printed later from the system workqueue, because
+ * the deferred log buffer is too small to hold them during init. The .data
+ * section is also compared with its load image in flash.
+ */
+#define RF_DBG_WINDOW_ADDR  0x20018e40UL
+#define RF_DBG_WINDOW_WORDS 8
+#define RF_DBG_STR_BYTES    32
+#define RF_DBG_DATA_ENTRIES 32
+/* The deferred log buffer is small, so only a few entries are logged at once. */
+#define RF_DBG_DATA_LOG_NOW 4
+
+enum rf_dbg_scan_id {
+	/* Right after the .data copy. Every mismatch is recorded. */
+	RF_DBG_SCAN_EARLY,
+	/* Before the RF parameter decode. Only suspect mismatches are recorded. */
+	RF_DBG_SCAN_BYTES_INIT,
+	RF_DBG_SCAN_COUNT,
+};
+
+static const char *const rf_dbg_scan_name[RF_DBG_SCAN_COUNT] = {
+	"EARLY", "bytes_init entry",
+};
+
+static struct {
+	bool taken;
+	uint16_t mismatches;
+	uint16_t suspects;
+	uint16_t stored;
+	struct {
+		uint32_t addr;
+		uint32_t expected;
+		uint32_t actual;
+	} entry[RF_DBG_DATA_ENTRIES];
+} rf_dbg_scan[RF_DBG_SCAN_COUNT];
+
+enum rf_dbg_stage {
+	RF_DBG_PRE_KERNEL_1,
+	RF_DBG_POST_KERNEL_FIRST,
+	RF_DBG_POST_KERNEL_LAST,
+	RF_DBG_BYTES_INIT,
+	RF_DBG_APPLICATION,
+	RF_DBG_STAGE_COUNT,
+};
+
+static const char *const rf_dbg_stage_name[RF_DBG_STAGE_COUNT] = {
+	"PRE_KERNEL_1", "POST_KERNEL first", "POST_KERNEL last", "bytes_init entry",
+	"APPLICATION",
+};
+
+static struct {
+	bool taken;
+	int8_t bad_idx;
+	uint32_t uptime_us;
+	const char *bad_ptr;
+	uint32_t window[RF_DBG_WINDOW_WORDS];
+} rf_dbg_snap[RF_DBG_STAGE_COUNT];
+
+static struct {
+	bool valid;
+	int index;
+	int ret;
+	size_t str_len;
+	struct rf_hex_param table[NUM_WIFI_PARAMS];
+	bool str_valid;
+	uint8_t str[RF_DBG_STR_BYTES];
+} rf_dbg_fail;
+
+static bool rf_dbg_in_rodata(const char *ptr)
+{
+	return ptr >= (const char *)__rodata_region_start &&
+	       ptr < (const char *)__rodata_region_end;
+}
+
+static bool rf_dbg_in_ram(const char *ptr)
+{
+	uintptr_t addr = (uintptr_t)ptr;
+
+	return addr >= CONFIG_SRAM_BASE_ADDRESS &&
+	       addr + RF_DBG_STR_BYTES <= CONFIG_SRAM_BASE_ADDRESS + KB(CONFIG_SRAM_SIZE);
+}
+
+/* A word is suspect if it holds an address or another large value and differs
+ * from its load value in one bit, or if it is an odd RAM address that is a
+ * function address in flash when bit 29 is cleared. Small values are skipped
+ * because flags and counters change by one bit in normal operation.
+ */
+static bool rf_dbg_word_is_suspect(uint32_t expected, uint32_t actual)
+{
+	const char *flash_addr = (const char *)(uintptr_t)(actual & ~BIT(29));
+
+	if (expected > UINT16_MAX && is_power_of_two(expected ^ actual)) {
+		return true;
+	}
+
+	return (actual & BIT(29)) && (actual & 1U) && flash_addr >= __text_region_start &&
+	       flash_addr < __text_region_end;
+}
+
+/* Compare .data in RAM with its load image in flash, word by word. */
+static void rf_dbg_data_scan(enum rf_dbg_scan_id id)
+{
+	size_t words = (__data_region_end - __data_region_start) / sizeof(uint32_t);
+	bool suspects_only = (id != RF_DBG_SCAN_EARLY);
+
+	if (rf_dbg_scan[id].taken) {
+		return;
+	}
+
+	rf_dbg_scan[id].taken = true;
+
+	for (size_t i = 0; i < words; i++) {
+		uint32_t expected;
+		uint32_t actual;
+		bool suspect;
+
+		memcpy(&expected, __data_region_load_start + i * sizeof(uint32_t),
+		       sizeof(expected));
+		memcpy(&actual, __data_region_start + i * sizeof(uint32_t), sizeof(actual));
+		if (expected == actual) {
+			continue;
+		}
+
+		rf_dbg_scan[id].mismatches++;
+		suspect = rf_dbg_word_is_suspect(expected, actual);
+		if (suspect) {
+			rf_dbg_scan[id].suspects++;
+		}
+
+		if ((suspects_only && !suspect) ||
+		    rf_dbg_scan[id].stored >= RF_DBG_DATA_ENTRIES) {
+			continue;
+		}
+
+		rf_dbg_scan[id].entry[rf_dbg_scan[id].stored].addr =
+			(uint32_t)(uintptr_t)(__data_region_start + i * sizeof(uint32_t));
+		rf_dbg_scan[id].entry[rf_dbg_scan[id].stored].expected = expected;
+		rf_dbg_scan[id].entry[rf_dbg_scan[id].stored].actual = actual;
+		rf_dbg_scan[id].stored++;
+	}
+}
+
+static void rf_dbg_data_scan_log(enum rf_dbg_scan_id id, unsigned int max_entries, bool pace)
+{
+	if (!rf_dbg_scan[id].taken) {
+		LOG_INF("RFDBG data %s: not reached", rf_dbg_scan_name[id]);
+		return;
+	}
+
+	LOG_INF("RFDBG data %s: %u mismatches, %u suspect, %u stored", rf_dbg_scan_name[id],
+		rf_dbg_scan[id].mismatches, rf_dbg_scan[id].suspects, rf_dbg_scan[id].stored);
+
+	for (unsigned int i = 0; i < MIN(rf_dbg_scan[id].stored, max_entries); i++) {
+		LOG_INF("RFDBG   data 0x%08x exp %08x act %08x xor %08x",
+			rf_dbg_scan[id].entry[i].addr, rf_dbg_scan[id].entry[i].expected,
+			rf_dbg_scan[id].entry[i].actual,
+			rf_dbg_scan[id].entry[i].expected ^ rf_dbg_scan[id].entry[i].actual);
+		if (pace && (i % 4) == 3) {
+			k_msleep(50);
+		}
+	}
+}
+
+/* Sum and XOR of a flash region, taken as little-endian 32-bit words. The last
+ * word is padded with zeros. The XOR shows which bits differ from the ELF.
+ */
+static void rf_dbg_flash_sum_log(const char *name, const char *start, const char *end)
+{
+	uint32_t sum = 0;
+	uint32_t xor = 0;
+
+	for (const char *ptr = start; ptr < end; ptr += sizeof(uint32_t)) {
+		uint32_t word = 0;
+
+		memcpy(&word, ptr, MIN(sizeof(word), (size_t)(end - ptr)));
+		sum += word;
+		xor ^= word;
+	}
+
+	LOG_INF("RFDBG flash %s %p-%p sum %08x xor %08x", name, (void *)start, (void *)end, sum,
+		xor);
+}
+
+static void rf_dbg_snapshot(enum rf_dbg_stage stage)
+{
+	if (rf_dbg_snap[stage].taken) {
+		return;
+	}
+
+	rf_dbg_snap[stage].taken = true;
+	rf_dbg_snap[stage].bad_idx = -1;
+	/* The system timer is not running before POST_KERNEL. */
+	rf_dbg_snap[stage].uptime_us = (stage == RF_DBG_PRE_KERNEL_1)
+		? 0 : k_cyc_to_us_floor32(k_cycle_get_32());
+	memcpy(rf_dbg_snap[stage].window, (const void *)RF_DBG_WINDOW_ADDR,
+	       sizeof(rf_dbg_snap[stage].window));
+
+	for (int i = 0; i < NUM_WIFI_PARAMS; i++) {
+		if (!rf_dbg_in_rodata(rf_params[i].hex_str)) {
+			rf_dbg_snap[stage].bad_idx = i;
+			rf_dbg_snap[stage].bad_ptr = rf_params[i].hex_str;
+			break;
+		}
+	}
+}
+
+static void rf_dbg_fail_capture(int index, size_t str_len, int ret)
+{
+	const char *str = rf_params[index].hex_str;
+
+	rf_dbg_fail.valid = true;
+	rf_dbg_fail.index = index;
+	rf_dbg_fail.ret = ret;
+	rf_dbg_fail.str_len = str_len;
+	memcpy(rf_dbg_fail.table, rf_params, sizeof(rf_dbg_fail.table));
+	rf_dbg_fail.str_valid = rf_dbg_in_rodata(str) || rf_dbg_in_ram(str);
+	if (rf_dbg_fail.str_valid) {
+		memcpy(rf_dbg_fail.str, str, sizeof(rf_dbg_fail.str));
+	}
+
+	LOG_ERR("RFDBG fail idx %d entry %p hex_str %p len %zu bytes %p ret %d", index,
+		(void *)&rf_params[index], (void *)str, str_len,
+		(void *)rf_params[index].bytes, ret);
+}
+
+static void rf_dbg_report(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	LOG_INF("RFDBG table %p size %zu rodata %p-%p window 0x%08lx", (void *)rf_params,
+		sizeof(rf_params), (void *)__rodata_region_start, (void *)__rodata_region_end,
+		RF_DBG_WINDOW_ADDR);
+
+	for (int i = 0; i < RF_DBG_STAGE_COUNT; i++) {
+		const uint32_t *w = rf_dbg_snap[i].window;
+
+		if (!rf_dbg_snap[i].taken) {
+			LOG_INF("RFDBG %s: not reached", rf_dbg_stage_name[i]);
+			continue;
+		}
+
+		LOG_INF("RFDBG %s @%uus bad_idx %d ptr %p", rf_dbg_stage_name[i],
+			rf_dbg_snap[i].uptime_us, rf_dbg_snap[i].bad_idx,
+			(void *)rf_dbg_snap[i].bad_ptr);
+		LOG_INF("RFDBG   win %08x %08x %08x %08x %08x %08x %08x %08x", w[0], w[1], w[2],
+			w[3], w[4], w[5], w[6], w[7]);
+		k_msleep(50);
+	}
+
+	for (int i = 0; i < RF_DBG_SCAN_COUNT; i++) {
+		rf_dbg_data_scan_log(i, RF_DBG_DATA_ENTRIES, true);
+		k_msleep(50);
+	}
+
+	rf_dbg_flash_sum_log("text", __text_region_start, __text_region_end);
+	rf_dbg_flash_sum_log("rodata", __rodata_region_start, __rodata_region_end);
+	rf_dbg_flash_sum_log("data", __data_region_load_start,
+			     __data_region_load_start +
+			     (__data_region_end - __data_region_start));
+	k_msleep(50);
+
+	if (!rf_dbg_fail.valid) {
+		LOG_INF("RFDBG no RF parameter decode failure recorded");
+		return;
+	}
+
+	LOG_ERR("RFDBG failure at idx %d len %zu ret %d, table at failure:", rf_dbg_fail.index,
+		rf_dbg_fail.str_len, rf_dbg_fail.ret);
+	for (int i = 0; i < NUM_WIFI_PARAMS; i++) {
+		LOG_ERR("RFDBG   [%2d] hex_str %p bytes %p len %d", i,
+			(void *)rf_dbg_fail.table[i].hex_str, (void *)rf_dbg_fail.table[i].bytes,
+			rf_dbg_fail.table[i].bytes_len);
+		k_msleep(50);
+	}
+
+	if (rf_dbg_fail.str_valid) {
+		LOG_HEXDUMP_ERR(rf_dbg_fail.str, sizeof(rf_dbg_fail.str),
+				"RFDBG data at failing hex_str");
+	} else {
+		LOG_ERR("RFDBG failing hex_str is outside RAM and rodata, not dumped");
+	}
+}
+
+static struct k_work_delayable rf_dbg_report_work;
+
+static int rf_dbg_early(void)
+{
+	rf_dbg_data_scan(RF_DBG_SCAN_EARLY);
+	return 0;
+}
+
+static int rf_dbg_pre_kernel_1(void)
+{
+	rf_dbg_snapshot(RF_DBG_PRE_KERNEL_1);
+	return 0;
+}
+
+static int rf_dbg_post_kernel_first(void)
+{
+	rf_dbg_snapshot(RF_DBG_POST_KERNEL_FIRST);
+	return 0;
+}
+
+static int rf_dbg_post_kernel_last(void)
+{
+	rf_dbg_snapshot(RF_DBG_POST_KERNEL_LAST);
+	return 0;
+}
+
+static int rf_dbg_application(void)
+{
+	rf_dbg_snapshot(RF_DBG_APPLICATION);
+	k_work_init_delayable(&rf_dbg_report_work, rf_dbg_report);
+	k_work_schedule(&rf_dbg_report_work, K_SECONDS(2));
+	return 0;
+}
+
+SYS_INIT(rf_dbg_early, EARLY, 0);
+SYS_INIT(rf_dbg_pre_kernel_1, PRE_KERNEL_1, 0);
+SYS_INIT(rf_dbg_post_kernel_first, POST_KERNEL, 0);
+SYS_INIT(rf_dbg_post_kernel_last, POST_KERNEL, 99);
+SYS_INIT(rf_dbg_application, APPLICATION, 99);
+
 static enum nrf_wifi_status rf_params_bytes_init(void)
 {
 	static bool initialized;
@@ -297,6 +622,12 @@ static enum nrf_wifi_status rf_params_bytes_init(void)
 	if (initialized) {
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
+
+	rf_dbg_snapshot(RF_DBG_BYTES_INIT);
+	rf_dbg_data_scan(RF_DBG_SCAN_BYTES_INIT);
+	/* Logged here so that the result is flushed even if a fault halts the system. */
+	rf_dbg_data_scan_log(RF_DBG_SCAN_EARLY, RF_DBG_DATA_LOG_NOW, false);
+	rf_dbg_data_scan_log(RF_DBG_SCAN_BYTES_INIT, RF_DBG_DATA_LOG_NOW, false);
 
 	for (index = 0; index < NUM_WIFI_PARAMS; index++) {
 		if (!rf_params[index].hex_str) {
@@ -312,6 +643,7 @@ static enum nrf_wifi_status rf_params_bytes_init(void)
 		ret = nrf_wifi_utils_hex_str_to_val(rf_params[index].bytes, (unsigned int)str_len,
 						    (unsigned char *)rf_params[index].hex_str);
 		if (ret < 0) {
+			rf_dbg_fail_capture(index, str_len, ret);
 			LOG_ERR("%s: hex_str_to_val failed", __func__);
 			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rf_params[index].bytes);
 			rf_params[index].bytes = NULL;
