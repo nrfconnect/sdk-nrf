@@ -223,3 +223,7 @@ config FIND_NEXT_SLOT_HOOK_BOOT_REQ
 
 config BASE_BOARD_IS_NON_SECURE
 	bool "Base board target is non-secure (informative only, do not change)"
+
+# Needed to resume from S2RAM when the bootloader mediates the wake up.
+configdefault SOC_EARLY_RESET_HOOK
+	default y if SOC_NRF54H20_CPUAPP || SOC_NRF9251_CPUAPP
