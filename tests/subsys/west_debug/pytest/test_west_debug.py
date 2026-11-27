@@ -112,7 +112,9 @@ def test_west_debug(dut: DeviceAdapter):
         f"b {ZEPHYR_BASE}/../nrf/tests/subsys/west_debug/src/main.c:21\n"
         f"b {ZEPHYR_BASE}/../nrf/tests/subsys/west_debug/src/main.c:25\n"
         "c\nwhere\nc\nwhere\nc\nwhere\nc\nwhere\n"
-        "disconnect\nq\n"
+        # J-Link removes hardware breakpoints only when the target resumes.
+        # Breakpoints left armed survive reflashing and fault the next test.
+        "delete\ncontinue &\ndisconnect\nq\n"
     )
     test_regex = (
         r"17\s+counter\+\+;[\s\S]*main.c:17[\s\S]*"  # breakpint 1 and where
