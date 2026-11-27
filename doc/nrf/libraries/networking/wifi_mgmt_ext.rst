@@ -26,7 +26,10 @@ For development purposes, you can set static Wi-Fi credentials configuration usi
 * :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_OPEN` - Wi-Fi network uses no password.
 * :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_PSK` - Wi-Fi network uses a password and WPA2-PSK security (default).
 * :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_PSK_SHA256` - Wi-Fi network uses a password and PSK-256 security.
-* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_SAE` - Wi-Fi network uses a password and SAE security.
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_SAE` - Wi-Fi network uses a password and SAE security with hunting-and-pecking (HnP).
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_SAE_H2E` - Wi-Fi network uses a password and SAE security with hash-to-element (H2E) only.
+  Use this option for 6 GHz networks, where H2E is mandatory.
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_SAE_AUTO` - Wi-Fi network uses a password and SAE security with both HnP and H2E enabled.
 * :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_WPA_PSK` - Wi-Fi network uses a password and WPA-PSK security.
 
 Usage
