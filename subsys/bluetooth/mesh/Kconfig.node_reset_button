@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_MESH_NODE_RESET_BUTTON
+	bool "Node reset using a button"
+	depends on DK_LIBRARY
+	help
+	  Allow a Bluetooth Mesh application to reset the node by
+	  holding a button on the development kit. The application enables this
+	  and calls bt_mesh_node_reset_button_init().
+
+if BT_MESH_NODE_RESET_BUTTON
+
+config BT_MESH_NODE_RESET_BUTTON_INDEX
+	int "Button used to reset the node"
+	default 0 if BOARD_NRF54L15TAG
+	default 3
+	range 0 3
+	help
+	  Index of the button, counting from 0. This is the position in the
+	  button list of the board (sw0 is 0, sw3 is 3), not the number printed
+	  on the DK: index 3 is Button 3 on the nRF54L DKs and Button 4 on the
+	  nRF5340 DK. The default is the highest button of the board. Set a lower
+	  index when the highest button has another function in the application,
+	  for example the EMDS store in the Light Control sample.
+
+config BT_MESH_NODE_RESET_BUTTON_HOLD_MS
+	int "Button hold time in milliseconds"
+	default 10000
+	range 1000 60000
+	help
+	  How long the reset button must be held before the node is reset.
+
+endif # BT_MESH_NODE_RESET_BUTTON

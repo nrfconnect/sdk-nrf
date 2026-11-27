@@ -41,6 +41,7 @@ zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC light_ctrl_reg_s
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_CTRL_CLI light_ctrl_cli.c)
 
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_DK_PROV dk_prov.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_NODE_RESET_BUTTON node_reset_button.c)
 
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SENSOR_SRV sensor_srv.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SENSOR_CLI sensor_cli.c)

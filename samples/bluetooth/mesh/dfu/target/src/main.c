@@ -11,6 +11,7 @@
 #include <bluetooth/mesh/dk_prov.h>
 #include <zephyr/storage/flash_map.h>
 #include <dk_buttons_and_leds.h>
+#include <bluetooth/mesh/node_reset_button.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/mesh.h>
 #include "dfu_target.h"
@@ -104,6 +105,16 @@ static void bt_ready(int err)
 	if (err) {
 		printk("Initializing LEDs failed (err %d)\n", err);
 		return;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_MESH_NODE_RESET_BUTTON)) {
+		err = dk_buttons_init(NULL);
+		if (err) {
+			printk("Initializing buttons failed (err %d)\n", err);
+			return;
+		}
+
+		bt_mesh_node_reset_button_init();
 	}
 
 	err = bt_mesh_init(bt_mesh_dk_prov_init(), &comp);
