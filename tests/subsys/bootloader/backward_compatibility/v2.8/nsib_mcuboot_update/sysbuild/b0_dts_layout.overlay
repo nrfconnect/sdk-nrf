@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../dts_layout.dtsi"
+
+&s1_partition {
+	reg = <0x14000 0xc000>;
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0_partition;
+	};
+};

@@ -1,0 +1,15 @@
+common:
+  sysbuild: true
+  build_only: true
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+  tags:
+    - mcuboot
+    - ci_tests_subsys_bootloader
+
+tests:
+  # Build the BLE update with the current NCS development toolchain.
+  # Match the NCS 2.8.0 slot geometry, signing key, and UROT_PUBKEY mapping.
+  mcuboot.backward_compatibility.v2_8.smp_svr_ble.kmu.dts_layout:
+    extra_args:
+      - FILE_SUFFIX=dts_layout

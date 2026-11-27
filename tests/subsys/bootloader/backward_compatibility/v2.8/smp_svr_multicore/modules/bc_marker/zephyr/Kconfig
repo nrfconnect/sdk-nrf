@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BC_MARKER
+	bool "Print a build identifier at startup"
+
+config BC_MARKER_ID
+	int "Build identifier printed by the marker"
+	depends on BC_MARKER
+	default 0

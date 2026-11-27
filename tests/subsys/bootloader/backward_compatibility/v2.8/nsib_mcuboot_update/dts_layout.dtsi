@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Released nRF5340 geometry, with the S1 code linked after its 0x200-byte update header. */
+&flash0 {
+	/delete-node/ partitions;
+
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x0 0x8000>;
+		};
+
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x8000 0xc000>;
+		};
+
+		s1_partition: partition@14200 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x14200 0xbe00>;
+		};
+
+		slot0_partition: partition@20000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x20000 0x70000>;
+		};
+
+		slot1_partition: partition@90000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x90000 0x70000>;
+		};
+	};
+};

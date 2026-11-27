@@ -1,0 +1,17 @@
+common:
+  sysbuild: true
+  build_only: true
+  platform_allow:
+    - nrf5340dk/nrf5340/cpuapp
+  tags:
+    - mcuboot
+    - ci_tests_subsys_bootloader
+
+tests:
+  # Build the app and network core updates with the current NCS development toolchain.
+  # Match the NCS 2.8.0 slot geometry and retain the MCUboot and b0n signing keys.
+  mcuboot.backward_compatibility.v2_8.smp_svr_multicore.ext_flash.dts_layout:
+    extra_args:
+      - FILE_SUFFIX=dts_layout
+      - CONFIG_BC_MARKER_ID=2
+      - empty_net_core_CONFIG_BC_MARKER_ID=2

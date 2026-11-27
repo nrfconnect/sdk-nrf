@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Backward compatibility: pin the released NCS v2.8 Partition Manager layout of
+ * the KMU build (64 KiB MCUboot, two 680 KiB slots) so slot 0 start (0x10000)
+ * and the image trailer at its end (0xba000) match what the v2.8 MCUboot on the
+ * device expects. MCUboot itself keeps the default board map because only the
+ * application update image is uploaded.
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x10000 DT_SIZE_K(680)>;
+		};
+
+		slot1_partition: partition@ba000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0xba000 DT_SIZE_K(680)>;
+		};
+	};
+};
