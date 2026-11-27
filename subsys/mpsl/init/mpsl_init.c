@@ -34,9 +34,6 @@
 #include <nrf_sys_event.h>
 #endif /* CONFIG_NRF_SYS_EVENT */
 
-#if DT_NODE_EXISTS(DT_NODELABEL(mram_controller))
-#include <hal/nrf_mramc.h>
-#endif /* DT_NODE_EXISTS(DT_NODELABEL(mram_controller)) */
 #endif /* IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS) */
 
 /* Include SoC-specific parameters for MPSL init.
@@ -195,8 +192,10 @@ static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
  */
 #if DT_NODE_EXISTS(DT_NODELABEL(rram_controller))
 #define MPSL_HW_HAS_RRAMC 1
+#include <hal/nrf_rramc.h>
 #elif DT_NODE_EXISTS(DT_NODELABEL(mram_controller))
 #define MPSL_HW_HAS_MRAMC 1
+#include <hal/nrf_mramc.h>
 #endif
 
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
@@ -711,11 +710,10 @@ void mpsl_low_latency_acquire_callback(void)
 #elif defined(MPSL_HW_HAS_RRAMC)
 	m_rram_lowpower_config = NRF_RRAMC->POWER.LOWPOWERCONFIG;
 #if IS_ENABLED(CONFIG_MPSL_RRAM_LOW_LATENCY_MODE_IDLE)
-	NRF_RRAMC->POWER.LOWPOWERCONFIG = RRAMC_POWER_LOWPOWERCONFIG_MODE_Idle
-					  << RRAMC_POWER_LOWPOWERCONFIG_MODE_Pos;
+	nrf_rramc_lp_mode_set(NRF_RRAMC,
+			    (nrf_rramc_lp_mode_t)RRAMC_POWER_LOWPOWERCONFIG_MODE_Idle);
 #else
-	NRF_RRAMC->POWER.LOWPOWERCONFIG = RRAMC_POWER_LOWPOWERCONFIG_MODE_Standby
-					  << RRAMC_POWER_LOWPOWERCONFIG_MODE_Pos;
+	nrf_rramc_lp_mode_set(NRF_RRAMC, NRF_RRAMC_LP_STANDBY);
 #endif /* IS_ENABLED(CONFIG_MPSL_RRAM_LOW_LATENCY_MODE_IDLE) */
 #elif defined(MPSL_HW_HAS_MRAMC)
 	nrf_mramc_power_autopowerdown_t cfg;
