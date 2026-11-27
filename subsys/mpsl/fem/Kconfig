@@ -68,17 +68,18 @@ choice MPSL_FEM_CHOICE
 	prompt "Radio front-end module (FEM) type"
 
 config MPSL_FEM_NRF21540_GPIO
+	bool "nRF21540 front-end module in GPIO mode"
 	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT
 	select NRFX_GPIOTE
 	select GPIO if ($(dt_nodelabel_has_prop,nrf_radio_fem,mode-gpios) || \
 		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
 	select NRFX_GPPI
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
-	bool "nRF21540 front-end module in GPIO mode"
 	help
 	  FEM device is nRF21540 and its control mode is GPIO.
 
 config MPSL_FEM_NRF21540_GPIO_SPI
+	bool "nRF21540 front-end module in GPIO + SPI mode"
 	depends on MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
 	select NRFX_GPIOTE
 	select GPIO if ($(dt_nodelabel_has_prop,nrf_radio_fem,mode-gpios) || \
@@ -87,16 +88,15 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	imply MPSL_FEM_POWER_MODEL if MPSL_FEM   # Don't force the model, but make it a default
-	bool "nRF21540 front-end module in GPIO + SPI mode"
 	help
 	  FEM device is nRF21540 and it uses both GPIO and SPI.
 
 config MPSL_FEM_SIMPLE_GPIO
+	bool "Generic front-end module with two-pin control"
 	depends on MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 	select NRFX_GPIOTE
 	select NRFX_GPPI
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
-	bool "Generic front-end module with two-pin control"
 	help
 	  FEM device uses a generic two-pin GPIO control interface. For
 	  devicetree nodes that declare compatible "radio-fem-two-ctrl-pins",
@@ -104,12 +104,12 @@ config MPSL_FEM_SIMPLE_GPIO
 	  FEMs with the same control scheme.
 
 config MPSL_FEM_NRF2240
+	bool "nRF2240 front-end module [EXPERIMENTAL]"
 	depends on MPSL_FEM_NRF2240_SUPPORT
 	select NRFX_GPIOTE
 	select NRFX_GPPI
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
-	bool "nRF2240 front-end module"
 	help
 	  FEM device is nRF2240.
 

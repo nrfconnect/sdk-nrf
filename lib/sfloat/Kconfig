@@ -5,7 +5,7 @@
 #
 
 config SFLOAT
-	bool "SFLOAT type"
+	bool "SFLOAT type [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
 	  A library for managing SFLOAT type.

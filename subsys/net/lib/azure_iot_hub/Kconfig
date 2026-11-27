@@ -8,9 +8,9 @@ module = AZURE_IOT_HUB
 module-prompt = "Azure IoT Hub"
 orsource "../Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
 
-menuconfig $(module)
+menuconfig AZURE_IOT_HUB
 	bool
-	prompt "Azure IoT Hub" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
+	prompt "Azure IoT Hub [EXPERIMENTAL]" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
 	select AZURE_SDK
 	select MQTT_HELPER
 	select MQTT_LIB_TLS
