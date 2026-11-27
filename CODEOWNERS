@@ -941,6 +941,8 @@
 /snippets/ci-shell/*.rst                  @nrfconnect/ncs-terahertz-doc
 /snippets/coverage_support/               @nrfconnect/ncs-low-level-test
 /snippets/hpf/                            @nrfconnect/ncs-ll-ursus
+/snippets/hpf/**/*.rst                    @nrfconnect/ncs-lowlevel-doc
+/snippets/hpf/gpio/**/*.rst               @nrfconnect/ncs-lowlevel-doc
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
 /snippets/nrf70-driver-debug/             @nrfconnect/ncs-wcg-drivers
