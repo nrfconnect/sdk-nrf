@@ -1019,6 +1019,7 @@ ci_tests_subsys_ipc:
 ci_samples_benchmarks:
   files:
     - modules/benchmark/
+    - nrf/lib/nrf71_idle_power/
     - nrf/modules/coremark/
     - nrf/samples/benchmarks/
 
