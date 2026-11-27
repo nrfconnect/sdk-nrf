@@ -121,6 +121,7 @@ The above examples render as follows:
 * :ncs-file:`/doc/versions.json`
 * :ncs-file:`styleguide.rst`
 * :ncs-file:`zephyr:/.checkpatch.conf`
+* :ncs-file:`Zephyr samples directory <zephyr:/samples>`
 
 By default, the link text is the name of the file, without the path.
 To use a different link text, place the path in angle brackets::
