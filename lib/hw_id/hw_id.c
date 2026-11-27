@@ -19,9 +19,9 @@
 #include <zephyr/drivers/hwinfo.h>
 #endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_DEVICE_ID) */
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_UUID)
-#if defined(CONFIG_SOC_SERIES_NRF91)
+#if defined(CONFIG_SOC_SERIES_NRF91) || defined(CONFIG_SOC_SERIES_NRF92)
 #include <modem/modem_jwt.h>
-#endif /* defined(CONFIG_SOC_SERIES_NRF91) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF91) || defined(CONFIG_SOC_SERIES_NRF92) */
 #endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_UUID) */
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_IMEI)
 #include <nrf_modem_at.h>
@@ -93,7 +93,7 @@ int hw_id_get(char *buf, size_t buf_len)
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_UUID)
 /* Request a UUID from the modem */
 
-#if defined(CONFIG_SOC_SERIES_NRF91)
+#if defined(CONFIG_SOC_SERIES_NRF91) || defined(CONFIG_SOC_SERIES_NRF92)
 int hw_id_get(char *buf, size_t buf_len)
 {
 	if (buf == NULL || buf_len < HW_ID_LEN) {
@@ -139,7 +139,7 @@ int hw_id_get(char *buf, size_t buf_len)
 		uuid_bytes[12], uuid_bytes[13], uuid_bytes[14], uuid_bytes[15]);
 	return 0;
 }
-#endif /* defined(CONFIG_SOC_SERIES_NRF91) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF91) || defined(CONFIG_SOC_SERIES_NRF92) */
 #endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_UUID) */
 
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_IMEI)

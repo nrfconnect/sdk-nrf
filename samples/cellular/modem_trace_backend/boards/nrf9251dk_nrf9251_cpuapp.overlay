@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Reduce size of application RAM to make room for trace. */
+&cpuapp_ram0x_sram {
+	reg = <0x2f000000 DT_SIZE_K(340)>;
+	ranges = <0x0 0x2f000000 0x55000>;
+};
+
+&cpuapp_cpucell_ram0x_region {
+	/* IPC Trace, user defined */
+	cpucell_cpuapp_ipc_shm_trace: memory@5000 {
+		reg = <0x5000 DT_SIZE_K(16)>;
+	};
+};

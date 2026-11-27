@@ -17,9 +17,9 @@
 #define HTTPS_HOSTNAME "example.com"
 #define TLS_SEC_TAG 42
 
-/* Certificate for `example.com` */
+/* Root certificates for the ECDSA and RSA certificate chains of `example.com` */
 static const char cert[] = {
-#include "DigiCertGlobalG2.pem.inc"
+#include "SSLcomTLSRootCA2022.pem.inc"
 };
 
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
@@ -46,11 +46,9 @@ static struct lookup_ciphersuite ciphersuites[] = {
 	{ "TLS_PSK_WITH_AES_128_CBC_SHA", 0x008C },
 	{ "TLS_PSK_WITH_AES_128_CCM_8", 0xC0A8 },
 	{ "TLS_EMPTY_RENEGOTIATIONINFO_SCSV", 0x00FF },
-#if defined(CONFIG_EXTENDED_CIPHERSUITE_LIST)
 	{ "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256", 0xC02B },
 	{ "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", 0xC030 },
 	{ "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", 0xC02F },
-#endif
 };
 
 /* Provision certificate to modem */
@@ -200,9 +198,16 @@ int main(void)
 		err = setsockopt(fd, SOL_TLS, TLS_CIPHERSUITE_LIST, ciphersuite_list,
 				 sizeof(ciphersuite_list));
 		if (err) {
-			printk("Failed to setup ciphersuite list, err %d, %s\n", errno,
-			       strerror(errno));
-			goto clean_up;
+			if (errno != EINVAL) {
+				printk("Failed to setup ciphersuite list, err %d, %s\n", errno,
+				       strerror(errno));
+				goto clean_up;
+			}
+
+			printk("Not supported by the modem\n");
+			ciphersuites[i].supported = false;
+			close(fd);
+			continue;
 		}
 
 		printk("Connecting to %s... ", HTTPS_HOSTNAME);

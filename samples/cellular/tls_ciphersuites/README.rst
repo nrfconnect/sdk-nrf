@@ -9,7 +9,7 @@
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -24,14 +24,21 @@ Provisioning must be done before connecting to the LTE network because the certi
 
 The sample then iterates through a list of TLS cipher suites, attempting connection to the host with each one of them.
 The sample connects successfully to the host (``www.example.com``) with the cipher suites that are supported by the host, while unsupported cipher suites cause a connection failure, setting ``errno`` to ``95``.
+Cipher suites that the modem rejects when they are configured on the socket are reported as not supported by the modem.
 
 Finally, the sample provides a summary of the cipher suites that are supported and not supported by the host, ``example.com``.
+
+The AES-GCM cipher suites in the list are only supported for the following modem firmware versions:
+   * Modem firmware v1.3.x, where x is greater than or equal to 1
+   * Modem firmware v1.2.x, where x is greater than or equal to 7
+   * Modem firmware v2.0.0
 
 Obtaining a certificate
 =======================
 
 The sample connects to ``www.example.com``, which requires an X.509 certificate.
-This certificate is provided in the :file:`samples/cellular/tls_ciphersuites/cert` folder.
+The host uses separate certificate chains for ECDSA and RSA cipher suites, so the sample provisions both the SSL.com TLS ECC Root CA 2022 and the SSL.com TLS RSA Root CA 2022 certificates.
+These certificates are provided in the :file:`samples/cellular/tls_ciphersuites/cert` folder.
 |hex_format|
 
 To connect to other servers, you might need to provision a different certificate.
@@ -44,17 +51,6 @@ Configuration
 
 Configuration options
 =====================
-
-Check and configure the following Kconfig options:
-
-.. _CONFIG_EXTENDED_CIPHERSUITE_LIST:
-
-CONFIG_EXTENDED_CIPHERSUITE_LIST
-   The sample configuration extends the cipher suite list with extra cipher suites that are only supported for the following modem firmware versions:
-
-   * Modem firmware v1.3.x, where x is greater than or equal to 1
-   * Modem firmware v1.2.x, where x is greater than or equal to 7
-   * Modem firmware v2.0.0
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

@@ -8,7 +8,7 @@
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -41,7 +41,7 @@ Testing
 
 #. |connect_kit|
 #. |connect_terminal|
-#. Power on or reset your nRF91 Series DK.
+#. Power on or reset your DK.
 #. Observe that the sample starts and connects to the LTE network, while displaying both the network registration status and signal quality during the process.
 #. Observe that the sample displays the PSM status twice on the terminal, once when it is disabled, and once when it is enabled.
 #. Observe that the sample completes with a message on the terminal.

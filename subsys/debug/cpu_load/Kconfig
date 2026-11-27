@@ -9,6 +9,7 @@ menuconfig NRF_CPU_LOAD
 	select NRFX_GPPI
 	depends on !SOC_SERIES_NRF51 # Lack of required HW events
 	depends on !SOC_SERIES_NRF54H # Lack of required HW events
+	depends on !SOC_SERIES_NRF92 # Lack of required HW events
 	depends on !RISCV # Lack of required HW events
 	help
 	  Enable the CPU load measurement instrumentation. This tool is using

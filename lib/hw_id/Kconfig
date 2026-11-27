@@ -22,7 +22,7 @@ config HW_ID_LIBRARY_SOURCE_IMEI
 
 config HW_ID_LIBRARY_SOURCE_UUID
 	bool "UUID"
-	depends on (MODEM_JWT || !SOC_SERIES_NRF91)
+	depends on (MODEM_JWT || !(SOC_SERIES_NRF91 || SOC_SERIES_NRF92))
 	help
 	  On nRF9160, this option requires modem firmware v1.3.0 or higher.
 
