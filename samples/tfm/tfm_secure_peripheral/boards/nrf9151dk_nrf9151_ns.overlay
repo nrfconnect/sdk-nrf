@@ -4,4 +4,28 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf9160dk_nrf9160_ns.overlay"
+#include <samples/cellular/nrf91_crypto_partitions.dtsi>
+
+#include <samples/cellular/nrf91_sram_crypto_partitions.dtsi>
+
+&pinctrl {
+	spi3_default: spi3_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 11)>;
+		};
+	};
+
+	spi3_sleep: spi3_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 11)>;
+			low-power-enable;
+		};
+	};
+};
+
+&spi3 {
+	/* Disabled in non-secure image. */
+	status = "disabled";
+};

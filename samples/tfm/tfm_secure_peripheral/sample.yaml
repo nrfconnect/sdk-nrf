@@ -9,8 +9,6 @@ common:
   platform_allow:
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9151dk/nrf9151/ns
-    - nrf9160dk/nrf9160/ns
-    - nrf9161dk/nrf9161/ns
     - nrf54l15dk/nrf54l15/cpuapp/ns
     - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     - nrf54lm20dk/nrf54lm20b/cpuapp/ns
@@ -20,8 +18,6 @@ common:
   integration_platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9151dk/nrf9151/ns
-    - nrf9160dk/nrf9160/ns
-    - nrf9161dk/nrf9161/ns
     - nrf54l15dk/nrf54l15/cpuapp/ns
     - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     - nrf54lm20dk/nrf54lm20b/cpuapp/ns
