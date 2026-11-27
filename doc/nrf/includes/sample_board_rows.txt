@@ -333,7 +333,7 @@
 
 .. nrf54lm20dongle_nrf54lm20b_cpuapp
 
-| :ref:`nRF54LM20 Dongle <ug_nrf54l>` | PCA10208 | nrf54lm20dongle | ``nrf54lm20dongle/nrf54lm20b/cpuapp`` |
+| :ref:`nRF54LM20 Dongle <ug_nrf54l>` | PCA10208 | :ref:`nrf54lm20dongle <board_nrf54lm20dongle>` | ``nrf54lm20dongle/nrf54lm20b/cpuapp`` |
 
 .. nrf54ls05dk_nrf54ls05a_cpuapp
 
