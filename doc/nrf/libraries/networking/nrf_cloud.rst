@@ -49,6 +49,37 @@ The available methods depend on the device:
 
 Refer to the `Adding a device to your account`_ section of the nRF Cloud documentation for more information.
 
+.. _lib_nrf_cloud_credentials_keygen:
+
+On-device key generation
+========================
+
+When the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN` Kconfig option is enabled, the library connects with a device private key that was generated on the device.
+The option is experimental.
+The library does not generate the key itself.
+You generate the key with the ``cred keygen`` command of the :ref:`TLS credentials shell <zephyr:tls_credentials_shell>`, or with the TLS credentials key generation API of Zephyr, described in the TLS Credentials On-Device Key Generation section on the :ref:`zephyr:bsd_sockets_interface` page.
+The ``device_credentials_installer`` script of `nRF Cloud Utils`_ runs the shell commands for you, as described in :ref:`nrf_cloud_preconnect_keygen`.
+
+The key has the following properties:
+
+* It is a persistent, non-exportable ECDSA P-256 key, created with the PSA Crypto API, so the private key never leaves the device.
+  nRF Cloud needs a P-256 key, because the library signs its JSON Web Tokens with the ES256 algorithm.
+  If you generate the key manually, do not select the ``p384`` key type.
+* It is registered as a TLS credential of its security tag when it is generated.
+  The protected storage backend of the TLS credentials keeps the registration after a reboot.
+* It must be in the security tag that the library uses, :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG`, or :kconfig:option:`CONFIG_NRF_CLOUD_COAP_SEC_TAG` for CoAP.
+  By default, both security tags are ``16842753``, the same as the default of the ``device_credentials_installer`` script.
+
+With MQTT, the TLS connection uses the key.
+With CoAP, the library also signs its JSON Web Tokens with the key, so the option requires the :kconfig:option:`CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM` Kconfig option.
+
+The option cannot be used together with the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option.
+To use a private key that is generated on the host or hard-coded in the firmware, disable the option.
+
+To replace the key, delete it with the ``cred keydel <sec_tag>`` command and generate a new one.
+The ``-d`` option of the ``device_credentials_installer`` script deletes the existing credentials, including the key, before it generates a new key.
+The previously issued device certificate no longer matches the new key, so provision the device again.
+
 .. _lib_nrf_cloud_connect:
 
 Connecting
