@@ -12,7 +12,7 @@ project(NONE)
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
 
-if(DEFINED CONFIG_SOC_NRF9160)
+if(DEFINED CONFIG_SOC_SERIES_NRF91)
   set(family_arg NRF91)
 else()
   set(family_arg NRF53)

@@ -876,7 +876,11 @@ Gazell samples
 Keys samples
 ------------
 
-|no_changes_yet_note|
+* Removed support for the nRF9160 DK and the nRF9161 DK in the following samples:
+
+  * :ref:`hw_unique_key_usage`
+  * :ref:`identity_key_generate`
+  * :ref:`identity_key_usage`
 
 Matter samples
 --------------

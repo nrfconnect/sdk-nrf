@@ -107,7 +107,7 @@ hkdf = HKDF(
 )
 final_key_91 = hkdf.derive(tfm_key_from_huk_91)
 
-print("NRF9160 key to be copied to the testing code:")
+print("NRF9151 key to be copied to the testing code:")
 print("===================================================")
 print("static uint8_t expected_key[" + str(len(final_key_91)) + "] = {")
 print(", ".join(hex(c) for c in final_key_91[0:len(final_key_91)]))
