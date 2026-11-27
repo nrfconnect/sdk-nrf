@@ -1186,6 +1186,7 @@ Thread samples
 --------------
 
 * Added experimental support for the nRF54LC10A SoC to all Thread samples.
+* Added support for the ``nrf7120dk/nrf7120/cpuapp`` board target in the :ref:`ot_cli_sample` sample.
 
 * Removed support for nRF52 Series devices from all Thread samples.
   The following board targets are no longer supported:
