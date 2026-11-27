@@ -182,6 +182,18 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 
 	LOG_DBG("%s: scan_done_event->scan_results_cnt = %d, scan_type = %d",
 		__func__, scan_done_event->scan_results_cnt, vif_ctx_zep->scan_type);
+
+	/* The event carries the database address back: from here on the
+	 * display/connect scan paths own and free it.
+	 */
+	{
+		k_spinlock_key_t inflight_key = k_spin_lock(&vif_ctx_zep->scan_lock);
+
+		vif_ctx_zep->scan_db_inflight = 0;
+		vif_ctx_zep->scan_done_cnt++;
+		k_spin_unlock(&vif_ctx_zep->scan_lock, inflight_key);
+	}
+
 	switch (vif_ctx_zep->scan_type) {
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 	case SCAN_DISPLAY: {
@@ -250,6 +262,13 @@ static void nrf_wifi_scan_timeout_work(struct k_work *work)
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_SCAN);
+
+	/* The RPU never sent scan done, so its results buffer stays out until the
+	 * interface goes down (the RPU may still write to it, so it is not freed here).
+	 */
+	LOG_WRN("%s: scan timed out, scan DB 0x%x still held by RPU", __func__,
+		vif_ctx_zep->scan_db_inflight);
+	nrf_wifi_mem_log_ctrl_stats("scan timeout");
 
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 	if (vif_ctx_zep->scan_type == SCAN_DISPLAY) {

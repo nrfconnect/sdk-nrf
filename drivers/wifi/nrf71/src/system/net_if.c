@@ -1009,6 +1009,24 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 #endif /* CONFIG_NRF71_STA_MODE */
 }
 
+/* Release the scan results buffer of a scan whose done event never arrived.
+ * Only call once the RPU can no longer write to it (VIF deleted / RPU off).
+ */
+static void nrf_wifi_if_release_inflight_scan_db(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
+{
+	k_spinlock_key_t key = k_spin_lock(&vif_ctx_zep->scan_lock);
+	unsigned int db = vif_ctx_zep->scan_db_inflight;
+
+	vif_ctx_zep->scan_db_inflight = 0;
+	k_spin_unlock(&vif_ctx_zep->scan_lock, key);
+
+	if (db) {
+		LOG_WRN("%s: releasing scan DB 0x%x of a scan that never completed",
+			__func__, db);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, (void *)(uintptr_t)db);
+	}
+}
+
 int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -1317,6 +1335,11 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 
 	ret = 0;
 unlock:
+	/* The VIF is gone and the RPU is off (or never ran): it cannot write to
+	 * a scan results buffer any more, so reclaim one that was never handed back.
+	 */
+	nrf_wifi_if_release_inflight_scan_db(vif_ctx_zep);
+	nrf_wifi_mem_log_ctrl_stats("iface stop done");
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	nrf_wifi_refresh_oper_state(vif_ctx_zep);
 

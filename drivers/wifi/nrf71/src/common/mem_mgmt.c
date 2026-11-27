@@ -11,8 +11,11 @@
 #include <string.h>
 
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <common/mem_mgmt.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 /* Memory pool management - unified pool-based API */
 #if defined(CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM)
@@ -62,7 +65,45 @@ void *nrf_wifi_mem_alloc(enum nrf_wifi_mem_pool_type pool_type, size_t size)
 		pool = wifi_ctrl_pool;
 	}
 
-	return k_heap_aligned_alloc(pool, WORD_SIZE, size_aligned, K_FOREVER);
+	void *ret;
+
+#if CONFIG_NRF_WIFI_CTRL_HEAP_ALLOC_TIMEOUT_MS > 0
+	/* Debug: never block forever on the control pool. A blocked allocation
+	 * hangs the calling thread (often the shell) and everything waiting on
+	 * vif_lock behind it, which hides the real cause: pool exhaustion.
+	 */
+	if (pool_type != NRF_WIFI_MEM_POOL_TYPE_DATA) {
+		ret = k_heap_aligned_alloc(pool, WORD_SIZE, size_aligned,
+					   K_MSEC(CONFIG_NRF_WIFI_CTRL_HEAP_ALLOC_TIMEOUT_MS));
+		if (ret == NULL) {
+			LOG_ERR("ctrl pool alloc of %u B failed after %d ms",
+				(unsigned int)size_aligned,
+				CONFIG_NRF_WIFI_CTRL_HEAP_ALLOC_TIMEOUT_MS);
+			nrf_wifi_mem_log_ctrl_stats("alloc timeout");
+		}
+		return ret;
+	}
+#endif /* CONFIG_NRF_WIFI_CTRL_HEAP_ALLOC_TIMEOUT_MS > 0 */
+
+	ret = k_heap_aligned_alloc(pool, WORD_SIZE, size_aligned, K_FOREVER);
+
+	return ret;
+}
+
+void nrf_wifi_mem_log_ctrl_stats(const char *where)
+{
+#ifdef CONFIG_SYS_HEAP_RUNTIME_STATS
+	struct sys_memory_stats stats;
+
+	if (sys_heap_runtime_stats_get(&wifi_ctrl_pool->heap, &stats) == 0) {
+		LOG_INF("ctrl heap [%s]: free=%u alloc=%u max_alloc=%u",
+			where, (unsigned int)stats.free_bytes,
+			(unsigned int)stats.allocated_bytes,
+			(unsigned int)stats.max_allocated_bytes);
+	}
+#else
+	ARG_UNUSED(where);
+#endif /* CONFIG_SYS_HEAP_RUNTIME_STATS */
 }
 
 void *nrf_wifi_mem_zalloc(enum nrf_wifi_mem_pool_type pool_type, size_t size)

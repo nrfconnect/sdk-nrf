@@ -52,13 +52,26 @@ struct nrf_wifi_vif_ctx_zep {
 
 	scan_result_cb_t disp_scan_cb;
 	bool scan_in_progress;
+	/* Scan results database handed to the RPU with a scan command. The host
+	 * only learns the address again from the scan done event, so if that
+	 * event never arrives the buffer would be lost. Track it here from the
+	 * moment the scan is triggered until the event hands it over (cleared in
+	 * the scan done handler) or the interface goes down (released there).
+	 */
+	unsigned int scan_db_inflight;
+	/* Number of scan done events handled so far. Lets a scan start tell
+	 * whether its own scan done already ran before it could record the buffer.
+	 * Guarded by scan_lock.
+	 */
+	unsigned int scan_done_cnt;
 	int scan_type;
 	uint16_t max_bss_cnt;
 	unsigned int scan_res_cnt;
 	struct k_work_delayable scan_timeout_work;
 	struct k_work disp_scan_res_work;
-	/* Guards disp_scan_cb, scan_in_progress and scan_done_event between the
-	 * scan timeout and display scan result works. Not vif_lock: interface
+	/* Guards disp_scan_cb, scan_in_progress, scan_done_event, scan_db_inflight
+	 * and scan_done_cnt between the scan timeout and display scan result works,
+	 * the scan done handler and the scan start paths. Not vif_lock: interface
 	 * teardown holds vif_lock while synchronously cancelling both works.
 	 */
 	struct k_spinlock scan_lock;
@@ -122,6 +135,49 @@ struct nrf_wifi_vif_ctx_zep {
 	int rts_threshold_value;
 	unsigned short bss_max_idle_period;
 };
+
+/* A scan that timed out leaves its results buffer with the RPU (the RPU may
+ * still write to it, so the host cannot free it). Until the interface goes down
+ * or a late scan done hands the buffer back, starting another scan would only
+ * allocate and lose one more buffer. Returns the address of that buffer, or 0.
+ */
+static inline unsigned int nrf_wifi_scan_db_held(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
+{
+	k_spinlock_key_t key = k_spin_lock(&vif_ctx_zep->scan_lock);
+	unsigned int db = vif_ctx_zep->scan_db_inflight;
+
+	k_spin_unlock(&vif_ctx_zep->scan_lock, key);
+
+	return db;
+}
+
+/* Take before sending a scan command, pass to nrf_wifi_scan_db_record(). */
+static inline unsigned int nrf_wifi_scan_db_snapshot(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
+{
+	k_spinlock_key_t key = k_spin_lock(&vif_ctx_zep->scan_lock);
+	unsigned int cnt = vif_ctx_zep->scan_done_cnt;
+
+	k_spin_unlock(&vif_ctx_zep->scan_lock, key);
+
+	return cnt;
+}
+
+/* Remember the results buffer of a scan that was just started, so it can be
+ * reclaimed if its scan done never arrives. Skipped when the scan done already
+ * ran since the snapshot: that handler has taken over the buffer, and recording
+ * it now would leave a stale address that is freed a second time.
+ */
+static inline void nrf_wifi_scan_db_record(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
+					   unsigned int db_addr, unsigned int snapshot)
+{
+	k_spinlock_key_t key = k_spin_lock(&vif_ctx_zep->scan_lock);
+
+	if (vif_ctx_zep->scan_done_cnt == snapshot) {
+		vif_ctx_zep->scan_db_inflight = db_addr;
+	}
+
+	k_spin_unlock(&vif_ctx_zep->scan_lock, key);
+}
 
 struct nrf_wifi_vif_ctx_map {
 	const char *ifname;

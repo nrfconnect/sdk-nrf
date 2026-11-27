@@ -442,6 +442,17 @@ config NRF_WIFI_CTRL_HEAP_SIZE
 	# Wi-Fi core processes them, so, need more RAM.
 	default 40000
 
+config NRF_WIFI_CTRL_HEAP_ALLOC_TIMEOUT_MS
+	int "Control pool allocation timeout in milliseconds (0 = wait forever)"
+	default 0
+	help
+	  By default an allocation from the control pool waits forever for memory.
+	  If the pool is exhausted that blocks the calling thread for good, and
+	  with it everything queued behind vif_lock. Set a non-zero value to fail
+	  the allocation instead, log the pool usage and let the caller recover.
+	  Debug aid for pool exhaustion; callers that do not check for NULL will
+	  fault instead of hanging.
+
 config NRF_WIFI_DATA_HEAP_SIZE
 	int "Dedicated memory pool for data plane"
 	default 0 if NRF71_RADIO_TEST || NRF71_OFFLOADED_RAW_TX
