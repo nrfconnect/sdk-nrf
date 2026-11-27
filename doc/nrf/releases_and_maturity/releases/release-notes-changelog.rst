@@ -1288,7 +1288,7 @@ Other samples
 
   * :ref:`app_event_manager_sample`
   * :ref:`app_event_manager_profiling_tracer_sample`
-
+  * :ref:`hw_id_sample`
 
 Drivers
 =======
