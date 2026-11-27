@@ -977,6 +977,8 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		}
 		break;
 	case NRF_WIFI_UMAC_EVENT_DEAUTHENTICATE:
+		/* Disconnected: the broadcast TIM setting applies to one connection */
+		sys_dev_ctx->bcast_rx_disable = 0;
 		if (callbk_fns->deauth_callbk_fn) {
 			callbk_fns->deauth_callbk_fn(vif_ctx->os_vif_ctx,
 						     event_data,
@@ -988,6 +990,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		}
 		break;
 	case NRF_WIFI_UMAC_EVENT_DISASSOCIATE:
+		sys_dev_ctx->bcast_rx_disable = 0;
 		if (callbk_fns->disassoc_callbk_fn) {
 			callbk_fns->disassoc_callbk_fn(vif_ctx->os_vif_ctx,
 						       event_data,

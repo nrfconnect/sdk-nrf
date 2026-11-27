@@ -43,4 +43,8 @@ enum nrf_wifi_status umac_cmd_sys_he_ltf_gi(struct nrf_wifi_fmac_dev_ctx *fmac_d
 
 enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
+
+enum nrf_wifi_status umac_cmd_sys_bcast_rx_config(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	unsigned char enable);
 #endif /* __FMAC_CMD_SYS_H__ */

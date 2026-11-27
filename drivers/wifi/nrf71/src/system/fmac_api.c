@@ -175,6 +175,23 @@ out:
 	return status;
 }
 
+/* Program the broadcast TIM setting in the firmware if it differs from the host's */
+static void nrf_wifi_sys_fmac_bcast_rx_sync(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
+{
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
+	if (sys_dev_ctx->bcast_rx_fw_disable == sys_dev_ctx->bcast_rx_disable) {
+		return;
+	}
+
+	if (umac_cmd_sys_bcast_rx_config(fmac_dev_ctx, !sys_dev_ctx->bcast_rx_disable) !=
+	    NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: broadcast TIM config failed", __func__);
+		return;
+	}
+	sys_dev_ctx->bcast_rx_fw_disable = sys_dev_ctx->bcast_rx_disable;
+}
+
 static enum nrf_wifi_status
 nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned int *rf_params_addr,
 			  unsigned int vtf_buffer_start_address,
@@ -263,6 +280,12 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 #endif /* CONFIG_NRF71_DATA_TX */
 		goto out;
 	}
+
+	/* The firmware starts with the broadcast TIM honored. If it was ignored
+	 * before this (re-)init, e.g. an RPU recovery, ignore it again.
+	 */
+	((struct nrf_wifi_sys_fmac_dev_ctx *)wifi_dev_priv(fmac_dev_ctx))->bcast_rx_fw_disable = 0;
+	nrf_wifi_sys_fmac_bcast_rx_sync(fmac_dev_ctx);
 
 	rx_buf_ipc = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_fpriv->num_rx_bufs *
 					      sizeof(struct nrf_wifi_rx_buf));
@@ -742,6 +765,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_auth(void *dev_ctx,
 		LOG_ERR("%s: No VIF for index %d", __func__, if_idx);
 		goto out;
 	}
+
+	/* A disconnect resets the broadcast TIM setting to honored on the host
+	 * only, program it in the firmware before the new connection.
+	 */
+	nrf_wifi_sys_fmac_bcast_rx_sync(fmac_dev_ctx);
 
 	auth_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*auth_cmd));
 
@@ -3884,6 +3912,52 @@ out:
 	}
 
 	return status;
+}
+
+enum nrf_wifi_status nrf_wifi_sys_fmac_set_bcast_rx(void *dev_ctx,
+						    bool enable)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = dev_ctx;
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+	unsigned char prev;
+
+	if (!fmac_dev_ctx) {
+		LOG_ERR("%s: Invalid parameters", __func__);
+		goto out;
+	}
+
+	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
+		LOG_ERR("%s: Invalid op mode", __func__);
+		goto out;
+	}
+
+	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	prev = sys_dev_ctx->bcast_rx_disable;
+	sys_dev_ctx->bcast_rx_disable = enable ? 0 : 1;
+
+	status = umac_cmd_sys_bcast_rx_config(fmac_dev_ctx, enable ? 1 : 0);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		sys_dev_ctx->bcast_rx_disable = prev;
+		LOG_ERR("%s: broadcast RX config failed", __func__);
+	} else {
+		sys_dev_ctx->bcast_rx_fw_disable = sys_dev_ctx->bcast_rx_disable;
+	}
+out:
+	return status;
+}
+
+bool nrf_wifi_sys_fmac_get_bcast_rx(void *dev_ctx)
+{
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = dev_ctx;
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
+
+	if (!fmac_dev_ctx || (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS)) {
+		return true;
+	}
+
+	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	return !sys_dev_ctx->bcast_rx_disable;
 }
 #endif /* CONFIG_NRF71_UTIL */
 
