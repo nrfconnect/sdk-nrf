@@ -502,6 +502,29 @@ The following code example shows how to publish to non-AWS specific topics:
 		return err;
 	}
 
+.. _lib_aws_iot_message_delivery:
+
+Handling message delivery
+=========================
+
+The library sends and receives all messages through the :ref:`lib_mqtt_helper` library.
+The rules described in the :ref:`lib_mqtt_helper_receiving` and :ref:`lib_mqtt_helper_publishing` sections therefore apply to both shadow topics and application-specific topics.
+This section describes how these rules appear in the API of this library.
+
+The library reports each received message with the :c:enumerator:`AWS_IOT_EVT_DATA_RECEIVED` event.
+The topic type in the event tells the application if the message came on a shadow topic or on an application-specific topic.
+The event does not contain the message ID, so a QoS 1 message that the broker delivers more than once is reported again as a new message.
+If a message is too large for the payload buffer, the library reports the :c:enumerator:`AWS_IOT_EVT_ERROR` event and disconnects from the broker.
+
+When the broker acknowledges a QoS 1 message, the library reports the :c:enumerator:`AWS_IOT_EVT_PUBACK` event with the message ID.
+To match this event to a message, set the ``message_id`` field of the :c:struct:`aws_iot_data` structure to a unique, non-zero value.
+Do this before you call the :c:func:`aws_iot_send` function.
+If the field is ``0``, the library assigns an ID itself and does not return it to the application.
+
+The ``persistent_session`` field of the :c:enumerator:`AWS_IOT_EVT_CONNECTED` event tells the application if the broker resumed the previous session.
+If it did, resend each unacknowledged message with the :c:func:`aws_iot_send` function.
+Use the original message ID, and set the ``dup_flag`` field to ``1``.
+
 .. _lib_set_client_id:
 
 Setting client ID at run-time
