@@ -4,22 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	zephyr,user {
-		pwms = <&pwm20 0 1600000 PWM_POLARITY_NORMAL>,
-		       <&pwm20 1 1600000 PWM_POLARITY_NORMAL>,
-		       <&pwm20 2 1600000 PWM_POLARITY_NORMAL>,
-		       <&pwm20 3 1600000 PWM_POLARITY_NORMAL>;
-	};
-
-	pulse_meas: pulse-meas {
-		compatible = "nordic,pulse-meas";
-		status = "okay";
-		timer-instance = <&timer20>;
-		assert-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
-		deassert-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
-	};
-};
+/*
+ * Test requires Loopback between:
+ *  - PWM20 OUT[0] at P1.08 <-> GPIO input at P1.09
+ *  - PWM20 OUT[1] at P1.10 <-> GPIO input at P1.11
+ */
 
 &pinctrl {
 	pwm20_default: pwm20_default {
@@ -38,11 +27,14 @@
 	};
 };
 
-tester_pwm: &pwm20 {
-	status = "reserved";
-	pinctrl-0 = <&pwm20_default>;
-	pinctrl-1 = <&pwm20_sleep>;
-	pinctrl-names = "default", "sleep";
+/ {
+	pulse_meas: pulse-meas {
+		compatible = "nordic,pulse-meas";
+		status = "okay";
+		timer-instance = <&timer20>;
+		assert-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+		deassert-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+	};
 };
 
 &timer20 {
@@ -51,4 +43,11 @@ tester_pwm: &pwm20 {
 
 &gpio1 {
 	status = "okay";
+};
+
+tester_pwm: &pwm20 {
+	status = "reserved";
+	pinctrl-0 = <&pwm20_default>;
+	pinctrl-1 = <&pwm20_sleep>;
+	pinctrl-names = "default", "sleep";
 };

@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Test requires Loopback between:
+ *  - PWM130 OUT[0] at P1.00 <-> GPIO input at P1.01
+ *  - PWM130 OUT[1] at P2.01 <-> GPIO input at P2.02
+ */
+
+&pinctrl {
+	pwm130_default: pwm130_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 0)>,
+				<NRF_PSEL(PWM_OUT1, 2, 1)>;
+		};
+	};
+
+	pwm130_sleep: pwm130_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 0)>,
+				<NRF_PSEL(PWM_OUT1, 2, 1)>;
+			low-power-enable;
+		};
+	};
+};
+
+/ {
+	pulse_meas: pulse-meas {
+		compatible = "nordic,pulse-meas";
+		status = "okay";
+		timer-instance = <&timer131>;
+		assert-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+		deassert-gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&timer131 {
+	status = "reserved";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+tester_pwm: &pwm130 {
+	status = "reserved";
+	pinctrl-0 = <&pwm130_default>;
+	pinctrl-1 = <&pwm130_sleep>;
+	pinctrl-names = "default", "sleep";
+};
