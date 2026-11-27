@@ -1968,6 +1968,7 @@ Documentation
   * The :ref:`software_maturity_security_features_psa` section on the :ref:`software_maturity` page by changing the support level of the :ref:`nrf_oberon <crypto_drivers_oberon>` driver on the nRF54LS05A SoC from experimental to supported.
   * The :ref:`lib_mqtt_helper` library page with information about message delivery and resending unacknowledged QoS 1 messages.
   * The :ref:`lib_aws_iot` library page with information about message delivery and resending unacknowledged QoS 1 messages.
+  * The :ref:`lib_azure_iot_hub` library page with information about message delivery and resending unacknowledged QoS 1 messages.
   * The :ref:`ug_nrf54h20_mcuboot_requests` page by adding figures that illustrate the initialization, read, clear, and write procedures of the bootloader requests module.
   * The :ref:`ug_nrf54h20_partitioning_merged` page by adding figures that illustrate the partition layouts, the bootchains, the radio core slot selection, and the image version dependencies.
   * The :ref:`ug_nrf54h20_mcuboot_manifest` page by adding figures that illustrate the manifest partitions and the manifest TLV structure, and by spelling out the term TLV.

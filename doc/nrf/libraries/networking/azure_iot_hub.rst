@@ -845,6 +845,28 @@ Hence subscriptions are requested for each connection to the IoT hub.
 
 For more information about the available APIs, see the :ref:`azure_iot_hub_api` section.
 
+.. _lib_azure_iot_hub_message_delivery:
+
+Handling message delivery
+=========================
+
+The library sends and receives all messages through the :ref:`lib_mqtt_helper` library.
+The rules described in the :ref:`lib_mqtt_helper_receiving` and :ref:`lib_mqtt_helper_publishing` sections therefore apply to all messages, including device twin messages and direct method requests.
+This section describes how these rules appear in the API of this library.
+
+The library reports a received message with the :c:enumerator:`AZURE_IOT_HUB_EVT_DATA_RECEIVED`, :c:enumerator:`AZURE_IOT_HUB_EVT_TWIN_RECEIVED`, :c:enumerator:`AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED`, or :c:enumerator:`AZURE_IOT_HUB_EVT_DIRECT_METHOD` event, depending on the topic.
+These events do not contain the message ID, so a QoS 1 message that the IoT hub delivers more than once is reported again as a new message.
+If a message is too large for the payload buffer, the library reports the :c:enumerator:`AZURE_IOT_HUB_EVT_ERROR_MSG_SIZE` event.
+
+When the IoT hub acknowledges a QoS 1 message, the library reports the :c:enumerator:`AZURE_IOT_HUB_EVT_PUBACK` event with the message ID.
+To match this event to a message, set the ``message_id`` field of the :c:struct:`azure_iot_hub_msg` structure to a unique, non-zero value.
+Do this before you call the :c:func:`azure_iot_hub_send` function.
+If the field is ``0``, the library assigns an ID itself and does not return it to the application.
+
+The :c:enumerator:`AZURE_IOT_HUB_EVT_CONNECTED` event does not report if the IoT hub resumed the previous session.
+After a reconnect, resend each unacknowledged QoS 1 message with the :c:func:`azure_iot_hub_send` function.
+Use the original message ID, and set the ``dup_flag`` field of the :c:struct:`azure_iot_hub_msg` structure to ``1``.
+
 
 Configuration
 *************
