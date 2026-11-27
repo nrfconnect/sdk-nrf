@@ -419,6 +419,16 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	umac_cmd_data->params.lp_rx_enable = 0;
 #endif /* CONFIG_NRF_WIFI_LP_RX */
 
+#ifdef CONFIG_NRF_WIFI_LP_RX_BCAST
+	/* Stay in LP RX for buffered broadcast/multicast up to these rates */
+	umac_cmd_data->params.lp_rx_bcast_enable = 1;
+	umac_cmd_data->params.lp_rx_max_dsss_rate = CONFIG_NRF_WIFI_LP_RX_BCAST_MAX_DSSS_RATE;
+	umac_cmd_data->params.lp_rx_max_ofdm_rate = CONFIG_NRF_WIFI_LP_RX_BCAST_MAX_OFDM_RATE;
+	umac_cmd_data->params.lp_rx_max_mcs = CONFIG_NRF_WIFI_LP_RX_BCAST_MAX_MCS;
+#else
+	umac_cmd_data->params.lp_rx_bcast_enable = 0;
+#endif /* CONFIG_NRF_WIFI_LP_RX_BCAST */
+
 	/* Internal tuning parameter for ACK timeout in the firmware. Accounts for
 	 * internal hardware latencies and is calibrated in the lab. Changing
 	 * this value may cause unexpected system behavior. Not expected to

@@ -2283,8 +2283,19 @@ struct lmac_tuning_params {
 	int tod_offset;
 	int toa_offset;
 	unsigned int clock_mode;
+	/* Receive buffered broadcast/multicast in LP RX instead of switching to TRX (patch). Disabled
+	 * until the host sets it
+	 */
+	unsigned int lp_rx_bcast_enable;
+	/* Highest broadcast/multicast rate received in LP RX, encoded like a TX rate: DSSS/CCK and
+	 * legacy OFDM in 500 kbps units (4 = 2 Mbps, 18 = 9 Mbps), HT/VHT/HE as 0x80 + MCS (0x82 = MCS2).
+	 * These four fields take the place of reserved[0..3], so the layout is unchanged.
+	 */
+	unsigned int lp_rx_max_dsss_rate;
+	unsigned int lp_rx_max_ofdm_rate;
+	unsigned int lp_rx_max_mcs;
 	/* reserved for patching */
-	unsigned int reserved[16];
+	unsigned int reserved[12];
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_vtf_params {
