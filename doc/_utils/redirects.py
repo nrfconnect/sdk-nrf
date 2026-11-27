@@ -73,7 +73,6 @@ NRF = (
     ("samples/dfu/index", "samples/dfu"),
     ("samples/esb/index", "samples/esb"),
     ("samples/fast_pair/index", "samples/fast_pair"),
-    ("samples/gazell/index", "samples/gazell"),
     ("samples/ironside_se/index", "samples/ironside_se"),
     ("samples/keys/index", "samples/keys"),
     ("samples/mesh/index", "samples/mesh"),
@@ -420,9 +419,6 @@ NRF = (
     ("ug_bt_mesh_nlc", "protocols/bt/bt_mesh/overview/nlc"), # Networked Lighting Control profiles
     ("protocols/bt/bt_mesh/nlc", "protocols/bt/bt_mesh/overview/nlc"),
     ("ug_esb", "protocols/esb/index"), # Enhanced ShockBurst (ESB) (landing)
-    ("ug_gz", "protocols/gazell/index"), # Gazell (landing)
-    ("ug_gzll", "protocols/gazell/gzll"), # Gazell Link Layer
-    ("ug_gzp", "protocols/gazell/gzp"), # Gazell Pairing
     ("test_and_optimize/optimizing/power_nrf91", "protocols/lte/power_nrf91"), # Power profiling cellular applications (moved from Test and optimizing general section)
     ("ug_matter", "releases_and_maturity/migration/migration_ncs_matter"), # Matter (landing)
     ("ug_matter_intro_overview", "releases_and_maturity/migration/migration_ncs_matter"), # Matter overview (landing)
@@ -584,7 +580,6 @@ NRF = (
     ("samples/cellular/nrf_provisioning/README", "samples/cellular/nrf_device_provisioning/README"),
     ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)
     ("samples/samples_crypto", "samples/crypto"), # Cryptography samples (landing)
-    ("samples/samples_gazell", "samples/gazell"), # Gazell samples (landing)
     ("samples/samples_matter", "releases_and_maturity/migration/migration_ncs_matter"), # Matter samples (landing)
     ("samples/matter/matter_debug_snippet", "releases_and_maturity/migration/migration_ncs_matter"), # Matter debug snippet (page removed)
     ("samples/matter/matter_diagnostic_logs_snippet", "releases_and_maturity/migration/migration_ncs_matter"), # Matter diagnostic logs snippet (page removed)

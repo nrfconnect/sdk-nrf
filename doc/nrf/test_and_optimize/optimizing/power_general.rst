@@ -186,24 +186,6 @@ Bluetooth Mesh
 
 The Bluetooth Mesh protocol offers the :ref:`ug_bt_mesh_configuring_lpn` feature for optimizing the power consumption of the Bluetooth Mesh devices.
 
-Gazell
-======
-
-Gazell is an asymmetrical protocol where the Device role is power-optimized.
-A Gazell Device attains the lowest current consumption during idle times.
-The :ref:`Gazell Link Layer API <nrfxlib:gzll_api>` provides functions for setting protocol parameters, including those that affect current consumption.
-From the power optimization point of view, the most important functions are:
-
-* :c:func:`nrf_gzll_set_tx_power`.
-* :c:func:`nrf_gzll_set_sync_lifetime` - Adapt this parameter based on how often the application sends data to Host.
-
-  When the link is synchronized, packets are transmitted faster, but an additional timer is running, consuming more current.
-  However, when the link is out of sync, sending a single packet may require multiple transmissions until Device and Host find each other on the same channel at the same time.
-
-* :c:func:`nrf_gzll_set_max_tx_attempts` - In poor RF conditions, retransmissions of each packet may be required, thus increasing the current consumption.
-
-  Setting the value zero means unlimited retransmissions until a packet gets acknowledged.
-
 Matter
 ======
 
