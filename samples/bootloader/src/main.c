@@ -25,6 +25,8 @@
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
+#elif defined(CONFIG_NRFX_MRAMC)
+#include <nrfx_mramc.h>
 #else
 #error "No NRFX memory backend selected"
 #endif
@@ -87,6 +89,21 @@ static bool rramc_configure(void)
 }
 #endif
 
+#if defined(CONFIG_NRFX_MRAMC)
+static bool mramc_configure(void)
+{
+	nrfx_mramc_config_t config = NRFX_MRAMC_DEFAULT_CONFIG();
+
+	int err = nrfx_mramc_init(&config, NULL);
+
+	if (err != 0 && err != -EALREADY) {
+		return false;
+	}
+
+	return true;
+}
+#endif
+
 int load_huk(void)
 {
 	if (!hw_unique_key_is_written(HUK_KEYSLOT_KDR)) {
@@ -116,13 +133,20 @@ int load_huk(void)
 				k_panic();
 				return -1;
 			}
+#elif defined(CONFIG_NRFX_MRAMC)
+			if (mramc_configure()) {
+				nrfx_mramc_word_write(huk_flag_addr, 0);
+			} else {
+				printk("Error: Unable to set Hardware Unique Key.\n");
+				k_panic();
+				return -1;
+			}
 #endif
 			return 0;
 		}
 		printk("Error: Hardware Unique Key not present.\n");
 		k_panic();
 		return -1;
-
 	}
 
 	if (hw_unique_key_load_kdr() != HW_UNIQUE_KEY_SUCCESS) {
@@ -136,7 +160,6 @@ int load_huk(void)
 
 SYS_INIT(load_huk, PRE_KERNEL_2, 0);
 #endif
-
 
 static void validate_and_boot(const struct fw_info *fw_info, counter_t slot)
 {
