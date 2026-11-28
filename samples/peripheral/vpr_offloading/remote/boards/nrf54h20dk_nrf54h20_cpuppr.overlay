@@ -3,25 +3,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&cpuppr_vevif {
-	status = "okay";
-};
-
-&cpuapp_bellboard {
-	status = "okay";
-};
-
 &cpuppr_vevif_rx {
 	/* Only 1 interrupt is used. Remove 15 not used isr handlers (1.4k savings) */
 	interrupts = <12 NRF_DEFAULT_IRQ_PRIORITY>;
 	nordic,tasks = <1>;
-};
-
-&cpuapp_cpuppr_ipc {
-	status = "okay";
-	compatible = "zephyr,ipc-icbmsg";
-	tx-blocks = <16>;
-	rx-blocks = <16>;
 };
 
 &uart135 {

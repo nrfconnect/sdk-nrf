@@ -134,7 +134,7 @@ To build the sample to test IPC between the application and radio domains using 
 
 .. code-block:: console
 
-   west build -p -b nrf54h20dk/nrf54h20/cpuapp
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icbmsg .
 
 To build the sample to test IPC between the application and PPR core using the :ref:`zephyr:ipc_service_backend_icmsg` backend, use the following command:
 

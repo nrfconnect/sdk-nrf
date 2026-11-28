@@ -4,11 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* The nordic-flpr snippet splits the 192k RAM into 123k for the application core,
- * 4k for the default IPC buffers (2k per direction), 64k for the FLPR code and data,
- * and 1k for the FLPR hibernation space.
- */
-
 / {
 	aliases {
 		remote-temp-monitor-ipc = &ipc0;

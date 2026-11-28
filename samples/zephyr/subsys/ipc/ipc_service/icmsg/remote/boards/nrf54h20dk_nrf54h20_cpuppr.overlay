@@ -6,16 +6,8 @@
 
 ipc0: &cpuapp_cpuppr_ipc {
 	status = "okay";
-};
-
-&cpuppr_vevif {
-	status = "okay";
-};
-
-&cpuapp_bellboard {
-	status = "okay";
-};
-
-&uart135 {
-	/delete-property/ hw-flow-control;
+	compatible = "zephyr,ipc-icmsg";
+	unbound = "enable";
+	/delete-property/ tx-blocks;
+	/delete-property/ rx-blocks;
 };
